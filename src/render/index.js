@@ -3,8 +3,8 @@
 // camera-translated entity pass -> HUD (screen space).
 import { drawBackground } from './background.js';
 import { drawHud } from './hud.js';
-import { drawLevel } from '../level.js';
-import { drawPlayer } from '../player.js';
+import { drawLevel } from './level.js';
+import { drawPlayer } from './player.js';
 import { drawEnemies } from '../enemies.js';
 import { drawLoot } from '../loot.js';
 import { drawArrows } from '../arrows.js';

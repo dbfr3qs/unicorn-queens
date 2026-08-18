@@ -34,3 +34,23 @@ export function createRecordingCtx() {
   });
   return { ctx, lines, text: () => lines.join('\n') };
 }
+
+// Indent the log between save()/restore() pairs so snapshots read like
+// nested draw calls and diffs stay localised to the block that changed.
+// depth is clamped so an unbalanced restore (a bug) can't underflow.
+export function pretty(lines) {
+  let depth = 0;
+  const out = [];
+  for (const line of lines) {
+    if (line === 'save()') {
+      out.push('  '.repeat(depth) + 'save()');
+      depth++;
+    } else if (line === 'restore()') {
+      depth = Math.max(0, depth - 1);
+      out.push('  '.repeat(depth) + 'restore()');
+    } else {
+      out.push('  '.repeat(depth) + line);
+    }
+  }
+  return out.join('\n');
+}

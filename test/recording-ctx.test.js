@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { createRecordingCtx } from './helpers/recording-ctx.js';
+import { createRecordingCtx, pretty } from './helpers/recording-ctx.js';
 
 test('records method calls with rounded args', () => {
   const { ctx, text } = createRecordingCtx();
@@ -43,4 +43,28 @@ test('multiple calls to the same method each log', () => {
   ctx.fillRect(0, 0, 1, 1);
   ctx.fillRect(2, 2, 3, 3);
   expect(text()).toBe('fillRect(0, 0, 1, 1)\nfillRect(2, 2, 3, 3)');
+});
+
+test('pretty indents save/restore nesting', () => {
+  const { ctx, lines } = createRecordingCtx();
+  ctx.fillRect(0, 0, 1, 1);
+  ctx.save();
+  ctx.translate(1, 2);
+  ctx.save();
+  ctx.fillRect(0, 0, 1, 1);
+  ctx.restore();
+  ctx.restore();
+  expect(pretty(lines)).toBe([
+    'fillRect(0, 0, 1, 1)',
+    'save()',
+    '  translate(1, 2)',
+    '  save()',
+    '    fillRect(0, 0, 1, 1)',
+    '  restore()',
+    'restore()',
+  ].join('\n'));
+});
+
+test('pretty clamps depth on unbalanced restore', () => {
+  expect(pretty(['restore()', 'fillRect(0, 0, 1, 1)'])).toBe('restore()\nfillRect(0, 0, 1, 1)');
 });

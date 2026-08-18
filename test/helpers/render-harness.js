@@ -9,7 +9,7 @@ import { reseed } from './seeded-rng.js';
 import { game, startGame, update } from '../../src/game.js';
 import { draw } from '../../src/render/index.js';
 import { input } from '../../src/input.js';
-import { createRecordingCtx } from './recording-ctx.js';
+import { createRecordingCtx, pretty } from './recording-ctx.js';
 
 export const VIEW_W = 800, VIEW_H = 600, DT = 1 / 60;
 
@@ -30,8 +30,8 @@ export function step(keys = {}, frames = 1) {
   input.jump = !!keys.jump;
   input.fire = !!keys.fire;
   for (let i = 0; i < frames; i++) update(DT, VIEW_W, noopFx);
-  const { ctx, text } = createRecordingCtx();
+  const { ctx, lines } = createRecordingCtx();
   draw(ctx, VIEW_W, VIEW_H);
   input.left = input.right = input.jump = input.fire = false;
-  return text();
+  return pretty(lines); // indented between save/restore for readable diffs
 }

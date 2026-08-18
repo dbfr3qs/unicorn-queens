@@ -12,5 +12,12 @@ function mulberry32(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-Math.random = mulberry32(1234567);
-export {};
+const SEED = 1234567;
+Math.random = mulberry32(SEED);
+
+// Restart the same sequence. The harness calls this in freshGame() so
+// each test's snapshots are independent of test order and of how much
+// randomness earlier tests consumed.
+export function reseed() {
+  Math.random = mulberry32(SEED);
+}

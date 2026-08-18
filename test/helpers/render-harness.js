@@ -5,7 +5,7 @@
 // Math.random at import time, and that must be the seeded PRNG from
 // ./seeded-rng.js — which is why it is this file's first import (and
 // must stay first).
-import './seeded-rng.js';
+import { reseed } from './seeded-rng.js';
 import { game, startGame, update } from '../../src/game.js';
 import { draw } from '../../src/render/index.js';
 import { input } from '../../src/input.js';
@@ -16,6 +16,7 @@ export const VIEW_W = 800, VIEW_H = 600, DT = 1 / 60;
 const noopFx = { play: () => {} }; // audio is never exercised in these tests
 
 export function freshGame(viewH = VIEW_H) {
+  reseed(); // each test gets the same RNG sequence
   startGame(viewH);
   return game;
 }

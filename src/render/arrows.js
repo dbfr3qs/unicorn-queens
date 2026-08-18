@@ -1,12 +1,13 @@
 // Arrow rendering: shaft + head, flipped by flight direction.
 import { arrows } from '../arrows.js';
+import { palette } from './theme.js';
 
 export function drawArrows(c) {
   for (const a of arrows) {
     c.save();
     c.translate(a.x, a.y);
     c.scale(Math.sign(a.vx), 1);
-    c.fillStyle = '#d9b380'; // shaft
+    c.fillStyle = palette.wood; // shaft
     c.fillRect(0, 1, 10, 2);
     c.fillStyle = '#e8e8f0'; // head
     c.beginPath();

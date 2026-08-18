@@ -3,6 +3,7 @@ import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { P_GRAVITY, P_TERM_VY } from './player.js';
+import { FX } from './effects.js';
 
 export const E_SPEED = 90, E_W = 30, E_H = 28, E_STOMP_V = -400, HURT_INVULN = 1.5;
 
@@ -44,7 +45,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
         p.vy = E_STOMP_V; // bounce
         p.cuttable = false;
         fx.play('stomp');
-        burst(e.x + e.w / 2, e.y + e.h / 2, { count: 12, colors: ['#b57edc', '#fff5fa'], speed: 160, up: 100, size: 5, grav: 400, life: 0.5 });
+        burst(e.x + e.w / 2, e.y + e.h / 2, FX.slimeDeath);
         shake(cam, 5, 0.18);
       } else {
         p.hp -= 1;
@@ -52,7 +53,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
         p.vy = -250;
         p.cuttable = false;
         fx.play('hurt');
-        burst(p.x + p.w / 2, p.y + p.h / 2, { count: 10, colors: ['#ff6f91', '#e33'], speed: 140, size: 4, grav: 300, life: 0.45 });
+        burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
         shake(cam, 8, 0.3);
         if (p.hp <= 0) { p.dead = true; fx.play('die'); }
       }

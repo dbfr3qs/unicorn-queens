@@ -10,10 +10,11 @@ import { drawLoot } from './loot.js';
 import { drawArrows } from './arrows.js';
 import { drawParticles } from './particles.js';
 import { game } from '../game.js';
+import { palette } from './theme.js';
 
 export function draw(ctx, viewW, viewH) {
   const { level, player, enemies, camera, gameTime } = game;
-  ctx.fillStyle = '#0d0815';
+  ctx.fillStyle = palette.clear;
   ctx.fillRect(0, 0, viewW, viewH);
   const shx = camera.shake > 0 ? (Math.random() * 2 - 1) * camera.mag : 0;
   const shy = camera.shake > 0 ? (Math.random() * 2 - 1) * camera.mag : 0;

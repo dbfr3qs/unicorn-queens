@@ -2,6 +2,7 @@
 import { burst } from './particles.js';
 import { spawnLoot } from './loot.js';
 import { shake } from './camera.js';
+import { FX } from './effects.js';
 
 export const arrows = [];
 export const ARROW_SPEED = 520, FIRE_CD = 0.22;
@@ -30,7 +31,7 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
         e.dead = true;
         a.dead = true;
         fx.play('thwack');
-        burst(e.x + e.w / 2, e.y + e.h / 2, { count: 12, colors: ['#b57edc', '#fff5fa'], speed: 160, up: 100, size: 5, grav: 400, life: 0.5 });
+        burst(e.x + e.w / 2, e.y + e.h / 2, FX.slimeDeath);
         shake(cam, 3, 0.12);
         break;
       }
@@ -43,7 +44,7 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
         a.dead = true;
         fx.play('box');
         spawnLoot(b);
-        burst(b.x + b.w / 2, b.y + b.h / 2, { count: 14, colors: ['#c98f3d', '#8a5f22', '#e8b86d'], speed: 170, up: 120, size: 6, grav: 700, life: 0.6 });
+        burst(b.x + b.w / 2, b.y + b.h / 2, FX.boxBreak);
         shake(cam, 4, 0.15);
         break;
       }

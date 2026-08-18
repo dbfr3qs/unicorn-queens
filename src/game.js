@@ -7,6 +7,7 @@ import { input } from './input.js';
 import { createEnemies, updateEnemies } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
+import { FX } from './effects.js';
 
 export const game = {
   level: null, player: null, enemies: null,
@@ -48,7 +49,7 @@ export function update(dt, viewW, fx) {
   if (!game.player.dead && !game.player.won && game.player.x + game.player.w >= game.level.goal.x) {
     game.player.won = true;
     fx.play('win');
-    burst(game.player.x + game.player.w / 2, game.player.y, { count: 40, colors: ['#ffd75e', '#6fe3e1', '#ff6f91', '#fff'], speed: 220, up: 160, size: 5, grav: 500, life: 0.9 });
+    burst(game.player.x + game.player.w / 2, game.player.y, FX.win);
     shake(game.camera, 3, 0.25);
   }
   if (game.camera.shake > 0) {

@@ -3,6 +3,7 @@
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H } from './player.js';
+import { FX } from './effects.js';
 
 export const loot = [];
 export let score = 0;
@@ -46,11 +47,11 @@ export function updateLoot(p, lvl, dt, fx) {
       if (it.kind === 'gem') {
         score += 1;
         fx.play('gem');
-        burst(it.x + 8, it.y + 8, { count: 10, colors: ['#6fe3e1', '#c8fbfa', '#fff'], speed: 120, size: 3, grav: -100, life: 0.4 });
+        burst(it.x + 8, it.y + 8, FX.gem);
       } else if (it.kind === 'bow') {
         p.hasBow = true;
         fx.play('bow');
-        burst(it.x + 8, it.y + 8, { count: 12, colors: ['#ffd75e', '#d9b380', '#fff'], speed: 130, size: 3, grav: -100, life: 0.45 });
+        burst(it.x + 8, it.y + 8, FX.bow);
       } else if (it.kind === 'grow') {
         if (!p.big) {
           p.big = true;
@@ -59,11 +60,11 @@ export function updateLoot(p, lvl, dt, fx) {
           p.w = BIG_W; p.h = BIG_H;
         }
         fx.play('grow');
-        burst(it.x + 8, it.y + 8, { count: 16, colors: ['#ffd75e', '#fff', '#ffe9b0'], speed: 150, size: 4, grav: -150, life: 0.5 });
+        burst(it.x + 8, it.y + 8, FX.grow);
       } else { // heart
         p.hp = Math.min(p.hp + 1, 3);
         fx.play('heart');
-        burst(it.x + 8, it.y + 8, { count: 10, colors: ['#ff6f91', '#fff'], speed: 120, size: 3, grav: -100, life: 0.4 });
+        burst(it.x + 8, it.y + 8, FX.heart);
       }
     }
   }

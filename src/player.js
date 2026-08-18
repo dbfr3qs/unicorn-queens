@@ -4,6 +4,7 @@ import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { spawnLoot } from './loot.js';
 import { fireArrow, FIRE_CD } from './arrows.js';
+import { FX } from './effects.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
@@ -57,7 +58,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   const surface = resolveGroundCollision(player, lvl, dt);
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust
     player.sy = 0.7; player.sx = 1.3;
-    burst(player.x + player.w / 2, player.y + player.h, { count: 6, colors: ['#8d76b8', '#5d4a80'], speed: 60, size: 4, grav: -200, life: 0.35 });
+    burst(player.x + player.w / 2, player.y + player.h, FX.landing);
     fx.play('land');
   }
   if (surface && surface.kind === 'box') {
@@ -66,7 +67,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     player.cuttable = false;
     spawnLoot(surface);
     fx.play('box');
-    burst(surface.x + surface.w / 2, surface.y + surface.h / 2, { count: 14, colors: ['#c98f3d', '#8a5f22', '#e8b86d'], speed: 170, up: 120, size: 6, grav: 700, life: 0.6 });
+    burst(surface.x + surface.w / 2, surface.y + surface.h / 2, FX.boxBreak);
     shake(cam, 4, 0.15);
   }
   player.sx += (1 - player.sx) * Math.min(1, dt * 14); // ease back to rest

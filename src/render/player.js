@@ -1,5 +1,6 @@
 // Player rendering: unicorn + queen rider, squash & stretch, bow.
 import { P_H, BIG_H } from '../player.js';
+import { palette } from './theme.js';
 
 export function drawPlayer(c, player, t) {
   c.save();
@@ -7,10 +8,10 @@ export function drawPlayer(c, player, t) {
   const bs = player.big ? BIG_H / P_H : 1; // grown unicorn draws bigger
   c.scale(player.facing * player.sx * bs, player.sy * bs);
   if (player.invuln > 0 && Math.floor(player.invuln * 12) % 2 === 0) c.globalAlpha = 0.35;
-  c.fillStyle = '#fff5fa';            // body
+  c.fillStyle = palette.unicornWhite; // body
   c.fillRect(-14, -24, 28, 18);
   c.fillRect(6, -34, 12, 12);         // head
-  c.fillStyle = '#ffd75e';            // horn
+  c.fillStyle = palette.gold;         // horn
   c.beginPath();
   c.moveTo(13, -34); c.lineTo(17, -46); c.lineTo(19, -34);
   c.closePath(); c.fill();
@@ -37,7 +38,7 @@ export function drawPlayer(c, player, t) {
   c.fillRect(1.5, -39.5, 2, 2.5);
   c.fillStyle = '#f5d76e';            // fringe over the forehead
   c.fillRect(-5, -45, 11, 4);
-  c.fillStyle = '#ffd75e';            // crown
+  c.fillStyle = palette.gold;         // crown
   c.fillRect(-4.5, -47.5, 10, 3);
   c.beginPath();
   c.moveTo(-4.5, -47.5); c.lineTo(-3, -51); c.lineTo(-1.5, -47.5);
@@ -47,7 +48,7 @@ export function drawPlayer(c, player, t) {
   c.fillStyle = '#ff5e78';            // crown gem
   c.fillRect(-0.5, -46.5, 1.5, 1.5);
   if (player.hasBow) { // bow held at the queen's hand
-    c.strokeStyle = '#d9b380';
+    c.strokeStyle = palette.wood;
     c.lineWidth = 2;
     c.beginPath();
     c.arc(11, -27, 6.5, -Math.PI / 2.5, Math.PI / 2.5);

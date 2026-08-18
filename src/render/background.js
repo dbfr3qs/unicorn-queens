@@ -1,5 +1,6 @@
 // Parallax night-sky background: twinkling stars + two mountain ridges.
 // Pure module: no DOM/canvas globals (ground line comes from the level).
+import { palette } from './theme.js';
 
 function makeRidge(width, minH, maxH, gap, rng) {
   const peaks = [];
@@ -42,7 +43,7 @@ function drawRidge(c, peaks, off, color, groundY) {
 export function drawBackground(c, lvl, cam, t) {
   c.save();
   c.translate(-cam.x * 0.2, 0); // stars drift slowest
-  c.fillStyle = '#cbb8ff';
+  c.fillStyle = palette.lavender;
   for (const s of background.stars) {
     c.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(t * 1.5 + s.ph)); // twinkle
     c.fillRect(s.x, s.y, s.r, s.r);

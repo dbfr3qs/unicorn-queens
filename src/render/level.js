@@ -1,11 +1,13 @@
 // Level rendering: ground, platforms, boxes, goal flag.
 // Self-applies the camera transform (kept as-is from the original drawLevel;
 // normalising it to the shared world pass is a later optional phase).
+import { palette } from './theme.js';
+
 export function drawLevel(c, lvl, camera) {
   c.save();
   c.translate(-(camera ? camera.x : 0), 0);
   for (const seg of lvl.ground) {
-    c.fillStyle = '#2d1b4e';
+    c.fillStyle = palette.night;
     c.fillRect(seg.x, lvl.groundY, seg.w, lvl.height - lvl.groundY);
     c.fillStyle = '#7b4fa6';
     c.fillRect(seg.x, lvl.groundY, seg.w, 4);
@@ -20,13 +22,13 @@ export function drawLevel(c, lvl, camera) {
     c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
   }
   const g = lvl.goal; // goal flag
-  c.fillStyle = '#cbb8ff';
+  c.fillStyle = palette.lavender;
   c.fillRect(g.x, lvl.groundY - 90, 4, 90);
-  c.fillStyle = '#ffd75e';
+  c.fillStyle = palette.gold;
   c.beginPath();
   c.arc(g.x + 2, lvl.groundY - 94, 5, 0, Math.PI * 2);
   c.fill();
-  c.fillStyle = '#ff6f91';
+  c.fillStyle = palette.pink;
   c.beginPath();
   c.moveTo(g.x + 4, lvl.groundY - 86);
   c.lineTo(g.x + 40, lvl.groundY - 74);

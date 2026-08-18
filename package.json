@@ -1,0 +1,15 @@
+{
+  "name": "unicorn-queens",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "serve": "node server.mjs 9000",
+    "smoke": "node smoke.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.10"
+  }
+}

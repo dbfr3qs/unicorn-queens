@@ -1,11 +1,8 @@
 // Level rendering: ground, platforms, boxes, goal flag.
-// Self-applies the camera transform (kept as-is from the original drawLevel;
-// normalising it to the shared world pass is a later optional phase).
+// Drawn inside the camera-translated world pass (see index.js).
 import { palette } from './theme.js';
 
-export function drawLevel(c, lvl, camera) {
-  c.save();
-  c.translate(-(camera ? camera.x : 0), 0);
+export function drawLevel(c, lvl) {
   for (const seg of lvl.ground) {
     c.fillStyle = palette.night;
     c.fillRect(seg.x, lvl.groundY, seg.w, lvl.height - lvl.groundY);
@@ -35,5 +32,4 @@ export function drawLevel(c, lvl, camera) {
   c.lineTo(g.x + 4, lvl.groundY - 62);
   c.closePath();
   c.fill();
-  c.restore();
 }

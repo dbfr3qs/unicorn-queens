@@ -1,6 +1,6 @@
 // Rendering: world draw order. No state of its own — reads the game object.
-// Passes: background (own parallax) -> level (own camera transform) ->
-// camera-translated entity pass -> HUD (screen space).
+// Passes: background (own parallax) -> camera-translated world pass
+// (level + entities) -> HUD (screen space).
 import { drawBackground } from './background.js';
 import { drawHud } from './hud.js';
 import { drawLevel } from './level.js';
@@ -21,9 +21,9 @@ export function draw(ctx, viewW, viewH) {
   ctx.save();
   ctx.translate(shx, shy); // screen shake wraps the world, not the HUD
   drawBackground(ctx, level, camera, gameTime);
-  drawLevel(ctx, level, camera);
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
+  drawLevel(ctx, level);
   drawPlayer(ctx, player, gameTime);
   drawEnemies(ctx, enemies);
   drawLoot(ctx);

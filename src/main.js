@@ -1,6 +1,6 @@
 // Entry point: canvas, render loop wiring, restart key.
 import { game, startGame, startLoop, update } from './game.js';
-import { draw } from './render.js';
+import { draw } from './render/index.js';
 import { fx } from './audio.js';
 import { onKeyDown, onKeyUp } from './input.js';
 

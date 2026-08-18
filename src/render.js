@@ -1,5 +1,5 @@
 // Rendering: world draw order + HUD. No state of its own — reads the game object.
-import { drawBackground } from './background.js';
+import { drawBackground } from './render/background.js';
 import { drawLevel } from './level.js';
 import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';

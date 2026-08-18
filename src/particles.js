@@ -1,4 +1,4 @@
-// Particle bursts: module-owned state, pure math, canvas draw pass.
+// Particle bursts: module-owned state, pure math.
 
 export const particles = [];
 
@@ -32,13 +32,4 @@ export function updateParticles(dt) {
     p.x += p.vx * dt;
     p.y += p.vy * dt;
   }
-}
-
-export function drawParticles(c) {
-  for (const p of particles) {
-    c.globalAlpha = Math.max(0, 1 - p.t / p.life);
-    c.fillStyle = p.color;
-    c.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-  }
-  c.globalAlpha = 1;
 }

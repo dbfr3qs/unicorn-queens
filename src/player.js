@@ -7,6 +7,7 @@ import { fireArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
+export const BOOTS_TIME = 10, BOOT_JUMP_MULT = 1.6; // bounce boots: 10 s, 1.6× jump
 export const HURT_INVULN = 1.5; // invulnerability window after any hit
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
 export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
@@ -30,6 +31,7 @@ export function createPlayer(lvl, carry = {}) {
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
     hasBow: !!lvl.startItems?.includes('bow') || !!carry.hasBow, fireCd: 0, // level 2 starts with the bow
     big,
+    boots: 0, // bounce boots timer (s); never carried across levels
     won: false,
   };
 }
@@ -59,15 +61,18 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.vx = (inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0);
   if (player.vx !== 0) player.facing = Math.sign(player.vx);
   player.fireCd = Math.max(0, player.fireCd - dt);
+  player.boots = Math.max(0, player.boots - dt);
   if (inp.fire && player.hasBow && player.fireCd <= 0) { // unlimited arrows
     fireArrow(player);
     player.fireCd = FIRE_CD;
     fx.play('fire');
   }
   if (player.jbuf > 0 && player.coyote > 0) {
-    player.vy = player.big ? BIG_JUMP_V : P_JUMP_V;
+    const base = player.big ? BIG_JUMP_V : P_JUMP_V;
+    player.vy = player.boots > 0 ? base * BOOT_JUMP_MULT : base; // bounce boots
     player.jbuf = 0; player.coyote = 0; player.cuttable = true;
     player.sy = 1.25; player.sx = 0.8; // stretch upward
+    if (player.boots > 0) burst(player.x + player.w / 2, player.y + player.h, FX.boots); // sparkle
     fx.play('jump');
   }
   if (!inp.jump && player.cuttable && player.vy < JUMP_CUT) player.vy = JUMP_CUT; // variable height

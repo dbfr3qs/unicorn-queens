@@ -68,6 +68,12 @@ test('big mode', () => {
   expect(step({}, 1)).toMatchSnapshot(); // scale 1.389 on both axes
 });
 
+test('boots active', () => {
+  const g = freshGame();
+  g.player.boots = 10;
+  expect(step({}, 1)).toMatchSnapshot(); // golden shoes on the unicorn
+});
+
 test('bow + arrow in flight', () => {
   const g = freshGame();
   g.player.hasBow = true;

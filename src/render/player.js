@@ -20,6 +20,14 @@ export function drawPlayer(c, player, t) {
   c.fillStyle = '#f3d9e6';            // legs
   c.fillRect(-12, -6, 5, 6);
   c.fillRect(7, -6, 5, 6);
+  if (player.boots > 0) {             // bounce boots: golden shoes
+    c.fillStyle = palette.gold;
+    c.fillRect(-13, -3, 7, 3);
+    c.fillRect(6, -3, 7, 3);
+    c.fillStyle = '#fff';             // glint
+    c.fillRect(-11, -3, 2, 1);
+    c.fillRect(8, -3, 2, 1);
+  }
   // ---- queen rider: blond hair, crown, light blue dress ----
   c.save();
   if (player.onGround && !player.dead && player.vx !== 0) // bob with the gallop

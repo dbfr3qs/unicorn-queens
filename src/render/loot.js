@@ -35,6 +35,15 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'boots') {
+      c.fillStyle = palette.gold;            // golden boot pair
+      c.fillRect(-8, -6, 6, 12);
+      c.fillRect(2, -6, 6, 12);
+      c.fillRect(-9, 4, 7, 3);               // soles
+      c.fillRect(1, 4, 7, 3);
+      c.fillStyle = '#8a5f22';               // trim
+      c.fillRect(-8, -6, 6, 2);
+      c.fillRect(2, -6, 6, 2);
     } else { // heart
       c.fillStyle = palette.pink;
       c.beginPath();

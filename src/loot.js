@@ -2,7 +2,7 @@
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
-import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H } from './player.js';
+import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME } from './player.js';
 import { FX } from './effects.js';
 
 export const loot = [];
@@ -15,11 +15,23 @@ export function resetLoot() {
   bowGiven = false;
 }
 
+// Random drop table (after the one-time bow): [kind, cumulative weight].
+const DROP_TABLE = [
+  ['heart', 0.20],
+  ['boots', 0.25],
+  ['gem', 1.0],
+];
+function rollDrop(rng) {
+  const r = rng();
+  for (const [kind, w] of DROP_TABLE) if (r < w) return kind;
+  return 'gem';
+}
+
 export function spawnLoot(box, rng = Math.random) {
   let kind;
   if (box.drop) kind = box.drop; // designated drop wins
   else if (!bowGiven) { kind = 'bow'; bowGiven = true; }
-  else kind = rng() < 0.2 ? 'heart' : 'gem';
+  else kind = rollDrop(rng);
   loot.push({
     x: box.x + box.w / 2 - 8, y: box.y - 4, w: 16, h: 16,
     vx: (rng() - 0.5) * 80, vy: -350,
@@ -61,6 +73,10 @@ export function updateLoot(p, lvl, dt, fx) {
         }
         fx.play('grow');
         burst(it.x + 8, it.y + 8, FX.grow);
+      } else if (it.kind === 'boots') {
+        p.boots = BOOTS_TIME;
+        fx.play('boots');
+        burst(it.x + 8, it.y + 8, FX.boots);
       } else { // heart
         p.hp = Math.min(p.hp + 1, 3);
         fx.play('heart');

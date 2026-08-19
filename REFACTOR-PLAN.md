@@ -1,5 +1,7 @@
 # Graphics extraction refactor — phased plan
 
+Status: all phases complete (phases 0–6). See git log.
+
 Goal: pull all canvas/graphics code out of the logic modules into a
 `src/render/` directory, organised one file per visual concern. Logic
 modules (`game.js`, `level.js`, `player.js`, `enemies.js`, `loot.js`,

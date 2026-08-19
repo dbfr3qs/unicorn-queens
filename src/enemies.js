@@ -3,10 +3,11 @@
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
-import { P_GRAVITY, P_TERM_VY } from './player.js';
+import { P_GRAVITY, P_TERM_VY, HURT_INVULN, hurtPlayer } from './player.js';
 import { FX } from './effects.js';
 
-export const E_W = 30, E_H = 28, E_STOMP_V = -400, HURT_INVULN = 1.5;
+export const E_W = 30, E_H = 28, E_STOMP_V = -400;
+export { HURT_INVULN }; // re-exported: defined in player.js
 
 // One entry per enemy kind: size, stomp rule, tuning, and `update` — the
 // kind-specific brain, which sets e.vx/e.vy and may do extras (hopping,
@@ -134,13 +135,6 @@ function hitPlayer(e, p, cam, fx) {
   } else if (stomp) {
     p.vy = E_STOMP_V; // bounced off an unstompable enemy (ghost)
   } else {
-    p.hp -= 1;
-    p.invuln = HURT_INVULN;
-    p.vy = -250;
-    p.cuttable = false;
-    fx.play('hurt');
-    burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
-    shake(cam, 8, 0.3);
-    if (p.hp <= 0) { p.dead = true; fx.play('die'); }
+    hurtPlayer(p, cam, fx);
   }
 }

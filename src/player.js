@@ -7,6 +7,7 @@ import { fireArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
+export const HURT_INVULN = 1.5; // invulnerability window after any hit
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
 export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 
@@ -27,6 +28,21 @@ export function createPlayer(lvl) {
     big: false,
     won: false,
   };
+}
+
+// Shared one-hit damage: knockback, invulnerability, death check.
+// Returns true if the hit landed (false while dead or invulnerable).
+export function hurtPlayer(p, cam, fx) {
+  if (p.dead || p.invuln > 0) return false;
+  p.hp -= 1;
+  p.invuln = HURT_INVULN;
+  p.vy = -250;
+  p.cuttable = false;
+  fx.play('hurt');
+  burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
+  shake(cam, 8, 0.3);
+  if (p.hp <= 0) { p.dead = true; fx.play('die'); }
+  return true;
 }
 
 export function updatePlayer(player, inp, lvl, cam, dt, fx) {
@@ -80,7 +96,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     if (player.hp <= 0) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); }
     else {
       fx.play('hurt');
-      player.invuln = 1.5;
+      player.invuln = HURT_INVULN;
       player.x = player.safeX;
       player.y = player.safeY;
       player.vx = 0;

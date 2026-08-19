@@ -7,6 +7,7 @@ import { input } from './input.js';
 import { createEnemies, updateEnemies } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
+import { resetFireballs, updateFireballs } from './projectiles.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -23,6 +24,7 @@ export function startGame(viewH, levelIndex = 0) {
   game.enemies = createEnemies(game.level);
   resetLoot();
   resetArrows();
+  resetFireballs();
   resetParticles();
   game.camera.x = 0;
   game.lastTs = 0;
@@ -47,6 +49,7 @@ export function update(dt, viewW, fx) {
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updateLoot(game.player, game.level, dt, fx);
   updateArrows(game.enemies, game.level, game.camera, dt, fx);
+  updateFireballs(game.player, game.level, game.camera, dt, fx);
   updateParticles(dt);
   if (!game.player.dead && !game.player.won && game.player.x + game.player.w >= game.level.goal.x) {
     game.player.won = true;

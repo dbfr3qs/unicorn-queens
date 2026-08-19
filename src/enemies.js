@@ -87,7 +87,7 @@ const KINDS = {
     w: 42, h: 54,
     hp: 5, stompable: false,
     idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
-    deathSound: 'boss', deathFx: FX.mageDeath,
+    hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.mageDeath,
     onHit(e) {
       e.flash = this.flashT;
       e.state = 'stagger';
@@ -147,7 +147,7 @@ export function damageEnemy(e, fx) {
     fx.play(k.deathSound ?? 'thwack');
     burst(e.x + e.w / 2, e.y + e.h / 2, k.deathFx ?? FX.enemyDeath);
   } else {
-    fx.play('thwack');
+    fx.play(k.hitSound ?? 'thwack');
     if (k.onHit) k.onHit(e);
   }
 }

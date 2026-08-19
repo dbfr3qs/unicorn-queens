@@ -9,6 +9,21 @@ step. Serve over http — the modules won't load from `file://`.
     npm test          # unit tests (vitest)
     npm run smoke     # 300-frame headless wiring check
 
+## Levels
+
+1. **Meadow** — a flat night meadow. Slimes, loot boxes, and a goal
+   flag. Teaches movement, jumping, box-breaking, and picking up the
+   bow.
+2. **The Bridge & The Castle** — you start with the bow. Cross the
+   plank bridge over two moat gaps (falling costs a heart), pass the
+   stone gate, and fight zombies and ghosts through the torch-lit
+   interior — mind the chasm. In the boss hall the mage has 5 hp and
+   fires fireballs you can't shoot down; dodge them. Beat him to make
+   the magic pearl appear, take it to break the seal, and walk the
+   four steps down to the exit.
+
+Win a level and press R to play the next one.
+
 ## Controls
 
 - Move: arrows or A/D

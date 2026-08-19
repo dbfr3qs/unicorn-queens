@@ -15,6 +15,7 @@ export const game = {
   level: null, player: null, enemies: null,
   camera: createCamera(),
   levelIndex: 0,
+  gateChimed: false, // one-shot gate chime per level entry
   lastTs: 0, running: false, gameTime: 0,
 };
 
@@ -28,6 +29,7 @@ export function startGame(viewH, levelIndex = 0) {
   resetFireballs();
   resetParticles();
   game.camera.x = 0;
+  game.gateChimed = false;
   game.lastTs = 0;
 }
 
@@ -47,6 +49,11 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 export function update(dt, viewW, fx) {
   game.gameTime += dt;
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
+  const gate = game.level.gate; // castle gate: one chime on first crossing
+  if (gate && !game.gateChimed && game.player.x + game.player.w > gate.x + gate.w / 2) {
+    game.gateChimed = true;
+    fx.play('gate');
+  }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
   updateLoot(game.player, game.level, dt, fx);

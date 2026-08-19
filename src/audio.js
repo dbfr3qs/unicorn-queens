@@ -48,6 +48,10 @@ export function sfx(name) {
     case 'fireball': beep(280, 140, 0.18, 'sawtooth', 0.1); break;
     case 'fizzle': beep(180, 60, 0.12, 'triangle', 0.08); break;
     case 'boss': beep(140, 40, 0.5, 'sawtooth', 0.25); break;
+    case 'bossHit': beep(200, 55, 0.22, 'sawtooth', 0.24); break;
+    case 'pearl': [1318, 1760].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.09)); break;
+    case 'seal': beep(160, 35, 0.45, 'square', 0.28); beep(900, 250, 0.08, 'square', 0.1, 0.03); break;
+    case 'gate': [392, 587].forEach((f, i) => beep(f, f, 0.22, 'sine', 0.2, i * 0.14)); break;
   }
 }
 

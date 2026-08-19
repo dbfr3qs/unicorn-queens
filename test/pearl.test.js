@@ -60,7 +60,8 @@ describe('pearl', () => {
     updatePearl(l, p, [], fx(calls));
     expect(l.pearl.taken).toBe(true);
     expect(l.exit.locked).toBe(false);
-    expect(calls).toContain('gem');
+    expect(calls).toContain('pearl');
+    expect(calls).toContain('seal');
   });
 
   it('cannot be picked up while hidden, and only once', () => {
@@ -72,7 +73,7 @@ describe('pearl', () => {
     const calls = [];
     updatePearl(l, p, [], fx(calls));
     updatePearl(l, p, [], fx(calls));
-    expect(calls.filter(n => n === 'gem').length).toBe(1); // one pickup
+    expect(calls.filter(n => n === 'pearl').length).toBe(1); // one pickup
     expect(l.pearl.taken).toBe(true);
   });
 });

@@ -64,7 +64,7 @@ describe('taking damage', () => {
     expect(e.dead).toBe(false);
     expect(e.flash).toBeGreaterThan(0);
     expect(e.state).toBe('stagger');
-    expect(calls).toContain('thwack');
+    expect(calls).toContain('bossHit');
   });
 
   it('dies on the fifth hit with the boss death fanfare', () => {

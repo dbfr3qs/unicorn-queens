@@ -14,8 +14,12 @@ export function updatePearl(lvl, p, enemies, fx) {
       p.x < pearl.x + pearl.w && p.x + p.w > pearl.x &&
       p.y < pearl.y + pearl.h && p.y + p.h > pearl.y) {
     pearl.taken = true;
-    fx.play('gem');
+    fx.play('pearl');
     burst(pearl.x + pearl.w / 2, pearl.y + pearl.h / 2, FX.gem);
-    if (lvl.exit) lvl.exit.locked = false; // break the seal
+    if (lvl.exit && lvl.exit.locked) { // break the seal
+      lvl.exit.locked = false;
+      fx.play('seal');
+      burst(lvl.exit.x + lvl.exit.w / 2, lvl.exit.y + lvl.exit.h / 2, FX.gem);
+    }
   }
 }

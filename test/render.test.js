@@ -8,9 +8,10 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, step } from './helpers/render-harness.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
+import { fireFireball, FIREBALL_SPEED } from '../src/projectiles.js';
 
 test('initial frame', () => {
   freshGame();
@@ -96,4 +97,45 @@ test('dead slime skipped', () => {
   const g = freshGame();
   g.enemies[0].dead = true; // drawEnemies must skip it
   expect(step({}, 1)).toMatchSnapshot(); // four slimes, not five
+});
+
+// ---- level 2 (bridge-castle) scenarios ----
+// Camera values are player.x + w/2 - viewW/2 (or the max-scroll clamp),
+// so updateCamera holds them still; state is set directly where reaching
+// it through play would take longer than the snapshot is worth pinning.
+
+test('l2 bridge start (planks, both moats, gate ahead)', () => {
+  const g = freshGame2();
+  g.player.x = 500; // mid-bridge, on the second plank span
+  g.camera.x = 114; // 500 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l2 interior (zombie aggro + ghost drift, room 1 platforms)', () => {
+  const g = freshGame2();
+  g.player.x = 1100; // zombie 100px ahead (aggros), ghost ~150px (drifts)
+  g.camera.x = 714; // 1100 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l2 boss hall (mage mid-windup, fireball in flight, hp pips)', () => {
+  const g = freshGame2();
+  g.player.x = 3000; // 250px short of the mage: aggroed, no contact
+  g.camera.x = 2614; // 3000 + 14 - 400
+  const mage = g.enemies.find(e => e.kind === 'mage');
+  mage.state = 'windup'; mage.t = 0.35; mage.flash = 0; // mid the 0.7s windup
+  mage.hp = 3; // pips: 3 red, 2 dim
+  fireFireball(3180, 535, -FIREBALL_SPEED, 0, { play: () => {} }); // in flight, heading at the player
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l2 pearl on pedestal + unsealed stairs', () => {
+  const g = freshGame2();
+  const mage = g.enemies.find(e => e.kind === 'mage');
+  mage.dead = true; // dead bosses are not drawn
+  g.level.pearl.visible = true; // appears on the mage's death
+  g.level.exit.locked = false; // seal broken (the pearl is taken in play)
+  g.player.x = 3400; // boss floor, just before the stairs
+  g.camera.x = 2800; // max scroll: level.width - viewW
+  expect(step({}, 1)).toMatchSnapshot();
 });

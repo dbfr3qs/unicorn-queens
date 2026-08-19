@@ -18,6 +18,15 @@ const noopFx = { play: () => {} }; // audio is never exercised in these tests
 export function freshGame(viewH = VIEW_H) {
   reseed(); // each test gets the same RNG sequence
   startGame(viewH);
+  game.gameTime = 0; // per-test deterministic animation phase (bob/twinkle/flicker)
+  return game;
+}
+
+// Level 2 (bridge-castle) entry: same seeding, level index 1.
+export function freshGame2(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 1);
+  game.gameTime = 0;
   return game;
 }
 

@@ -1,5 +1,6 @@
 // HUD: hearts, score, mute/bow hints, win/lose overlay. No state of its own.
 import { game } from '../game.js';
+import { LEVELS } from '../levels.js';
 import { score } from '../loot.js';
 import { muted } from '../audio.js';
 import { palette, fonts } from './theme.js';
@@ -16,6 +17,9 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.fillStyle = palette.teal;
   ctx.textAlign = 'right';
   ctx.fillText('SCORE ' + score, viewW - 12, 10);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = palette.lavender;
+  ctx.fillText('LEVEL ' + (game.levelIndex + 1), viewW / 2, 10);
   ctx.restore();
   if (player.dead || player.won) {
     ctx.save();
@@ -27,7 +31,12 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.fillText(player.won ? 'LEVEL CLEAR!' : 'GAME OVER', viewW / 2, viewH / 2 - 24);
     ctx.font = fonts.sub;
     ctx.fillStyle = palette.lavender;
-    ctx.fillText(player.won ? 'score ' + score + ' - press R to play again' : 'press R to try again', viewW / 2, viewH / 2 + 12);
+    const sub = !player.won
+      ? 'press R to try again'
+      : game.levelIndex + 1 < LEVELS.length
+        ? 'score ' + score + ' - press R for next level'
+        : 'score ' + score + ' - press R to play again';
+    ctx.fillText(sub, viewW / 2, viewH / 2 + 12);
     ctx.restore();
   }
   ctx.save();

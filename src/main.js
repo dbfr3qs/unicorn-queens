@@ -1,5 +1,5 @@
 // Entry point: canvas, render loop wiring, restart key.
-import { game, startGame, startLoop, update } from './game.js';
+import { game, startGame, startLoop, update, restartTarget } from './game.js';
 import { draw } from './render/index.js';
 import { fx } from './audio.js';
 import { onKeyDown, onKeyUp } from './input.js';
@@ -13,5 +13,5 @@ startLoop(dt => {
 });
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
-addEventListener('keydown', e => { if (e.code === 'KeyR' && (game.player.dead || game.player.won)) startGame(canvas.height); });
+addEventListener('keydown', e => { if (e.code === 'KeyR' && (game.player.dead || game.player.won)) startGame(canvas.height, restartTarget()); });
 startGame(canvas.height);

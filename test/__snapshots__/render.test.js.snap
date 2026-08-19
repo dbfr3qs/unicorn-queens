@@ -499,6 +499,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -1031,6 +1034,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -1529,6 +1535,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -2037,6 +2046,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -2576,6 +2588,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   fillStyle=rgba(13, 8, 21, 0.7)
@@ -3126,6 +3141,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -3634,6 +3652,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -4142,6 +4163,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -4668,6 +4692,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -5237,6 +5264,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -5746,6 +5776,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   font=12px monospace
@@ -6374,6 +6407,9 @@ save()
   fillStyle=#6fe3e1
   textAlign=right
   fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
 restore()
 save()
   fillStyle=rgba(13, 8, 21, 0.7)

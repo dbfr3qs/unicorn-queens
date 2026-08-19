@@ -1,5 +1,5 @@
 // Game state + simulation step. Owns the top-level state objects.
-import { createLevel } from './level.js';
+import { LEVELS } from './levels.js';
 import { burst, updateParticles, resetParticles } from './particles.js';
 import { createCamera, updateCamera, shake } from './camera.js';
 import { createPlayer, updatePlayer } from './player.js';
@@ -12,11 +12,13 @@ import { FX } from './effects.js';
 export const game = {
   level: null, player: null, enemies: null,
   camera: createCamera(),
+  levelIndex: 0,
   lastTs: 0, running: false, gameTime: 0,
 };
 
-export function startGame(viewH) {
-  game.level = createLevel(viewH);
+export function startGame(viewH, levelIndex = 0) {
+  game.levelIndex = levelIndex;
+  game.level = LEVELS[levelIndex].make(viewH);
   game.player = createPlayer(game.level);
   game.enemies = createEnemies(game.level);
   resetLoot();
@@ -57,4 +59,11 @@ export function update(dt, viewW, fx) {
     game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
   }
   if (!game.player.dead && !game.player.won) updateCamera(game.camera, game.player, game.level, viewW, dt);
+}
+
+// R on the end screen: advance to the next level on a win, restart on a
+// loss (or on the final level's win).
+export function restartTarget() {
+  if (game.player.won && game.levelIndex + 1 < LEVELS.length) return game.levelIndex + 1;
+  return game.levelIndex;
 }

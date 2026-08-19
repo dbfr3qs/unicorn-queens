@@ -8,6 +8,7 @@ import { createEnemies, updateEnemies } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
 import { resetFireballs, updateFireballs } from './projectiles.js';
+import { updatePearl } from './pearl.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -47,11 +48,12 @@ export function update(dt, viewW, fx) {
   game.gameTime += dt;
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
+  updatePearl(game.level, game.player, game.enemies, fx);
   updateLoot(game.player, game.level, dt, fx);
   updateArrows(game.enemies, game.level, game.camera, dt, fx);
   updateFireballs(game.player, game.level, game.camera, dt, fx);
   updateParticles(dt);
-  if (!game.player.dead && !game.player.won && game.player.x + game.player.w >= game.level.goal.x) {
+  if (!game.player.dead && !game.player.won && reachedExit(game.player, game.level)) {
     game.player.won = true;
     fx.play('win');
     burst(game.player.x + game.player.w / 2, game.player.y, FX.win);
@@ -69,4 +71,15 @@ export function update(dt, viewW, fx) {
 export function restartTarget() {
   if (game.player.won && game.levelIndex + 1 < LEVELS.length) return game.levelIndex + 1;
   return game.levelIndex;
+}
+
+// Win check: the level.exit rect if the level has one (it may be locked
+// until a seal breaks), else the level-1 style goal line.
+export function reachedExit(p, lvl) {
+  if (lvl.exit) {
+    return !lvl.exit.locked &&
+      p.x < lvl.exit.x + lvl.exit.w && p.x + p.w > lvl.exit.x &&
+      p.y < lvl.exit.y + lvl.exit.h && p.y + p.h > lvl.exit.y;
+  }
+  return p.x + p.w >= lvl.goal.x;
 }

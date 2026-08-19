@@ -3,7 +3,9 @@
 // (level + entities) -> HUD (screen space).
 import { drawBackground } from './background.js';
 import { drawHud } from './hud.js';
+import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
+import { drawExit, drawPearl } from './pearl.js';
 import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
@@ -21,10 +23,13 @@ export function draw(ctx, viewW, viewH) {
   const shy = camera.shake > 0 ? (Math.random() * 2 - 1) * camera.mag : 0;
   ctx.save();
   ctx.translate(shx, shy); // screen shake wraps the world, not the HUD
-  drawBackground(ctx, level, camera, gameTime);
+  if (level.zones) drawZones(ctx, level, camera, gameTime, viewW);
+  else drawBackground(ctx, level, camera, gameTime);
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
   drawLevel(ctx, level);
+  drawExit(ctx, level, gameTime);
+  drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
   drawEnemies(ctx, enemies);
   drawLoot(ctx);

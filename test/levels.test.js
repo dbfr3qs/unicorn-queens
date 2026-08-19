@@ -1,11 +1,10 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { LEVELS } from '../src/levels.js';
 import { game, startGame, restartTarget } from '../src/game.js';
-import { createLevel } from '../src/level.js';
 
 describe('level registry', () => {
   it('starts with level 1', () => {
-    expect(LEVELS.length).toBe(1);
+    expect(LEVELS.length).toBe(2);
     const lvl = LEVELS[0].make(600);
     expect(lvl.width).toBe(2400);
     expect(lvl.groundY).toBe(560);
@@ -14,8 +13,9 @@ describe('level registry', () => {
 });
 
 describe('startGame + restartTarget', () => {
+  const initialLength = LEVELS.length;
   afterEach(() => {
-    while (LEVELS.length > 1) LEVELS.pop();
+    while (LEVELS.length > initialLength) LEVELS.pop();
     startGame(600, 0);
   });
 
@@ -27,18 +27,20 @@ describe('startGame + restartTarget', () => {
 
   it('R restarts the level on a loss, and on a win with no next level', () => {
     startGame(600);
-    game.player.won = true;
-    expect(restartTarget()).toBe(0);
-    game.player.won = false;
     game.player.dead = true;
-    expect(restartTarget()).toBe(0);
+    expect(restartTarget()).toBe(0); // loss: restart level 1
+    game.player.dead = false;
+    game.player.won = true;
+    expect(restartTarget()).toBe(1); // level 1 win: a next level exists
+    startGame(600, 1);
+    game.player.won = true;
+    expect(restartTarget()).toBe(1); // final level win: restart itself
   });
 
   it('R advances on a win when a next level exists', () => {
-    LEVELS.push({ name: 'stub', make: viewH => createLevel(viewH) });
     startGame(600, 0);
     game.player.won = true;
-    expect(restartTarget()).toBe(1);
+    expect(restartTarget()).toBe(1); // advance to level 2
     startGame(600, 1);
     game.player.dead = true;
     expect(restartTarget()).toBe(1); // loss: restart, never advance

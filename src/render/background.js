@@ -23,7 +23,7 @@ export function createBackground(rng = Math.random) {
 
 export const background = createBackground();
 
-function drawRidge(c, peaks, off, color, groundY) {
+export function drawRidge(c, peaks, off, color, groundY) {
   c.save();
   c.translate(-off, 0);
   c.fillStyle = color;
@@ -40,15 +40,21 @@ function drawRidge(c, peaks, off, color, groundY) {
   c.restore();
 }
 
-export function drawBackground(c, lvl, cam, t) {
+// Stars (with parallax offset); exported so zone backgrounds can reuse the
+// same star field clipped to their area.
+export function drawStars(c, off, t) {
   c.save();
-  c.translate(-cam.x * 0.2, 0); // stars drift slowest
+  c.translate(-off, 0); // stars drift slowest
   c.fillStyle = palette.lavender;
   for (const s of background.stars) {
     c.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(t * 1.5 + s.ph)); // twinkle
     c.fillRect(s.x, s.y, s.r, s.r);
   }
   c.restore();
+}
+
+export function drawBackground(c, lvl, cam, t) {
+  drawStars(c, cam.x * 0.2, t);
   drawRidge(c, background.far, cam.x * 0.35, '#241543', lvl.groundY);
   drawRidge(c, background.near, cam.x * 0.6, '#2f1c55', lvl.groundY);
 }

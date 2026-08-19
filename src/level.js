@@ -31,6 +31,13 @@ export function createLevel(viewH = 600) {
       { x: 1950, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box' },
       { x: 1250, y: groundY - 166, w: 36, h: 36, broken: false, kind: 'box' },
     ],
+    roster: [
+      { kind: 'slime', x: 560, minX: 496, maxX: 664 },
+      { kind: 'slime', x: 1050, minX: 980, maxX: 1260 },
+      { kind: 'slime', x: 1450, minX: 1380, maxX: 1560 },
+      { kind: 'slime', x: 2000, minX: 2010, maxX: 2125 },
+      { kind: 'slime', x: 2250, minX: 2165, maxX: 2360 },
+    ],
   };
 }
 

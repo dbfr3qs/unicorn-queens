@@ -152,17 +152,9 @@ export function damageEnemy(e, fx) {
   }
 }
 
-// Enemy placement for the level: one entry per enemy.
-const ROSTER = [
-  { kind: 'slime', x: 560, minX: 496, maxX: 664 },
-  { kind: 'slime', x: 1050, minX: 980, maxX: 1260 },
-  { kind: 'slime', x: 1450, minX: 1380, maxX: 1560 },
-  { kind: 'slime', x: 2000, minX: 2010, maxX: 2125 },
-  { kind: 'slime', x: 2250, minX: 2165, maxX: 2360 },
-];
-
+// Enemy placement comes from the level data (lvl.roster).
 export function createEnemies(lvl) {
-  return ROSTER.map(spec => spawnEnemy(spec, lvl));
+  return (lvl.roster ?? []).map(spec => spawnEnemy(spec, lvl));
 }
 
 export function updateEnemies(enemies, p, lvl, cam, dt, fx) {

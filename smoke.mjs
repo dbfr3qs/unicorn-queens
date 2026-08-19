@@ -17,7 +17,7 @@ globalThis.requestAnimationFrame = cb => { rafCb = cb; return 1; };
 
 // ---- run ----
 await import(new URL('./src/main.js', import.meta.url));
-const { game } = await import(new URL('./src/game.js', import.meta.url)); // same module instance main.js uses
+const { game, startGame } = await import(new URL('./src/game.js', import.meta.url)); // same module instance main.js uses
 if (!game.level || !game.player || !game.enemies) throw new Error('startGame did not initialize state');
 
 const FRAMES = 300; // ~5s of game time
@@ -28,4 +28,13 @@ for (let i = 0; i < FRAMES; i++) {
   if (!cb) throw new Error('requestAnimationFrame chain broke at frame ' + i);
   cb(ts);
 }
-console.log(`smoke OK: ${FRAMES} frames ran without throwing`);
+// second run: level 2 (bridge, castle interior, boss hall)
+startGame(600, 1);
+game.lastTs = 0;
+for (let i = 0; i < FRAMES; i++) {
+  ts += 16.7;
+  const cb = rafCb; rafCb = null;
+  if (!cb) throw new Error('requestAnimationFrame chain broke at level-2 frame ' + i);
+  cb(ts);
+}
+console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2)`);

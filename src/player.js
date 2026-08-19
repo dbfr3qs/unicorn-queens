@@ -24,7 +24,7 @@ export function createPlayer(lvl) {
     dead: false,
     sx: 1, sy: 1, // squash & stretch
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
-    hasBow: false, fireCd: 0,
+    hasBow: !!lvl.startItems?.includes('bow'), fireCd: 0, // level 2 starts with the bow
     big: false,
     won: false,
   };

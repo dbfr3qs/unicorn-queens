@@ -13,7 +13,13 @@ export function drawExit(c, lvl, gameTime) {
 
 export function drawPearl(c, lvl, gameTime) {
   const pearl = lvl.pearl;
-  if (!pearl || !pearl.visible || pearl.taken) return;
+  if (!pearl) return;
+  // pedestal, present even before the pearl appears
+  c.fillStyle = '#3a2a5c';
+  c.fillRect(pearl.x - 8, pearl.y + pearl.h - 4, pearl.w + 16, lvl.groundY - (pearl.y + pearl.h - 4));
+  c.fillStyle = '#4a3a70'; // cap
+  c.fillRect(pearl.x - 12, pearl.y + pearl.h - 10, pearl.w + 24, 8);
+  if (!pearl.visible || pearl.taken) return;
   const bob = Math.sin(gameTime * 3) * 3;
   c.save();
   c.translate(pearl.x + pearl.w / 2, pearl.y + pearl.h / 2 + bob);

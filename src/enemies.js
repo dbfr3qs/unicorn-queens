@@ -1,4 +1,5 @@
-// Enemies: patrolling slimes, stomp vs side-contact resolution against the player.
+// Enemies: per-kind brains (slime patrols; hopping/shooting kinds later),
+// plus shared ground physics and stomp vs side-contact resolution.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
@@ -7,56 +8,81 @@ import { FX } from './effects.js';
 
 export const E_SPEED = 90, E_W = 30, E_H = 28, E_STOMP_V = -400, HURT_INVULN = 1.5;
 
-export function spawnEnemy(x, minX, maxX, lvl) {
+// One entry per enemy kind. `update` is the kind-specific brain: it sets
+// e.vx/e.vy and may do extras (hopping, firing). Shared parts — stomp vs
+// side-hit, arrow hits, death — live in this module, so a new kind gets
+// them for free. Adding a kind: an entry here, a draw function in
+// src/render/enemies.js, and (optionally) FX presets in src/effects.js.
+const KINDS = {
+  slime: {
+    w: E_W, h: E_H,
+    update(e, { lvl, dt }) {
+      // Dumb patrol: keep walking, turn at the bounds.
+      e.vx = e.dir * E_SPEED;
+      e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
+      e.x += e.vx * dt;
+      e.y += e.vy * dt;
+      if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
+      else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
+      resolveGroundCollision(e, lvl, dt);
+    },
+  },
+};
+
+export function spawnEnemy(spec, lvl) {
+  const k = KINDS[spec.kind];
   return {
-    x, y: lvl.groundY - E_H, w: E_W, h: E_H,
+    kind: spec.kind,
+    x: spec.x, y: spec.y ?? lvl.groundY - k.h, w: k.w, h: k.h,
     vx: 0, vy: 0, onGround: false,
-    minX, maxX, dir: -1,
+    minX: spec.minX ?? 0,
+    maxX: spec.maxX ?? lvl.width,
+    dir: spec.dir ?? -1,
     dead: false,
   };
 }
 
+// Enemy placement for the level: one entry per enemy.
+const ROSTER = [
+  { kind: 'slime', x: 560, minX: 496, maxX: 664 },
+  { kind: 'slime', x: 1050, minX: 980, maxX: 1260 },
+  { kind: 'slime', x: 1450, minX: 1380, maxX: 1560 },
+  { kind: 'slime', x: 2000, minX: 2010, maxX: 2125 },
+  { kind: 'slime', x: 2250, minX: 2165, maxX: 2360 },
+];
+
 export function createEnemies(lvl) {
-  return [
-    spawnEnemy(560, 496, 664, lvl),
-    spawnEnemy(1050, 980, 1260, lvl),
-    spawnEnemy(1450, 1380, 1560, lvl),
-    spawnEnemy(2000, 2010, 2125, lvl),
-    spawnEnemy(2250, 2165, 2360, lvl),
-  ];
+  return ROSTER.map(spec => spawnEnemy(spec, lvl));
 }
 
 export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
+  const env = { p, lvl, cam, dt, fx };
   for (const e of enemies) {
     if (e.dead) continue;
-    e.vx = e.dir * E_SPEED;
-    e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
-    e.x += e.vx * dt;
-    e.y += e.vy * dt;
-    if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
-    else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
-    resolveGroundCollision(e, lvl, dt);
-    // stomp vs side contact
-    if (!p.dead && p.invuln <= 0 &&
-        p.x < e.x + e.w && p.x + p.w > e.x &&
-        p.y < e.y + e.h && p.y + p.h > e.y) {
-      if (p.vy > 0 && p.y + p.h - e.y < 16) {
-        e.dead = true;   // stomped
-        p.vy = E_STOMP_V; // bounce
-        p.cuttable = false;
-        fx.play('stomp');
-        burst(e.x + e.w / 2, e.y + e.h / 2, FX.slimeDeath);
-        shake(cam, 5, 0.18);
-      } else {
-        p.hp -= 1;
-        p.invuln = HURT_INVULN;
-        p.vy = -250;
-        p.cuttable = false;
-        fx.play('hurt');
-        burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
-        shake(cam, 8, 0.3);
-        if (p.hp <= 0) { p.dead = true; fx.play('die'); }
-      }
-    }
+    KINDS[e.kind].update(e, env);
+    hitPlayer(e, p, cam, fx);
+  }
+}
+
+// Shared stomp vs side contact, applied to every kind.
+function hitPlayer(e, p, cam, fx) {
+  if (p.dead || p.invuln > 0) return;
+  if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
+  if (p.vy > 0 && p.y + p.h - e.y < 16) {
+    e.dead = true;   // stomped
+    p.vy = E_STOMP_V; // bounce
+    p.cuttable = false;
+    fx.play('stomp');
+    burst(e.x + e.w / 2, e.y + e.h / 2, FX.enemyDeath);
+    shake(cam, 5, 0.18);
+  } else {
+    p.hp -= 1;
+    p.invuln = HURT_INVULN;
+    p.vy = -250;
+    p.cuttable = false;
+    fx.play('hurt');
+    burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
+    shake(cam, 8, 0.3);
+    if (p.hp <= 0) { p.dead = true; fx.play('die'); }
   }
 }

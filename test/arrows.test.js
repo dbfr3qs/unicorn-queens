@@ -41,7 +41,7 @@ describe('fireArrow', () => {
 describe('updateArrows', () => {
   it('hits an enemy it overlaps', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     const cam = createCamera();
     arrows.push({ x: 555, y: l.groundY - E_H + 10, vx: ARROW_SPEED, dead: false });
     const calls = [];
@@ -55,7 +55,7 @@ describe('updateArrows', () => {
 
   it('misses an enemy it flies over', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     arrows.push({ x: 555, y: l.groundY - E_H - 10, vx: ARROW_SPEED, dead: false }); // 10px above the top
     const calls = [];
     updateArrows([e], l, createCamera(), DT, fx(calls));

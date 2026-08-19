@@ -31,7 +31,7 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
         e.dead = true;
         a.dead = true;
         fx.play('thwack');
-        burst(e.x + e.w / 2, e.y + e.h / 2, FX.slimeDeath);
+        burst(e.x + e.w / 2, e.y + e.h / 2, FX.enemyDeath);
         shake(cam, 3, 0.12);
         break;
       }

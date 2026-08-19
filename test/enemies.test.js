@@ -14,6 +14,7 @@ describe('createEnemies', () => {
     const es = createEnemies(l);
     expect(es.length).toBe(5);
     for (const e of es) {
+      expect(e.kind).toBe('slime');
       expect(e.y).toBe(l.groundY - E_H);
       expect(e.dead).toBe(false);
     }
@@ -23,7 +24,7 @@ describe('createEnemies', () => {
 describe('patrol', () => {
   it('turns around at the patrol bounds', () => {
     const l = lvl();
-    const e = spawnEnemy(580, 560, 800, l); // walks left from 580
+    const e = spawnEnemy({ kind: 'slime', x: 580, minX: 560, maxX: 800 }, l); // walks left from 580
     const p = createPlayer(l); // x 60, far from the enemy
     const cam = createCamera();
     let minX = Infinity;
@@ -37,7 +38,7 @@ describe('patrol', () => {
 
   it('is inert once dead', () => {
     const l = lvl();
-    const e = spawnEnemy(580, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 580, minX: 560, maxX: 800 }, l);
     e.dead = true;
     updateEnemies([e], createPlayer(l), l, createCamera(), DT, fx([]));
     expect(e.x).toBe(580);
@@ -47,7 +48,7 @@ describe('patrol', () => {
 describe('stomp vs side contact', () => {
   it('stomping kills the slime and bounces the player', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     const p = createPlayer(l);
     p.x = 570;
     p.y = (l.groundY - E_H) - 36 + 8; // bottom 8px below the slime's top (< 16)
@@ -64,7 +65,7 @@ describe('stomp vs side contact', () => {
 
   it('side contact damages the player and grants invulnerability', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     const p = createPlayer(l);
     p.x = 570;
     p.y = l.groundY - E_H; // same top: bottom offset 36 >= 16 -> not a stomp
@@ -80,7 +81,7 @@ describe('stomp vs side contact', () => {
 
   it('kills the player at zero hp', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     const p = createPlayer(l);
     p.x = 570;
     p.y = l.groundY - E_H;
@@ -95,7 +96,7 @@ describe('stomp vs side contact', () => {
 
   it('an invulnerable player takes no damage', () => {
     const l = lvl();
-    const e = spawnEnemy(560, 560, 800, l);
+    const e = spawnEnemy({ kind: 'slime', x: 560, minX: 560, maxX: 800 }, l);
     const p = createPlayer(l);
     p.x = 570;
     p.y = l.groundY - E_H;

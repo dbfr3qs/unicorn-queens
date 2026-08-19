@@ -2,6 +2,7 @@
 import { burst } from './particles.js';
 import { spawnLoot } from './loot.js';
 import { shake } from './camera.js';
+import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
 
 export const arrows = [];
@@ -28,10 +29,8 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
     for (const e of enemies) { // hit an enemy
       if (e.dead) continue;
       if (a.x < e.x + e.w && a.x + 14 > e.x && a.y < e.y + e.h && a.y + 4 > e.y) {
-        e.dead = true;
+        damageEnemy(e, fx); // hp, per-kind hit reaction, death at 0
         a.dead = true;
-        fx.play('thwack');
-        burst(e.x + e.w / 2, e.y + e.h / 2, FX.enemyDeath);
         shake(cam, 3, 0.12);
         break;
       }

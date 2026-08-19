@@ -12,4 +12,5 @@ export const FX = {
   heart: { count: 10, colors: ['#ff6f91', '#fff'], speed: 120, size: 3, grav: -100, life: 0.4 },
   win: { count: 40, colors: ['#ffd75e', '#6fe3e1', '#ff6f91', '#fff'], speed: 220, up: 160, size: 5, grav: 500, life: 0.9 },
   fireballFizzle: { count: 8, colors: ['#ff8c42', '#ffd166', '#c1440e'], speed: 70, size: 3, grav: -60, life: 0.25 },
+  mageDeath: { count: 30, colors: ['#b57edc', '#ffd75e', '#fff5fa'], speed: 260, up: 160, size: 6, grav: 400, life: 0.9 },
 };

@@ -1,9 +1,10 @@
-// Enemies: per-kind brains (slime patrols; hopping/shooting kinds later),
-// plus shared ground physics and stomp vs side-contact resolution.
+// Enemies: per-kind brains (slime patrols, zombie chases, ghost drifts,
+// mage duels), plus shared physics, stomp vs side-contact, and arrow damage.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { P_GRAVITY, P_TERM_VY, HURT_INVULN, hurtPlayer } from './player.js';
+import { fireFireball, fireballs, FIREBALL_SPEED } from './projectiles.js';
 import { FX } from './effects.js';
 
 export const E_W = 30, E_H = 28, E_STOMP_V = -400;
@@ -82,6 +83,44 @@ const KINDS = {
       }
     },
   },
+  mage: {
+    w: 42, h: 54,
+    hp: 5, stompable: false,
+    idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
+    deathSound: 'boss', deathFx: FX.mageDeath,
+    onHit(e) {
+      e.flash = this.flashT;
+      e.state = 'stagger';
+      e.t = this.staggerT;
+    },
+    update(e, { p, dt, fx }) {
+      // Boss duel: idle -> windup (staff glows) -> fire at the player's
+      // height. Arrow hits stagger the cycle. One fireball in the air at a
+      // time; the boss sleeps until the player is in range.
+      if (e.state === undefined) { e.state = 'idle'; e.t = 2; e.flash = 0; }
+      e.flash = Math.max(0, e.flash - dt);
+      e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
+      e.t -= dt;
+      if (e.state === 'stagger') {
+        if (e.t <= 0) { e.state = 'idle'; e.t = this.nextIdle(); }
+        return; // frozen while staggering
+      }
+      if (e.state === 'idle') {
+        if (e.t > 0) return;
+        const inRange = !p.dead && Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.aggroRange;
+        if (inRange && fireballs.length === 0) { e.state = 'windup'; e.t = this.windupT; }
+        else e.t = 0.4; // wait: player out of range, or a fireball in flight
+        return;
+      }
+      // windup done: fire
+      if (e.t > 0) return;
+      const dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
+      fireFireball(e.x + e.w / 2 + dir * 24, p.y + p.h / 2 - 7, dir * FIREBALL_SPEED, 0, fx);
+      e.state = 'idle';
+      e.t = this.nextIdle();
+    },
+    nextIdle() { return this.idleMin + Math.random() * (this.idleMax - this.idleMin); },
+  },
 };
 
 export function spawnEnemy(spec, lvl) {
@@ -93,8 +132,24 @@ export function spawnEnemy(spec, lvl) {
     minX: spec.minX ?? 0,
     maxX: spec.maxX ?? lvl.width,
     dir: spec.dir ?? -1,
+    hp: k.hp ?? 1,
     dead: false,
   };
+}
+
+// Shared one-point damage (arrows and friends): -1 hp, per-kind hit
+// reaction (onHit), death at 0 with per-kind sound and burst.
+export function damageEnemy(e, fx) {
+  e.hp -= 1;
+  const k = KINDS[e.kind];
+  if (e.hp <= 0) {
+    e.dead = true;
+    fx.play(k.deathSound ?? 'thwack');
+    burst(e.x + e.w / 2, e.y + e.h / 2, k.deathFx ?? FX.enemyDeath);
+  } else {
+    fx.play('thwack');
+    if (k.onHit) k.onHit(e);
+  }
 }
 
 // Enemy placement for the level: one entry per enemy.

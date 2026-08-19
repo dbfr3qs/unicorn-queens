@@ -57,6 +57,30 @@ const KINDS = {
       resolveGroundCollision(e, lvl, dt);
     },
   },
+  ghost: {
+    w: 28, h: 26,
+    speed: 60, aggroRange: 260, aggroDy: 120, bobAmp: 14, bobPeriod: 2,
+    stompable: false,
+    update(e, { p, dt }) {
+      // Hovers at its home point with a slow bob; drifts toward the player
+      // while they are close, eases back home when they aren't.
+      if (e.homeX === undefined) { e.homeX = e.x; e.homeY = e.y; e.phase = e.x * 0.1; }
+      e.phase += dt * Math.PI * 2 / this.bobPeriod;
+      const dx = p.x + p.w / 2 - (e.x + e.w / 2);
+      const dy = p.y + p.h / 2 - (e.y + e.h / 2);
+      const near = !p.dead && Math.abs(dx) < this.aggroRange && Math.abs(dy) < this.aggroDy;
+      const tx = near ? p.x + p.w / 2 : e.homeX + e.w / 2;
+      const ty = near ? p.y + p.h / 2 : e.homeY + e.h / 2 + Math.sin(e.phase) * this.bobAmp;
+      const ox = tx - (e.x + e.w / 2);
+      const oy = ty - (e.y + e.h / 2);
+      const d = Math.hypot(ox, oy);
+      if (d > 0) {
+        const m = Math.min(this.speed * dt, d); // ease toward target
+        e.x += ox / d * m;
+        e.y += oy / d * m;
+      }
+    },
+  },
 };
 
 export function spawnEnemy(spec, lvl) {
@@ -99,13 +123,16 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
 function hitPlayer(e, p, cam, fx) {
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
-  if (p.vy > 0 && p.y + p.h - e.y < 16 && KINDS[e.kind].stompable) {
+  const stomp = p.vy > 0 && p.y + p.h - e.y < 16;
+  if (stomp && KINDS[e.kind].stompable) {
     e.dead = true;   // stomped
     p.vy = E_STOMP_V; // bounce
     p.cuttable = false;
     fx.play('stomp');
     burst(e.x + e.w / 2, e.y + e.h / 2, FX.enemyDeath);
     shake(cam, 5, 0.18);
+  } else if (stomp) {
+    p.vy = E_STOMP_V; // bounced off an unstompable enemy (ghost)
   } else {
     p.hp -= 1;
     p.invuln = HURT_INVULN;

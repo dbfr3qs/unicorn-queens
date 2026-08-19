@@ -13,5 +13,11 @@ startLoop(dt => {
 });
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
-addEventListener('keydown', e => { if (e.code === 'KeyR' && (game.player.dead || game.player.won)) startGame(canvas.height, restartTarget()); });
+addEventListener('keydown', e => {
+  if (e.code === 'KeyR' && (game.player.dead || game.player.won)) {
+    const next = restartTarget();
+    // advancing carries big/bow; a death-restart resets to small
+    startGame(canvas.height, next, next !== game.levelIndex ? game.player : null);
+  }
+});
 startGame(canvas.height);

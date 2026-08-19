@@ -11,10 +11,14 @@ export const HURT_INVULN = 1.5; // invulnerability window after any hit
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
 export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 
-export function createPlayer(lvl) {
+// carry: permanent acquisitions from the previous level (big, bow),
+// passed when advancing; a fresh start or death-restart carries nothing.
+export function createPlayer(lvl, carry = {}) {
+  const big = !!carry.big;
+  const w = big ? BIG_W : P_W, h = big ? BIG_H : P_H;
   return {
-    x: 60, y: lvl.groundY - P_H, w: P_W, h: P_H,
-    safeX: 60, safeY: lvl.groundY - P_H, // respawn point: last spot stood on
+    x: 60, y: lvl.groundY - h, w, h,
+    safeX: 60, safeY: lvl.groundY - h, // respawn point: last spot stood on
     vx: 0, vy: 0,
     onGround: false,
     facing: 1,
@@ -24,8 +28,8 @@ export function createPlayer(lvl) {
     dead: false,
     sx: 1, sy: 1, // squash & stretch
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
-    hasBow: !!lvl.startItems?.includes('bow'), fireCd: 0, // level 2 starts with the bow
-    big: false,
+    hasBow: !!lvl.startItems?.includes('bow') || !!carry.hasBow, fireCd: 0, // level 2 starts with the bow
+    big,
     won: false,
   };
 }

@@ -19,10 +19,16 @@ export const game = {
   lastTs: 0, running: false, gameTime: 0,
 };
 
-export function startGame(viewH, levelIndex = 0) {
+// prev: the outgoing player, passed when advancing to the next level so
+// permanent pickups (big, bow) carry over. Death-restarts pass nothing;
+// hp and position always reset.
+export function startGame(viewH, levelIndex = 0, prev = null) {
   game.levelIndex = levelIndex;
   game.level = LEVELS[levelIndex].make(viewH);
-  game.player = createPlayer(game.level);
+  game.player = createPlayer(game.level, {
+    big: prev?.big ?? false,
+    hasBow: prev?.hasBow ?? false,
+  });
   game.enemies = createEnemies(game.level);
   resetLoot();
   resetArrows();

@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { LEVELS } from '../src/levels.js';
 import { game, startGame, restartTarget } from '../src/game.js';
+import { BIG_W, BIG_H, P_W, P_H } from '../src/player.js';
 
 describe('level registry', () => {
   it('starts with level 1', () => {
@@ -47,5 +48,36 @@ describe('startGame + restartTarget', () => {
     game.player.dead = false;
     game.player.won = true;
     expect(restartTarget()).toBe(1); // final level: win restarts itself
+  });
+});
+
+describe('permanent state across levels', () => {
+  afterEach(() => {
+    startGame(600, 0);
+  });
+
+  it('advancing carries big + bow; hp resets to 3', () => {
+    startGame(600, 0);
+    game.player.big = true;
+    game.player.w = BIG_W; game.player.h = BIG_H;
+    game.player.hasBow = true;
+    game.player.hp = 1;
+    startGame(600, 1, game.player); // as the R-advance handler calls it
+    expect(game.player.big).toBe(true);
+    expect(game.player.w).toBe(BIG_W);
+    expect(game.player.h).toBe(BIG_H);
+    expect(game.player.y).toBe(game.level.groundY - BIG_H); // spawns standing, big
+    expect(game.player.hasBow).toBe(true);
+    expect(game.player.hp).toBe(3); // hp always resets
+  });
+
+  it('a fresh start (no prev) is small', () => {
+    startGame(600, 0);
+    game.player.big = true;
+    game.player.w = BIG_W; game.player.h = BIG_H;
+    startGame(600, 0); // death-restart: no prev
+    expect(game.player.big).toBe(false);
+    expect(game.player.w).toBe(P_W);
+    expect(game.player.y).toBe(game.level.groundY - P_H);
   });
 });

@@ -141,16 +141,33 @@ describe('landing and hazards', () => {
     expect(cam.shake).toBe(0.15);
   });
 
-  it('falling in a pit kills the player', () => {
+  it('falling in a pit costs 1 hp and respawns at the last safe spot', () => {
     const l = lvl();
     const p = createPlayer(l);
     p.x = 856;      // inside the pit (820..940)
     p.y = l.height; // at the bottom
     p.vy = 0;
     const calls = [];
+    updatePlayer(p, { ...noInput }, l, createCamera(), DT, fx(calls));
+    // gravity pushes y past lvl.height this frame
+    expect(p.hp).toBe(2);
+    expect(p.dead).toBe(false);
+    expect(p.invuln).toBeGreaterThan(0);
+    expect(p.x).toBe(60); // no safe spot recorded yet -> spawn point
+    expect(p.y).toBe(l.groundY - P_H);
+    expect(calls).toContain('hurt');
+  });
+
+  it('falling in a pit kills a player at 1 hp', () => {
+    const l = lvl();
+    const p = createPlayer(l);
+    p.hp = 1;
+    p.x = 856;      // inside the pit (820..940)
+    p.y = l.height; // at the bottom
+    p.vy = 0;
+    const calls = [];
     const cam = createCamera();
     updatePlayer(p, { ...noInput }, l, cam, DT, fx(calls));
-    // gravity pushes y past lvl.height this frame
     expect(p.dead).toBe(true);
     expect(calls).toContain('die');
     expect(cam.mag).toBe(10);

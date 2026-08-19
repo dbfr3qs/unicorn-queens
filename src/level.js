@@ -12,9 +12,9 @@ export function createLevel(viewH = 600) {
     groundY,
     goal: { x: 2340 },
     ground: [
-      { x: 0, w: 820, kind: 'ground' },
-      { x: 940, w: 660, kind: 'ground' },
-      { x: 1800, w: 600, kind: 'ground' },
+      { x: 0, w: 820, kind: 'ground', y: groundY },
+      { x: 940, w: 660, kind: 'ground', y: groundY },
+      { x: 1800, w: 600, kind: 'ground', y: groundY },
     ],
     platforms: [
       { x: 320, y: groundY - 110, w: 140, kind: 'platform' },
@@ -46,8 +46,9 @@ export function resolveGroundCollision(entity, lvl, dt) {
     // +0.5px tolerance: prevBottom is reconstructed (bottom - vy*dt), so float
     // rounding can leave it 1e-13 px below the surface and miss the landing
     for (const seg of lvl.ground) {
-      if (right > seg.x && left < seg.x + seg.w && prevBottom <= lvl.groundY + 0.5 && bottom >= lvl.groundY) {
-        entity.y = lvl.groundY - entity.h;
+      const top = seg.y ?? lvl.groundY; // per-segment height (level 2 has stairs-down)
+      if (right > seg.x && left < seg.x + seg.w && prevBottom <= top + 0.5 && bottom >= top) {
+        entity.y = top - entity.h;
         entity.vy = 0;
         entity.onGround = true;
         landed = seg;

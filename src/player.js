@@ -13,6 +13,7 @@ export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 export function createPlayer(lvl) {
   return {
     x: 60, y: lvl.groundY - P_H, w: P_W, h: P_H,
+    safeX: 60, safeY: lvl.groundY - P_H, // respawn point: last spot stood on
     vx: 0, vy: 0,
     onGround: false,
     facing: 1,
@@ -56,6 +57,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.y += player.vy * dt;
   player.x = Math.max(0, Math.min(player.x, lvl.width - player.w));
   const surface = resolveGroundCollision(player, lvl, dt);
+  if (player.onGround) { player.safeX = player.x; player.safeY = player.y; } // respawn point
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust
     player.sy = 0.7; player.sx = 1.3;
     burst(player.x + player.w / 2, player.y + player.h, FX.landing);
@@ -72,5 +74,17 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   player.sx += (1 - player.sx) * Math.min(1, dt * 14); // ease back to rest
   player.sy += (1 - player.sy) * Math.min(1, dt * 14);
-  if (player.y > lvl.height) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); } // fell in a pit
+  if (player.y > lvl.height) { // fell in a pit: 1 damage, respawn at last safe spot
+    player.hp -= 1;
+    player.cuttable = false;
+    if (player.hp <= 0) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); }
+    else {
+      fx.play('hurt');
+      player.invuln = 1.5;
+      player.x = player.safeX;
+      player.y = player.safeY;
+      player.vx = 0;
+      player.vy = 0;
+    }
+  }
 }

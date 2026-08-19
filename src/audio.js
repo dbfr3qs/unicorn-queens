@@ -44,6 +44,7 @@ export function sfx(name) {
     case 'thwack': beep(600, 100, 0.1, 'square', 0.18); break;
     case 'bow':   beep(440, 660, 0.15, 'triangle', 0.25); break;
     case 'boots': [330, 440, 660].forEach((f, i) => beep(f, f, 0.09, 'triangle', 0.16, i * 0.07)); break;
+    case 'magnet': beep(600, 1200, 0.15, 'sine', 0.18); break;
     case 'grow':  beep(220, 660, 0.22, 'triangle', 0.3); break;
     case 'win':   [523, 659, 784, 1047].forEach((f, i) => beep(f, f, 0.12, 'square', 0.18, i * 0.09)); break;
     case 'fireball': beep(280, 140, 0.18, 'sawtooth', 0.1); break;

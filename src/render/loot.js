@@ -35,6 +35,15 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'magnet') {
+      c.strokeStyle = palette.pink;          // horseshoe magnet
+      c.lineWidth = 4;
+      c.beginPath();
+      c.arc(0, 1, 6, Math.PI, Math.PI * 2);  // open at the bottom
+      c.stroke();
+      c.fillStyle = '#fff';                  // ferrule tips
+      c.fillRect(-8, 0, 4, 3);
+      c.fillRect(4, 0, 4, 3);
     } else if (it.kind === 'boots') {
       c.fillStyle = palette.gold;            // golden boot pair
       c.fillRect(-8, -6, 6, 12);

@@ -2,7 +2,7 @@
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
-import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME } from './player.js';
+import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME, MAGNET_TIME } from './player.js';
 import { FX } from './effects.js';
 
 export const loot = [];
@@ -19,8 +19,11 @@ export function resetLoot() {
 const DROP_TABLE = [
   ['heart', 0.20],
   ['boots', 0.25],
+  ['magnet', 0.30],
   ['gem', 1.0],
 ];
+
+const MAGNET_ACC = 900, MAGNET_SPEED = 320; // gem steering toward the player
 function rollDrop(rng) {
   const r = rng();
   for (const [kind, w] of DROP_TABLE) if (r < w) return kind;
@@ -45,7 +48,19 @@ export function updateLoot(p, lvl, dt, fx) {
   for (const it of loot) {
     if (it.taken) continue;
     it.t += dt;
-    if (!it.onGround) {
+    if (!p.dead && it.kind === 'gem' && p.magnet > 0) {
+      // magnet: gems fly to the player (accelerate, capped speed)
+      it.onGround = false; // a flying gem is no longer resting
+      const dx = (p.x + p.w / 2) - (it.x + it.w / 2);
+      const dy = (p.y + p.h / 2) - (it.y + it.h / 2);
+      const d = Math.hypot(dx, dy) || 1;
+      it.vx += (dx / d) * MAGNET_ACC * dt;
+      it.vy += (dy / d) * MAGNET_ACC * dt;
+      const sp = Math.hypot(it.vx, it.vy);
+      if (sp > MAGNET_SPEED) { it.vx *= MAGNET_SPEED / sp; it.vy *= MAGNET_SPEED / sp; }
+      it.x += it.vx * dt;
+      it.y += it.vy * dt;
+    } else if (!it.onGround) {
       it.vy = Math.min(it.vy + P_GRAVITY * dt, P_TERM_VY);
       it.x += it.vx * dt;
       it.y += it.vy * dt;
@@ -77,6 +92,10 @@ export function updateLoot(p, lvl, dt, fx) {
         p.boots = BOOTS_TIME;
         fx.play('boots');
         burst(it.x + 8, it.y + 8, FX.boots);
+      } else if (it.kind === 'magnet') {
+        p.magnet = MAGNET_TIME;
+        fx.play('magnet');
+        burst(it.x + 8, it.y + 8, FX.magnet);
       } else { // heart
         p.hp = Math.min(p.hp + 1, 3);
         fx.play('heart');

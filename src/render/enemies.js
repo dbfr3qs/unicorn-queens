@@ -4,6 +4,7 @@ import { palette } from './theme.js';
 
 const DRAW = {
   slime: drawSlime,
+  zombie: drawZombie,
 };
 
 export function drawEnemies(c, enemies) {
@@ -26,5 +27,26 @@ function drawSlime(c, e) {
   c.fillRect(4, -10, 6, 6);
   c.fillStyle = '#e33';
   c.fillRect(6, -8, 3, 3);
+  c.restore();
+}
+
+function drawZombie(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  const step = Math.sin(e.x * 0.3) * 3; // leg shuffle from position
+  c.fillStyle = '#4a7c3f'; // torso
+  c.fillRect(-17, -20, 34, 32);
+  c.fillStyle = '#3a6132'; // legs
+  c.fillRect(-14, 12, 10, 8 + step);
+  c.fillRect(4, 12, 10, 8 - step);
+  c.fillStyle = '#5d9450'; // outstretched arm
+  c.fillRect(6, -10, 12, 6);
+  c.fillStyle = '#3a6132'; // dark patch
+  c.fillRect(-13, -2, 8, 10);
+  c.fillStyle = palette.white; // eye
+  c.fillRect(3, -16, 7, 5);
+  c.fillStyle = '#e33'; // glowing pupil
+  c.fillRect(6, -15, 3, 3);
   c.restore();
 }

@@ -6,24 +6,54 @@ import { shake } from './camera.js';
 import { P_GRAVITY, P_TERM_VY } from './player.js';
 import { FX } from './effects.js';
 
-export const E_SPEED = 90, E_W = 30, E_H = 28, E_STOMP_V = -400, HURT_INVULN = 1.5;
+export const E_W = 30, E_H = 28, E_STOMP_V = -400, HURT_INVULN = 1.5;
 
-// One entry per enemy kind. `update` is the kind-specific brain: it sets
-// e.vx/e.vy and may do extras (hopping, firing). Shared parts — stomp vs
-// side-hit, arrow hits, death — live in this module, so a new kind gets
-// them for free. Adding a kind: an entry here, a draw function in
-// src/render/enemies.js, and (optionally) FX presets in src/effects.js.
+// One entry per enemy kind: size, stomp rule, tuning, and `update` — the
+// kind-specific brain, which sets e.vx/e.vy and may do extras (hopping,
+// firing). Brains read their own tuning off `this` (the kind entry).
+// Shared parts — stomp vs side-hit, arrow hits, pit death — live in this
+// module, so a new kind gets them for free. Adding a kind: an entry here,
+// a draw function in src/render/enemies.js, and (optionally) FX presets in
+// src/effects.js.
 const KINDS = {
   slime: {
     w: E_W, h: E_H,
+    speed: 90,
+    stompable: true,
     update(e, { lvl, dt }) {
       // Dumb patrol: keep walking, turn at the bounds.
-      e.vx = e.dir * E_SPEED;
+      e.vx = e.dir * this.speed;
       e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
       e.x += e.vx * dt;
       e.y += e.vy * dt;
       if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
       else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
+      resolveGroundCollision(e, lvl, dt);
+    },
+  },
+  zombie: {
+    w: 34, h: 40,
+    speed: 40, chaseSpeed: 70, aggroRange: 220, aggroDy: 60,
+    stompable: true,
+    update(e, { p, lvl, dt }) {
+      // Shambles within its bounds; chases the player while they are close
+      // and roughly on the same level (chasing ignores the bounds).
+      const dx = p.x + p.w / 2 - (e.x + e.w / 2);
+      const dy = p.y + p.h / 2 - (e.y + e.h / 2);
+      const chasing = !p.dead && Math.abs(dx) < this.aggroRange && Math.abs(dy) < this.aggroDy;
+      if (chasing) {
+        e.dir = dx >= 0 ? 1 : -1;
+        e.vx = e.dir * this.chaseSpeed;
+      } else {
+        e.vx = e.dir * this.speed;
+      }
+      e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
+      e.x += e.vx * dt;
+      e.y += e.vy * dt;
+      if (!chasing) {
+        if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
+        else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
+      }
       resolveGroundCollision(e, lvl, dt);
     },
   },
@@ -60,6 +90,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
   for (const e of enemies) {
     if (e.dead) continue;
     KINDS[e.kind].update(e, env);
+    if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit
     hitPlayer(e, p, cam, fx);
   }
 }
@@ -68,7 +99,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
 function hitPlayer(e, p, cam, fx) {
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
-  if (p.vy > 0 && p.y + p.h - e.y < 16) {
+  if (p.vy > 0 && p.y + p.h - e.y < 16 && KINDS[e.kind].stompable) {
     e.dead = true;   // stomped
     p.vy = E_STOMP_V; // bounce
     p.cuttable = false;

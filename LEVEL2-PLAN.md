@@ -1,5 +1,7 @@
 # Level 2 — phased implementation plan
 
+Status: all phases P1–P10 complete. See git log.
+
 One phase = one commit. After every phase: `npm test` + `npm run smoke` green,
 and the level-1 snapshot md5 unchanged — until P9 intentionally adds level-2
 snapshots.

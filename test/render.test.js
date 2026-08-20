@@ -142,6 +142,14 @@ test('l2 boss hall (mage mid-windup, fireball in flight, hp pips)', () => {
   expect(step({}, 1)).toMatchSnapshot();
 });
 
+test('l2 boss hall with shield active (moon disc + charge pips)', () => {
+  const g = freshGame2();
+  g.player.x = 3000;
+  g.camera.x = 2614;
+  g.player.shield = 3; // full charge
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
 test('l2 pearl on pedestal + unsealed stairs', () => {
   const g = freshGame2();
   const mage = g.enemies.find(e => e.kind === 'mage');

@@ -39,6 +39,7 @@ export function createPlayer(lvl, carry = {}) {
     stars: 0, // star arrows in reserve; never carried across levels
     hops: 0, // levitation air-jumps left; never carried across levels
     hopFx: 0, // wing shimmer timer (s); visual only
+    shield: 0, // mirror shield: fireball reflects left; never carried
     won: false,
   };
 }

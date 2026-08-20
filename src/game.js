@@ -67,7 +67,7 @@ export function update(dt, viewW, fx) {
   updateLoot(game.player, game.level, dt, fx, { onSunbeam: fireSunbeam });
   if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx);
-  updateFireballs(game.player, game.level, game.camera, dt, fx);
+  updateFireballs(game.player, game.level, game.camera, dt, fx, game.enemies);
   updateParticles(dt);
   if (!game.player.dead && !game.player.won && reachedExit(game.player, game.level)) {
     game.player.won = true;

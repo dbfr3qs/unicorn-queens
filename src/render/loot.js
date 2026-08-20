@@ -35,6 +35,14 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'shield') {
+      c.fillStyle = '#cfe8ff';             // mirror disc
+      c.beginPath(); c.arc(0, -1, 6, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#8fd3f4';
+      c.lineWidth = 1.5;
+      c.beginPath(); c.arc(0, -1, 6, 0, Math.PI * 2); c.stroke();
+      c.fillStyle = '#8fd3f4';             // handle
+      c.fillRect(-1.5, 5, 3, 5);
     } else if (it.kind === 'hops') {
       c.fillStyle = '#e8e8f0';             // pair of small wings
       c.beginPath(); c.ellipse(-4, 0, 5, 3.5, -0.5, 0, Math.PI * 2); c.fill();

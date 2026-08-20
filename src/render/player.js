@@ -34,6 +34,16 @@ export function drawPlayer(c, player, t) {
     c.beginPath(); c.ellipse(-3, -26, 6, 3, -0.4, 0, Math.PI * 2); c.fill();
     c.beginPath(); c.ellipse(1, -24, 5, 2.5, -0.4, 0, Math.PI * 2); c.fill();
   }
+  if (player.shield > 0) { // mirror shield: moon disc + charge pips
+    c.fillStyle = '#cfe8ff';
+    c.beginPath(); c.arc(17, -22, 4.5, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#8fd3f4';
+    c.beginPath(); c.arc(17, -22, 2, 0, Math.PI * 2); c.fill();
+    for (let i = 0; i < 3; i++) { // pips over the head (mage precedent)
+      c.fillStyle = i < player.shield ? '#8fd3f4' : 'rgba(143, 211, 244, 0.35)';
+      c.fillRect(-6 + i * 5, -60, 4, 2.5);
+    }
+  }
   // ---- queen rider: blond hair, crown, light blue dress ----
   c.save();
   if (player.onGround && !player.dead && player.vx !== 0) // bob with the gallop

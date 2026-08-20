@@ -109,6 +109,10 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         p.stars = Math.min(10, p.stars + 5);
         fx.play('star');
         burst(it.x + 8, it.y + 8, FX.star);
+      } else if (it.kind === 'shield') {
+        p.shield = Math.min(3, p.shield + 3);
+        fx.play('reflect');
+        burst(it.x + 8, it.y + 8, FX.reflect);
       } else if (it.kind === 'hops') {
         p.hops = Math.min(3, p.hops + 3);
         fx.play('hop');

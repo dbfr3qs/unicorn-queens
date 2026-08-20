@@ -63,18 +63,32 @@ describe('pickup', () => {
 });
 
 describe('screen clear', () => {
-  it('kills all small enemies, clears fireballs, spares the mage', () => {
+  it('kills only enemies visible in the viewport', () => {
+    startGame(600, 0); // meadow: slimes at 560, 1050, 1450, 2000, 2250
+    const g = game;
+    const byX = x => g.enemies.find(e => e.x === x);
+    g.camera.x = 0; // viewport 0..800: only the 560 slime is on screen
+    fireSunbeam(g.player, g.level, fx([]), 800);
+    expect(byX(560).dead).toBe(true);
+    for (const x of [1050, 1450, 2000, 2250]) expect(byX(x).dead).toBe(false);
+    g.camera.x = 1950; // viewport 1950..2750: the two far slimes
+    fireSunbeam(g.player, g.level, fx([]), 800);
+    expect(byX(2000).dead).toBe(true);
+    expect(byX(2250).dead).toBe(true);
+    expect(byX(1050).dead).toBe(false); // still off-screen
+    expect(byX(1450).dead).toBe(false);
+  });
+
+  it('clears fireballs and sets the beam even when nothing is on screen', () => {
     startGame(600, 1);
     const g = game;
     const mage = g.enemies.find(e => e.kind === 'mage');
-    const small = g.enemies.filter(e => e.kind !== 'mage' && !e.dead);
-    expect(small.length).toBeGreaterThan(0);
-    fireFireball(1000, 400, 240, 0, fx([]));
+    const small = g.enemies.filter(e => e.kind !== 'mage');
+    fireFireball(100, 400, 240, 0, fx([]));
     expect(fireballs.length).toBe(1);
-    fireSunbeam(g.player, g.level, fx([]));
-    for (const e of small) expect(e.dead).toBe(true);
-    expect(mage.dead).toBe(false);
-    expect(mage.hp).toBe(5); // untouched
+    fireSunbeam(g.player, g.level, fx([]), 800); // camera 0: all smalls are off-screen
+    for (const e of small) expect(e.dead).toBe(false);
+    expect(mage.hp).toBe(5); // still exempt
     expect(fireballs.length).toBe(0);
     expect(g.level.sunbeamT).toBe(0.4);
   });

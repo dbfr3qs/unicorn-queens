@@ -38,7 +38,7 @@ lantern, heart cap, mystery) only come from their designated boxes.
 | grow | big form: bigger body, 1.35× jump; lasts the rest of the level and carries into the next | permanent | meadow, castle platform |
 | bounce boots | 1.6× jump | 10 s | table (5%), mystery (25%, 5 s version), meadow + castle box |
 | magnet | gems fly to you | 8 s | table (5%), meadow + castle box |
-| sunbeam | instant burst that defeats every non-mage enemy | instant | table (3%), meadow platform, castle room-1 box |
+| sunbeam | instant burst that defeats every non-mage enemy on screen | instant | table (3%), meadow platform, castle room-1 box |
 | star arrows | +5 arrows that pierce up to 5 enemies each (reserve cap 10); they shatter boxes in their path too | until fired | table (4%), meadow + 2 castle boxes |
 | levitation | +3 mid-air jumps (cap 3) | until used | table (4%), meadow + castle box |
 | mirror shield | reflects up to 3 fireballs; a reflected shot damages the mage. Doesn't block enemy contact | 3 uses | castle boss-hall box |

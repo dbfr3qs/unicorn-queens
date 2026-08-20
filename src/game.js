@@ -66,7 +66,7 @@ export function update(dt, viewW, fx) {
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
-  updateLoot(game.player, game.level, dt, fx, { onSunbeam: fireSunbeam });
+  updateLoot(game.player, game.level, dt, fx, { onSunbeam: (p, l, f) => fireSunbeam(p, l, f, viewW) });
   if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx);
   updateFireballs(game.player, game.level, game.camera, dt, fx, game.enemies);
@@ -84,13 +84,16 @@ export function update(dt, viewW, fx) {
   if (!game.player.dead && !game.player.won) updateCamera(game.camera, game.player, game.level, viewW, dt);
 }
 
-// Sunbeam pickup: every non-boss enemy on the level dies through the
-// normal damage path (consistent sounds/FX), live fireballs clear, and
-// a golden beam flashes across the screen (sunbeamT, decayed in update).
-// The mage is exempt - he has his own hp and the arrows/shield phases.
-export function fireSunbeam(p, lvl, fx) {
+// Sunbeam pickup: every non-boss enemy visible in the viewport dies
+// through the normal damage path (consistent sounds/FX), live fireballs
+// clear, and a golden beam flashes across the screen (sunbeamT, decayed
+// in update). Off-screen enemies are spared. The mage is exempt - he has
+// his own hp and the arrows/shield phases.
+export function fireSunbeam(p, lvl, fx, viewW = 800) {
+  const cam = game.camera;
   for (const e of game.enemies) {
     if (e.dead || e.kind === 'mage') continue;
+    if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }
   resetFireballs();

@@ -35,6 +35,13 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'hops') {
+      c.fillStyle = '#e8e8f0';             // pair of small wings
+      c.beginPath(); c.ellipse(-4, 0, 5, 3.5, -0.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(4, 0, 5, 3.5, 0.5, 0, Math.PI * 2); c.fill();
+      c.fillStyle = palette.lavender;      // feather lines
+      c.fillRect(-6, 1, 3, 1);
+      c.fillRect(3, 1, 3, 1);
     } else if (it.kind === 'star') {
       c.fillStyle = palette.gold;           // four-point star, slow spin
       c.beginPath();

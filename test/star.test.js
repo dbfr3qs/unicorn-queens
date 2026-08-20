@@ -43,7 +43,7 @@ describe('drop table', () => {
     expect(kindAt(0.32)).toBe('sunbeam');
     expect(kindAt(0.34)).toBe('star');
     expect(kindAt(0.369)).toBe('star');
-    expect(kindAt(0.38)).toBe('gem');
+    expect(kindAt(0.42)).toBe('gem'); // hops band starts at 0.37 (P6)
   });
 });
 

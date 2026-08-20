@@ -29,6 +29,7 @@ export function createLevel(viewH = 600) {
       { x: 700, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'grow' },
       { x: 1300, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'boots' },
       { x: 1500, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' },
+      { x: 2100, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'hops' }, // near the goal
       { x: 1950, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'magnet' },
       { x: 1250, y: groundY - 166, w: 36, h: 36, broken: false, kind: 'box', drop: 'sunbeam' },
     ],

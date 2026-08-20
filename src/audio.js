@@ -48,6 +48,7 @@ export function sfx(name) {
     case 'magnet': beep(600, 1200, 0.15, 'sine', 0.18); break;
     case 'sunbeam': [784, 1047, 1568].forEach((f, i) => beep(f, f, 0.18, 'sine', 0.2, i * 0.06)); break;
     case 'star': beep(880, 1760, 0.14, 'triangle', 0.16); beep(1320, 2637, 0.16, 'sine', 0.12, 0.05); break;
+    case 'hop': beep(320, 640, 0.09, 'sine', 0.15); break;
     case 'grow':  beep(220, 660, 0.22, 'triangle', 0.3); break;
     case 'win':   [523, 659, 784, 1047].forEach((f, i) => beep(f, f, 0.12, 'square', 0.18, i * 0.09)); break;
     case 'fireball': beep(280, 140, 0.18, 'sawtooth', 0.1); break;

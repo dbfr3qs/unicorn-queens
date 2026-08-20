@@ -28,6 +28,12 @@ export function drawPlayer(c, player, t) {
     c.fillRect(-11, -3, 2, 1);
     c.fillRect(8, -3, 2, 1);
   }
+  if (player.hopFx > 0) { // levitation hop: brief wing shimmer
+    const a = Math.round(Math.min(1, player.hopFx / 0.35) * 8) / 8;
+    c.fillStyle = 'rgba(255, 255, 255, ' + a + ')';
+    c.beginPath(); c.ellipse(-3, -26, 6, 3, -0.4, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(1, -24, 5, 2.5, -0.4, 0, Math.PI * 2); c.fill();
+  }
   // ---- queen rider: blond hair, crown, light blue dress ----
   c.save();
   if (player.onGround && !player.dead && player.vx !== 0) // bob with the gallop

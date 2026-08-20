@@ -12,6 +12,7 @@ export const FX = {
   magnet: { count: 10, colors: ['#ff8fc7', '#ffd1e8', '#fff'], speed: 110, size: 3, grav: -100, life: 0.4 },
   sunbeam: { count: 24, colors: ['#ffd75e', '#fff6d8', '#fff'], speed: 200, up: 150, size: 4, grav: 300, life: 0.7 },
   star: { count: 12, colors: ['#ffd75e', '#fff6d8', '#fff'], speed: 140, up: 60, size: 3, grav: 200, life: 0.5 },
+  hopPuff: { count: 8, colors: ['#e8e8f0', '#d8d8e8', '#fff'], speed: 60, up: 20, size: 3, grav: -40, life: 0.4 },
   grow: { count: 16, colors: ['#ffd75e', '#fff', '#ffe9b0'], speed: 150, size: 4, grav: -150, life: 0.5 },
   heart: { count: 10, colors: ['#ff6f91', '#fff'], speed: 120, size: 3, grav: -100, life: 0.4 },
   win: { count: 40, colors: ['#ffd75e', '#6fe3e1', '#ff6f91', '#fff'], speed: 220, up: 160, size: 5, grav: 500, life: 0.9 },

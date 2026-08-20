@@ -7,6 +7,7 @@ import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
+export const HOP_V = P_JUMP_V * 0.85; // levitation hop: shorter than a ground jump
 export const BOOTS_TIME = 10, BOOT_JUMP_MULT = 1.6; // bounce boots: 10 s, 1.6× jump
 export const MAGNET_TIME = 8; // magnet: 8 s of gem attraction
 export const HURT_INVULN = 1.5; // invulnerability window after any hit
@@ -36,6 +37,8 @@ export function createPlayer(lvl, carry = {}) {
     boots: 0, // bounce boots timer (s); never carried across levels
     magnet: 0, // gem attraction timer (s); never carried across levels
     stars: 0, // star arrows in reserve; never carried across levels
+    hops: 0, // levitation air-jumps left; never carried across levels
+    hopFx: 0, // wing shimmer timer (s); visual only
     won: false,
   };
 }
@@ -67,6 +70,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.fireCd = Math.max(0, player.fireCd - dt);
   player.boots = Math.max(0, player.boots - dt);
   player.magnet = Math.max(0, player.magnet - dt);
+  player.hopFx = Math.max(0, player.hopFx - dt);
   if (inp.fire && player.hasBow && player.fireCd <= 0) { // unlimited arrows
     if (player.stars > 0) { player.stars--; fireStarArrow(player); } // stars first
     else fireArrow(player);
@@ -80,6 +84,15 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     player.sy = 1.25; player.sx = 0.8; // stretch upward
     if (player.boots > 0) burst(player.x + player.w / 2, player.y + player.h, FX.boots); // sparkle
     fx.play('jump');
+  } else if (player.jbuf > 0 && player.hops > 0) {
+    // levitation hop: a press that can't start a ground/coyote jump
+    player.hops -= 1;
+    player.vy = HOP_V;
+    player.jbuf = 0; player.cuttable = true;
+    player.sy = 1.25; player.sx = 0.8; // stretch upward
+    player.hopFx = 0.35;
+    burst(player.x + player.w / 2, player.y + player.h, FX.hopPuff); // cloud puff
+    fx.play('hop');
   }
   if (!inp.jump && player.cuttable && player.vy < JUMP_CUT) player.vy = JUMP_CUT; // variable height
   const prevVy = player.vy;

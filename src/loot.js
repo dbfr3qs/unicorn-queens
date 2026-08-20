@@ -4,6 +4,8 @@ import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME, MAGNET_TIME, LANTERN_TIME } from './player.js';
 import { FX } from './effects.js';
+import { getItem } from './loot-items/index.js';
+import './loot-items/gem.js'; // self-registers into the loot-items registry
 
 export const loot = [];
 export let score = 0;
@@ -26,7 +28,6 @@ const DROP_TABLE = [
   ['gem', 1.0],
 ];
 
-const MAGNET_ACC = 900, MAGNET_SPEED = 320; // gem steering toward the player
 function rollDrop(rng) {
   const r = rng();
   for (const [kind, w] of DROP_TABLE) if (r < w) return kind;
@@ -77,19 +78,10 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
   for (const it of loot) {
     if (it.taken) continue;
     it.t += dt;
-    if (!p.dead && it.kind === 'gem' && p.magnet > 0) {
-      // magnet: gems fly to the player (accelerate, capped speed)
-      it.onGround = false; // a flying gem is no longer resting
-      const dx = (p.x + p.w / 2) - (it.x + it.w / 2);
-      const dy = (p.y + p.h / 2) - (it.y + it.h / 2);
-      const d = Math.hypot(dx, dy) || 1;
-      it.vx += (dx / d) * MAGNET_ACC * dt;
-      it.vy += (dy / d) * MAGNET_ACC * dt;
-      const sp = Math.hypot(it.vx, it.vy);
-      if (sp > MAGNET_SPEED) { it.vx *= MAGNET_SPEED / sp; it.vy *= MAGNET_SPEED / sp; }
-      it.x += it.vx * dt;
-      it.y += it.vy * dt;
-    } else if (!it.onGround) {
+    const def = getItem(it.kind);
+    // def.update may move the item itself (gem + magnet); otherwise the
+    // default gravity/ground pass applies.
+    if (!def?.update?.(it, p, lvl, dt) && !it.onGround) {
       it.vy = Math.min(it.vy + P_GRAVITY * dt, P_TERM_VY);
       it.x += it.vx * dt;
       it.y += it.vy * dt;
@@ -100,10 +92,9 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         p.x < it.x + it.w && p.x + p.w > it.x &&
         p.y < it.y + it.h && p.y + p.h > it.y) {
       it.taken = true;
-      if (it.kind === 'gem') {
-        score += 1;
-        fx.play('gem');
-        burst(it.x + 8, it.y + 8, FX.gem);
+      if (def?.onPickup) {
+        // registry item: onPickup returns the score delta
+        score += def.onPickup(it, p, lvl, fx, hooks) || 0;
       } else if (it.kind === 'bow') {
         p.hasBow = true;
         fx.play('bow');

@@ -1,5 +1,7 @@
-// Loot rendering: gem, grow sparkle, bow, heart.
+// Loot rendering: per-kind sprites via the loot-items registry, with a
+// legacy chain for kinds not yet migrated.
 import { loot } from '../loot.js';
+import { getItem } from '../loot-items/index.js';
 import { palette } from './theme.js';
 
 export function drawLoot(c) {
@@ -8,15 +10,9 @@ export function drawLoot(c) {
     const bob = it.onGround ? Math.sin(it.t * 4) * 3 : 0;
     c.save();
     c.translate(it.x + it.w / 2, it.y + it.h / 2 + bob);
-    if (it.kind === 'gem') {
-      c.fillStyle = palette.teal;
-      c.beginPath();
-      c.moveTo(0, -8); c.lineTo(7, 0); c.lineTo(0, 8); c.lineTo(-7, 0);
-      c.closePath(); c.fill();
-      c.fillStyle = '#c8fbfa'; // glint
-      c.beginPath();
-      c.moveTo(0, -8); c.lineTo(7, 0); c.lineTo(0, 0);
-      c.closePath(); c.fill();
+    const def = getItem(it.kind);
+    if (def?.draw) {
+      def.draw(c, it);
     } else if (it.kind === 'grow') {
       c.fillStyle = palette.gold;
       c.beginPath(); // four-point sparkle

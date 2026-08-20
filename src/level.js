@@ -27,6 +27,7 @@ export function createLevel(viewH = 600) {
     boxes: [
       { x: 450, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box' },
       { x: 700, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'grow' },
+      { x: 1000, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', mystery: true }, // wildcard
       { x: 1300, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'boots' },
       { x: 1500, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' },
       { x: 2100, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'hops' }, // near the goal

@@ -25,6 +25,13 @@ test('walking', () => {
   expect(step({ right: true }, 90)).toMatchSnapshot();
 });
 
+test('l1 mystery box (purple, swirl)', () => {
+  const g = freshGame();
+  g.player.x = 1350; // clear of the 980-1260 slime patrol, box at 1000 in view
+  g.camera.x = 964; // 1350 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
 test('jumping', () => {
   freshGame();
   // jump fires on frame 2 (needs one frame to land and arm coyote time);

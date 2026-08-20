@@ -27,7 +27,7 @@ export function draw(ctx, viewW, viewH) {
   else drawBackground(ctx, level, camera, gameTime);
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
-  drawLevel(ctx, level);
+  drawLevel(ctx, level, gameTime);
   drawExit(ctx, level, gameTime);
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);

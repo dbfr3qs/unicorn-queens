@@ -2,7 +2,7 @@
 // Drawn inside the camera-translated world pass (see index.js).
 import { palette } from './theme.js';
 
-export function drawLevel(c, lvl) {
+export function drawLevel(c, lvl, t = 0) {
   for (const seg of lvl.ground) {
     const top = seg.y ?? lvl.groundY;
     if (seg.kind === 'plank') { // wooden bridge deck
@@ -35,10 +35,23 @@ export function drawLevel(c, lvl) {
   for (const p of lvl.platforms) c.fillRect(p.x, p.y, p.w, 12);
   for (const b of lvl.boxes) {
     if (b.broken) continue;
-    c.fillStyle = '#c98f3d';
-    c.fillRect(b.x, b.y, b.w, b.h);
-    c.strokeStyle = '#8a5f22';
-    c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
+    if (b.mystery) { // wildcard: purple box with a slow swirl
+      c.fillStyle = '#7a4fd0';
+      c.fillRect(b.x, b.y, b.w, b.h);
+      c.strokeStyle = '#4a2d7a';
+      c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
+      const a = t * 1.2 + b.x * 0.01; // swirl angle: gameTime-driven, per-box phase
+      c.strokeStyle = '#d9c8ff';
+      c.lineWidth = 2;
+      c.beginPath();
+      c.arc(b.x + b.w / 2, b.y + b.h / 2, 8, a, a + 4.2);
+      c.stroke();
+    } else {
+      c.fillStyle = '#c98f3d';
+      c.fillRect(b.x, b.y, b.w, b.h);
+      c.strokeStyle = '#8a5f22';
+      c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
+    }
   }
   if (!lvl.goal) return; // level 2 exits via the staircase, no flag
   const g = lvl.goal; // goal flag

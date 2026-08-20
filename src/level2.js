@@ -47,6 +47,7 @@ export function createLevel2(viewH = 600) {
       { x: 1050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'sunbeam' }, // room 1, before the chasm
       { x: 1160, y: groundY - 236, w: 36, h: 36, broken: false, kind: 'box', drop: 'grow' }, // on the 1150 platform
       { x: 1350, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'lantern' }, // room 1, among the ghosts
+      { x: 1500, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', mystery: true }, // room 1, wildcard
       { x: 1600, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' }, // room 1
       { x: 1750, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'boots' }, // before the chasm
       { x: 1810, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'hops' }, // chasm is its intended use

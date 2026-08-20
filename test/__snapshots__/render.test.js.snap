@@ -4,7 +4,7 @@ exports[`big mode 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
-  translate(0.518, -1.487)
+  translate(0, 0)
   save()
     translate(0, 0)
     fillStyle=#cbb8ff
@@ -339,6 +339,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -523,7 +532,7 @@ exports[`boots active 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
-  translate(0.453, -1.301)
+  translate(0, 0)
   save()
     translate(0, 0)
     fillStyle=#cbb8ff
@@ -858,6 +867,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -1383,6 +1401,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.2, 14.4)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -1929,6 +1956,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -2435,6 +2471,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -2954,6 +2999,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.2, 14.4)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -3180,7 +3234,7 @@ exports[`heart cap (4 hp pips) 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
-  translate(0.397, -1.139)
+  translate(0, 0)
   save()
     translate(0, 0)
     fillStyle=#cbb8ff
@@ -3515,6 +3569,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -4036,6 +4099,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.16, 14.36)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -4586,6 +4658,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10, 14.2)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -5105,6 +5186,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.2, 14.4)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -5247,6 +5337,534 @@ save()
     restore()
     save()
       translate(2250, 546)
+      scale(-1, 1)
+      fillStyle=#5d3a9b
+      fillRect(-15, -14, 30, 24)
+      fillStyle=#2d1b4e
+      fillRect(-13, 10, 8, 4)
+      fillRect(5, 10, 8, 4)
+      fillStyle=#fff
+      fillRect(4, -10, 6, 6)
+      fillStyle=#e33
+      fillRect(6, -8, 3, 3)
+    restore()
+    globalAlpha=1
+  restore()
+restore()
+save()
+  font=18px monospace
+  textBaseline=top
+  fillStyle=#ff6f91
+  fillText(♥, 12, 10)
+  fillStyle=#ff6f91
+  fillText(♥, 34, 10)
+  fillStyle=#ff6f91
+  fillText(♥, 56, 10)
+  fillStyle=#6fe3e1
+  textAlign=right
+  fillText(SCORE 0, 788, 10)
+  textAlign=center
+  fillStyle=#cbb8ff
+  fillText(LEVEL 1, 400, 10)
+restore()
+save()
+  font=12px monospace
+  fillStyle=#5d4a80
+  textBaseline=bottom
+  fillText(sound on (M), 12, 592)
+restore()"
+`;
+
+exports[`l1 mystery box (purple, swirl) 1`] = `
+"fillStyle=#0d0815
+fillRect(0, 0, 800, 600)
+save()
+  translate(0, 0)
+  save()
+    translate(-192.8, 0)
+    fillStyle=#cbb8ff
+    globalAlpha=0.896
+    fillRect(728.962, 72.75, 1.213, 1.213)
+    globalAlpha=0.916
+    fillRect(151.24, 157.784, 0.811, 0.811)
+    globalAlpha=0.713
+    fillRect(273.915, 172.928, 1.366, 1.366)
+    globalAlpha=0.813
+    fillRect(1146.497, 221.814, 0.73, 0.73)
+    globalAlpha=0.882
+    fillRect(498.546, 196.28, 1.893, 1.893)
+    globalAlpha=0.968
+    fillRect(563.833, 61.937, 0.69, 0.69)
+    globalAlpha=0.6
+    fillRect(355.791, 328.817, 1.017, 1.017)
+    globalAlpha=0.965
+    fillRect(1099.5, 246.005, 0.824, 0.824)
+    globalAlpha=0.786
+    fillRect(238.753, 261.197, 1.504, 1.504)
+    globalAlpha=0.933
+    fillRect(379.048, 151.803, 1.431, 1.431)
+    globalAlpha=0.617
+    fillRect(867.714, 21.967, 1.387, 1.387)
+    globalAlpha=0.895
+    fillRect(1146.436, 109.475, 1.844, 1.844)
+    globalAlpha=0.889
+    fillRect(293.637, 263.707, 1.418, 1.418)
+    globalAlpha=0.799
+    fillRect(796.657, 11.137, 0.945, 0.945)
+    globalAlpha=0.99
+    fillRect(851.739, 294.133, 1.699, 1.699)
+    globalAlpha=0.942
+    fillRect(907.923, 75.899, 0.945, 0.945)
+    globalAlpha=0.677
+    fillRect(1160.027, 4.357, 1.746, 1.746)
+    globalAlpha=0.861
+    fillRect(419.298, 50.178, 1.122, 1.122)
+    globalAlpha=0.969
+    fillRect(1.408, 47.473, 1.171, 1.171)
+    globalAlpha=0.47
+    fillRect(992.396, 69.556, 0.777, 0.777)
+    globalAlpha=0.591
+    fillRect(1039.188, 259.132, 1.468, 1.468)
+    globalAlpha=0.635
+    fillRect(567.086, 199.79, 0.872, 0.872)
+    globalAlpha=0.713
+    fillRect(963.728, 295.418, 0.932, 0.932)
+    globalAlpha=0.906
+    fillRect(1070.7, 170.255, 1.742, 1.742)
+    globalAlpha=0.425
+    fillRect(513.059, 341.224, 1.164, 1.164)
+    globalAlpha=0.994
+    fillRect(237.91, 335.056, 1.619, 1.619)
+    globalAlpha=0.868
+    fillRect(434.148, 287.736, 1.187, 1.187)
+    globalAlpha=0.992
+    fillRect(1169.223, 228.552, 1.154, 1.154)
+    globalAlpha=0.93
+    fillRect(948.147, 184.439, 1.198, 1.198)
+    globalAlpha=0.974
+    fillRect(679.501, 279.098, 1.408, 1.408)
+    globalAlpha=0.999
+    fillRect(508.65, 145.019, 1.188, 1.188)
+    globalAlpha=0.976
+    fillRect(1085.152, 71.674, 1.424, 1.424)
+    globalAlpha=0.93
+    fillRect(728.004, 125.356, 1.88, 1.88)
+    globalAlpha=0.512
+    fillRect(816.019, 300.117, 1.176, 1.176)
+    globalAlpha=0.929
+    fillRect(558.395, 56.119, 1.661, 1.661)
+    globalAlpha=0.884
+    fillRect(174.579, 205.053, 1.635, 1.635)
+    globalAlpha=0.969
+    fillRect(685.067, 24.284, 0.618, 0.618)
+    globalAlpha=0.975
+    fillRect(866.286, 47.936, 1.474, 1.474)
+    globalAlpha=0.912
+    fillRect(307.074, 116.424, 1.813, 1.813)
+    globalAlpha=0.626
+    fillRect(1025.226, 20.072, 1.788, 1.788)
+    globalAlpha=0.981
+    fillRect(1172.858, 237.328, 1.025, 1.025)
+    globalAlpha=1
+    fillRect(1105.305, 262.581, 0.747, 0.747)
+    globalAlpha=0.784
+    fillRect(1117.725, 229.364, 0.895, 0.895)
+    globalAlpha=0.522
+    fillRect(744.464, 94.152, 1.329, 1.329)
+    globalAlpha=0.999
+    fillRect(525.118, 9.415, 1.846, 1.846)
+    globalAlpha=0.969
+    fillRect(432.777, 301.183, 0.709, 0.709)
+    globalAlpha=0.478
+    fillRect(313.354, 191.636, 1.987, 1.987)
+    globalAlpha=0.79
+    fillRect(167.114, 379.312, 0.905, 0.905)
+    globalAlpha=0.863
+    fillRect(723.197, 144.345, 1.53, 1.53)
+    globalAlpha=0.608
+    fillRect(268.091, 356.101, 0.824, 0.824)
+    globalAlpha=0.434
+    fillRect(114.769, 240.023, 1.857, 1.857)
+    globalAlpha=0.594
+    fillRect(970.801, 216.374, 0.85, 0.85)
+    globalAlpha=0.745
+    fillRect(981.66, 158.258, 0.963, 0.963)
+    globalAlpha=0.704
+    fillRect(566.051, 105.874, 1.555, 1.555)
+    globalAlpha=0.93
+    fillRect(522.518, 23, 1.179, 1.179)
+    globalAlpha=0.608
+    fillRect(180.779, 221.665, 1.649, 1.649)
+    globalAlpha=0.532
+    fillRect(735.758, 356.795, 0.698, 0.698)
+    globalAlpha=0.983
+    fillRect(26.876, 205.282, 1.935, 1.935)
+    globalAlpha=0.98
+    fillRect(440.13, 160.078, 0.811, 0.811)
+    globalAlpha=0.511
+    fillRect(875.624, 133.002, 1.161, 1.161)
+    globalAlpha=0.836
+    fillRect(585.972, 292.556, 1.209, 1.209)
+    globalAlpha=0.914
+    fillRect(1157.48, 26.237, 1.726, 1.726)
+    globalAlpha=0.538
+    fillRect(1087.423, 198.759, 1.995, 1.995)
+    globalAlpha=0.703
+    fillRect(194.279, 365.968, 1.602, 1.602)
+    globalAlpha=0.932
+    fillRect(397.758, 342.719, 1.016, 1.016)
+    globalAlpha=0.487
+    fillRect(945.187, 242.963, 0.904, 0.904)
+    globalAlpha=0.364
+    fillRect(457.183, 248.032, 1.197, 1.197)
+    globalAlpha=0.568
+    fillRect(112.736, 38.565, 0.645, 0.645)
+    globalAlpha=0.718
+    fillRect(681.564, 164.038, 0.663, 0.663)
+    globalAlpha=0.481
+    fillRect(962.848, 201.314, 0.921, 0.921)
+    globalAlpha=0.65
+    fillRect(842.609, 210.682, 1.251, 1.251)
+    globalAlpha=0.929
+    fillRect(941.863, 226.148, 1.487, 1.487)
+    globalAlpha=0.539
+    fillRect(67.109, 252.006, 1.817, 1.817)
+    globalAlpha=0.51
+    fillRect(339.966, 349.423, 1.983, 1.983)
+    globalAlpha=0.853
+    fillRect(658.688, 56.831, 1.58, 1.58)
+    globalAlpha=0.812
+    fillRect(837.367, 171.157, 1.608, 1.608)
+    globalAlpha=0.764
+    fillRect(716.324, 125.768, 1.522, 1.522)
+    globalAlpha=0.973
+    fillRect(400.323, 169.854, 1.366, 1.366)
+    globalAlpha=0.828
+    fillRect(1047.066, 303.681, 1.048, 1.048)
+    globalAlpha=0.974
+    fillRect(1157.718, 56.214, 1.427, 1.427)
+    globalAlpha=0.939
+    fillRect(260.797, 206.281, 1.938, 1.938)
+    globalAlpha=0.612
+    fillRect(983.884, 104.25, 0.719, 0.719)
+    globalAlpha=0.466
+    fillRect(138.843, 346.931, 1.665, 1.665)
+    globalAlpha=0.831
+    fillRect(893.984, 283.391, 1.308, 1.308)
+    globalAlpha=0.642
+    fillRect(915.913, 155.345, 1.394, 1.394)
+    globalAlpha=0.927
+    fillRect(106.325, 157.6, 1.047, 1.047)
+    globalAlpha=0.722
+    fillRect(275.581, 316.418, 0.651, 0.651)
+    globalAlpha=0.438
+    fillRect(1001.744, 214.625, 1.593, 1.593)
+    globalAlpha=0.946
+    fillRect(402.764, 371.932, 1.296, 1.296)
+    globalAlpha=0.712
+    fillRect(653.935, 86.797, 1.937, 1.937)
+    globalAlpha=0.952
+    fillRect(770.51, 190.995, 1.932, 1.932)
+    globalAlpha=0.513
+    fillRect(317.695, 182.361, 0.772, 0.772)
+    globalAlpha=0.481
+    fillRect(852.984, 101.063, 1.406, 1.406)
+    globalAlpha=0.935
+    fillRect(188.219, 297.254, 1.253, 1.253)
+    globalAlpha=0.871
+    fillRect(991.48, 199.318, 1.636, 1.636)
+    globalAlpha=0.928
+    fillRect(1181.103, 96.537, 0.825, 0.825)
+    globalAlpha=0.667
+    fillRect(539.311, 148.73, 1.875, 1.875)
+    globalAlpha=0.639
+    fillRect(426.601, 310.453, 1.936, 1.936)
+    globalAlpha=0.425
+    fillRect(1031.562, 244.481, 1.668, 1.668)
+    globalAlpha=0.921
+    fillRect(147.516, 119.836, 1.435, 1.435)
+    globalAlpha=0.998
+    fillRect(25.607, 203.564, 1.085, 1.085)
+    globalAlpha=1
+    fillRect(921.192, 86.181, 0.65, 0.65)
+    globalAlpha=0.979
+    fillRect(1148.189, 122.108, 0.622, 0.622)
+    globalAlpha=0.521
+    fillRect(522.004, 215.128, 0.611, 0.611)
+    globalAlpha=0.495
+    fillRect(839.528, 268.811, 1.263, 1.263)
+    globalAlpha=0.732
+    fillRect(40.889, 350.809, 1.367, 1.367)
+    globalAlpha=0.861
+    fillRect(729.449, 169.548, 1.082, 1.082)
+    globalAlpha=0.947
+    fillRect(1110.512, 251.539, 1.656, 1.656)
+    globalAlpha=0.731
+    fillRect(517.992, 374.668, 1.047, 1.047)
+    globalAlpha=0.48
+    fillRect(387.505, 321.922, 0.784, 0.784)
+  restore()
+  save()
+    translate(-337.4, 0)
+    fillStyle=#241543
+    beginPath()
+    moveTo(-200, 560)
+    lineTo(-100, 560)
+    lineTo(-14.836, 418.73)
+    lineTo(70.329, 560)
+    lineTo(36.263, 560)
+    lineTo(187.873, 391.071)
+    lineTo(339.483, 560)
+    lineTo(278.839, 560)
+    lineTo(418.079, 390.476)
+    lineTo(557.32, 560)
+    lineTo(501.623, 560)
+    lineTo(593.072, 450.832)
+    lineTo(684.52, 560)
+    lineTo(647.941, 560)
+    lineTo(755.776, 430.073)
+    lineTo(863.611, 560)
+    lineTo(820.477, 560)
+    lineTo(904.503, 457.786)
+    lineTo(988.528, 560)
+    lineTo(954.918, 560)
+    lineTo(1105.091, 431.899)
+    lineTo(1255.263, 560)
+    lineTo(1195.194, 560)
+    lineTo(1319.076, 373.884)
+    lineTo(1442.957, 560)
+    lineTo(1393.405, 560)
+    lineTo(1511.999, 452.707)
+    lineTo(1630.594, 560)
+    lineTo(3000, 560)
+    closePath()
+    fill()
+  restore()
+  save()
+    translate(-578.4, 0)
+    fillStyle=#2f1c55
+    beginPath()
+    moveTo(-200, 560)
+    lineTo(-100, 560)
+    lineTo(-10.004, 353.87)
+    lineTo(79.991, 560)
+    lineTo(43.993, 560)
+    lineTo(163.422, 305.448)
+    lineTo(282.851, 560)
+    lineTo(235.079, 560)
+    lineTo(360.954, 307.983)
+    lineTo(486.829, 560)
+    lineTo(436.479, 560)
+    lineTo(562.742, 314.442)
+    lineTo(689.004, 560)
+    lineTo(638.499, 560)
+    lineTo(748.332, 411.839)
+    lineTo(858.164, 560)
+    lineTo(814.231, 560)
+    lineTo(915.725, 331.122)
+    lineTo(1017.218, 560)
+    lineTo(976.621, 560)
+    lineTo(1084.506, 318.682)
+    lineTo(1192.392, 560)
+    lineTo(1149.237, 560)
+    lineTo(1242.011, 322.483)
+    lineTo(1334.784, 560)
+    lineTo(1297.675, 560)
+    lineTo(1414.84, 301.852)
+    lineTo(1532.005, 560)
+    lineTo(1485.139, 560)
+    lineTo(1566.512, 324.105)
+    lineTo(1647.886, 560)
+    lineTo(1615.337, 560)
+    lineTo(1702.135, 405.03)
+    lineTo(1788.934, 560)
+    lineTo(1754.214, 560)
+    lineTo(1838.061, 349.011)
+    lineTo(1921.908, 560)
+    lineTo(3000, 560)
+    closePath()
+    fill()
+  restore()
+  save()
+    translate(-964, 0)
+    fillStyle=#2d1b4e
+    fillRect(0, 560, 820, 40)
+    fillStyle=#7b4fa6
+    fillRect(0, 560, 820, 4)
+    fillStyle=#2d1b4e
+    fillRect(940, 560, 660, 40)
+    fillStyle=#7b4fa6
+    fillRect(940, 560, 660, 4)
+    fillStyle=#2d1b4e
+    fillRect(1800, 560, 600, 40)
+    fillStyle=#7b4fa6
+    fillRect(1800, 560, 600, 4)
+    fillStyle=#4a2d7a
+    fillRect(320, 450, 140, 12)
+    fillRect(540, 370, 140, 12)
+    fillRect(840, 410, 120, 12)
+    fillRect(1200, 430, 140, 12)
+    fillRect(1640, 400, 130, 12)
+    fillRect(2000, 420, 140, 12)
+    fillStyle=#c98f3d
+    fillRect(450, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(451.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(700, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(1300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(2100, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2101.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1950, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1951.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1250, 394, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1251.5, 395.5, 33, 33)
+    fillStyle=#cbb8ff
+    fillRect(2340, 470, 4, 90)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2342, 466, 5, 0, 6.283)
+    fill()
+    fillStyle=#ff6f91
+    beginPath()
+    moveTo(2344, 474)
+    lineTo(2380, 486)
+    lineTo(2344, 498)
+    closePath()
+    fill()
+    save()
+      translate(1364, 560)
+      scale(1, 1)
+      fillStyle=#fff5fa
+      fillRect(-14, -24, 28, 18)
+      fillRect(6, -34, 12, 12)
+      fillStyle=#ffd75e
+      beginPath()
+      moveTo(13, -34)
+      lineTo(17, -46)
+      lineTo(19, -34)
+      closePath()
+      fill()
+      fillStyle=#e78fd0
+      fillRect(2, -34, 5, 14)
+      fillStyle=#f3d9e6
+      fillRect(-12, -6, 5, 6)
+      fillRect(7, -6, 5, 6)
+      save()
+        fillStyle=#f5d76e
+        fillRect(-7, -44, 4, 13)
+        fillStyle=#8fd3f4
+        beginPath()
+        moveTo(-3.5, -31)
+        lineTo(3.5, -31)
+        lineTo(6.5, -21)
+        lineTo(-6.5, -21)
+        closePath()
+        fill()
+        fillRect(-3, -36, 7, 5)
+        fillStyle=#ffe0c8
+        fillRect(2, -29, 9, 3)
+        fillRect(-4, -44, 9, 8)
+        fillStyle=#3a2b4d
+        fillRect(1.5, -39.5, 2, 2.5)
+        fillStyle=#f5d76e
+        fillRect(-5, -45, 11, 4)
+        fillStyle=#ffd75e
+        fillRect(-4.5, -47.5, 10, 3)
+        beginPath()
+        moveTo(-4.5, -47.5)
+        lineTo(-3, -51)
+        lineTo(-1.5, -47.5)
+        moveTo(-1, -47.5)
+        lineTo(0.5, -52)
+        lineTo(2, -47.5)
+        moveTo(2.5, -47.5)
+        lineTo(4, -51)
+        lineTo(5.5, -47.5)
+        closePath()
+        fill()
+        fillStyle=#ff5e78
+        fillRect(-0.5, -46.5, 1.5, 1.5)
+      restore()
+    restore()
+    save()
+      translate(573.5, 546)
+      scale(-1, 1)
+      fillStyle=#5d3a9b
+      fillRect(-15, -14, 30, 24)
+      fillStyle=#2d1b4e
+      fillRect(-13, 10, 8, 4)
+      fillRect(5, 10, 8, 4)
+      fillStyle=#fff
+      fillRect(4, -10, 6, 6)
+      fillStyle=#e33
+      fillRect(6, -8, 3, 3)
+    restore()
+    save()
+      translate(1063.5, 546)
+      scale(-1, 1)
+      fillStyle=#5d3a9b
+      fillRect(-15, -14, 30, 24)
+      fillStyle=#2d1b4e
+      fillRect(-13, 10, 8, 4)
+      fillRect(5, 10, 8, 4)
+      fillStyle=#fff
+      fillRect(4, -10, 6, 6)
+      fillStyle=#e33
+      fillRect(6, -8, 3, 3)
+    restore()
+    save()
+      translate(1463.5, 546)
+      scale(-1, 1)
+      fillStyle=#5d3a9b
+      fillRect(-15, -14, 30, 24)
+      fillStyle=#2d1b4e
+      fillRect(-13, 10, 8, 4)
+      fillRect(5, 10, 8, 4)
+      fillStyle=#fff
+      fillRect(4, -10, 6, 6)
+      fillStyle=#e33
+      fillRect(6, -8, 3, 3)
+    restore()
+    save()
+      translate(2025, 546)
+      scale(1, 1)
+      fillStyle=#5d3a9b
+      fillRect(-15, -14, 30, 24)
+      fillStyle=#2d1b4e
+      fillRect(-13, 10, 8, 4)
+      fillRect(5, 10, 8, 4)
+      fillStyle=#fff
+      fillRect(4, -10, 6, 6)
+      fillStyle=#e33
+      fillRect(6, -8, 3, 3)
+    restore()
+    save()
+      translate(2263.5, 546)
       scale(-1, 1)
       fillStyle=#5d3a9b
       fillRect(-15, -14, 30, 24)
@@ -5541,6 +6159,15 @@ save()
     fillRect(1350, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1351.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1501.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1518, 542, 8, 15.02, 19.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1600, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -6063,6 +6690,15 @@ save()
     fillRect(1350, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1351.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1501.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1518, 542, 8, 15.02, 19.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1600, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -6860,6 +7496,15 @@ save()
     fillRect(1350, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1351.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1501.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1518, 542, 8, 15.02, 19.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1600, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -7643,6 +8288,15 @@ save()
     fillRect(1350, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1351.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1501.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1518, 542, 8, 15.02, 19.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1600, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -8156,6 +8810,15 @@ save()
     fillRect(1350, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1351.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1501.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1518, 542, 8, 15.02, 19.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1600, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -8730,6 +9393,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.8, 15)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -9267,6 +9939,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.02, 14.22)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -9847,6 +10528,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 11.8, 16)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -10367,6 +11057,15 @@ save()
     fillRect(700, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(701.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1000, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1001.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1018, 542, 8, 10.2, 14.4)
+    stroke()
     fillStyle=#c98f3d
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22

@@ -33,7 +33,30 @@ function rollDrop(rng) {
   return 'gem';
 }
 
+export const MYSTERY_BOOTS = 5; // s of super-jump from a mystery box (short)
+
+// Mystery box payload, hidden until broken: 40% heart, 25% three-gem
+// fountain, 25% short boots, 10% dud. Uses the same rng as the regular
+// table, so a seeded run is reproducible. Returns the kind (null = dud).
+function spawnMystery(box, rng) {
+  const r = rng();
+  const x = box.x + box.w / 2 - 8, y = box.y - 4;
+  const mk = (kind, vx, vy, short = false) => {
+    loot.push({ x, y, w: 16, h: 16, vx, vy, onGround: false, kind, short, taken: false, t: 0 });
+  };
+  if (r < 0.40) { mk('heart', 0, -350); return 'heart'; }
+  if (r < 0.65) { // three-gem fountain: spread velocities
+    mk('gem', -80, -380); mk('gem', 0, -430); mk('gem', 80, -380);
+    return 'gem';
+  }
+  if (r < 0.90) { mk('boots', 0, -350, true); return 'boots'; }
+  return null; // dud
+}
+
+// Returns the dropped kind (null for a mystery dud) so the caller can
+// play the fizzle.
 export function spawnLoot(box, rng = Math.random) {
+  if (box.mystery) return spawnMystery(box, rng);
   let kind;
   if (box.drop) kind = box.drop; // designated drop wins
   else if (!bowGiven) { kind = 'bow'; bowGiven = true; }
@@ -45,6 +68,7 @@ export function spawnLoot(box, rng = Math.random) {
     kind,
     taken: false, t: 0,
   });
+  return kind;
 }
 
 // hooks.onSunbeam: wired by game.js to the screen-clear; loot.js stays
@@ -94,7 +118,7 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         fx.play('grow');
         burst(it.x + 8, it.y + 8, FX.grow);
       } else if (it.kind === 'boots') {
-        p.boots = BOOTS_TIME;
+        p.boots = it.short ? MYSTERY_BOOTS : BOOTS_TIME;
         fx.play('boots');
         burst(it.x + 8, it.y + 8, FX.boots);
       } else if (it.kind === 'magnet') {

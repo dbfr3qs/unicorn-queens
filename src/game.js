@@ -37,6 +37,8 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   resetFireballs();
   resetParticles();
   game.camera.x = 0;
+  game.camera.shake = 0; // camera is a singleton: don't leak shake across restarts
+  game.camera.mag = 0;
   game.gateChimed = false;
   game.lastTs = 0;
 }

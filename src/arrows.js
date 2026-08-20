@@ -61,7 +61,7 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
         b.broken = true;
         a.dead = true;
         fx.play('box');
-        spawnLoot(b);
+        if (spawnLoot(b) === null) fx.play('fizzle'); // mystery dud: nothing fell
         burst(b.x + b.w / 2, b.y + b.h / 2, FX.boxBreak);
         shake(cam, 4, 0.15);
         break;

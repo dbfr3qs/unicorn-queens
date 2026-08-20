@@ -38,5 +38,14 @@ export function draw(ctx, viewW, viewH) {
   drawParticles(ctx);
   ctx.restore();
   ctx.restore();
+  if (level.sunbeamT > 0) { // sunbeam flash: golden light over the screen
+    const a = level.sunbeamT / 0.4;
+    ctx.globalAlpha = a * 0.35;
+    ctx.fillStyle = '#ffd75e';
+    ctx.fillRect(0, 0, viewW, viewH);
+    ctx.globalAlpha = a * 0.3; // brighter core column
+    ctx.fillRect(viewW / 2 - 70, 0, 140, viewH);
+    ctx.globalAlpha = 1;
+  }
   drawHud(ctx, viewW, viewH);
 }

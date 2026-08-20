@@ -4,7 +4,7 @@ import { burst, updateParticles, resetParticles } from './particles.js';
 import { createCamera, updateCamera, shake } from './camera.js';
 import { createPlayer, updatePlayer } from './player.js';
 import { input } from './input.js';
-import { createEnemies, updateEnemies } from './enemies.js';
+import { createEnemies, updateEnemies, damageEnemy } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
 import { resetFireballs, updateFireballs } from './projectiles.js';
@@ -62,7 +62,8 @@ export function update(dt, viewW, fx) {
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
-  updateLoot(game.player, game.level, dt, fx);
+  updateLoot(game.player, game.level, dt, fx, { onSunbeam: fireSunbeam });
+  if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx);
   updateFireballs(game.player, game.level, game.camera, dt, fx);
   updateParticles(dt);
@@ -77,6 +78,20 @@ export function update(dt, viewW, fx) {
     game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
   }
   if (!game.player.dead && !game.player.won) updateCamera(game.camera, game.player, game.level, viewW, dt);
+}
+
+// Sunbeam pickup: every non-boss enemy on the level dies through the
+// normal damage path (consistent sounds/FX), live fireballs clear, and
+// a golden beam flashes across the screen (sunbeamT, decayed in update).
+// The mage is exempt - he has his own hp and the arrows/shield phases.
+export function fireSunbeam(p, lvl, fx) {
+  for (const e of game.enemies) {
+    if (e.dead || e.kind === 'mage') continue;
+    while (!e.dead) damageEnemy(e, fx);
+  }
+  resetFireballs();
+  lvl.sunbeamT = 0.4;
+  shake(game.camera, 8, 0.4);
 }
 
 // R on the end screen: advance to the next level on a win, restart on a

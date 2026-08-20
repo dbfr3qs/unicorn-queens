@@ -35,6 +35,20 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'sunbeam') {
+      c.strokeStyle = '#ffe9b0';             // rotating rays
+      c.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4 + it.t;
+        c.beginPath();
+        c.moveTo(Math.cos(a) * 7, Math.sin(a) * 7);
+        c.lineTo(Math.cos(a) * 10, Math.sin(a) * 10);
+        c.stroke();
+      }
+      c.fillStyle = '#ffd75e';               // radiant disc
+      c.beginPath();
+      c.arc(0, 0, 6, 0, Math.PI * 2);
+      c.fill();
     } else if (it.kind === 'magnet') {
       c.strokeStyle = palette.pink;          // horseshoe magnet
       c.lineWidth = 4;

@@ -20,6 +20,7 @@ const DROP_TABLE = [
   ['heart', 0.20],
   ['boots', 0.25],
   ['magnet', 0.30],
+  ['sunbeam', 0.33],
   ['gem', 1.0],
 ];
 
@@ -44,7 +45,9 @@ export function spawnLoot(box, rng = Math.random) {
   });
 }
 
-export function updateLoot(p, lvl, dt, fx) {
+// hooks.onSunbeam: wired by game.js to the screen-clear; loot.js stays
+// decoupled from the enemy list. Absent in unit tests - safe to omit.
+export function updateLoot(p, lvl, dt, fx, hooks = {}) {
   for (const it of loot) {
     if (it.taken) continue;
     it.t += dt;
@@ -96,6 +99,10 @@ export function updateLoot(p, lvl, dt, fx) {
         p.magnet = MAGNET_TIME;
         fx.play('magnet');
         burst(it.x + 8, it.y + 8, FX.magnet);
+      } else if (it.kind === 'sunbeam') {
+        fx.play('sunbeam');
+        burst(it.x + 8, it.y + 8, FX.sunbeam);
+        if (hooks.onSunbeam) hooks.onSunbeam(p, lvl, fx); // screen clear
       } else { // heart
         p.hp = Math.min(p.hp + 1, 3);
         fx.play('heart');

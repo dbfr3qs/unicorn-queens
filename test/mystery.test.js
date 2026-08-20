@@ -63,9 +63,11 @@ describe('integration', () => {
     const realRandom = Math.random;
     Math.random = () => 0.95; // force the dud band through the unseeded arrows path
     const calls = [];
+    const cam = createCamera();
+    cam.x = 340; // box at 820..856 sits on screen (arrows cull off-screen)
     try {
       fireArrow(p);
-      for (let i = 0; i < 30; i++) updateArrows([], l, createCamera(), DT, fx(calls));
+      for (let i = 0; i < 30; i++) updateArrows([], l, cam, DT, fx(calls));
     } finally {
       Math.random = realRandom;
     }

@@ -103,6 +103,7 @@ describe('piercing', () => {
     g.player.x = mage.x - 150;
     g.player.y = g.level.groundY - P_H;
     g.player.facing = 1;
+    g.camera.x = g.player.x + 14 - 400; // keep the fight on screen (arrows cull off-screen)
     fireStarArrow(g.player);
     for (let i = 0; i < 40; i++) updateArrows(g.enemies, g.level, g.camera, DT, fx([]));
     expect(mage.hp).toBe(4); // staggered once...

@@ -33,11 +33,14 @@ export function fireStarArrow(p) {
   });
 }
 
-export function updateArrows(enemies, lvl, cam, dt, fx) {
+export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
   for (const a of arrows) {
     if (a.dead) continue;
     a.x += a.vx * dt;
-    if (a.x < -20 || a.x > lvl.width + 20) { a.dead = true; continue; }
+    // Arrows only affect what's on screen: they vanish at the viewport
+    // edge (small grace so a shot fired from the screen edge still leaves
+    // the bow). No more sniping enemies or boxes across the level.
+    if (a.x > cam.x + viewW + 20 || a.x + 14 < cam.x - 20) { a.dead = true; continue; }
     for (const e of enemies) { // hit an enemy
       if (e.dead || (a.hit && a.hit.has(e))) continue; // no double-dips
       if (a.x < e.x + e.w && a.x + 14 > e.x && a.y < e.y + e.h && a.y + 4 > e.y) {

@@ -87,11 +87,11 @@ describe('updateArrows', () => {
     expect(loot.length).toBe(0);
   });
 
-  it('culls arrows that leave the world, either edge', () => {
+  it('culls arrows that leave the viewport, either edge', () => {
     const l = lvl();
-    arrows.push({ x: 2415, y: 300, vx: ARROW_SPEED, dead: false });
-    arrows.push({ x: -15, y: 300, vx: -ARROW_SPEED, dead: false });
-    updateArrows([], l, createCamera(), DT, fx([]));
+    arrows.push({ x: 900, y: 300, vx: ARROW_SPEED, dead: false }); // off-screen right, still in the level
+    arrows.push({ x: -40, y: 300, vx: -ARROW_SPEED, dead: false }); // off-screen left
+    updateArrows([], l, createCamera(), DT, fx([])); // camera at 0: viewport 0..800
     expect(arrows.length).toBe(0);
   });
 });

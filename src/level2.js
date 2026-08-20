@@ -50,7 +50,7 @@ export function createLevel2(viewH = 600) {
       { x: 2050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'magnet' }, // room 2
       { x: 2420, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heart' },
       { x: 2620, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box' },
-      { x: 2800, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'gem' }, // before the boss
+      { x: 2800, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heartcap' }, // boss hall boon
     ],
     pearl: {
       x: 3340, y: groundY - 60, w: 20, h: 20,

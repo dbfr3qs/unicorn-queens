@@ -10,7 +10,7 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.save();
   ctx.font = fonts.hud;
   ctx.textBaseline = 'top';
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < player.maxHp; i++) { // 4th pip appears with the heart cap
     ctx.fillStyle = i < player.hp ? palette.pink : palette.heartEmpty;
     ctx.fillText('\u2665', 12 + i * 22, 10); // heart
   }

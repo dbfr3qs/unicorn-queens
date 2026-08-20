@@ -35,6 +35,20 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'heartcap') {
+      c.fillStyle = palette.gold;           // golden heart
+      c.beginPath();
+      c.arc(-3.5, -2, 4.5, 0, Math.PI * 2);
+      c.arc(3.5, -2, 4.5, 0, Math.PI * 2);
+      c.fill();
+      c.beginPath();
+      c.moveTo(-7.5, 0); c.lineTo(0, 8); c.lineTo(7.5, 0);
+      c.closePath(); c.fill();
+      c.fillStyle = '#fff';                 // little crown
+      c.fillRect(-5.5, -9.5, 11, 2.5);
+      c.fillRect(-5.5, -13, 2.5, 5);
+      c.fillRect(-1.25, -13.5, 2.5, 5.5);
+      c.fillRect(3, -13, 2.5, 5);
     } else if (it.kind === 'sunbeam') {
       c.strokeStyle = '#ffe9b0';             // rotating rays
       c.lineWidth = 1.5;

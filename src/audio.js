@@ -37,6 +37,7 @@ export function sfx(name) {
     case 'box':   beep(160, 55, 0.12, 'square', 0.25); break;
     case 'gem':   beep(880, 1500, 0.1, 'sine', 0.2); break;
     case 'heart': beep(520, 880, 0.12, 'sine', 0.22); break;
+    case 'heartcap': [520, 880, 1320].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.22, i * 0.08)); break;
     case 'hurt':  beep(320, 90, 0.22, 'sawtooth', 0.25); break;
     case 'land':  beep(120, 55, 0.06, 'triangle', 0.15); break;
     case 'die':   beep(400, 70, 0.4, 'sawtooth', 0.25); break;

@@ -80,4 +80,22 @@ describe('permanent state across levels', () => {
     expect(game.player.w).toBe(P_W);
     expect(game.player.y).toBe(game.level.groundY - P_H);
   });
+
+  it('heart cap survives advance AND death-restart; big survives neither a death', () => {
+    startGame(600, 0);
+    game.player.maxHp = 4;
+    game.player.hp = 1;
+    startGame(600, 1, game.player); // advance
+    expect(game.player.maxHp).toBe(4);
+    expect(game.player.hp).toBe(3); // hp always resets
+    // death-restart: same level, prev is dead -> cap kept, big reset
+    game.player.big = true;
+    game.player.w = BIG_W; game.player.h = BIG_H;
+    game.player.dead = true;
+    startGame(600, 1, game.player);
+    expect(game.player.maxHp).toBe(4);
+    expect(game.player.big).toBe(false);
+    expect(game.player.w).toBe(P_W);
+    expect(game.player.hp).toBe(3);
+  });
 });

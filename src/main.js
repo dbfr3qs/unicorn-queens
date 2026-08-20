@@ -15,9 +15,9 @@ addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
 addEventListener('keydown', e => {
   if (e.code === 'KeyR' && (game.player.dead || game.player.won)) {
-    const next = restartTarget();
-    // advancing carries big/bow; a death-restart resets to small
-    startGame(canvas.height, next, next !== game.levelIndex ? game.player : null);
+    // startGame carries big/bow on advance only; the heart cap (maxHp)
+    // always survives, being permanent for the run
+    startGame(canvas.height, restartTarget(), game.player);
   }
 });
 startGame(canvas.height);

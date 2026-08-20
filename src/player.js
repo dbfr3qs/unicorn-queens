@@ -32,6 +32,7 @@ export function createPlayer(lvl, carry = {}) {
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
     hasBow: !!lvl.startItems?.includes('bow') || !!carry.hasBow, fireCd: 0, // level 2 starts with the bow
     big,
+    maxHp: carry.maxHp ?? 3, // heart cap: permanent for the run
     boots: 0, // bounce boots timer (s); never carried across levels
     magnet: 0, // gem attraction timer (s); never carried across levels
     won: false,

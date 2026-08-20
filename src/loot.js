@@ -103,8 +103,17 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         fx.play('sunbeam');
         burst(it.x + 8, it.y + 8, FX.sunbeam);
         if (hooks.onSunbeam) hooks.onSunbeam(p, lvl, fx); // screen clear
+      } else if (it.kind === 'heartcap') {
+        if (p.maxHp < 4) {
+          p.maxHp = 4; // permanent for the run
+          fx.play('heartcap');
+        } else {
+          score += 1; // already capped: pays out like a gem
+          fx.play('gem');
+        }
+        burst(it.x + 8, it.y + 8, FX.heart);
       } else { // heart
-        p.hp = Math.min(p.hp + 1, 3);
+        p.hp = Math.min(p.hp + 1, p.maxHp);
         fx.play('heart');
         burst(it.x + 8, it.y + 8, FX.heart);
       }

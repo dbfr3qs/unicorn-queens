@@ -74,6 +74,13 @@ test('boots active', () => {
   expect(step({}, 1)).toMatchSnapshot(); // golden shoes on the unicorn
 });
 
+test('heart cap (4 hp pips)', () => {
+  const g = freshGame();
+  g.player.maxHp = 4;
+  g.player.hp = 4;
+  expect(step({}, 1)).toMatchSnapshot(); // fourth pip filled in the HUD
+});
+
 test('bow + arrow in flight', () => {
   const g = freshGame();
   g.player.hasBow = true;

@@ -38,7 +38,7 @@ describe('drop table', () => {
     expect(kindAt(0.26)).toBe('magnet');
     expect(kindAt(0.305)).toBe('sunbeam');
     expect(kindAt(0.329)).toBe('sunbeam');
-    expect(kindAt(0.34)).toBe('gem');
+    expect(kindAt(0.38)).toBe('gem'); // star band starts at 0.33 (P5)
   });
 });
 

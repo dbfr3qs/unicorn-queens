@@ -21,6 +21,7 @@ const DROP_TABLE = [
   ['boots', 0.25],
   ['magnet', 0.30],
   ['sunbeam', 0.33],
+  ['star', 0.37],
   ['gem', 1.0],
 ];
 
@@ -103,6 +104,10 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         fx.play('sunbeam');
         burst(it.x + 8, it.y + 8, FX.sunbeam);
         if (hooks.onSunbeam) hooks.onSunbeam(p, lvl, fx); // screen clear
+      } else if (it.kind === 'star') {
+        p.stars = Math.min(10, p.stars + 5);
+        fx.play('star');
+        burst(it.x + 8, it.y + 8, FX.star);
       } else if (it.kind === 'heartcap') {
         if (p.maxHp < 4) {
           p.maxHp = 4; // permanent for the run

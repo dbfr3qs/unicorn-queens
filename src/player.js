@@ -3,7 +3,7 @@ import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { spawnLoot } from './loot.js';
-import { fireArrow, FIRE_CD } from './arrows.js';
+import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
@@ -35,6 +35,7 @@ export function createPlayer(lvl, carry = {}) {
     maxHp: carry.maxHp ?? 3, // heart cap: permanent for the run
     boots: 0, // bounce boots timer (s); never carried across levels
     magnet: 0, // gem attraction timer (s); never carried across levels
+    stars: 0, // star arrows in reserve; never carried across levels
     won: false,
   };
 }
@@ -67,7 +68,8 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.boots = Math.max(0, player.boots - dt);
   player.magnet = Math.max(0, player.magnet - dt);
   if (inp.fire && player.hasBow && player.fireCd <= 0) { // unlimited arrows
-    fireArrow(player);
+    if (player.stars > 0) { player.stars--; fireStarArrow(player); } // stars first
+    else fireArrow(player);
     player.fireCd = FIRE_CD;
     fx.play('fire');
   }

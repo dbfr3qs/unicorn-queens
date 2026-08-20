@@ -35,6 +35,16 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'star') {
+      c.fillStyle = palette.gold;           // four-point star, slow spin
+      c.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const r = i % 2 === 0 ? 9 : 3.5;
+        const a = (i * Math.PI) / 4 - Math.PI / 2 + it.t;
+        c[i === 0 ? 'moveTo' : 'lineTo'](Math.cos(a) * r, Math.sin(a) * r);
+      }
+      c.closePath();
+      c.fill();
     } else if (it.kind === 'heartcap') {
       c.fillStyle = palette.gold;           // golden heart
       c.beginPath();

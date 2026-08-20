@@ -21,21 +21,40 @@ export function fireArrow(p) {
   });
 }
 
+// Star arrow: pierces up to 5 enemies (never re-hitting one), passes
+// through boxes, no gravity (like every arrow here).
+export function fireStarArrow(p) {
+  arrows.push({
+    x: p.facing > 0 ? p.x + p.w : p.x - 14,
+    y: p.y + p.h - 24,
+    vx: p.facing * ARROW_SPEED,
+    dead: false,
+    star: true, pierces: 5, hit: new Set(),
+  });
+}
+
 export function updateArrows(enemies, lvl, cam, dt, fx) {
   for (const a of arrows) {
     if (a.dead) continue;
     a.x += a.vx * dt;
     if (a.x < -20 || a.x > lvl.width + 20) { a.dead = true; continue; }
     for (const e of enemies) { // hit an enemy
-      if (e.dead) continue;
+      if (e.dead || (a.hit && a.hit.has(e))) continue; // no double-dips
       if (a.x < e.x + e.w && a.x + 14 > e.x && a.y < e.y + e.h && a.y + 4 > e.y) {
         damageEnemy(e, fx); // hp, per-kind hit reaction, death at 0
-        a.dead = true;
         shake(cam, 3, 0.12);
+        if (a.star) { // pierce: remember the hit, keep flying on budget
+          a.hit.add(e);
+          a.pierces -= 1;
+          if (a.pierces <= 0) { a.dead = true; break; }
+          continue;
+        }
+        a.dead = true;
         break;
       }
     }
     if (a.dead) continue;
+    if (a.star) continue; // star arrows pass through boxes
     for (const b of lvl.boxes) { // break a box from range
       if (b.broken) continue;
       if (a.x < b.x + b.w && a.x + 14 > b.x && a.y < b.y + b.h && a.y + 4 > b.y) {

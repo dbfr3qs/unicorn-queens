@@ -344,6 +344,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -854,6 +858,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -1371,6 +1379,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -1910,6 +1922,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -2407,6 +2423,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -2918,6 +2938,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -3472,6 +3496,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -3984,6 +4012,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -4527,6 +4559,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -5038,6 +5074,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -5458,6 +5498,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1161.5, 325.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1750, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1751.5, 525.5, 33, 33)
@@ -5465,6 +5509,10 @@ save()
     fillRect(2050, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(2051.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(2300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(2420, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -6230,6 +6278,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1161.5, 325.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1750, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1751.5, 525.5, 33, 33)
@@ -6237,6 +6289,10 @@ save()
     fillRect(2050, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(2051.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(2300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(2420, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -6993,6 +7049,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1161.5, 325.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1750, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1751.5, 525.5, 33, 33)
@@ -7000,6 +7060,10 @@ save()
     fillRect(2050, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(2051.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(2300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(2420, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -7486,6 +7550,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1161.5, 325.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1750, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1751.5, 525.5, 33, 33)
@@ -7493,6 +7561,10 @@ save()
     fillRect(2050, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(2051.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(2300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(2420, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -8048,6 +8120,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -8576,6 +8652,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
@@ -9149,6 +9229,10 @@ save()
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
     fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1951.5, 525.5, 33, 33)
@@ -9660,6 +9744,10 @@ save()
     fillRect(1300, 524, 36, 36)
     strokeStyle=#8a5f22
     strokeRect(1301.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
     fillStyle=#c98f3d
     fillRect(1950, 524, 36, 36)
     strokeStyle=#8a5f22

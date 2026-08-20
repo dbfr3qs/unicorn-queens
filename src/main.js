@@ -14,7 +14,8 @@ startLoop(dt => {
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
 addEventListener('keydown', e => {
-  if (e.code === 'KeyR' && (game.player.dead || game.player.won)) {
+  if (e.repeat) return; // holding jump through the end screen must not auto-advance
+  if (e.code === 'Space' && (game.player.dead || game.player.won)) {
     // startGame carries big/bow on advance only; the heart cap (maxHp)
     // always survives, being permanent for the run
     startGame(canvas.height, restartTarget(), game.player);

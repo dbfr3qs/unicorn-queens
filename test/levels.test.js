@@ -26,7 +26,7 @@ describe('startGame + restartTarget', () => {
     expect(game.level.width).toBe(2400);
   });
 
-  it('R restarts the level on a loss, and on a win with no next level', () => {
+  it('Space restarts the level on a loss, and on a win with no next level', () => {
     startGame(600);
     game.player.dead = true;
     expect(restartTarget()).toBe(0); // loss: restart level 1

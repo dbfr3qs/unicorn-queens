@@ -22,7 +22,7 @@ step. Serve over http — the modules won't load from `file://`.
    the magic pearl appear, take it to break the seal, and walk the
    four steps down to the exit.
 
-Win a level and press R to play the next one.
+Win a level and press Space to play the next one.
 
 ## Loot
 
@@ -55,7 +55,7 @@ the only exception. Score and the one-time bow reset each level.
 - Jump: Space / W / up arrow
 - Shoot: X or J
 - Sound: M
-- Restart (after win/loss): R
+- Next level / retry (after win/loss): Space
 
 ## Layout
 

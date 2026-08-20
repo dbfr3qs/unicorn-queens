@@ -3220,7 +3220,7 @@ save()
   fillText(GAME OVER, 400, 276)
   font=16px monospace
   fillStyle=#cbb8ff
-  fillText(press R to try again, 400, 312)
+  fillText(press Space to try again, 400, 312)
 restore()
 save()
   font=12px monospace
@@ -11367,7 +11367,7 @@ save()
   fillText(LEVEL CLEAR!, 400, 276)
   font=16px monospace
   fillStyle=#cbb8ff
-  fillText(score 0 - press R for next level, 400, 312)
+  fillText(score 0 - press Space for next level, 400, 312)
 restore()
 save()
   font=12px monospace

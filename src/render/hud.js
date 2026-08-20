@@ -32,10 +32,10 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.font = fonts.sub;
     ctx.fillStyle = palette.lavender;
     const sub = !player.won
-      ? 'press R to try again'
+      ? 'press Space to try again'
       : game.levelIndex + 1 < LEVELS.length
-        ? 'score ' + score + ' - press R for next level'
-        : 'score ' + score + ' - press R to play again';
+        ? 'score ' + score + ' - press Space for next level'
+        : 'score ' + score + ' - press Space to play again';
     ctx.fillText(sub, viewW / 2, viewH / 2 + 12);
     ctx.restore();
   }

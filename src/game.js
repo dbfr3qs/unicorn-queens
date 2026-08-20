@@ -101,8 +101,8 @@ export function fireSunbeam(p, lvl, fx, viewW = 800) {
   shake(game.camera, 8, 0.4);
 }
 
-// R on the end screen: advance to the next level on a win, restart on a
-// loss (or on the final level's win).
+// Space on the end screen: advance to the next level on a win, restart on
+// a loss (or on the final level's win).
 export function restartTarget() {
   if (game.player.won && game.levelIndex + 1 < LEVELS.length) return game.levelIndex + 1;
   return game.levelIndex;

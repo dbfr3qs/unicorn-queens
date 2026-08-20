@@ -21,8 +21,8 @@ export function fireArrow(p) {
   });
 }
 
-// Star arrow: pierces up to 5 enemies (never re-hitting one), passes
-// through boxes, no gravity (like every arrow here).
+// Star arrow: pierces up to 5 enemies (never re-hitting one), shatters
+// boxes in its path and keeps flying, no gravity (like every arrow here).
 export function fireStarArrow(p) {
   arrows.push({
     x: p.facing > 0 ? p.x + p.w : p.x - 14,
@@ -54,16 +54,15 @@ export function updateArrows(enemies, lvl, cam, dt, fx) {
       }
     }
     if (a.dead) continue;
-    if (a.star) continue; // star arrows pass through boxes
     for (const b of lvl.boxes) { // break a box from range
       if (b.broken) continue;
       if (a.x < b.x + b.w && a.x + 14 > b.x && a.y < b.y + b.h && a.y + 4 > b.y) {
         b.broken = true;
-        a.dead = true;
         fx.play('box');
         if (spawnLoot(b) === null) fx.play('fizzle'); // mystery dud: nothing fell
         burst(b.x + b.w / 2, b.y + b.h / 2, FX.boxBreak);
         shake(cam, 4, 0.15);
+        if (!a.star) a.dead = true; // stars shatter the box and keep flying
         break;
       }
     }

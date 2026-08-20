@@ -121,15 +121,17 @@ describe('piercing', () => {
     expect(arrows.length).toBe(0);
   });
 
-  it('a star arrow passes through boxes', () => {
+  it('a star arrow shatters boxes in its path and keeps flying', () => {
     const { l, p } = standingPlayer();
     p.x = 100; p.facing = 1;
     const b = { x: 300, y: l.groundY - 40, w: 36, h: 36, broken: false };
     l.boxes.push(b);
+    const calls = [];
     fireStarArrow(p);
-    for (let i = 0; i < 40; i++) updateArrows([], l, createCamera(), DT, fx([]));
-    expect(b.broken).toBe(false);
-    expect(arrows.length).toBe(1); // flew right through
+    for (let i = 0; i < 40; i++) updateArrows([], l, createCamera(), DT, fx(calls));
+    expect(b.broken).toBe(true); // broken as it flew past
+    expect(calls).toContain('box');
+    expect(arrows.length).toBe(1); // ...and the star kept flying
   });
 });
 

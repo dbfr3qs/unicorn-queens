@@ -24,6 +24,31 @@ step. Serve over http — the modules won't load from `file://`.
 
 Win a level and press R to play the next one.
 
+## Loot
+
+Boxes break with a bow arrow. The first box you break in a level drops the
+bow — the meadow teaches it, and the castle starts with one, so its first
+box is a spare. Random boxes roll the table below; special items (shield,
+lantern, heart cap, mystery) only come from their designated boxes.
+
+| item | effect | duration / uses | where it drops |
+|---|---|---|---|
+| gem | +1 score | — | table (59%), mystery fountain, castle bridge box |
+| heart | +1 hp up to your max | — | table (20%), mystery (40%), castle room-2 box |
+| grow | big form: bigger body, 1.35× jump; lasts the rest of the level and carries into the next | permanent | meadow, castle platform |
+| bounce boots | 1.6× jump | 10 s | table (5%), mystery (25%, 5 s version), meadow + castle box |
+| magnet | gems fly to you | 8 s | table (5%), meadow + castle box |
+| sunbeam | instant burst that defeats every non-mage enemy | instant | table (3%), meadow platform, castle room-1 box |
+| star arrows | +5 arrows that pierce up to 5 enemies each (reserve cap 10) | until fired | table (4%), meadow + 2 castle boxes |
+| levitation | +3 mid-air jumps (cap 3) | until used | table (4%), meadow + castle box |
+| mirror shield | reflects up to 3 fireballs; a reflected shot damages the mage. Doesn't block enemy contact | 3 uses | castle boss-hall box |
+| lantern | ghosts within ~160 px flee the light (they still hurt on touch) | 8 s | two castle-interior boxes, among the ghosts |
+| heart cap | +1 max hp (3 → 4); permanent for the run — survives death and level change | permanent | castle boss-hall box |
+| mystery | hidden payload: heart (40%), three-gem fountain (25%), 5 s boots (25%), dud (10%) | — | one box per level (purple, swirled) |
+
+Timed powers and use-counters never carry across levels — the heart cap is
+the only exception. Score and the one-time bow reset each level.
+
 ## Controls
 
 - Move: arrows or A/D

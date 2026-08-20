@@ -1,6 +1,6 @@
 # New loot — phased implementation plan
 
-Status: not started.
+Status: all phases P1–P10 complete. See git log.
 
 One phase = one commit, one loot type per phase. After every phase:
 `npm test` + `npm run smoke` green, and the snapshot md5 unchanged — unless

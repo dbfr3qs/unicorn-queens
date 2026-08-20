@@ -2,9 +2,14 @@
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
-import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME, MAGNET_TIME, LANTERN_TIME } from './player.js';
+import { P_GRAVITY, P_TERM_VY, BOOTS_TIME, MAGNET_TIME, LANTERN_TIME } from './player.js';
 import { FX } from './effects.js';
 import { getItem } from './loot-items/index.js';
+// item imports double as registration; weighted kinds first, in drop-table
+// order, so the registry's insertion order IS the table order (see P6)
+import './loot-items/heart.js';
+import './loot-items/bow.js';
+import './loot-items/grow.js';
 import './loot-items/gem.js'; // self-registers into the loot-items registry
 
 export const loot = [];
@@ -95,19 +100,6 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
       if (def?.onPickup) {
         // registry item: onPickup returns the score delta
         score += def.onPickup(it, p, lvl, fx, hooks) || 0;
-      } else if (it.kind === 'bow') {
-        p.hasBow = true;
-        fx.play('bow');
-        burst(it.x + 8, it.y + 8, FX.bow);
-      } else if (it.kind === 'grow') {
-        if (!p.big) {
-          p.big = true;
-          p.x -= (BIG_W - p.w) / 2; // grow from the feet
-          p.y -= (BIG_H - p.h);
-          p.w = BIG_W; p.h = BIG_H;
-        }
-        fx.play('grow');
-        burst(it.x + 8, it.y + 8, FX.grow);
       } else if (it.kind === 'boots') {
         p.boots = it.short ? MYSTERY_BOOTS : BOOTS_TIME;
         fx.play('boots');
@@ -144,10 +136,6 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
           score += 1; // already capped: pays out like a gem
           fx.play('gem');
         }
-        burst(it.x + 8, it.y + 8, FX.heart);
-      } else { // heart
-        p.hp = Math.min(p.hp + 1, p.maxHp);
-        fx.play('heart');
         burst(it.x + 8, it.y + 8, FX.heart);
       }
     }

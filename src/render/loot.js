@@ -13,24 +13,6 @@ export function drawLoot(c) {
     const def = getItem(it.kind);
     if (def?.draw) {
       def.draw(c, it);
-    } else if (it.kind === 'grow') {
-      c.fillStyle = palette.gold;
-      c.beginPath(); // four-point sparkle
-      c.moveTo(0, -8); c.lineTo(3, -3); c.lineTo(8, 0); c.lineTo(3, 3);
-      c.lineTo(0, 8); c.lineTo(-3, 3); c.lineTo(-8, 0); c.lineTo(-3, -3);
-      c.closePath();
-      c.fill();
-    } else if (it.kind === 'bow') {
-      c.strokeStyle = palette.wood;
-      c.lineWidth = 2.5;
-      c.beginPath();
-      c.arc(-2, 0, 7, -Math.PI / 2, Math.PI / 2); // limb
-      c.stroke();
-      c.strokeStyle = palette.white;
-      c.lineWidth = 1;
-      c.beginPath();
-      c.moveTo(-2, -7); c.lineTo(-2, 7); // string
-      c.stroke();
     } else if (it.kind === 'lantern') {
       c.fillStyle = '#ffb36b';             // warm glass
       c.fillRect(-4, -6, 8, 10);
@@ -111,15 +93,6 @@ export function drawLoot(c) {
       c.fillStyle = '#8a5f22';               // trim
       c.fillRect(-8, -6, 6, 2);
       c.fillRect(2, -6, 6, 2);
-    } else { // heart
-      c.fillStyle = palette.pink;
-      c.beginPath();
-      c.arc(-3.5, -3, 4.5, 0, Math.PI * 2);
-      c.arc(3.5, -3, 4.5, 0, Math.PI * 2);
-      c.fill();
-      c.beginPath();
-      c.moveTo(-7.5, -1); c.lineTo(0, 8); c.lineTo(7.5, -1);
-      c.closePath(); c.fill();
     }
     c.restore();
   }

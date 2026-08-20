@@ -46,13 +46,14 @@ export function createLevel2(viewH = 600) {
       { x: 560, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'gem' },
       { x: 1050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'sunbeam' }, // room 1, before the chasm
       { x: 1160, y: groundY - 236, w: 36, h: 36, broken: false, kind: 'box', drop: 'grow' }, // on the 1150 platform
+      { x: 1350, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'lantern' }, // room 1, among the ghosts
       { x: 1600, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' }, // room 1
       { x: 1750, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'boots' }, // before the chasm
       { x: 1810, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'hops' }, // chasm is its intended use
       { x: 2050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'magnet' }, // room 2
       { x: 2300, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' }, // room 2
       { x: 2420, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heart' },
-      { x: 2620, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box' },
+      { x: 2620, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'lantern' }, // among the ghosts
       { x: 2730, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'shield' }, // boss hall, visible on the approach
       { x: 2800, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heartcap' }, // boss hall boon
     ],

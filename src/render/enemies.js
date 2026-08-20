@@ -55,7 +55,7 @@ function drawZombie(c, e) {
 
 function drawGhost(c, e) {
   c.save();
-  c.globalAlpha = 0.75; // translucent
+  c.globalAlpha = e.flicker > 0 ? 0.4 : 0.75; // dimmer while fleeing the lantern
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   const wob = Math.sin(e.phase) * 2; // skirt wobble follows the bob phase
   c.fillStyle = '#cfe8ff'; // pale body

@@ -35,6 +35,15 @@ export function drawLoot(c) {
       c.beginPath();
       c.moveTo(-2, -7); c.lineTo(-2, 7); // string
       c.stroke();
+    } else if (it.kind === 'lantern') {
+      c.fillStyle = '#ffb36b';             // warm glass
+      c.fillRect(-4, -6, 8, 10);
+      c.fillStyle = '#8a5f22';             // frame
+      c.fillRect(-6, -8, 12, 2);
+      c.fillRect(-6, 4, 12, 2);
+      c.strokeStyle = '#8a5f22';           // handle
+      c.lineWidth = 1.5;
+      c.beginPath(); c.arc(0, -8, 4, Math.PI, 0); c.stroke();
     } else if (it.kind === 'shield') {
       c.fillStyle = '#cfe8ff';             // mirror disc
       c.beginPath(); c.arc(0, -1, 6, 0, Math.PI * 2); c.fill();

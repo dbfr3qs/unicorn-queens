@@ -65,11 +65,21 @@ const KINDS = {
     stompable: false,
     update(e, { p, dt }) {
       // Hovers at its home point with a slow bob; drifts toward the player
-      // while they are close, eases back home when they aren't.
+      // while they are close, eases back home when they aren't. A lit
+      // lantern makes close ghosts flee the light instead.
       if (e.homeX === undefined) { e.homeX = e.x; e.homeY = e.y; e.phase = e.x * 0.1; }
       e.phase += dt * Math.PI * 2 / this.bobPeriod;
+      e.flicker = Math.max(0, (e.flicker ?? 0) - dt);
       const dx = p.x + p.w / 2 - (e.x + e.w / 2);
       const dy = p.y + p.h / 2 - (e.y + e.h / 2);
+      const dist = Math.hypot(dx, dy);
+      if (!p.dead && p.lantern > 0 && dist < 160) { // lantern: move straight away
+        const m = this.speed * dt;
+        if (dist > 0.001) { e.x -= dx / dist * m; e.y -= dy / dist * m; }
+        else { e.x -= m; }
+        e.flicker = 0.2; // visual: dimmer while fleeing
+        return;
+      }
       const near = !p.dead && Math.abs(dx) < this.aggroRange && Math.abs(dy) < this.aggroDy;
       const tx = near ? p.x + p.w / 2 : e.homeX + e.w / 2;
       const ty = near ? p.y + p.h / 2 : e.homeY + e.h / 2 + Math.sin(e.phase) * this.bobAmp;

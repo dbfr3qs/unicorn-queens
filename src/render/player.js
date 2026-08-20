@@ -7,6 +7,13 @@ export function drawPlayer(c, player, t) {
   c.translate(player.x + player.w / 2, player.y + player.h); // anchor at feet so squash compresses down
   const bs = player.big ? BIG_H / P_H : 1; // grown unicorn draws bigger
   c.scale(player.facing * player.sx * bs, player.sy * bs);
+  if (player.lantern > 0) { // lantern: warm radial glow around the rider
+    const g = c.createRadialGradient(0, -24, 8, 0, -24, 90);
+    g.addColorStop(0, 'rgba(255, 205, 130, 0.35)');
+    g.addColorStop(1, 'rgba(255, 205, 130, 0)');
+    c.fillStyle = g;
+    c.beginPath(); c.arc(0, -24, 90, 0, Math.PI * 2); c.fill();
+  }
   if (player.invuln > 0 && Math.floor(player.invuln * 12) % 2 === 0) c.globalAlpha = 0.35;
   c.fillStyle = palette.unicornWhite; // body
   c.fillRect(-14, -24, 28, 18);

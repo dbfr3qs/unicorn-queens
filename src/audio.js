@@ -50,6 +50,7 @@ export function sfx(name) {
     case 'star': beep(880, 1760, 0.14, 'triangle', 0.16); beep(1320, 2637, 0.16, 'sine', 0.12, 0.05); break;
     case 'hop': beep(320, 640, 0.09, 'sine', 0.15); break;
     case 'reflect': beep(1400, 700, 0.09, 'square', 0.1); break;
+    case 'lantern': beep(520, 1040, 0.18, 'triangle', 0.12); break;
     case 'grow':  beep(220, 660, 0.22, 'triangle', 0.3); break;
     case 'win':   [523, 659, 784, 1047].forEach((f, i) => beep(f, f, 0.12, 'square', 0.18, i * 0.09)); break;
     case 'fireball': beep(280, 140, 0.18, 'sawtooth', 0.1); break;

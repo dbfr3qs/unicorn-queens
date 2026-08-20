@@ -2,7 +2,7 @@
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
-import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME, MAGNET_TIME } from './player.js';
+import { P_GRAVITY, P_TERM_VY, BIG_W, BIG_H, BOOTS_TIME, MAGNET_TIME, LANTERN_TIME } from './player.js';
 import { FX } from './effects.js';
 
 export const loot = [];
@@ -113,6 +113,10 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         p.shield = Math.min(3, p.shield + 3);
         fx.play('reflect');
         burst(it.x + 8, it.y + 8, FX.reflect);
+      } else if (it.kind === 'lantern') {
+        p.lantern = LANTERN_TIME;
+        fx.play('lantern');
+        burst(it.x + 8, it.y + 8, FX.lantern);
       } else if (it.kind === 'hops') {
         p.hops = Math.min(3, p.hops + 3);
         fx.play('hop');

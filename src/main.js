@@ -19,6 +19,10 @@ addEventListener('keydown', e => {
     // startGame carries big/bow on advance only; the heart cap (maxHp)
     // always survives, being permanent for the run
     startGame(canvas.height, restartTarget(), game.player);
+    // The restart press IS a held jump: mark it so the new player doesn't
+    // read it as a fresh press and hop on spawn. Release + press jumps
+    // normally; a plain startGame (first load, tests) is untouched.
+    game.player.jumpHeld = true;
   }
 });
 startGame(canvas.height);

@@ -174,6 +174,25 @@ describe('landing and hazards', () => {
   });
 });
 
+describe('jump edge (restart-hold)', () => {
+  it('a held jump is not re-buffered; release + press jumps', () => {
+    const l = lvl();
+    const p = createPlayer(l);
+    p.onGround = true;
+    const cam = createCamera();
+    // The restart press: space is held and jumpHeld is set, so it must not
+    // buffer a fresh jump on spawn.
+    p.jumpHeld = true;
+    updatePlayer(p, { ...noInput, jump: true }, l, cam, DT, fx([]));
+    expect(p.jbuf).toBe(0); // still held -> not a fresh press
+    expect(p.vy).toBe(0); // no jump on spawn
+    // Release, then press again -> a real fresh press.
+    updatePlayer(p, noInput, l, cam, DT, fx([]));
+    updatePlayer(p, { ...noInput, jump: true }, l, cam, DT, fx([]));
+    expect(p.vy).toBeLessThan(0); // jumped
+  });
+});
+
 describe('bow', () => {
   it('fires with cooldown when carrying the bow', () => {
     const l = lvl();

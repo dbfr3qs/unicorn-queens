@@ -1,5 +1,9 @@
 # Loot items refactor — phased plan
 
+Status: all phases P1–P7 complete. See git log (commits `loot-items P1`–`P7`).
+Snapshot md5 `d91847dfa46c2b1fdc83d063be5f19ef` stable from before the
+refactor through P7.
+
 Goal: split the per-kind loot logic out of `src/loot.js` and
 `src/render/loot.js` into one file per item, in a new `src/loot-items/`
 subfolder, following the `KINDS` registry precedent from `enemies.js`.

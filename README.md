@@ -63,6 +63,29 @@ the only exception. Score and the one-time bow reset each level.
   camera, game state). No canvas calls.
 - `src/render/` — all drawing, split per entity, plus a shared `theme.js`
   (palette/fonts) and `background.js`.
+- `src/loot-items/` — one file per loot kind. Each file registers
+  `{ kind, weight?, onPickup, update?, draw }` with the registry in
+  `index.js`, so a kind's effect, drop weight, and sprite all live in the
+  same file (`gem.js` also owns magnet steering in `update`; `sunbeam.js`
+  keeps the enemy side decoupled via `hooks.onSunbeam`). `loot.js` keeps
+  the loot list, score, box spawning, default physics, and the drop table
+  (derived from each item's `weight`, in import order); `render/loot.js`
+  is a thin loop over `def.draw`.
+
+  | kind | file | table weight |
+  |---|---|---|
+  | gem | `gem.js` | remainder (fallback) |
+  | heart | `heart.js` | 20% |
+  | boots | `boots.js` | 5% (also owns `MYSTERY_BOOTS`) |
+  | magnet | `magnet.js` | 5% |
+  | sunbeam | `sunbeam.js` | 3% |
+  | star | `star.js` | 4% |
+  | hops | `hops.js` | 4% |
+  | bow, grow | `bow.js`, `grow.js` | none (first box / designated) |
+  | shield, lantern, heartcap | `shield.js`, `lantern.js`, `heartcap.js` | none (designated boxes) |
+
+  The mystery box is not a kind: its payload table stays in `loot.js`
+  (`spawnMystery`) and its sprite in `render/level.js`.
 - `test/` — unit tests for the logic, plus render snapshot tests.
 
 ## Render snapshot tests

@@ -11,58 +11,15 @@ import { getKind } from './enemies/index.js';
 import './enemies/slime.js';
 import './enemies/zombie.js';
 import './enemies/ghost.js';
+import './enemies/mage.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
 export { HURT_INVULN }; // re-exported: defined in player.js
 
-// One entry per enemy kind: size, stomp rule, tuning, and `update` — the
-// kind-specific brain, which sets e.vx/e.vy and may do extras (hopping,
-// firing). Brains read their own tuning off `this` (the kind entry).
-// Shared parts — stomp vs side-hit, arrow hits, pit death — live in this
-// module, so a new kind gets them for free. Adding a kind: an entry here,
-// a draw function in src/render/enemies.js, and (optionally) FX presets in
-// src/effects.js.
-const KINDS = {
-  mage: {
-    w: 42, h: 54,
-    hp: 5, stompable: false,
-    idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
-    hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.mageDeath,
-    onHit(e) {
-      e.flash = this.flashT;
-      e.state = 'stagger';
-      e.t = this.staggerT;
-    },
-    update(e, { p, dt, fx }) {
-      // Boss duel: idle -> windup (staff glows) -> fire at the player's
-      // height. Arrow hits stagger the cycle. One fireball in the air at a
-      // time; the boss sleeps until the player is in range.
-      if (e.state === undefined) { e.state = 'idle'; e.t = 2; e.flash = 0; }
-      e.flash = Math.max(0, e.flash - dt);
-      e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
-      e.t -= dt;
-      if (e.state === 'stagger') {
-        if (e.t <= 0) { e.state = 'idle'; e.t = this.nextIdle(); }
-        return; // frozen while staggering
-      }
-      if (e.state === 'idle') {
-        if (e.t > 0) return;
-        const inRange = !p.dead && Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.aggroRange;
-        if (inRange && fireballs.length === 0) { e.state = 'windup'; e.t = this.windupT; }
-        else e.t = 0.4; // wait: player out of range, or a fireball in flight
-        return;
-      }
-      // windup done: fire
-      if (e.t > 0) return;
-      const dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
-      fireFireball(e.x + e.w / 2 + dir * 24, p.y + p.h / 2 - 7, dir * FIREBALL_SPEED, 0, fx);
-      e.state = 'idle';
-      e.t = this.nextIdle();
-    },
-    nextIdle() { return this.idleMin + Math.random() * (this.idleMax - this.idleMin); },
-  },
-};
+// Legacy kind table — emptied as each kind moves to src/enemies/<kind>.js
+// (self-registering into the registry). Deleted entirely in P5.
+const KINDS = {};
 
 export function spawnEnemy(spec, lvl) {
   const k = getKind(spec.kind) ?? KINDS[spec.kind];

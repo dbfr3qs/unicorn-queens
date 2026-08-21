@@ -1,3 +1,89 @@
-// Mage: the boss — idle/windup/fire state machine with stagger on hit,
-// one fireball in the air at a time; hp 5, unstompable; robe-and-hat
-// sprite with windup orb glow, hit flash, and hp pips.
+// Mage: level 2 boss. 5 hp, unstompable. idle -> windup -> fire state
+// machine (one fireball in the air at a time, staggers on hit); owns the
+// robe/hat/staff sprite and the hp pips (drawn in world space after
+// restore, like before).
+import { fireFireball, fireballs, FIREBALL_SPEED } from '../projectiles.js';
+import { FX } from '../effects.js';
+import { register } from './index.js';
+import { palette } from '../render/theme.js';
+
+function onHit(e) {
+  e.flash = this.flashT;
+  e.state = 'stagger';
+  e.t = this.staggerT;
+}
+
+function update(e, { p, dt, fx }) {
+  // Boss duel: idle -> windup (staff glows) -> fire at the player's
+  // height. Arrow hits stagger the cycle. One fireball in the air at a
+  // time; the boss sleeps until the player is in range.
+  if (e.state === undefined) { e.state = 'idle'; e.t = 2; e.flash = 0; }
+  e.flash = Math.max(0, e.flash - dt);
+  e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
+  e.t -= dt;
+  if (e.state === 'stagger') {
+    if (e.t <= 0) { e.state = 'idle'; e.t = this.nextIdle(); }
+    return; // frozen while staggering
+  }
+  if (e.state === 'idle') {
+    if (e.t > 0) return;
+    const inRange = !p.dead && Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.aggroRange;
+    if (inRange && fireballs.length === 0) { e.state = 'windup'; e.t = this.windupT; }
+    else e.t = 0.4; // wait: player out of range, or a fireball in flight
+    return;
+  }
+  // windup done: fire
+  if (e.t > 0) return;
+  const dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
+  fireFireball(e.x + e.w / 2 + dir * 24, p.y + p.h / 2 - 7, dir * FIREBALL_SPEED, 0, fx);
+  e.state = 'idle';
+  e.t = this.nextIdle();
+}
+
+function nextIdle() { return this.idleMin + Math.random() * (this.idleMax - this.idleMin); }
+
+function draw(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  const windup = e.state === 'windup';
+  c.fillStyle = '#3d2b6b'; // robe
+  c.fillRect(-16, -10, 32, 37);
+  c.fillStyle = '#58418f'; // robe front
+  c.fillRect(-16, -10, 12, 37);
+  c.fillStyle = '#2a1d4d'; // hat
+  c.fillRect(-12, -27, 24, 9);
+  c.fillRect(-6, -19, 16, 4);
+  c.fillStyle = palette.white; // face
+  c.fillRect(-2, -16, 10, 8);
+  c.fillStyle = '#e33'; // eye
+  c.fillRect(4, -14, 3, 3);
+  c.fillStyle = '#8a5f22'; // staff
+  c.fillRect(14, -16, 3, 40);
+  c.fillStyle = windup ? '#ff8c42' : '#6fe3e1'; // staff orb glows in the windup
+  c.fillRect(11, -24, 9, 9);
+  if (e.flash > 0) {
+    c.globalAlpha = 0.7; // hit flash
+    c.fillStyle = palette.white;
+    c.fillRect(-17, -28, 34, 56);
+  }
+  c.restore();
+  if (!e.dead) { // hp pips, world space above the boss
+    for (let i = 0; i < 5; i++) {
+      c.fillStyle = i < e.hp ? '#e33' : '#522';
+      c.fillRect(e.x + e.w / 2 - 29 + i * 12, e.y - 14, 10, 4);
+    }
+  }
+}
+
+register({
+  kind: 'mage',
+  w: 42, h: 54,
+  hp: 5, stompable: false,
+  idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
+  hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.mageDeath,
+  onHit,
+  update,
+  nextIdle,
+  draw,
+});

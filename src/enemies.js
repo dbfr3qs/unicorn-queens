@@ -1,10 +1,11 @@
-// Enemies: per-kind brains (slime patrols, zombie chases, ghost drifts,
-// mage duels), plus shared physics, stomp vs side-contact, and arrow damage.
-import { resolveGroundCollision } from './level.js';
+// Enemies: shared spawning, stomp vs side-contact, and arrow damage.
+// Per-kind brains and sprites live in src/enemies/<kind>.js, each
+// self-registering into the registry (src/enemies/index.js). Adding a kind:
+// a new file there, imported below for its registration side effect, and
+// (optionally) FX presets in src/effects.js.
 import { burst } from './particles.js';
 import { shake } from './camera.js';
-import { P_GRAVITY, P_TERM_VY, HURT_INVULN, hurtPlayer } from './player.js';
-import { fireFireball, fireballs, FIREBALL_SPEED } from './projectiles.js';
+import { HURT_INVULN, hurtPlayer } from './player.js';
 import { FX } from './effects.js';
 import { getKind } from './enemies/index.js';
 // each kind import self-registers into the enemy kind registry
@@ -17,12 +18,8 @@ export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported fo
 export const E_STOMP_V = -400;
 export { HURT_INVULN }; // re-exported: defined in player.js
 
-// Legacy kind table — emptied as each kind moves to src/enemies/<kind>.js
-// (self-registering into the registry). Deleted entirely in P5.
-const KINDS = {};
-
 export function spawnEnemy(spec, lvl) {
-  const k = getKind(spec.kind) ?? KINDS[spec.kind];
+  const k = getKind(spec.kind);
   return {
     kind: spec.kind,
     x: spec.x, y: spec.y ?? lvl.groundY - k.h, w: k.w, h: k.h,
@@ -39,7 +36,7 @@ export function spawnEnemy(spec, lvl) {
 // reaction (onHit), death at 0 with per-kind sound and burst.
 export function damageEnemy(e, fx) {
   e.hp -= 1;
-  const k = getKind(e.kind) ?? KINDS[e.kind];
+  const k = getKind(e.kind);
   if (e.hp <= 0) {
     e.dead = true;
     fx.play(k.deathSound ?? 'thwack');
@@ -60,7 +57,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
   for (const e of enemies) {
     if (e.dead) continue;
     // method call so `this` is the kind entry (brains read tuning off it)
-    (getKind(e.kind) ?? KINDS[e.kind]).update(e, env);
+    getKind(e.kind).update(e, env);
     if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit
     hitPlayer(e, p, cam, fx);
   }
@@ -71,7 +68,7 @@ function hitPlayer(e, p, cam, fx) {
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
   const stomp = p.vy > 0 && p.y + p.h - e.y < 16;
-  if (stomp && (getKind(e.kind) ?? KINDS[e.kind]).stompable) {
+  if (stomp && getKind(e.kind).stompable) {
     e.dead = true;   // stomped
     p.vy = E_STOMP_V; // bounce
     p.cuttable = false;

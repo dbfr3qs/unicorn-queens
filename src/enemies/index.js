@@ -1,7 +1,7 @@
 // Registry for enemy kind definitions: kind -> { kind, w, h, stompable,
 // tuning..., update, draw, onHit?, hitSound?, deathSound?, deathFx? }.
-// Kind files register here (P2+); enemies.js and render/enemies.js
-// dispatch through it.
+// Each src/enemies/<kind>.js registers itself at import time; enemies.js
+// and render/enemies.js dispatch through it.
 const REGISTRY = new Map();
 
 export function register(def) {

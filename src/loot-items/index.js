@@ -1,7 +1,7 @@
 // Registry for loot item definitions: kind -> { kind, weight, onPickup, update, draw }.
 // Item files register here (P2+); loot.js and render/loot.js dispatch through it.
 
-const REGISTRY = new Map();
+export const REGISTRY = new Map(); // insertion order = drop-table order
 
 export function register(def) {
   REGISTRY.set(def.kind, def);

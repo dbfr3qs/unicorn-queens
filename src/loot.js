@@ -1,21 +1,21 @@
 // Loot: box drops (gem/bow/heart/grow), item physics, and pickup effects.
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
-import { burst } from './particles.js';
 import { P_GRAVITY, P_TERM_VY } from './player.js';
-import { FX } from './effects.js';
-import { getItem } from './loot-items/index.js';
+import { getItem, REGISTRY } from './loot-items/index.js';
 // item imports double as registration; weighted kinds first, in drop-table
-// order, so the registry's insertion order IS the table order (see P6)
+// order, so the registry's insertion order IS the table order rollDrop derives
 import './loot-items/heart.js';
 import './loot-items/boots.js';
 import './loot-items/magnet.js';
+import './loot-items/sunbeam.js';
 import './loot-items/star.js';
 import './loot-items/hops.js';
 import './loot-items/shield.js';
 import './loot-items/lantern.js';
 import './loot-items/bow.js';
 import './loot-items/grow.js';
+import './loot-items/heartcap.js';
 import './loot-items/gem.js'; // self-registers into the loot-items registry
 
 export const loot = [];
@@ -29,15 +29,22 @@ export function resetLoot() {
 }
 
 // Random drop table (after the one-time bow): [kind, cumulative weight].
-const DROP_TABLE = [
-  ['heart', 0.20],
-  ['boots', 0.25],
-  ['magnet', 0.30],
-  ['sunbeam', 0.33],
-  ['star', 0.37],
-  ['hops', 0.41],
-  ['gem', 1.0],
-];
+// Derived once from each item's weight field, in registry insertion order
+// (= the import order above = the drop-table order). Weights are 1% units, so
+// each cumulative is rounded to 2dp to stay bit-identical with the original
+// literals (keeps seeded rolls reproducible). Kinds with no weight are
+// skipped; gem (weight 0) absorbs the remainder as the fallback.
+const DROP_TABLE = (() => {
+  const table = [];
+  let acc = 0;
+  for (const def of REGISTRY.values()) {
+    if (!def.weight) continue;
+    acc = Number((acc + def.weight).toFixed(2));
+    table.push([def.kind, acc]);
+  }
+  table.push(['gem', 1.0]);
+  return table;
+})();
 
 function rollDrop(rng) {
   const r = rng();
@@ -103,23 +110,8 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         p.x < it.x + it.w && p.x + p.w > it.x &&
         p.y < it.y + it.h && p.y + p.h > it.y) {
       it.taken = true;
-      if (def?.onPickup) {
-        // registry item: onPickup returns the score delta
-        score += def.onPickup(it, p, lvl, fx, hooks) || 0;
-      } else if (it.kind === 'sunbeam') {
-        fx.play('sunbeam');
-        burst(it.x + 8, it.y + 8, FX.sunbeam);
-        if (hooks.onSunbeam) hooks.onSunbeam(p, lvl, fx); // screen clear
-      } else if (it.kind === 'heartcap') {
-        if (p.maxHp < 4) {
-          p.maxHp = 4; // permanent for the run
-          fx.play('heartcap');
-        } else {
-          score += 1; // already capped: pays out like a gem
-          fx.play('gem');
-        }
-        burst(it.x + 8, it.y + 8, FX.heart);
-      }
+      // every kind is a registry item; onPickup returns the score delta
+      if (def?.onPickup) score += def.onPickup(it, p, lvl, fx, hooks) || 0;
     }
   }
 }

@@ -10,6 +10,9 @@ import { getItem } from './loot-items/index.js';
 import './loot-items/heart.js';
 import './loot-items/boots.js';
 import './loot-items/magnet.js';
+import './loot-items/star.js';
+import './loot-items/hops.js';
+import './loot-items/shield.js';
 import './loot-items/lantern.js';
 import './loot-items/bow.js';
 import './loot-items/grow.js';
@@ -107,18 +110,6 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         fx.play('sunbeam');
         burst(it.x + 8, it.y + 8, FX.sunbeam);
         if (hooks.onSunbeam) hooks.onSunbeam(p, lvl, fx); // screen clear
-      } else if (it.kind === 'star') {
-        p.stars = Math.min(10, p.stars + 5);
-        fx.play('star');
-        burst(it.x + 8, it.y + 8, FX.star);
-      } else if (it.kind === 'shield') {
-        p.shield = Math.min(3, p.shield + 3);
-        fx.play('reflect');
-        burst(it.x + 8, it.y + 8, FX.reflect);
-      } else if (it.kind === 'hops') {
-        p.hops = Math.min(3, p.hops + 3);
-        fx.play('hop');
-        burst(it.x + 8, it.y + 8, FX.hopPuff);
       } else if (it.kind === 'heartcap') {
         if (p.maxHp < 4) {
           p.maxHp = 4; // permanent for the run

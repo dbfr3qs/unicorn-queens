@@ -6,8 +6,11 @@ import { shake } from './camera.js';
 import { P_GRAVITY, P_TERM_VY, HURT_INVULN, hurtPlayer } from './player.js';
 import { fireFireball, fireballs, FIREBALL_SPEED } from './projectiles.js';
 import { FX } from './effects.js';
+import { getKind } from './enemies/index.js';
+import './enemies/slime.js'; // self-registers into the enemy kind registry
 
-export const E_W = 30, E_H = 28, E_STOMP_V = -400;
+export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
+export const E_STOMP_V = -400;
 export { HURT_INVULN }; // re-exported: defined in player.js
 
 // One entry per enemy kind: size, stomp rule, tuning, and `update` — the
@@ -18,21 +21,6 @@ export { HURT_INVULN }; // re-exported: defined in player.js
 // a draw function in src/render/enemies.js, and (optionally) FX presets in
 // src/effects.js.
 const KINDS = {
-  slime: {
-    w: E_W, h: E_H,
-    speed: 90,
-    stompable: true,
-    update(e, { lvl, dt }) {
-      // Dumb patrol: keep walking, turn at the bounds.
-      e.vx = e.dir * this.speed;
-      e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
-      e.x += e.vx * dt;
-      e.y += e.vy * dt;
-      if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
-      else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
-      resolveGroundCollision(e, lvl, dt);
-    },
-  },
   zombie: {
     w: 34, h: 40,
     speed: 40, chaseSpeed: 70, aggroRange: 220, aggroDy: 60,
@@ -134,7 +122,7 @@ const KINDS = {
 };
 
 export function spawnEnemy(spec, lvl) {
-  const k = KINDS[spec.kind];
+  const k = getKind(spec.kind) ?? KINDS[spec.kind];
   return {
     kind: spec.kind,
     x: spec.x, y: spec.y ?? lvl.groundY - k.h, w: k.w, h: k.h,
@@ -151,7 +139,7 @@ export function spawnEnemy(spec, lvl) {
 // reaction (onHit), death at 0 with per-kind sound and burst.
 export function damageEnemy(e, fx) {
   e.hp -= 1;
-  const k = KINDS[e.kind];
+  const k = getKind(e.kind) ?? KINDS[e.kind];
   if (e.hp <= 0) {
     e.dead = true;
     fx.play(k.deathSound ?? 'thwack');
@@ -171,7 +159,8 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
   const env = { p, lvl, cam, dt, fx };
   for (const e of enemies) {
     if (e.dead) continue;
-    KINDS[e.kind].update(e, env);
+    // method call so `this` is the kind entry (brains read tuning off it)
+    (getKind(e.kind) ?? KINDS[e.kind]).update(e, env);
     if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit
     hitPlayer(e, p, cam, fx);
   }
@@ -182,7 +171,7 @@ function hitPlayer(e, p, cam, fx) {
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
   const stomp = p.vy > 0 && p.y + p.h - e.y < 16;
-  if (stomp && KINDS[e.kind].stompable) {
+  if (stomp && (getKind(e.kind) ?? KINDS[e.kind]).stompable) {
     e.dead = true;   // stomped
     p.vy = E_STOMP_V; // bounce
     p.cuttable = false;

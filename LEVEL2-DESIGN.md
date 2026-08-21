@@ -71,21 +71,43 @@ Kind-level flags in the KINDS table: `stompable` (slime/zombie: true;
 ghost: false), `grounded` (ghost: false). `hitPlayer` checks `stompable`
 before the stomp branch.
 
-### Mage (boss, new kind)
-- 42×54, stationary at the hall end (small idle bob).
+### Mage (boss, new kind) — "the smart mage"
+- 42×54, **levitating** boss at the hall end. Stays within a fixed arena
+  (x 2760–3380, so it never leaves the hall floor) and a vertical band
+  (y 160–506 at the default 600 view) — it floats, it never falls.
 - **HP 5**: each arrow hit = hp−1, white flash 0.15 s + 0.25 s stagger
-  (no attacking while staggered). HP bar: 5 pips above the mage, drawn in
-  world space while alive and on screen.
-- **Attack cycle**: idle 1.6–2.4 s → windup 0.7 s (staff gem glows, tells the
-  player) → fires one fireball aimed straight at the player, 240 px/s →
-  back to idle. One fireball in flight at a time.
-- **Fireballs**: 14×14, straight-line (no gravity), no ground bounce — they
-  fizzle in a small flame burst on ground/wall contact or after 3 s.
-  Hit player: shared hurt (1 damage + knockback). **Not shootable** —
-  arrows pass through; dodging is the counter-play.
+  (frozen mid-air while staggered — no dodging or attacking). HP bar: 5 pips
+  above the mage, drawn in world space while alive.
+- **Levitation**: eased vertical motion toward a `floatY` target (150 px/s,
+  ghost pattern). A soft floor shadow fades/shrinks with height and
+  foot-spark particles trail while floating.
+- **Arrow dodge** (the "avoid being hit" behaviour): when an approaching
+  arrow's band would cross the mage's body, it floats out of the way (64 px
+  up, or down if cramped) and holds the altitude until the arrow stream has
+  cleared the grounded band, so a 0.22 s-cooldown stream can't catch the
+  descending mage. 0.6 s dodge cooldown; no dodging while staggered.
+- **Attack cycle**: idle 1.2–1.9 s → windup 0.7 s (staff gem glows, tells
+  the player) → fires one fireball **from the staff orb at the player's
+  predicted position, at any angle** (leads a moving player by the flight
+  time) → back to idle. One fireball in flight at a time.
+- **Proactive hover**: after a shot the mage may hover at a random band
+  height for 0.8–1.4 s (35 % at full hp, 70 % at ≤2 hp) so the player can't
+  camp on the ground, then settles back down.
+- **Fireballs**: 14×14, straight-line (no gravity), 240 px/s, fizzle in a
+  small flame burst on surface contact or after 3 s. Hit player: shared hurt
+  (1 damage + knockback). **Not shootable** — arrows pass through; the
+  mirror shield reflects one (reflected shots damage the mage); dodging is
+  the counter-play.
 - **On death**: big burst + shake → the magic pearl appears on its pedestal.
 - Sprite: purple robe, wide hat, staff with a glowing gem; windup brightens
-  the gem with rising sparkle particles.
+  the gem; levitation adds the floor shadow + foot sparks.
+- **Tuning** (on the kind entry in `src/enemies/mage.js`): idleMin 1.2 /
+  idleMax 1.9, windupT 0.7, staggerT 0.25, aggroRange 500, floatSpeed 150,
+  dodgeLook 280, dodgeCooldown 0.6, dodgeHeight 64, threatMargin 8,
+  hoverChance 0.35, hoverLowHpChance 0.7, hoverMin 0.8, hoverMax 1.4.
+  Difficulty target: hard but beatable — the mage dodges ~80 % of arrows;
+  a skilled player wins by timing shots into the dodge cooldown, matching
+  hover heights, and reflecting fireballs.
 
 ## Ending sequence
 

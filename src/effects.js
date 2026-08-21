@@ -20,4 +20,5 @@ export const FX = {
   win: { count: 40, colors: ['#ffd75e', '#6fe3e1', '#ff6f91', '#fff'], speed: 220, up: 160, size: 5, grav: 500, life: 0.9 },
   fireballFizzle: { count: 8, colors: ['#ff8c42', '#ffd166', '#c1440e'], speed: 70, size: 3, grav: -60, life: 0.25 },
   mageDeath: { count: 30, colors: ['#b57edc', '#ffd75e', '#fff5fa'], speed: 260, up: 160, size: 6, grav: 400, life: 0.9 },
+  mageSpark: { count: 5, colors: ['#6fe3e1', '#b57edc', '#fff'], speed: 50, up: 30, size: 3, grav: 100, life: 0.35 },
 };

@@ -6,6 +6,7 @@
 // space after restore, like before).
 import { fireFireball, fireballs, FIREBALL_SPEED } from '../projectiles.js';
 import { arrows } from '../arrows.js';
+import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { palette } from '../render/theme.js';
@@ -71,6 +72,13 @@ function update(e, { p, lvl, dt, fx }) {
   e.y = Math.max(top, Math.min(bottom, e.y));
   e.x = Math.max(e.minX, Math.min(e.maxX, e.x));
   e.levitating = e.y < e.homeY - 1;
+  // Foot sparks while floating (throttled; the pinned snapshot pose is
+  // grounded, so this never fires there).
+  e.sparkT = Math.max(0, (e.sparkT ?? 0) - dt);
+  if (e.levitating && e.sparkT <= 0) {
+    burst(e.x + e.w / 2, e.y + e.h - 2, FX.mageSpark);
+    e.sparkT = 0.12;
+  }
   // Proactive hover: hold the hover height for its duration; only when
   // the timer expires this frame do we settle back to the ground (a
   // dodge cancels the hover and owns the target). Transition-based, so
@@ -141,6 +149,7 @@ function update(e, { p, lvl, dt, fx }) {
   if (!e.dodging && Math.random() < (e.hp <= 2 ? this.hoverLowHpChance : this.hoverChance)) {
     e.floatY = top + Math.random() * (bottom - top);
     e.hover = this.hoverMin + Math.random() * (this.hoverMax - this.hoverMin);
+    fx.play('hop'); // levitation whoosh, same as dodges
   }
 }
 
@@ -195,9 +204,9 @@ register({
   kind: 'mage',
   w: 42, h: 54,
   hp: 5, stompable: false,
-  idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
+  idleMin: 1.2, idleMax: 1.9, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
   floatSpeed: 150,
-  dodgeLook: 280, dodgeCooldown: 0.7, dodgeHeight: 64, threatMargin: 8,
+  dodgeLook: 280, dodgeCooldown: 0.6, dodgeHeight: 64, threatMargin: 8,
   hoverChance: 0.35, hoverLowHpChance: 0.7, hoverMin: 0.8, hoverMax: 1.4,
   hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.mageDeath,
   onHit,

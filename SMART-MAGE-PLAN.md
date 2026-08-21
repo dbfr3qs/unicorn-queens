@@ -1,6 +1,9 @@
 # Smart mage — phased plan
 
-Status: not started.
+Status: all phases P1–P5 complete. Render snapshot md5
+`d91847dfa46c2b1fdc83d063be5f19ef` stable across every phase — the pinned
+poses are all grounded, and the new visuals (floor shadow, foot sparks)
+only draw while levitating, so no pinned scene changed.
 
 Goal: make the level-2 boss (the mage, `src/enemies/mage.js`) genuinely
 harder to kill. Two behaviors, per the request:
@@ -240,6 +243,24 @@ Changes:
   angled + leading fireballs, arena bounds).
 - If the sprite changed at all: `npx vitest -u`, review the `.snap`
   diff, record the new snapshot md5 here.
+
+As-built notes:
+- Foot sparks: `FX.mageSpark` (5 particles, teal/purple/white, 0.35 s),
+  emitted at the mage's feet every 0.12 s while `levitating` (throttled via
+  `e.sparkT`). The `'hop'` whoosh now plays on both dodge and hover start.
+- Final tuning: idleMin 1.2 / idleMax 1.9 (faster fire cycle than the old
+  1.6–2.4, for pressure), dodgeCooldown 0.6 (slightly shorter than 0.7,
+  harder to punish). floatSpeed 150, dodgeLook 280, dodgeHeight 64,
+  hoverChance 0.35 / 0.7, hoverMin 0.8 / hoverMax 1.4 unchanged.
+  Fireball speed left at 240 (a shared constant, not in the P5 tuning list;
+  a speed sweep showed the perfect bot wins regardless, so the difficulty
+  lives in the skill gap, not that constant).
+- Balance result (a near-perfect reference bot: keeps a firing lane, matches
+  the mage's height with jumps, fires when aligned, banks 3 shield charges
+  + 3 hops): kills the mage in ~5.5 s at 3/3 hp, landing only ~5 of ~25
+  arrows — the mage dodges ~80 %. Beatability confirmed; the difficulty is
+  the human skill gap (tracking random hover heights + timing shots into the
+  0.6 s dodge cooldown + reflecting/dodging the leading fireballs).
 
 Verification: `npm test`, `npm run smoke`, manual play of the hall.
 Final snapshot md5 recorded in this file's Status line.

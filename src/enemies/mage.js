@@ -1,9 +1,10 @@
 // Mage: level 2 boss. 5 hp, unstompable. idle -> windup -> fire state
 // machine (one fireball in the air at a time, staggers on hit);
-// levitates (eased floatY, clamped to the hall band); owns the
-// robe/hat/staff sprite and the hp pips (drawn in world space after
-// restore, like before).
+// levitates (eased floatY, clamped to the hall band) and dodges incoming
+// arrows; owns the robe/hat/staff sprite and the hp pips (drawn in world
+// space after restore, like before).
 import { fireFireball, fireballs, FIREBALL_SPEED } from '../projectiles.js';
+import { arrows } from '../arrows.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { palette } from '../render/theme.js';
@@ -12,6 +13,37 @@ function onHit(e) {
   e.flash = this.flashT;
   e.state = 'stagger';
   e.t = this.staggerT;
+}
+
+const A_W = 14, A_H = 4; // arrow body size (kept in sync with the arrows.js hit test)
+
+// Approaching: an arrow moving toward the mage's near side, its leading
+// edge within look px of it, and not fully past the far side.
+function approaching(e, a, look) {
+  if (a.vx > 0) return a.x < e.x + e.w && e.x - (a.x + A_W) < look;
+  if (a.vx < 0) return a.x + A_W > e.x && a.x - (e.x + e.w) < look;
+  return false;
+}
+
+// Threat: an approaching arrow whose band (± threatMargin) crosses the
+// mage's current body band.
+function findThreat(e, k) {
+  for (const a of arrows) {
+    if (a.dead) continue;
+    if (approaching(e, a, k.dodgeLook) &&
+        a.y - k.threatMargin < e.y + e.h && a.y + A_H + k.threatMargin > e.y) return a;
+  }
+  return null;
+}
+
+// Would an approaching arrow hit the mage if it were on the ground?
+function homeThreat(e, k) {
+  for (const a of arrows) {
+    if (a.dead) continue;
+    if (approaching(e, a, k.dodgeLook) &&
+        a.y - k.threatMargin < e.homeY + e.h && a.y + A_H + k.threatMargin > e.homeY) return true;
+  }
+  return false;
 }
 
 function update(e, { p, lvl, dt, fx }) {
@@ -38,6 +70,44 @@ function update(e, { p, lvl, dt, fx }) {
   e.y = Math.max(top, Math.min(bottom, e.y));
   e.x = Math.max(e.minX, Math.min(e.maxX, e.x));
   e.levitating = e.y < e.homeY - 1;
+  // Arrow dodge: release the held dodge once its arrow has fully cleared
+  // the mage (trailing edge past the far side - releasing earlier would
+  // let the descending mage re-enter the arrow's band mid x-overlap). On
+  // release, hold altitude while another approaching arrow still crosses
+  // the grounded band (a 0.22s-cooldown stream must not catch the
+  // descending mage); descend once the home band is clear. Then scan for
+  // a new threat, gated by the dodge cooldown. Stagger returns above, so
+  // a staggered mage never dodges.
+  e.dodgeCool = Math.max(0, (e.dodgeCool ?? 0) - dt);
+  if (e.dodging) { // off the ground because of a dodge
+    const a = e.dodgeArrow;
+    const gone = !a || a.dead || (a.vx > 0 ? a.x >= e.x + e.w : a.x + A_W <= e.x);
+    if (gone && !homeThreat(e, this)) {
+      e.dodging = false;
+      e.dodgeArrow = null;
+      e.floatY = e.homeY; // home band clear: settle to the ground
+    } else if (gone) {
+      e.dodgeArrow = null; // hold: a stream arrow is still crossing the home band
+    }
+  }
+  if (e.dodgeCool <= 0) {
+    const threat = findThreat(e, this);
+    if (threat) {
+      const dh = this.dodgeHeight;
+      const upRoom = e.y - top, downRoom = bottom - e.y;
+      let side;
+      if (upRoom >= dh && downRoom >= dh) side = e.lastDodge === 'up' ? 'down' : 'up'; // alternate
+      else if (upRoom >= dh) side = 'up';
+      else if (downRoom >= dh) side = 'down';
+      else side = upRoom >= downRoom ? 'up' : 'down'; // both cramped: take the room
+      e.lastDodge = side;
+      e.floatY = side === 'up' ? e.y - dh : e.y + dh; // clamped by the float
+      e.dodging = true;
+      e.dodgeArrow = threat;
+      e.dodgeCool = this.dodgeCooldown;
+      fx.play('hop'); // levitation whoosh
+    }
+  }
   if (e.state === 'idle') {
     if (e.t > 0) return;
     const inRange = !p.dead && Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.aggroRange;
@@ -108,6 +178,7 @@ register({
   hp: 5, stompable: false,
   idleMin: 1.6, idleMax: 2.4, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
   floatSpeed: 150,
+  dodgeLook: 280, dodgeCooldown: 0.7, dodgeHeight: 64, threatMargin: 8,
   hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.mageDeath,
   onHit,
   update,

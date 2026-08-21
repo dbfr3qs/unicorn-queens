@@ -163,9 +163,12 @@ Changes:
     the choice with `e.lastDodge` alternation for unpredictability.
     Set `floatY = e.y ∓ dodgeHeight` (clamped). Start `dodgeCooldown`;
     play `'hop'` once per dodge.
-  - The target **persists** until the threatening arrow passes or
-    fizzles (a 0.22s-cooldown double shot can't re-hit the same band),
-    then `floatY` eases back to `homeY`.
+  - The target **persists** until the threatening arrow fully clears
+    the mage (trailing edge past the far side — releasing earlier lets
+    the descending mage re-enter the arrow's band mid x-overlap), and
+    **holds altitude while another approaching arrow still crosses the
+    grounded band** (`homeThreat`), so a 0.22s-cooldown stream can't
+    catch the descending mage; descends once the home band is clear.
   - No dodge while `state === 'stagger'` (already frozen). Firing
   proceeds from whatever height the mage is at — combined with P1,
   that is the "shoot at any angle while levitating" behavior.
@@ -176,7 +179,9 @@ Changes:
   - no dodge during stagger;
   - at the band top, a threat from above dodges down (clamp case);
   - `dodgeCooldown` elapsed → a second threat re-dodges; a threat
-    inside the cooldown does not (no jitter).
+    inside the cooldown does not (no jitter);
+  - an arrow stream at the player's 0.22s cadence lands no hits (hold),
+    and the mage settles back to the ground once the stream stops.
 
 Verification: `npm test`, `npm run smoke`. Snapshot md5 **stable**.
 

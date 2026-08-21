@@ -3,6 +3,7 @@ import { createLevel } from '../src/level.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemies.js';
 import { resetFireballs, fireballs, FIREBALL_SPEED } from '../src/projectiles.js';
+import { resetArrows, updateArrows, arrows, ARROW_SPEED } from '../src/arrows.js';
 import { createCamera } from '../src/camera.js';
 
 const DT = 1 / 60;
@@ -130,6 +131,125 @@ describe('levitation', () => {
     updateEnemies([e], p, l, cam, DT, fx([]));
     expect(e.y).toBe(midY); // no easing while staggered
     expect(e.levitating).toBe(true); // flag retained
+  });
+});
+
+describe('arrow dodge', () => {
+  const setup = () => {
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1200; // out of aggro range: the boss never fires during these tests
+    const cam = createCamera();
+    cam.x = 1800; // keep scripted arrows inside the viewport (arrows die at the edge)
+    return { e, l, p, cam };
+  };
+
+  it('dodges an approaching arrow, then settles back on the ground', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    const home = e.y;
+    const calls = [];
+    arrows.push({ x: 1900, y: 510, vx: ARROW_SPEED, dead: false }); // body height, 286px out
+    let minY = e.y;
+    for (let i = 0; i < 200; i++) {
+      updateEnemies([e], p, l, cam, DT, fx(calls));
+      updateArrows([e], l, cam, DT, fx(calls)); // real arrow flight
+      minY = Math.min(minY, e.y);
+    }
+    expect(minY).toBeLessThan(home - 40); // floated clear of the arrow's band
+    expect(e.hp).toBe(5); // the arrow passed without a hit
+    expect(e.y).toBeCloseTo(home, 5); // settled back on the ground
+    expect(calls).toContain('hop'); // whoosh on the dodge
+  });
+
+  it('does not dodge arrows moving away or beyond the look range', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    const home = e.y;
+    const calls = [];
+    arrows.push({ x: 1800, y: 510, vx: -ARROW_SPEED, dead: false }); // left of the mage, moving left: away
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    arrows.push({ x: 1772, y: 510, vx: ARROW_SPEED, dead: false }); // approaching, but 414px out > dodgeLook
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    expect(e.y).toBe(home); // never moved
+    expect(e.floatY).toBeUndefined();
+    expect(calls).not.toContain('hop');
+  });
+
+  it('does not dodge while staggering', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    const home = e.y;
+    e.state = 'stagger'; e.t = 0.05; // one frame of stagger
+    arrows.push({ x: 2000, y: 510, vx: ARROW_SPEED, dead: false }); // inside the threat window
+    const calls = [];
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    expect(e.y).toBe(home); // frozen mid-threat
+    expect(e.floatY).toBeUndefined();
+    expect(calls).not.toContain('hop');
+  });
+
+  it('dodges down at the band top (no room above)', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    e.floatY = 0; // float to the band top first
+    for (let i = 0; i < 200; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    const topY = e.y;
+    expect(topY).toBeCloseTo(Math.max(150, l.groundY - 400), 5); // at the band top
+    arrows.push({ x: 2000, y: topY, vx: ARROW_SPEED, dead: false }); // band across the mage's top
+    const calls = [];
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    expect(e.floatY).toBeCloseTo(topY + 64, 5); // escapes downward
+    expect(calls).toContain('hop');
+    for (let i = 0; i < 20; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.y).toBeGreaterThan(topY); // descending
+  });
+
+  it('ignores new threats inside the cooldown, re-dodges after it elapses', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    const home = e.y;
+    const calls = [];
+    arrows.push({ x: 2000, y: 510, vx: ARROW_SPEED, dead: false }); // inside the threat window
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    expect(e.floatY).toBeCloseTo(home - 64, 5); // first dodge: up
+    expect(calls.filter(n => n === 'hop').length).toBe(1);
+    arrows.push({ x: 2050, y: 510, vx: ARROW_SPEED, dead: false }); // second threat, cooldown active
+    updateEnemies([e], p, l, cam, DT, fx(calls));
+    expect(e.floatY).toBeCloseTo(home - 64, 5); // unchanged: no jitter
+    expect(calls.filter(n => n === 'hop').length).toBe(1);
+    for (let i = 0; i < 45; i++) updateEnemies([e], p, l, cam, DT, fx([])); // > 0.7s cooldown
+    expect(e.y).toBeCloseTo(home - 64, 5); // settled at the dodge height
+    const y0 = e.y;
+    arrows.push({ x: 2000, y: y0 + 10, vx: ARROW_SPEED, dead: false }); // arrow at the dodge height
+    const calls2 = [];
+    updateEnemies([e], p, l, cam, DT, fx(calls2));
+    expect(calls2).toContain('hop'); // re-dodges once the cooldown is gone
+    expect(e.floatY).toBeGreaterThan(y0); // alternates to the other side (down)
+  });
+
+  it('holds altitude against an arrow stream, descends when the stream stops', () => {
+    resetArrows();
+    const { e, l, p, cam } = setup();
+    const home = e.y;
+    let lastShot = -99, heldFrames = 0;
+    for (let i = 0; i < 60 * 4; i++) { // 4s of firing at the player's 0.22s cadence
+      updateEnemies([e], p, l, cam, DT, fx([]));
+      if (i - lastShot >= 13) { // 13 frames ≈ 0.22s
+        arrows.push({ x: 1900, y: 510, vx: ARROW_SPEED, dead: false });
+        lastShot = i;
+      }
+      updateArrows([e], l, cam, DT, fx([]));
+      if (e.y < home - 40) heldFrames++;
+    }
+    expect(e.hp).toBe(5); // the stream never landed a hit
+    expect(heldFrames).toBeGreaterThan(60); // spent real time off the ground
+    for (let i = 0; i < 120; i++) { // stream stopped: settle back down
+      updateEnemies([e], p, l, cam, DT, fx([]));
+      updateArrows([e], l, cam, DT, fx([]));
+    }
+    expect(e.y).toBeCloseTo(home, 5);
   });
 });
 

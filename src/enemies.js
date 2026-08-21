@@ -7,7 +7,10 @@ import { P_GRAVITY, P_TERM_VY, HURT_INVULN, hurtPlayer } from './player.js';
 import { fireFireball, fireballs, FIREBALL_SPEED } from './projectiles.js';
 import { FX } from './effects.js';
 import { getKind } from './enemies/index.js';
-import './enemies/slime.js'; // self-registers into the enemy kind registry
+// each kind import self-registers into the enemy kind registry
+import './enemies/slime.js';
+import './enemies/zombie.js';
+import './enemies/ghost.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -21,66 +24,6 @@ export { HURT_INVULN }; // re-exported: defined in player.js
 // a draw function in src/render/enemies.js, and (optionally) FX presets in
 // src/effects.js.
 const KINDS = {
-  zombie: {
-    w: 34, h: 40,
-    speed: 40, chaseSpeed: 70, aggroRange: 220, aggroDy: 60,
-    stompable: true,
-    update(e, { p, lvl, dt }) {
-      // Shambles within its bounds; chases the player while they are close
-      // and roughly on the same level (chasing ignores the bounds).
-      const dx = p.x + p.w / 2 - (e.x + e.w / 2);
-      const dy = p.y + p.h / 2 - (e.y + e.h / 2);
-      const chasing = !p.dead && Math.abs(dx) < this.aggroRange && Math.abs(dy) < this.aggroDy;
-      if (chasing) {
-        e.dir = dx >= 0 ? 1 : -1;
-        e.vx = e.dir * this.chaseSpeed;
-      } else {
-        e.vx = e.dir * this.speed;
-      }
-      e.vy = Math.min(e.vy + P_GRAVITY * dt, P_TERM_VY);
-      e.x += e.vx * dt;
-      e.y += e.vy * dt;
-      if (!chasing) {
-        if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
-        else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
-      }
-      resolveGroundCollision(e, lvl, dt);
-    },
-  },
-  ghost: {
-    w: 28, h: 26,
-    speed: 60, aggroRange: 260, aggroDy: 120, bobAmp: 14, bobPeriod: 2,
-    stompable: false,
-    update(e, { p, dt }) {
-      // Hovers at its home point with a slow bob; drifts toward the player
-      // while they are close, eases back home when they aren't. A lit
-      // lantern makes close ghosts flee the light instead.
-      if (e.homeX === undefined) { e.homeX = e.x; e.homeY = e.y; e.phase = e.x * 0.1; }
-      e.phase += dt * Math.PI * 2 / this.bobPeriod;
-      e.flicker = Math.max(0, (e.flicker ?? 0) - dt);
-      const dx = p.x + p.w / 2 - (e.x + e.w / 2);
-      const dy = p.y + p.h / 2 - (e.y + e.h / 2);
-      const dist = Math.hypot(dx, dy);
-      if (!p.dead && p.lantern > 0 && dist < 160) { // lantern: move straight away
-        const m = this.speed * dt;
-        if (dist > 0.001) { e.x -= dx / dist * m; e.y -= dy / dist * m; }
-        else { e.x -= m; }
-        e.flicker = 0.2; // visual: dimmer while fleeing
-        return;
-      }
-      const near = !p.dead && Math.abs(dx) < this.aggroRange && Math.abs(dy) < this.aggroDy;
-      const tx = near ? p.x + p.w / 2 : e.homeX + e.w / 2;
-      const ty = near ? p.y + p.h / 2 : e.homeY + e.h / 2 + Math.sin(e.phase) * this.bobAmp;
-      const ox = tx - (e.x + e.w / 2);
-      const oy = ty - (e.y + e.h / 2);
-      const d = Math.hypot(ox, oy);
-      if (d > 0) {
-        const m = Math.min(this.speed * dt, d); // ease toward target
-        e.x += ox / d * m;
-        e.y += oy / d * m;
-      }
-    },
-  },
   mage: {
     w: 42, h: 54,
     hp: 5, stompable: false,

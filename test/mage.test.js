@@ -81,6 +81,58 @@ describe('attack cycle', () => {
   });
 });
 
+describe('levitation', () => {
+  it('floats to a floatY target with eased motion, then eases back to the ground', () => {
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1200; // out of aggro range: no firing during the test
+    const cam = createCamera();
+    const home = e.y;
+    e.floatY = e.y - 100;
+    for (let i = 0; i < 60; i++) updateEnemies([e], p, l, cam, DT, fx([])); // 150 px/s: 100px in ~40 frames
+    expect(e.y).toBeCloseTo(home - 100, 5);
+    expect(e.levitating).toBe(true);
+    e.floatY = e.homeY;
+    for (let i = 0; i < 60; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.y).toBeCloseTo(home, 5);
+    expect(e.levitating).toBe(false);
+  });
+
+  it('clamps to the band top and to the arena x range', () => {
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1200;
+    const cam = createCamera();
+    e.floatY = 0; // far above the band
+    for (let i = 0; i < 200; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.y).toBeCloseTo(Math.max(150, l.groundY - 400), 5); // band top
+    e.minX = 2100; e.maxX = 2300;
+    e.x = 2000; // outside the arena on the left
+    updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.x).toBe(2100);
+    e.x = 2400; // outside on the right
+    updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.x).toBe(2300);
+  });
+
+  it('stays frozen mid-air while staggering', () => {
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1200;
+    const cam = createCamera();
+    e.floatY = e.y - 100;
+    for (let i = 0; i < 60; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    const midY = e.y;
+    e.state = 'stagger'; e.t = 5; // long stagger
+    updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(e.y).toBe(midY); // no easing while staggered
+    expect(e.levitating).toBe(true); // flag retained
+  });
+});
+
 describe('taking damage', () => {
   it('loses one hp per arrow hit, flashes and staggers', () => {
     const e = m(2200);

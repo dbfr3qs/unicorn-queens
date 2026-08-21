@@ -71,7 +71,7 @@ export function createLevel2(viewH = 600) {
       { kind: 'ghost', x: 2200, y: 220 },
       { kind: 'ghost', x: 2550, y: 260 },
       { kind: 'zombie', x: 2560, minX: 2500, maxX: 2650 },
-      { kind: 'mage', x: 3250 },
+      { kind: 'mage', x: 3250, minX: 2760, maxX: 3380 }, // boss arena: stays on the hall floor
     ],
   };
 }

@@ -2,12 +2,15 @@
 // Module-owned state: the loot list, score, and the one-time bow drop.
 import { resolveGroundCollision } from './level.js';
 import { burst } from './particles.js';
-import { P_GRAVITY, P_TERM_VY, BOOTS_TIME, MAGNET_TIME, LANTERN_TIME } from './player.js';
+import { P_GRAVITY, P_TERM_VY } from './player.js';
 import { FX } from './effects.js';
 import { getItem } from './loot-items/index.js';
 // item imports double as registration; weighted kinds first, in drop-table
 // order, so the registry's insertion order IS the table order (see P6)
 import './loot-items/heart.js';
+import './loot-items/boots.js';
+import './loot-items/magnet.js';
+import './loot-items/lantern.js';
 import './loot-items/bow.js';
 import './loot-items/grow.js';
 import './loot-items/gem.js'; // self-registers into the loot-items registry
@@ -39,7 +42,7 @@ function rollDrop(rng) {
   return 'gem';
 }
 
-export const MYSTERY_BOOTS = 5; // s of super-jump from a mystery box (short)
+export { MYSTERY_BOOTS } from './loot-items/boots.js'; // re-export for existing imports
 
 // Mystery box payload, hidden until broken: 40% heart, 25% three-gem
 // fountain, 25% short boots, 10% dud. Uses the same rng as the regular
@@ -100,14 +103,6 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
       if (def?.onPickup) {
         // registry item: onPickup returns the score delta
         score += def.onPickup(it, p, lvl, fx, hooks) || 0;
-      } else if (it.kind === 'boots') {
-        p.boots = it.short ? MYSTERY_BOOTS : BOOTS_TIME;
-        fx.play('boots');
-        burst(it.x + 8, it.y + 8, FX.boots);
-      } else if (it.kind === 'magnet') {
-        p.magnet = MAGNET_TIME;
-        fx.play('magnet');
-        burst(it.x + 8, it.y + 8, FX.magnet);
       } else if (it.kind === 'sunbeam') {
         fx.play('sunbeam');
         burst(it.x + 8, it.y + 8, FX.sunbeam);
@@ -120,10 +115,6 @@ export function updateLoot(p, lvl, dt, fx, hooks = {}) {
         p.shield = Math.min(3, p.shield + 3);
         fx.play('reflect');
         burst(it.x + 8, it.y + 8, FX.reflect);
-      } else if (it.kind === 'lantern') {
-        p.lantern = LANTERN_TIME;
-        fx.play('lantern');
-        burst(it.x + 8, it.y + 8, FX.lantern);
       } else if (it.kind === 'hops') {
         p.hops = Math.min(3, p.hops + 3);
         fx.play('hop');

@@ -13,15 +13,6 @@ export function drawLoot(c) {
     const def = getItem(it.kind);
     if (def?.draw) {
       def.draw(c, it);
-    } else if (it.kind === 'lantern') {
-      c.fillStyle = '#ffb36b';             // warm glass
-      c.fillRect(-4, -6, 8, 10);
-      c.fillStyle = '#8a5f22';             // frame
-      c.fillRect(-6, -8, 12, 2);
-      c.fillRect(-6, 4, 12, 2);
-      c.strokeStyle = '#8a5f22';           // handle
-      c.lineWidth = 1.5;
-      c.beginPath(); c.arc(0, -8, 4, Math.PI, 0); c.stroke();
     } else if (it.kind === 'shield') {
       c.fillStyle = '#cfe8ff';             // mirror disc
       c.beginPath(); c.arc(0, -1, 6, 0, Math.PI * 2); c.fill();
@@ -75,24 +66,6 @@ export function drawLoot(c) {
       c.beginPath();
       c.arc(0, 0, 6, 0, Math.PI * 2);
       c.fill();
-    } else if (it.kind === 'magnet') {
-      c.strokeStyle = palette.pink;          // horseshoe magnet
-      c.lineWidth = 4;
-      c.beginPath();
-      c.arc(0, 1, 6, Math.PI, Math.PI * 2);  // open at the bottom
-      c.stroke();
-      c.fillStyle = '#fff';                  // ferrule tips
-      c.fillRect(-8, 0, 4, 3);
-      c.fillRect(4, 0, 4, 3);
-    } else if (it.kind === 'boots') {
-      c.fillStyle = palette.gold;            // golden boot pair
-      c.fillRect(-8, -6, 6, 12);
-      c.fillRect(2, -6, 6, 12);
-      c.fillRect(-9, 4, 7, 3);               // soles
-      c.fillRect(1, 4, 7, 3);
-      c.fillStyle = '#8a5f22';               // trim
-      c.fillRect(-8, -6, 6, 2);
-      c.fillRect(2, -6, 6, 2);
     }
     c.restore();
   }

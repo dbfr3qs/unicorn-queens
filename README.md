@@ -86,6 +86,22 @@ the only exception. Score and the one-time bow reset each level.
 
   The mystery box is not a kind: its payload table stays in `loot.js`
   (`spawnMystery`) and its sprite in `render/level.js`.
+- `src/enemies/` — one file per enemy kind. Each file registers
+  `{ kind, w, h, stompable, tuning..., update, draw, onHit?, hitSound?,
+  deathSound?, deathFx? }` with the registry in `index.js`, so a kind's
+  brain and sprite live in the same file (`slime.js` also owns `E_W`/
+  `E_H`, re-exported from `enemies.js`; `mage.js` imports
+  `projectiles.js` — a runtime-only cycle, safe because no kind file
+  reads the orchestrator at module init). `enemies.js` keeps spawning,
+  the shared stomp-vs-side-contact rule, and one-point arrow damage;
+  `render/enemies.js` is a thin loop over `def.draw`.
+
+  | kind | file | brain |
+  |---|---|---|
+  | slime | `slime.js` | patrol (turns at bounds); stompable; owns `E_W`/`E_H` |
+  | zombie | `zombie.js` | shamble + chase in aggro range; stompable |
+  | ghost | `ghost.js` | hover/bob, drifts close, flees a lit lantern; unstompable |
+  | mage | `mage.js` | boss: idle→windup→fire, stagger on hit, 5 hp, hp-pip sprite |
 - `test/` — unit tests for the logic, plus render snapshot tests.
 
 ## Render snapshot tests

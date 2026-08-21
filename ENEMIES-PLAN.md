@@ -1,5 +1,9 @@
 # Enemies refactor — phased plan
 
+Status: all phases P1–P6 complete. Snapshot md5
+`d91847dfa46c2b1fdc83d063be5f19ef` stable from before the refactor
+through the end (verified across two final runs).
+
 Goal: split the four enemy kinds out of the `KINDS` object in
 `src/enemies.js` and the `DRAW` map in `src/render/enemies.js` into one
 file per kind, in a new `src/enemies/` subfolder — the same shape as the

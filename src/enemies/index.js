@@ -2,7 +2,7 @@
 // tuning..., update, draw, onHit?, hitSound?, deathSound?, deathFx? }.
 // Each src/enemies/<kind>.js registers itself at import time; enemies.js
 // and render/enemies.js dispatch through it.
-const REGISTRY = new Map();
+export const REGISTRY = new Map();
 
 export function register(def) {
   REGISTRY.set(def.kind, def);

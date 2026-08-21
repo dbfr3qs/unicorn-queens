@@ -4,6 +4,7 @@ import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemies.js';
 import { resetFireballs, fireballs, FIREBALL_SPEED } from '../src/projectiles.js';
 import { resetArrows, updateArrows, arrows, ARROW_SPEED } from '../src/arrows.js';
+import { reseed } from './helpers/seeded-rng.js';
 import { createCamera } from '../src/camera.js';
 
 const DT = 1 / 60;
@@ -250,6 +251,88 @@ describe('arrow dodge', () => {
       updateArrows([e], l, cam, DT, fx([]));
     }
     expect(e.y).toBeCloseTo(home, 5);
+  });
+});
+
+describe('hover and aim lead', () => {
+  // Duel helper: the player stands in aggro range, unupdated (no arrows,
+  // no movement), and the fireball is cleared every frame - no player
+  // damage, and the air is always "clear" so the mage keeps shooting.
+  const duel = (e, frames) => {
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 2000; // 200px from the mage: in aggro range
+    const cam = createCamera();
+    const home = e.y;
+    let starts = 0, was = false, minY = e.y;
+    for (let i = 0; i < frames; i++) {
+      updateEnemies([e], p, l, cam, DT, fx([]));
+      resetFireballs();
+      const is = e.hover > 0;
+      if (is && !was) starts++;
+      was = is;
+      minY = Math.min(minY, e.y);
+    }
+    return { starts, minY, home };
+  };
+
+  it('proactively hovers off the ground after a shot (seeded)', () => {
+    reseed();
+    resetFireballs();
+    const { starts, minY, home } = duel(m(2200), 60 * 40);
+    expect(starts).toBeGreaterThanOrEqual(1);
+    expect(minY).toBeLessThan(home - 40); // reached a real hover height
+  });
+
+  it('hovers more often at low hp (seeded)', () => {
+    reseed();
+    resetFireballs();
+    const full = duel(m(2200), 60 * 45);
+    reseed();
+    resetFireballs();
+    const lowE = m(2200); lowE.hp = 1;
+    const low = duel(lowE, 60 * 45);
+    expect(low.starts).toBeGreaterThan(full.starts);
+  });
+
+  it('leads the shot at a moving player (aims at the predicted point)', () => {
+    resetFireballs();
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1900;
+    p.vx = -260; // running left, away from the mage
+    const cam = createCamera();
+    e.state = 'windup'; e.t = 0; // fire this frame
+    updateEnemies([e], p, l, cam, DT, fx([]));
+    const f = fireballs[0];
+    // expected aim point: the player's position after the flight time
+    const ox = e.x + e.w / 2 + e.dir * 15.5, oy = e.y + e.h / 2 - 19.5;
+    const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
+    const tFlight = Math.hypot(cx - ox, cy - oy) / FIREBALL_SPEED;
+    const tx = cx + p.vx * tFlight;
+    const d = Math.hypot(tx - ox, cy - oy);
+    expect(f.vx).toBeCloseTo((tx - ox) / d * FIREBALL_SPEED, 5);
+    expect(f.vy).toBeCloseTo((cy - oy) / d * FIREBALL_SPEED, 5);
+    expect(tx).toBeLessThan(cx); // the aim point is ahead of the fleeing player
+  });
+
+  it('clamps the lead to the level bounds', () => {
+    resetFireballs();
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 10;
+    p.vx = -260; // the naive lead point is far off the left edge
+    const cam = createCamera();
+    e.state = 'windup'; e.t = 0;
+    updateEnemies([e], p, l, cam, DT, fx([]));
+    const f = fireballs[0];
+    const ox = e.x + e.w / 2 + e.dir * 15.5, oy = e.y + e.h / 2 - 19.5;
+    const cy = p.y + p.h / 2;
+    const d = Math.hypot(0 - ox, cy - oy); // tx clamps to 0
+    expect(f.vx).toBeCloseTo((0 - ox) / d * FIREBALL_SPEED, 5);
+    expect(f.vx).toBeLessThan(0);
   });
 });
 

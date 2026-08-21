@@ -194,20 +194,30 @@ Changes:
 - `src/enemies/mage.js`:
   - After each successful fire, with `hoverChance` (`hoverLowHpChance`
     when `e.hp <= 2`), set `floatY` to a random height in the band and
-    hold it for `hoverTime`, then ease back to `homeY`. (Reuses the P2
-    float system; no new states — the idle/windup machine keeps
-    running while the mage hovers.)
+    hold it for `hoverMin..hoverMax` seconds (`e.hover` timer), then
+    ease back to `homeY`. (Reuses the P2 float system; no new states —
+    the idle/windup machine keeps running while the mage hovers.)
+    The release is **transition-based** (only on the hover→0 expiry
+    frame), so a `floatY` set for other reasons is never clobbered;
+    a dodge cancels the hover (`e.hover = 0`) and owns the target, and
+    the roll is skipped while dodging.
   - **Aim lead (the stretch item, cut first if the phase overruns):**
     at fire time, aim at the player's *predicted* position —
-    `pCenter + p.vx * (dist / FIREBALL_SPEED)` in x — clamped to level
-    bounds.
-- `test/mage.test.js`:
-  - over a long simulated duel (no arrows), the mage leaves `homeY`
-    at least once;
+    `pCenter + p.vx * (dist / FIREBALL_SPEED)` in x (flight time to
+    the player's current position) — clamped to level bounds.
+- `test/mage.test.js` (new `hover and aim lead` describe; `reseed()`
+  from `test/helpers/seeded-rng.js` for determinism — note the import
+  installs the seeded PRNG for the whole file, so all earlier tests
+  re-ran green under it):
+  - over a simulated 40s duel (no arrows), the mage hovers at least
+    once and reaches a real hover height;
+  - over a 45s duel, low-hp (hp 1) hover starts > full-hp hover starts
+    (seeded: 13 vs 4);
   - with the player moving at constant `vx`, the fired fireball's
-    direction points at the predicted point, not the current one;
-  - low-hp hover frequency is higher (seed `Math.random` via the
-    existing `test/helpers/seeded-rng.js` for determinism).
+    direction points exactly at the predicted point (formula
+    reproduced in the test), ahead of the fleeing player;
+  - the lead clamps to the level bounds (player at the left edge,
+    running off it).
 
 Verification: `npm test`, `npm run smoke`. Snapshot md5 **stable**
 (no draw changes).

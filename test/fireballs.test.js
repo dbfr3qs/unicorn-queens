@@ -26,6 +26,23 @@ describe('fireballs', () => {
     expect(fireballs[0].y).toBe(y0); // no gravity
   });
 
+  it('keep a constant velocity when fired diagonally (no gravity, no steering)', () => {
+    fresh();
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 1000; // out of the way
+    fireFireball(200, 300, 192, -144, fx([])); // 3-4-5 triangle at full speed
+    const f = fireballs[0];
+    const x0 = f.x, y0 = f.y;
+    const calls = [];
+    for (let i = 0; i < 30; i++) updateFireballs(p, l, createCamera(), DT, fx(calls));
+    expect(fireballs.length).toBe(1); // still alive: no surface in its path
+    expect(fireballs[0].vx).toBe(192);
+    expect(fireballs[0].vy).toBe(-144);
+    expect(fireballs[0].x).toBeCloseTo(x0 + 192 * 30 * DT, 5);
+    expect(fireballs[0].y).toBeCloseTo(y0 - 144 * 30 * DT, 5);
+  });
+
   it('fizzles out after the TTL', () => {
     fresh();
     const l = lvl();

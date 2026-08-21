@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemies.js';
-import { resetFireballs, fireballs } from '../src/projectiles.js';
+import { resetFireballs, fireballs, FIREBALL_SPEED } from '../src/projectiles.js';
 import { createCamera } from '../src/camera.js';
 
 const DT = 1 / 60;
@@ -33,8 +33,34 @@ describe('attack cycle', () => {
     for (let i = 0; i < 170; i++) updateEnemies([e], p, l, cam, DT, fx(calls));
     expect(fireballs.length).toBe(1);
     expect(calls).toContain('fireball');
-    expect(fireballs[0].vx).toBeLessThan(0); // flies left, toward the player
-    expect(Math.abs(fireballs[0].y + 7 - (p.y + p.h / 2))).toBeLessThan(2); // aimed at player height
+    const f = fireballs[0];
+    expect(f.vx).toBeLessThan(0); // flies left, toward the player
+    expect(f.vy).toBeGreaterThan(10); // grounded player center is below the orb: aims down
+    expect(Math.hypot(f.vx, f.vy)).toBeCloseTo(FIREBALL_SPEED, 0); // full speed, any angle
+  });
+
+  it('aims level when the player is centered on the orb height', () => {
+    resetFireballs();
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 2000;
+    p.y = e.y + e.h / 2 - 19.5 - p.h / 2; // player center exactly on the orb line
+    const cam = createCamera();
+    for (let i = 0; i < 170; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(Math.abs(fireballs[0].vy)).toBeLessThan(0.5); // level shot
+  });
+
+  it('aims up at an elevated player', () => {
+    resetFireballs();
+    const e = m(2200);
+    const l = lvl();
+    const p = createPlayer(l);
+    p.x = 2000;
+    p.y = 200; // well above the orb
+    const cam = createCamera();
+    for (let i = 0; i < 170; i++) updateEnemies([e], p, l, cam, DT, fx([]));
+    expect(fireballs[0].vy).toBeLessThan(-50); // flies up-left
   });
 
   it('keeps at most one fireball in the air', () => {

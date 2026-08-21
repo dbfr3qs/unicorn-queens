@@ -15,8 +15,9 @@ function onHit(e) {
 
 function update(e, { p, dt, fx }) {
   // Boss duel: idle -> windup (staff glows) -> fire at the player's
-  // height. Arrow hits stagger the cycle. One fireball in the air at a
-  // time; the boss sleeps until the player is in range.
+  // center from the staff orb, at any angle. Arrow hits stagger the
+  // cycle. One fireball in the air at a time; the boss sleeps until the
+  // player is in range.
   if (e.state === undefined) { e.state = 'idle'; e.t = 2; e.flash = 0; }
   e.flash = Math.max(0, e.flash - dt);
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
@@ -32,10 +33,12 @@ function update(e, { p, dt, fx }) {
     else e.t = 0.4; // wait: player out of range, or a fireball in flight
     return;
   }
-  // windup done: fire
+  // windup done: fire from the staff orb at the player's center, any angle
   if (e.t > 0) return;
-  const dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
-  fireFireball(e.x + e.w / 2 + dir * 24, p.y + p.h / 2 - 7, dir * FIREBALL_SPEED, 0, fx);
+  const ox = e.x + e.w / 2 + e.dir * 15.5, oy = e.y + e.h / 2 - 19.5; // orb center
+  const dx = (p.x + p.w / 2) - ox, dy = (p.y + p.h / 2) - oy;
+  const d = Math.hypot(dx, dy) || 1; // player inside the orb: arbitrary direction
+  fireFireball(ox - 7, oy - 7, dx / d * FIREBALL_SPEED, dy / d * FIREBALL_SPEED, fx);
   e.state = 'idle';
   e.t = this.nextIdle();
 }

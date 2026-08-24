@@ -7,10 +7,10 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, step } from './helpers/render-harness.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
-import { fireFireball, FIREBALL_SPEED } from '../src/projectiles.js';
+import { fireFireball, FIREBALL_SPEED, fireBoulder } from '../src/projectiles.js';
 
 test('initial frame', () => {
   freshGame();
@@ -220,5 +220,65 @@ test('l2 pearl on pedestal + unsealed stairs', () => {
   g.level.exit.locked = false; // seal broken (the pearl is taken in play)
   g.player.x = 3400; // boss floor, just before the stairs
   g.camera.x = 2800; // max scroll: level.width - viewW
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 3 (undercroft) scenarios ----
+// Camera values are player.x + w/2 - viewW/2 (or a clamp), so updateCamera
+// holds them still; boss/flight state is set directly (reaching it through
+// play would take longer than the snapshot is worth pinning).
+
+test('l3 corridor start (brick, torches, zombie, lava fissure 1)', () => {
+  const g = freshGame3();
+  g.player.x = 150; // just past the first zombie (250, patrols 180-420)
+  g.camera.x = 0; // level start clamp
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l3 key alcove (nook ledge over lava, marker, key)', () => {
+  const g = freshGame3();
+  g.player.x = 1470; // at the west lip, looking at the nook
+  g.camera.x = 1084; // 1470 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // marker, ledge, key over the fissure
+});
+
+test('l3 jail cell (bars closed, witch inside)', () => {
+  const g = freshGame3();
+  g.player.x = 1950; // outside the approach zone (2040-2170): no hint beat
+  g.camera.x = 1564; // 1950 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // bars + witch, ghost behind
+});
+
+test('l3 troll hall (slam windup, boulder in flight, hp pips)', () => {
+  const g = freshGame3();
+  g.player.x = 3660; // arena left edge, past the door
+  g.player.hasBow = true; // carried from level 2 in real play
+  g.camera.x = 3274; // 3660 + 14 - 400: locked door + hall in frame
+  const troll = g.enemies.find(e => e.kind === 'troll');
+  troll.state = 'slamWindup'; troll.t = 0.4; // mid the 0.8 s windup
+  troll.hp = 5; // pips: 5 green, 3 dim
+  fireBoulder(3930, 500, 3720, 545, { play: () => {} }); // lobbed toward the player
+  expect(step({}, 1)).toMatchSnapshot(); // boulder just launched
+});
+
+test('l3 flight (player mid-air over lava, wing meter half)', () => {
+  const g = freshGame3();
+  g.player.hasFlight = true;
+  g.player.flying = true;
+  g.player.flightT = 5; // half of the 10 s spell
+  g.player.x = 2900; // over fissure 3 (2850-2950): flight's reason to exist
+  g.player.y = 300; g.player.vy = 0;
+  g.camera.x = 2514; // 2900 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // wings flapping, meter ~half
+});
+
+test('l3 pearl on pedestal + unsealed stairs (troll dead)', () => {
+  const g = freshGame3();
+  const troll = g.enemies.find(e => e.kind === 'troll');
+  troll.dead = true; // dead bosses are not drawn
+  g.level.pearl.visible = true; // appears on the troll's death
+  g.level.exit.locked = false; // seal broken (the pearl is taken in play)
+  g.player.x = 4100; // hall floor, just before the stairs
+  g.camera.x = 3600; // max scroll: level.width - viewW
   expect(step({}, 1)).toMatchSnapshot();
 });

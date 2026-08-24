@@ -30,6 +30,14 @@ export function freshGame2(viewH = VIEW_H) {
   return game;
 }
 
+// Level 3 (undercroft) entry: same seeding, level index 2.
+export function freshGame3(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 2);
+  game.gameTime = 0;
+  return game;
+}
+
 // Simulate `frames` updates with the given keys held, then draw one
 // frame to a fresh recording context. Returns the draw-call log.
 // Input is reset afterwards so scenarios don't leak keys.

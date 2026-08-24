@@ -1,4 +1,4 @@
-// Heart cap: permanent-for-the-run maxHp 4 (LOOT-PLAN P4).
+// Heart cap: permanent-for-the-run maxHp 4.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

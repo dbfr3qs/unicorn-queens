@@ -1,4 +1,4 @@
-// Harness for render snapshot tests. See RENDER-TEST-PLAN.md.
+// Harness for render snapshot tests.
 //
 // IMPORT ORDER MATTERS: this module must be imported before any src/
 // module in the test file. src/background.js generates its stars with

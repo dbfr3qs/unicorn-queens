@@ -1,6 +1,6 @@
 # Level 2 design — "The Bridge & The Castle"
 
-Status: CONFIRMED (decisions at bottom). See LEVEL2-PLAN.md for the phased build.
+Status: CONFIRMED (decisions at bottom).
 
 ## Layout (left → right, ~3600 px wide, view 800×600)
 

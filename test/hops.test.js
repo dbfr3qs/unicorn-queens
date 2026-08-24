@@ -1,4 +1,4 @@
-// Levitation hops: limited-use air-jumps (LOOT-PLAN P6).
+// Levitation hops: limited-use air-jumps.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

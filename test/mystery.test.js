@@ -1,4 +1,4 @@
-// Mystery box: seeded wildcard payload (LOOT-PLAN P9).
+// Mystery box: seeded wildcard payload.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

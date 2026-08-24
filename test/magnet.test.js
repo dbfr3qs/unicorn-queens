@@ -1,4 +1,4 @@
-// Magnet: timed gem attraction (LOOT-PLAN P2).
+// Magnet: timed gem attraction.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

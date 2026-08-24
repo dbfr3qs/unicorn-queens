@@ -1,4 +1,4 @@
-// Bounce boots: timed super-jump power (LOOT-PLAN P1).
+// Bounce boots: timed super-jump power.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

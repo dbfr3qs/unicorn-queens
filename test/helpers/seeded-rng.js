@@ -2,7 +2,7 @@
 // Side-effect module with no imports of its own: it must evaluate
 // before any src/ module, so that import-time randomness (e.g. star
 // generation in src/background.js) is deterministic. The harness
-// imports it first. See RENDER-TEST-PLAN.md.
+// imports it first.
 function mulberry32(seed) {
   let a = seed >>> 0;
   return () => {

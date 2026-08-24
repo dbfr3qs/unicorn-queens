@@ -1,4 +1,4 @@
-// Lantern: timed ghost repel (LOOT-PLAN P8).
+// Lantern: timed ghost repel.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

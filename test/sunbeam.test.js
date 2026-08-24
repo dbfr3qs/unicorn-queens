@@ -1,4 +1,4 @@
-// Sunbeam: instant screen clear (LOOT-PLAN P3).
+// Sunbeam: instant screen clear.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';

@@ -1,7 +1,7 @@
 // Recording canvas 2D context for render snapshot tests.
 // Instead of drawing, it records every method call and property
 // assignment as a line of text; the log is compared via
-// toMatchSnapshot(). See RENDER-TEST-PLAN.md.
+// toMatchSnapshot().
 //
 // Floats are rounded to 3 dp so last-ulp arithmetic reordering doesn't
 // churn snapshots. save/restore are recorded so draw nesting is visible.

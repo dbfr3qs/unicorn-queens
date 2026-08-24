@@ -1,15 +1,6 @@
-// The exit (a sealed or open portal) and the pearl on its pedestal.
+// The pearl on its pedestal. The exit itself is invisible: the level
+// ends by walking down the staircase into the (unlocked) exit rect.
 import { palette } from './theme.js';
-
-export function drawExit(c, lvl, gameTime) {
-  const e = lvl.exit;
-  if (!e) return;
-  c.save();
-  c.globalAlpha = e.locked ? 0.45 + 0.2 * Math.sin(gameTime * 4) : 0.35;
-  c.fillStyle = e.locked ? '#6fe3e1' : palette.gold; // seal vs open glow
-  c.fillRect(e.x, e.y, e.w, e.h);
-  c.restore();
-}
 
 export function drawPearl(c, lvl, gameTime) {
   const pearl = lvl.pearl;

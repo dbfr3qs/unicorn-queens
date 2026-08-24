@@ -14,7 +14,7 @@ import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
 import { drawArrows } from './arrows.js';
-import { drawFireballs } from './projectiles.js';
+import { drawFireballs, drawBoulders, drawShockwaves } from './projectiles.js';
 import { drawParticles } from './particles.js';
 import { game } from '../game.js';
 import { palette } from './theme.js';
@@ -42,6 +42,8 @@ export function draw(ctx, viewW, viewH) {
   drawLoot(ctx);
   drawArrows(ctx);
   drawFireballs(ctx);
+  drawBoulders(ctx);
+  drawShockwaves(ctx);
   drawParticles(ctx);
   ctx.restore();
   ctx.restore();

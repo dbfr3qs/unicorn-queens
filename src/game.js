@@ -8,7 +8,7 @@ import { isDialogueOpen, openDialogue, resetDialogue } from './dialogue.js';
 import { createEnemies, updateEnemies, damageEnemy } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
-import { resetFireballs, updateFireballs } from './projectiles.js';
+import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetShockwaves, updateShockwaves } from './projectiles.js';
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateCell } from './cell.js';
@@ -41,6 +41,8 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   resetLoot();
   resetArrows();
   resetFireballs();
+  resetBoulders();
+  resetShockwaves();
   resetParticles();
   game.camera.x = 0;
   game.camera.shake = 0; // camera is a singleton: don't leak shake across restarts
@@ -88,6 +90,8 @@ export function update(dt, viewW, fx) {
   if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx, viewW);
   updateFireballs(game.player, game.level, game.camera, dt, fx, game.enemies);
+  updateBoulders(game.player, game.level, game.camera, dt, fx);
+  updateShockwaves(game.player, game.camera, dt, fx);
   updateParticles(dt);
   if (!game.player.dead && !game.player.won && reachedExit(game.player, game.level)) {
     game.player.won = true;

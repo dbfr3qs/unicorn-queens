@@ -23,4 +23,7 @@ export const FX = {
   mageSpark: { count: 5, colors: ['#6fe3e1', '#b57edc', '#fff'], speed: 50, up: 30, size: 3, grav: 100, life: 0.35 },
   cast: { count: 12, colors: ['#fff', '#cbb8ff', '#8fd3f4'], speed: 90, up: 70, size: 3, grav: -60, life: 0.5 },
   key: { count: 12, colors: ['#ffd75e', '#fff6d8', '#fff'], speed: 130, up: 60, size: 3, grav: -100, life: 0.5 },
+  boulderLand: { count: 10, colors: ['#8d76b8', '#6b4a32', '#5d4a80'], speed: 70, up: 40, size: 4, grav: 200, life: 0.4 },
+  boulderFizzle: { count: 10, colors: ['#6b4a32', '#8a6a4a', '#4a2d1c'], speed: 90, size: 4, grav: 300, life: 0.4 },
+  shockwave: { count: 8, colors: ['#8d76b8', '#6b4a32', '#fff'], speed: 80, up: 30, size: 3, grav: 100, life: 0.35 },
 };

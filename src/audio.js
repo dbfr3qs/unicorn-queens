@@ -67,6 +67,8 @@ export function sfx(name) {
     case 'clank': beep(160, 55, 0.25, 'square', 0.28); beep(90, 40, 0.18, 'square', 0.14, 0.06); break;
     case 'grant': [587, 880, 1175].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.08)); break;
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;
+    case 'thud': beep(90, 40, 0.2, 'triangle', 0.35); break;
+    case 'clatter': beep(300, 120, 0.15, 'square', 0.18); beep(200, 80, 0.12, 'square', 0.12, 0.05); break;
     case 'dialog': beep(740, 980, 0.05, 'square', 0.06); break;
   }
 }

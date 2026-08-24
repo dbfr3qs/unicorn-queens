@@ -50,7 +50,7 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
       const mage = enemies.find(e => e.kind === 'mage' && !e.dead);
       if (mage && f.x < mage.x + mage.w && f.x + f.w > mage.x &&
           f.y < mage.y + mage.h && f.y + f.h > mage.y) {
-        damageEnemy(mage, fx);
+        damageEnemy(mage, fx, cam);
         f.dead = true;
         fizzle(f, fx);
       }

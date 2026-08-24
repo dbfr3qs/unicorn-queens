@@ -13,6 +13,7 @@ import './enemies/slime.js';
 import './enemies/zombie.js';
 import './enemies/ghost.js';
 import './enemies/mage.js';
+import './enemies/troll.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -33,14 +34,16 @@ export function spawnEnemy(spec, lvl) {
 }
 
 // Shared one-point damage (arrows and friends): -1 hp, per-kind hit
-// reaction (onHit), death at 0 with per-kind sound and burst.
-export function damageEnemy(e, fx) {
+// reaction (onHit), death at 0 with per-kind sound, burst and optional
+// onDeath hook (the troll uses it for the death shake).
+export function damageEnemy(e, fx, cam) {
   e.hp -= 1;
   const k = getKind(e.kind);
   if (e.hp <= 0) {
     e.dead = true;
     fx.play(k.deathSound ?? 'thwack');
     burst(e.x + e.w / 2, e.y + e.h / 2, k.deathFx ?? FX.enemyDeath);
+    if (k.onDeath) k.onDeath(e, fx, cam);
   } else {
     fx.play(k.hitSound ?? 'thwack');
     if (k.onHit) k.onHit(e);

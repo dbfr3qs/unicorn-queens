@@ -26,4 +26,7 @@ export const FX = {
   boulderLand: { count: 10, colors: ['#8d76b8', '#6b4a32', '#5d4a80'], speed: 70, up: 40, size: 4, grav: 200, life: 0.4 },
   boulderFizzle: { count: 10, colors: ['#6b4a32', '#8a6a4a', '#4a2d1c'], speed: 90, size: 4, grav: 300, life: 0.4 },
   shockwave: { count: 8, colors: ['#8d76b8', '#6b4a32', '#fff'], speed: 80, up: 30, size: 3, grav: 100, life: 0.35 },
+  trollDeath: { count: 40, colors: ['#707d63', '#4a5240', '#8a9678', '#ffd75e'], speed: 220, up: 140, size: 5, grav: 400, life: 0.8 },
+  shieldSpark: { count: 8, colors: ['#fff', '#ffd75e', '#9aa0a8'], speed: 130, size: 3, grav: 100, life: 0.3 },
+  slamDust: { count: 14, colors: ['#8d76b8', '#6b4a32', '#8a8f98'], speed: 90, up: 50, size: 4, grav: 200, life: 0.45 },
 };

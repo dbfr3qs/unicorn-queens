@@ -45,7 +45,7 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
     for (const e of enemies) { // hit an enemy
       if (e.dead || (a.hit && a.hit.has(e))) continue; // no double-dips
       if (a.x < e.x + e.w && a.x + 14 > e.x && a.y < e.y + e.h && a.y + 4 > e.y) {
-        damageEnemy(e, fx); // hp, per-kind hit reaction, death at 0
+        damageEnemy(e, fx, cam); // hp, per-kind hit reaction, death at 0
         shake(cam, 3, 0.12);
         if (a.star) { // pierce: remember the hit, keep flying on budget
           a.hit.add(e);

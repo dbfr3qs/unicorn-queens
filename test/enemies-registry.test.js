@@ -1,23 +1,23 @@
 // Registry integrity for the enemies refactor: every definition is
-// well-formed, the original kind set is exactly the registered one, the
-// per-kind sizes/stomp rules (and boss hp) match the original KINDS
-// table, and every roster spec in both levels dispatches to a registered
-// kind.
+// well-formed, the kind set is exactly the registered one, the per-kind
+// sizes/stomp rules (and boss hp) match the KINDS table, and every
+// roster spec in both levels dispatches to a registered kind.
 import { describe, it, expect } from 'vitest';
 import { REGISTRY } from '../src/enemies/index.js';
 import { spawnEnemy } from '../src/enemies.js'; // side effect: registers all kind files
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';
 
-const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage'];
+const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll'];
 
-// The original KINDS table, per kind: size, stomp rule, and (boss only)
-// hp. The registry must match it exactly.
+// The KINDS table, per kind: size, stomp rule, and (boss only) hp.
+// The registry must match it exactly.
 const EXPECTED = {
   slime: { w: 30, h: 28, stompable: true },
   zombie: { w: 34, h: 40, stompable: true },
   ghost: { w: 28, h: 26, stompable: false },
   mage: { w: 42, h: 54, stompable: false, hp: 5 },
+  troll: { w: 52, h: 64, stompable: false, hp: 8 },
 };
 
 describe('registry shape', () => {
@@ -34,7 +34,7 @@ describe('registry shape', () => {
     }
   });
 
-  it('all 4 kinds are registered (catches a stub that never calls register)', () => {
+  it('all 5 kinds are registered (catches a stub that never calls register)', () => {
     expect([...REGISTRY.keys()].sort()).toEqual([...ALL_KINDS].sort());
   });
 });

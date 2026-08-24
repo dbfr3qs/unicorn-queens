@@ -21,6 +21,25 @@ step. Serve over http — the modules won't load from `file://`.
    fires fireballs you can't shoot down; dodge them. Beat him to make
    the magic pearl appear, take it to break the seal, and walk the
    four steps down to the exit.
+3. **The Undercroft** — a brown-brick dungeon lit by torches, crossed
+   by lava fissures (falling in costs a heart and respawns you).
+   A marker brick on the wall glints toward a hidden key set into a
+   nook ledge above the second fissure — a tight two-hop chain. The
+   key unlocks a jail cell; the witch inside grants you the flight
+   spell (permanent for the run). The same key opens the troll's
+   door: it is consumed there, and the portcullis drops shut behind
+   you, so the fight is a one-way commit. The troll has 8 hp and a
+   stone shield that bounces arrows (the top of his head is open, and
+   he sometimes rolls it away); he slams the floor into shockwaves
+   and lobs boulders you can't shoot down. Below 4 hp he winds up
+   faster, throws three boulders, and his eyes glow. Beat him to make
+   the pearl appear, take it, and walk the four steps down to the
+   exit.
+
+   **Flight spell (S):** for 10 s you fly — up/down/left/right with
+   the arrow keys (A/D still run, X still shoots); landing on anything
+   ends it early. 15 s recharge, forever. No invulnerability while
+   airborne.
 
 Win a level and press Space to play the next one.
 
@@ -54,6 +73,8 @@ the only exception. Score and the one-time bow reset each level.
 - Move: arrows or A/D
 - Jump: Space / W / up arrow
 - Shoot: X or J
+- Flight spell (once learned, level 3): S — fly for 10 s; while
+  flying, up/down arrows rise and descend
 - Sound: M
 - Next level / retry (after win/loss): Space
 
@@ -101,7 +122,8 @@ the only exception. Score and the one-time bow reset each level.
   | slime | `slime.js` | patrol (turns at bounds); stompable; owns `E_W`/`E_H` |
   | zombie | `zombie.js` | shamble + chase in aggro range; stompable |
   | ghost | `ghost.js` | hover/bob, drifts close, flees a lit lantern; unstompable |
-  | mage | `mage.js` | boss: idle→windup→fire, stagger on hit, 5 hp, hp-pip sprite |
+  | mage | `mage.js` | boss (level 2): idle→windup→fire, stagger on hit, 5 hp, hp-pip sprite |
+  | troll | `troll.js` | boss (level 3): 8 hp, stone shield bounces front arrows (top open, reactive roll), slam → shockwaves + shake, lobs unshootable boulders; phase 2 at hp ≤ 4 (faster windups, 3 boulders, ember eyes) |
 - `test/` — unit tests for the logic, plus render snapshot tests.
 
 ## Render snapshot tests

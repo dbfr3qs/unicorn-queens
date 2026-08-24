@@ -15,7 +15,7 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.fillStyle = i < player.hp ? palette.pink : palette.heartEmpty;
     ctx.fillText('\u2665', 12 + i * 22, 10); // heart
   }
-  if (game.level.key && game.level.key.taken) { // key icon, until the door consumes it (P5)
+  if (game.level.key && game.level.key.taken && !game.level.key.consumed) { // key icon, until the door consumes it
     const kx = 12 + player.maxHp * 22 + 10, ky = 12; // just right of the hearts
     ctx.strokeStyle = palette.gold;
     ctx.lineWidth = 2.5;

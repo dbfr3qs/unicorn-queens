@@ -9,6 +9,7 @@ import { drawLevel } from './level.js';
 import { drawPearl } from './pearl.js';
 import { drawKey, drawMarker } from './key.js';
 import { drawCell } from './cell.js';
+import { drawDoor } from './door.js';
 import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
@@ -34,6 +35,7 @@ export function draw(ctx, viewW, viewH) {
   drawKey(ctx, level, gameTime);
   drawMarker(ctx, level, gameTime);
   drawCell(ctx, level);
+  drawDoor(ctx, level, gameTime);
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
   drawEnemies(ctx, enemies);

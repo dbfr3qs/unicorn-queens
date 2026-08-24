@@ -69,8 +69,10 @@ P5 needs P3; P7 needs P6 (its projectiles); P8 needs everything; P9 last.
   after fade; unlock persists; dialogue state does not leak across levels.
 
 ## P5 — The door (troll-hall gate)
-- Portcullis at 3550–3590 (floor to y≈200): solid side-collision rect for
-  the player (seal-style), iron-banded stone, glowing lock.
+- Portcullis at 3550–3590, **full height** (floor to ceiling): solid
+  side-collision rect for the player (seal-style), iron-banded stone,
+  glowing lock. Full height so flight can't skip the key (a y≈200 top
+  would be flyable over).
 - No key: impassable. With key: auto-opens on approach — rumble, slides up
   over ~1 s, **key consumed** (`lvl.key.taken = true`, icon disappears).
 - Once the player passes x > 3600 the portcullis drops shut behind them

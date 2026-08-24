@@ -88,8 +88,9 @@ lava:    600–700      1550–1650      2850–2950      3250–3350
      "Free at last — you have a kind heart. / Take this: press S and you
      will soar." → the witch hops out, wanders a step or two, fades in a
      puff of sparkles. The **flight spell is granted** (permanent).
-3. **Door** (3550–3590, floor to y≈200): iron-banded stone portcullis with a
-   glowing lock.
+3. **Door** (3550–3590, **full height** — floor to ceiling, since a
+   y≈200 top would be flyable over and the key must not be skippable):
+   iron-banded stone portcullis with a glowing lock.
    - *No key:* solid barrier — the troll hall cannot be entered.
    - *With key:* auto-opens on approach (rumble, slides up) and **the key is
      consumed** (icon disappears). Once the player passes x > 3600 the

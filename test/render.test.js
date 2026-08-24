@@ -165,6 +165,22 @@ test('l3 key in alcove + marker glint', () => {
   expect(step({}, 1)).toMatchSnapshot(); // glint decays one frame during the step
 });
 
+test('l3 door locked (glowing lock)', () => {
+  const g = freshGame();
+  const gy = g.level.groundY;
+  g.level.door = { x: 1000, y: 0, w: 40, h: gy, state: 'locked', openT: 0, closeT: 0 };
+  g.player.x = 900;
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l3 door open (lattice retracted)', () => {
+  const g = freshGame();
+  const gy = g.level.groundY;
+  g.level.door = { x: 1000, y: 0, w: 40, h: gy, state: 'open', openT: 0, closeT: 0 };
+  g.player.x = 1100;
+  expect(step({}, 1)).toMatchSnapshot(); // no lock, 30 px header remains
+});
+
 test('l3 jail cell with witch (bars closed)', () => {
   const g = freshGame();
   const gy = g.level.groundY;

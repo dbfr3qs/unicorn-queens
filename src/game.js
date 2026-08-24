@@ -12,6 +12,7 @@ import { resetFireballs, updateFireballs } from './projectiles.js';
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateCell } from './cell.js';
+import { updateDoor, resolveDoor } from './door.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -68,6 +69,7 @@ export function update(dt, viewW, fx) {
   if (isDialogueOpen()) return; // dialogue: the whole world is frozen, clock included
   game.gameTime += dt;
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
+  resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame
   const gate = game.level.gate; // castle gate: one chime on first crossing
   if (gate && !game.gateChimed && game.player.x + game.player.w > gate.x + gate.w / 2) {
@@ -78,6 +80,7 @@ export function update(dt, viewW, fx) {
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx);
   updateCell(game.level, game.player, dt, fx);
+  updateDoor(game.level, game.player, dt, fx);
   if (game.level.marker && game.level.marker.glintT > 0) {
     game.level.marker.glintT = Math.max(0, game.level.marker.glintT - dt);
   }

@@ -165,6 +165,22 @@ test('l3 key in alcove + marker glint', () => {
   expect(step({}, 1)).toMatchSnapshot(); // glint decays one frame during the step
 });
 
+test('l3 jail cell with witch (bars closed)', () => {
+  const g = freshGame();
+  const gy = g.level.groundY;
+  g.level.cell = { x: 500, y: gy - 100, w: 70, h: 100, open: false, opening: false, unlockT: 0, witch: 'inside', wx: 525, wy: gy - 32, wvy: 0, wanderT: 0, fadeT: 0, puffT: 0 };
+  g.player.x = 300; // far enough not to trigger anything
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l3 cell open after the witch is gone', () => {
+  const g = freshGame();
+  const gy = g.level.groundY;
+  g.level.cell = { x: 500, y: gy - 100, w: 70, h: 100, open: true, opening: false, unlockT: 0, witch: 'gone', wx: 490, wy: gy - 32, wvy: 0, wanderT: 0, fadeT: 0, puffT: 0 };
+  g.player.x = 300;
+  expect(step({}, 1)).toMatchSnapshot(); // no bars, empty interior
+});
+
 test('l3 key HUD icon (carried)', () => {
   const g = freshGame();
   g.level.key = { x: 1620, y: g.level.groundY - 240, w: 16, h: 16, taken: true };

@@ -11,6 +11,7 @@ import { resetArrows, updateArrows } from './arrows.js';
 import { resetFireballs, updateFireballs } from './projectiles.js';
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
+import { updateCell } from './cell.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -45,6 +46,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   game.camera.mag = 0;
   game.gateChimed = false;
   game.dialogsFired = new Set(); // beat ids already spoken this run
+  game.dialogsIn = new Set(); // dialog rects the player is standing in
   resetDialogue(); // a restart never leaves a box half-open
   game.lastTs = 0;
 }
@@ -75,6 +77,7 @@ export function update(dt, viewW, fx) {
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx);
+  updateCell(game.level, game.player, dt, fx);
   if (game.level.marker && game.level.marker.glintT > 0) {
     game.level.marker.glintT = Math.max(0, game.level.marker.glintT - dt);
   }
@@ -97,18 +100,22 @@ export function update(dt, viewW, fx) {
 }
 
 // Proximity dialogue: each lvl.dialogs entry is a trigger rect with
-// ordered beats. A beat fires once per run (its id goes in
-// game.dialogsFired) when the player overlaps the rect and its `when`
-// (if any) returns true; the first eligible unfired beat opens.
+// ordered beats. Beats fire on ENTRY of the rect (game.dialogsIn tracks
+// who is standing in which rect), so a `repeat` beat re-fires on each
+// approach while plain beats fire once per run (id in game.dialogsFired).
+// A beat's `when(game)` gates it; the first eligible beat opens.
 function checkDialogs(fx) {
   const dialogs = game.level.dialogs;
-  if (!dialogs || game.player.dead || game.player.won) return;
+  if (!dialogs || isDialogueOpen() || game.player.dead || game.player.won) return;
   const p = game.player;
   for (const d of dialogs) {
-    if (p.x >= d.x + d.w || p.x + p.w <= d.x || p.y >= d.y + d.h || p.y + p.h <= d.y) continue;
-    const beat = d.beats.find(b => !game.dialogsFired.has(b.id) && (!b.when || b.when(game)));
+    const inside = p.x < d.x + d.w && p.x + p.w > d.x && p.y < d.y + d.h && p.y + p.h > d.y;
+    if (!inside) { game.dialogsIn.delete(d.id); continue; }
+    if (game.dialogsIn.has(d.id)) continue; // already standing in it
+    game.dialogsIn.add(d.id); // entry edge this frame
+    const beat = d.beats.find(b => (b.repeat || !game.dialogsFired.has(b.id)) && (!b.when || b.when(game)));
     if (!beat) continue;
-    game.dialogsFired.add(beat.id);
+    if (!beat.repeat) game.dialogsFired.add(beat.id);
     openDialogue(beat.lines);
     fx.play('dialog');
     return; // one dialog per frame

@@ -76,6 +76,25 @@ describe('world freeze', () => {
   });
 });
 
+describe('repeat beats', () => {
+  it('a repeat beat re-fires on each approach, not while standing', () => {
+    game.level.dialogs = [{
+      id: 'd', x: 440, y: 100, w: 120, h: 460,
+      beats: [{ id: 'r', repeat: true, lines: [L('again')] }],
+    }];
+    stand(500);
+    update(DT, 800, fx);
+    expect(isDialogueOpen()).toBe(true);
+    advanceDialogue(); // close, still standing in the rect
+    update(DT, 800, fx);
+    expect(isDialogueOpen()).toBe(false); // no immediate re-fire
+    stand(200); update(DT, 800, fx); // walk out
+    stand(500); update(DT, 800, fx); // re-approach
+    expect(isDialogueOpen()).toBe(true);
+    expect(game.dialogsFired.has('r')).toBe(false); // repeats never get marked fired
+  });
+});
+
 describe('advance', () => {
   it('advances one line per call and closes on the last', () => {
     openDialogue([L('a'), L('b')]);

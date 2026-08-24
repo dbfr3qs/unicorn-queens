@@ -56,14 +56,15 @@ P5 needs P3; P7 needs P6 (its projectiles); P8 needs everything; P9 last.
 ## P4 — Jail cell & the witch
 - Cell: brick alcove with iron bars (70×100) at ~2100; witch sprite inside
   (cowl, staff, hopeful eyes).
-- Two beats via the dialogue system, selected by `lvl.key.taken`:
-  - No key: hint line ("…a secret key hides to the west — above the fire.").
-    Non-blocking: re-triggers each approach until unlocked (the one
-    exception to P2's fire-once rule).
-  - With key: auto-unlock — clank, bars swing open animation (~0.8 s),
-    thank-you + spell lines, then **`hasFlight = true`**, witch hops out,
-    wanders a step or two, fades in a sparkle puff. One-time; the cell
-    stays open afterwards.
+- Two beats, selected by `lvl.key.taken`:
+  - No key: hint line via a **repeat** `lvl.dialogs` beat (P4 adds entry-
+    edge triggering + `repeat` to the P2 system): re-triggers each
+    approach, never marked fired.
+  - With key: `updateCell` auto-unlock — clank, bars swing open over 0.8 s,
+    then the witch's two lines (openDialogue directly) and **
+    `hasFlight = true`** + flightCd reset; the frame the box closes the
+    witch hops out, wanders a step or two west, fades in a sparkle puff.
+    One-time; the cell stays open afterwards. State in `lvl.cell`.
 - Tests: beat 1 hint keyless; with key → unlock, spell granted, witch gone
   after fade; unlock persists; dialogue state does not leak across levels.
 

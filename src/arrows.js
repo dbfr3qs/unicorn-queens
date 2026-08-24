@@ -21,7 +21,7 @@ export function fireArrow(p) {
   });
 }
 
-// Star arrow: pierces up to 5 enemies (never re-hitting one), shatters
+// Star arrow: pierces up to 2 enemies (never re-hitting one), shatters
 // boxes in its path and keeps flying, no gravity (like every arrow here).
 export function fireStarArrow(p) {
   arrows.push({
@@ -29,7 +29,7 @@ export function fireStarArrow(p) {
     y: p.y + p.h - 24,
     vx: p.facing * ARROW_SPEED,
     dead: false,
-    star: true, pierces: 5, hit: new Set(),
+    star: true, pierces: 2, hit: new Set(),
   });
 }
 

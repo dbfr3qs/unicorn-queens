@@ -1,4 +1,4 @@
-// Star arrows: piercing star projectiles (LOOT-PLAN P5).
+// Star arrows: piercing star projectiles.
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';
@@ -81,7 +81,7 @@ describe('firing', () => {
 });
 
 describe('piercing', () => {
-  it('a star arrow kills two slimes and survives both', () => {
+  it('a star arrow kills two slimes and is spent on the second', () => {
     const { l, p } = standingPlayer();
     p.x = 100; p.facing = 1;
     const e1 = spawnEnemy({ kind: 'slime', x: 300, minX: 300, maxX: 340 }, l);
@@ -93,7 +93,7 @@ describe('piercing', () => {
     expect(arrows.length).toBe(1); // still flying after the first kill
     for (let i = 0; i < 25; i++) updateArrows([e1, e2], l, cam, DT, fx([]));
     expect(e2.dead).toBe(true);
-    expect(arrows.length).toBe(1); // 5-hit budget far from spent
+    expect(arrows.length).toBe(0); // 2-hit budget spent on the second kill
   });
 
   it('a star arrow damages the mage and never re-hits him', () => {

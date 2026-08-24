@@ -47,10 +47,12 @@ lava:    600–700      1550–1650      2850–2950      3250–3350
   out of pattern with a faint glint (brightens briefly if shot). Points at
   the alcove to its right.
 - **The key** (~1620, y≈groundY−240): a small brick nook above lava fissure
-  2 (1550–1650). Reached by a precise two-hop chain: platform at the west
-  lip {1460, y−150, 100} → the nook ledge {1600, y−240, 90}. Missing the
-  ledge = lava. The nook is set into the wall, so the key is only visible
-  if you look up / approach the lip — hidden, and the approach is difficult.
+  2 (1550-1650). Reached by a precise two-hop chain: platform at the west
+  lip {1460, y−120, 100} → the nook ledge {1600, y−240, 90}. Each hop is a
+  120 px rise (the jump apex is ~130 px, so both are tight but fair).
+  Missing the ledge = lava. The nook is set into the wall, so the key is
+  only visible if you look up / approach the lip — hidden, and the approach
+  is difficult.
 - **Jail cell** (~2100, ground level): a brick alcove with iron bars, ~70×100,
   witch visible inside. Two dialogue beats (see below).
 - Zombie: (2000, patrol 1900–2100). Ghost: (2250, 230).
@@ -59,7 +61,8 @@ lava:    600–700      1550–1650      2850–2950      3250–3350
 
 - The danger ramp — where flight starts to pay off before the boss.
 - Lava fissures at 2850–2950 and 3250–3350; staggered platforms over both
-  (e.g. {2800, y−150, 110}, {3100, y−180, 120}, {3300, y−140, 110}).
+  {2800, y−110, 110}, {3100, y−140, 120}, {3300, y−110, 110} (heights kept
+  within the ~130 px jump apex of the ground or a neighbouring platform).
 - Zombies: (2700, 2600–2800), (3100, 3000–3200), (3450, 3400–3520).
   Ghosts: (2950, 250), (3300, 230) — "ghosts in the dark".
 - **The door** at 3550 (see below).

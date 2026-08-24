@@ -25,6 +25,25 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillStyle = '#1d4e8e'; // surface line
     c.fillRect(m.x, lvl.groundY + 6, m.w, 3);
   }
+  for (const m of lvl.lava ?? []) { // lava fissures (dungeon): glowing, bubbling
+    const top = lvl.groundY + 4;
+    c.fillStyle = '#3a0a05'; // body
+    c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
+    c.fillStyle = '#8a2410'; // surface line
+    c.fillRect(m.x, top, m.w, 3);
+    c.fillStyle = '#c2451e'; // slow bubbles
+    for (let i = 0; i < 3; i++) {
+      const bx = m.x + 14 + i * ((m.w - 28) / 2);
+      const by = top + 8 + Math.sin(t * 1.6 + i * 2.1 + m.x * 0.05) * 3;
+      c.beginPath();
+      c.arc(bx, by, 2.5, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.globalAlpha = 0.12; // soft glow on the brick above
+    c.fillStyle = '#ff6a2a';
+    c.fillRect(m.x - 8, lvl.groundY - 26, m.w + 16, 30);
+    c.globalAlpha = 1;
+  }
   if (lvl.gate) { // stone arch at the castle gate
     c.fillStyle = '#3a2a5c';
     c.fillRect(lvl.gate.x, lvl.groundY - 220, 26, 220);

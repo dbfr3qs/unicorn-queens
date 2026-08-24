@@ -37,4 +37,13 @@ for (let i = 0; i < FRAMES; i++) {
   if (!cb) throw new Error('requestAnimationFrame chain broke at level-2 frame ' + i);
   cb(ts);
 }
-console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2)`);
+// third run: level 3 (dungeon, lava, key chain, troll hall, stairs down)
+startGame(600, 2);
+game.lastTs = 0;
+for (let i = 0; i < FRAMES; i++) {
+  ts += 16.7;
+  const cb = rafCb; rafCb = null;
+  if (!cb) throw new Error('requestAnimationFrame chain broke at level-3 frame ' + i);
+  cb(ts);
+}
+console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3)`);

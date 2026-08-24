@@ -5,7 +5,7 @@ import { BIG_W, BIG_H, P_W, P_H } from '../src/player.js';
 
 describe('level registry', () => {
   it('starts with level 1', () => {
-    expect(LEVELS.length).toBe(2);
+    expect(LEVELS.length).toBe(3);
     const lvl = LEVELS[0].make(600);
     expect(lvl.width).toBe(2400);
     expect(lvl.groundY).toBe(560);
@@ -33,9 +33,9 @@ describe('startGame + restartTarget', () => {
     game.player.dead = false;
     game.player.won = true;
     expect(restartTarget()).toBe(1); // level 1 win: a next level exists
-    startGame(600, 1);
+    startGame(600, 2);
     game.player.won = true;
-    expect(restartTarget()).toBe(1); // final level win: restart itself
+    expect(restartTarget()).toBe(2); // final level win: restart itself
   });
 
   it('R advances on a win when a next level exists', () => {
@@ -47,7 +47,7 @@ describe('startGame + restartTarget', () => {
     expect(restartTarget()).toBe(1); // loss: restart, never advance
     game.player.dead = false;
     game.player.won = true;
-    expect(restartTarget()).toBe(1); // final level: win restarts itself
+    expect(restartTarget()).toBe(2); // level 2 win: advance to level 3
   });
 });
 

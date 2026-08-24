@@ -22,4 +22,5 @@ export const FX = {
   mageDeath: { count: 30, colors: ['#b57edc', '#ffd75e', '#fff5fa'], speed: 260, up: 160, size: 6, grav: 400, life: 0.9 },
   mageSpark: { count: 5, colors: ['#6fe3e1', '#b57edc', '#fff'], speed: 50, up: 30, size: 3, grav: 100, life: 0.35 },
   cast: { count: 12, colors: ['#fff', '#cbb8ff', '#8fd3f4'], speed: 90, up: 70, size: 3, grav: -60, life: 0.5 },
+  key: { count: 12, colors: ['#ffd75e', '#fff6d8', '#fff'], speed: 130, up: 60, size: 3, grav: -100, life: 0.5 },
 };

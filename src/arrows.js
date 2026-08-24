@@ -4,6 +4,7 @@ import { spawnLoot } from './loot.js';
 import { shake } from './camera.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
+import { MARKER_GLINT } from './key.js';
 
 export const arrows = [];
 export const ARROW_SPEED = 520, FIRE_CD = 0.22;
@@ -68,6 +69,12 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
         if (!a.star) a.dead = true; // stars shatter the box and keep flying
         break;
       }
+    }
+    if (a.dead) continue;
+    if (lvl.marker && // marker brick: purely visual glint, the arrow passes through
+        a.x < lvl.marker.x + lvl.marker.w && a.x + 14 > lvl.marker.x &&
+        a.y < lvl.marker.y + lvl.marker.h && a.y + 4 > lvl.marker.y) {
+      lvl.marker.glintT = MARKER_GLINT;
     }
   }
   for (let i = arrows.length - 1; i >= 0; i--) if (arrows[i].dead) arrows.splice(i, 1);

@@ -10,6 +10,7 @@ import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
 import { resetFireballs, updateFireballs } from './projectiles.js';
 import { updatePearl } from './pearl.js';
+import { updateKey } from './key.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -73,6 +74,10 @@ export function update(dt, viewW, fx) {
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
+  updateKey(game.level, game.player, fx);
+  if (game.level.marker && game.level.marker.glintT > 0) {
+    game.level.marker.glintT = Math.max(0, game.level.marker.glintT - dt);
+  }
   updateLoot(game.player, game.level, dt, fx, { onSunbeam: (p, l, f) => fireSunbeam(p, l, f, viewW) });
   if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx, viewW);

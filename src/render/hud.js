@@ -15,6 +15,16 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.fillStyle = i < player.hp ? palette.pink : palette.heartEmpty;
     ctx.fillText('\u2665', 12 + i * 22, 10); // heart
   }
+  if (game.level.key && game.level.key.taken) { // key icon, until the door consumes it (P5)
+    const kx = 12 + player.maxHp * 22 + 10, ky = 12; // just right of the hearts
+    ctx.strokeStyle = palette.gold;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(kx + 4, ky + 4, 3.5, 0, Math.PI * 2); ctx.stroke(); // ring
+    ctx.fillStyle = palette.gold;
+    ctx.fillRect(kx + 7, ky + 3, 8, 2.5); // shaft
+    ctx.fillRect(kx + 11.5, ky + 5.5, 2, 3);
+    ctx.fillRect(kx + 14, ky + 5.5, 2, 3.5); // teeth
+  }
   ctx.fillStyle = palette.teal;
   ctx.textAlign = 'right';
   ctx.fillText('SCORE ' + score, viewW - 12, 10);

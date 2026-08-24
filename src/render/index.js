@@ -7,6 +7,7 @@ import { drawDialogue } from './dialogue.js';
 import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
 import { drawPearl } from './pearl.js';
+import { drawKey, drawMarker } from './key.js';
 import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
@@ -29,6 +30,8 @@ export function draw(ctx, viewW, viewH) {
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
   drawLevel(ctx, level, gameTime);
+  drawKey(ctx, level, gameTime);
+  drawMarker(ctx, level, gameTime);
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
   drawEnemies(ctx, enemies);

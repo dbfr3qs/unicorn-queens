@@ -156,6 +156,21 @@ test('l2 boss hall with shield active (moon disc + charge pips)', () => {
   expect(step({}, 1)).toMatchSnapshot();
 });
 
+test('l3 key in alcove + marker glint', () => {
+  const g = freshGame();
+  g.level.key = { x: 1620, y: g.level.groundY - 240, w: 16, h: 16, taken: false };
+  g.level.marker = { x: 1480, y: g.level.groundY - 200, w: 36, h: 12, glintT: 0.3 };
+  g.player.x = 1500;
+  g.camera.x = 1114; // 1500 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // glint decays one frame during the step
+});
+
+test('l3 key HUD icon (carried)', () => {
+  const g = freshGame();
+  g.level.key = { x: 1620, y: g.level.groundY - 240, w: 16, h: 16, taken: true };
+  expect(step({}, 1)).toMatchSnapshot(); // icon top-left, key itself gone
+});
+
 test('dialogue box (bottom center)', () => {
   const g = freshGame();
   g.level.dialogs = [{

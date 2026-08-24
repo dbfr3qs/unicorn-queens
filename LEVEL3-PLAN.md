@@ -46,7 +46,8 @@ P5 needs P3; P7 needs P6 (its projectiles); P8 needs everything; P9 last.
   beat selection callback, re-approach does not re-trigger finished dialog.
 
 ## P3 — The key
-- Key as a world pickup (16×16, golden, glint animation): `game.key` boolean,
+- Key as a world pickup (16×16, golden, glint animation): `lvl.key = {x, y,
+  w, h, taken}` (pearl pattern — all key-chain state lives in level data),
   HUD key icon while carried. Pickup = burst + chime.
 - Marker brick: one out-of-pattern brick on the corridor wall (~1480) with a
   faint glint; glint brightens briefly if an arrow hits it (purely visual).
@@ -55,7 +56,7 @@ P5 needs P3; P7 needs P6 (its projectiles); P8 needs everything; P9 last.
 ## P4 — Jail cell & the witch
 - Cell: brick alcove with iron bars (70×100) at ~2100; witch sprite inside
   (cowl, staff, hopeful eyes).
-- Two beats via the dialogue system, selected by `game.key`:
+- Two beats via the dialogue system, selected by `lvl.key.taken`:
   - No key: hint line ("…a secret key hides to the west — above the fire.").
     Non-blocking: re-triggers each approach until unlocked (the one
     exception to P2's fire-once rule).
@@ -70,7 +71,7 @@ P5 needs P3; P7 needs P6 (its projectiles); P8 needs everything; P9 last.
 - Portcullis at 3550–3590 (floor to y≈200): solid side-collision rect for
   the player (seal-style), iron-banded stone, glowing lock.
 - No key: impassable. With key: auto-opens on approach — rumble, slides up
-  over ~1 s, **key consumed** (icon disappears).
+  over ~1 s, **key consumed** (`lvl.key.taken = true`, icon disappears).
 - Once the player passes x > 3600 the portcullis drops shut behind them
   (1 s), re-locking the hall.
 - Tests: blocks keyless; opens + consumes key; drop-shut triggers after

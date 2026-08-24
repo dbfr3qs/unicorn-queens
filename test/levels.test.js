@@ -81,6 +81,16 @@ describe('permanent state across levels', () => {
     expect(game.player.y).toBe(game.level.groundY - P_H);
   });
 
+  it('flight spell is permanent: survives advance AND death-restart', () => {
+    startGame(600, 0);
+    game.player.hasFlight = true;
+    startGame(600, 1, game.player); // advance
+    expect(game.player.hasFlight).toBe(true);
+    game.player.dead = true;
+    startGame(600, 1, game.player); // death-restart: the witch's gift stays
+    expect(game.player.hasFlight).toBe(true);
+  });
+
   it('heart cap survives advance AND death-restart; big survives neither a death', () => {
     startGame(600, 0);
     game.player.maxHp = 4;

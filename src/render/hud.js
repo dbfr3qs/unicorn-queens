@@ -3,6 +3,7 @@ import { game } from '../game.js';
 import { LEVELS } from '../levels.js';
 import { score } from '../loot.js';
 import { muted } from '../audio.js';
+import { FLIGHT_TIME, FLIGHT_CD } from '../player.js';
 import { palette, fonts } from './theme.js';
 
 export function drawHud(ctx, viewW, viewH) {
@@ -20,6 +21,19 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.textAlign = 'center';
   ctx.fillStyle = palette.lavender;
   ctx.fillText('LEVEL ' + (game.levelIndex + 1), viewW / 2, 10);
+  if (player.hasFlight) { // flight meter: gold drains in flight, lavender refills on cooldown
+    const bw = 64, bh = 5, bx = viewW / 2 - bw / 2, by = 32;
+    const frac = player.flying ? player.flightT / FLIGHT_TIME
+      : player.flightCd > 0 ? 1 - player.flightCd / FLIGHT_CD : 1;
+    ctx.fillStyle = palette.hint;
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = player.flying ? palette.gold
+      : player.flightCd > 0 ? palette.lavender : palette.teal;
+    ctx.fillRect(bx, by, bw * Math.max(0, Math.min(1, frac)), bh);
+    ctx.fillStyle = player.flying ? palette.gold : palette.lavender; // wing icon
+    ctx.beginPath(); ctx.ellipse(bx - 14, by + 1, 6, 3, -0.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(bx - 7, by + 3.5, 5, 2.5, -0.3, 0, Math.PI * 2); ctx.fill();
+  }
   ctx.restore();
   if (player.dead || player.won) {
     ctx.save();
@@ -44,10 +58,13 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.fillStyle = palette.hint;
   ctx.textBaseline = 'bottom';
   ctx.fillText(muted ? 'sound off (M)' : 'sound on (M)', 12, viewH - 8);
-  if (player.hasBow) {
+  if (player.hasFlight || player.hasBow) {
     ctx.fillStyle = palette.bowHint;
     ctx.textAlign = 'right';
-    ctx.fillText('X: fire', viewW - 12, viewH - 8);
+    const hints = [];
+    if (player.hasFlight) hints.push('S: fly');
+    if (player.hasBow) hints.push('X: fire');
+    ctx.fillText(hints.join('  '), viewW - 12, viewH - 8);
   }
   ctx.restore();
 }

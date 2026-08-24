@@ -14,6 +14,9 @@ export const LANTERN_TIME = 8; // lantern: 8 s of ghost-repelling light
 export const HURT_INVULN = 1.5; // invulnerability window after any hit
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
 export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
+export const FLIGHT_TIME = 10, FLIGHT_CD = 15; // witch's spell: 10 s flight, 15 s recharge
+export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
+export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
 
 // carry: permanent acquisitions from the previous level (big, bow),
 // passed when advancing; a fresh start or death-restart carries nothing.
@@ -42,6 +45,12 @@ export function createPlayer(lvl, carry = {}) {
     hopFx: 0, // wing shimmer timer (s); visual only
     shield: 0, // mirror shield: fireball reflects left; never carried
     lantern: 0, // ghost-repelling light timer (s); never carried
+    hasFlight: !!carry.hasFlight, // witch's flight spell: permanent once learned
+    flying: false,
+    flightT: 0, // remaining flight time (s)
+    flightCd: 0, // remaining recharge (s)
+    flightLaunch: 0, // a ground cast lifts off upward for a beat
+    whooshT: 0,
     won: false,
   };
 }
@@ -61,8 +70,17 @@ export function hurtPlayer(p, cam, fx) {
   return true;
 }
 
+// End flight (expiry, landing, pit fall): start the recharge.
+function endFlight(p, fx) {
+  p.flying = false;
+  p.flightT = 0;
+  p.flightCd = FLIGHT_CD;
+  fx.play('flightEnd');
+}
+
 export function updatePlayer(player, inp, lvl, cam, dt, fx) {
-  if (player.dead || player.won) return;
+  if (player.dead || player.won) { inp.cast = false; return; } // never let a stale cast survive
+  const wasOnGround = player.onGround; // landing-cancel compares against this
   player.invuln = Math.max(0, player.invuln - dt);
   player.coyote = player.onGround ? COYOTE : Math.max(0, player.coyote - dt);
   if (inp.jump && !player.jumpHeld) player.jbuf = JBUF; // buffer the press
@@ -75,36 +93,66 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.lantern = Math.max(0, player.lantern - dt);
   player.magnet = Math.max(0, player.magnet - dt);
   player.hopFx = Math.max(0, player.hopFx - dt);
+  player.flightCd = Math.max(0, player.flightCd - dt);
+  player.whooshT = Math.max(0, player.whooshT - dt);
+  player.flightLaunch = Math.max(0, player.flightLaunch - dt);
+  if (inp.cast) { // S: cast the flight spell (one-frame flag, consumed here)
+    inp.cast = false;
+    if (player.hasFlight && !player.flying && player.flightCd <= 0) {
+      player.flying = true;
+      player.flightT = FLIGHT_TIME;
+      if (player.onGround) player.flightLaunch = FLY_LAUNCH; // lift off, don't sink
+      player.whooshT = 0.7;
+      fx.play('cast');
+      burst(player.x + player.w / 2, player.y + player.h / 2, FX.cast);
+    }
+  }
   if (inp.fire && player.hasBow && player.fireCd <= 0) { // unlimited arrows
     if (player.stars > 0) { player.stars--; fireStarArrow(player); } // stars first
     else fireArrow(player);
     player.fireCd = FIRE_CD;
     fx.play('fire');
   }
-  if (player.jbuf > 0 && player.coyote > 0) {
-    const base = player.big ? BIG_JUMP_V : P_JUMP_V;
-    player.vy = player.boots > 0 ? base * BOOT_JUMP_MULT : base; // bounce boots
-    player.jbuf = 0; player.coyote = 0; player.cuttable = true;
-    player.sy = 1.25; player.sx = 0.8; // stretch upward
-    if (player.boots > 0) burst(player.x + player.w / 2, player.y + player.h, FX.boots); // sparkle
-    fx.play('jump');
-  } else if (player.jbuf > 0 && player.hops > 0) {
-    // levitation hop: a press that can't start a ground/coyote jump
-    player.hops -= 1;
-    player.vy = HOP_V;
-    player.jbuf = 0; player.cuttable = true;
-    player.sy = 1.25; player.sx = 0.8; // stretch upward
-    player.hopFx = 0.35;
-    burst(player.x + player.w / 2, player.y + player.h, FX.hopPuff); // cloud puff
-    fx.play('hop');
+  if (!player.flying) { // jump, hop, and gravity are suspended while flying
+    if (player.jbuf > 0 && player.coyote > 0) {
+      const base = player.big ? BIG_JUMP_V : P_JUMP_V;
+      player.vy = player.boots > 0 ? base * BOOT_JUMP_MULT : base; // bounce boots
+      player.jbuf = 0; player.coyote = 0; player.cuttable = true;
+      player.sy = 1.25; player.sx = 0.8; // stretch upward
+      if (player.boots > 0) burst(player.x + player.w / 2, player.y + player.h, FX.boots); // sparkle
+      fx.play('jump');
+    } else if (player.jbuf > 0 && player.hops > 0) {
+      // levitation hop: a press that can't start a ground/coyote jump
+      player.hops -= 1;
+      player.vy = HOP_V;
+      player.jbuf = 0; player.cuttable = true;
+      player.sy = 1.25; player.sx = 0.8; // stretch upward
+      player.hopFx = 0.35;
+      burst(player.x + player.w / 2, player.y + player.h, FX.hopPuff); // cloud puff
+      fx.play('hop');
+    }
+    if (!inp.jump && player.cuttable && player.vy < JUMP_CUT) player.vy = JUMP_CUT; // variable height
   }
-  if (!inp.jump && player.cuttable && player.vy < JUMP_CUT) player.vy = JUMP_CUT; // variable height
   const prevVy = player.vy;
-  player.vy = Math.min(player.vy + P_GRAVITY * dt, P_TERM_VY);
+  if (player.flying) {
+    // four-way control: up ascends, down descends, neutral drifts down gently
+    player.vy = player.flightLaunch > 0 ? -FLY_UP
+      : inp.up ? -FLY_UP : inp.down ? FLY_DOWN : FLY_SINK;
+    player.flightT -= dt;
+    if (player.whooshT <= 0) { fx.play('whoosh'); player.whooshT = 0.7; } // loop-free whoosh
+    if (player.flightT <= 0) endFlight(player, fx); // ran out of time
+  } else {
+    player.vy = Math.min(player.vy + P_GRAVITY * dt, P_TERM_VY);
+  }
   player.x += player.vx * dt;
   player.y += player.vy * dt;
   player.x = Math.max(0, Math.min(player.x, lvl.width - player.w));
+  if (player.flying && player.y < FLY_CEIL) { // dungeon ceiling
+    player.y = FLY_CEIL;
+    player.vy = Math.max(0, player.vy);
+  }
   const surface = resolveGroundCollision(player, lvl, dt);
+  if (player.flying && player.onGround && !wasOnGround) endFlight(player, fx); // landing ends flight
   if (player.onGround) { player.safeX = player.x; player.safeY = player.y; } // respawn point
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust
     player.sy = 0.7; player.sx = 1.3;
@@ -128,6 +176,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     if (player.hp <= 0) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); }
     else {
       fx.play('hurt');
+      if (player.flying) endFlight(player, fx); // the spell was used up
       player.invuln = HURT_INVULN;
       player.x = player.safeX;
       player.y = player.safeY;

@@ -60,6 +60,9 @@ export function sfx(name) {
     case 'pearl': [1318, 1760].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.09)); break;
     case 'seal': beep(160, 35, 0.45, 'square', 0.28); beep(900, 250, 0.08, 'square', 0.1, 0.03); break;
     case 'gate': [392, 587].forEach((f, i) => beep(f, f, 0.22, 'sine', 0.2, i * 0.14)); break;
+    case 'cast': [523, 784, 1047].forEach((f, i) => beep(f, f, 0.12, 'sine', 0.16, i * 0.06)); break;
+    case 'whoosh': beep(260, 520, 0.22, 'sine', 0.05); break;
+    case 'flightEnd': beep(240, 90, 0.18, 'triangle', 0.12); break;
   }
 }
 

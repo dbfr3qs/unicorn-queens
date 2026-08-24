@@ -41,6 +41,12 @@ export function drawPlayer(c, player, t) {
     c.beginPath(); c.ellipse(-3, -26, 6, 3, -0.4, 0, Math.PI * 2); c.fill();
     c.beginPath(); c.ellipse(1, -24, 5, 2.5, -0.4, 0, Math.PI * 2); c.fill();
   }
+  if (player.flying) { // flight spell: flapping wings
+    const flap = Math.sin(t * 16) * 3;
+    c.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    c.beginPath(); c.ellipse(-10, -32 + flap, 9, 4, -0.5, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(-4, -27 - flap, 7, 3.5, -0.4, 0, Math.PI * 2); c.fill();
+  }
   if (player.shield > 0) { // mirror shield: moon disc + charge pips
     c.fillStyle = '#cfe8ff';
     c.beginPath(); c.arc(17, -22, 4.5, 0, Math.PI * 2); c.fill();

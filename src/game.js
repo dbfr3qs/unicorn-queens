@@ -20,8 +20,9 @@ export const game = {
 };
 
 // prev: the outgoing player. big/bow carry only on an advance (level
-// index changes); maxHp (heart cap) is permanent for the run, so it
-// survives death-restarts too. hp and position always reset.
+// index changes); maxHp (heart cap) and hasFlight (witch's spell) are
+// permanent for the run, so they survive death-restarts too.
+// hp and position always reset.
 export function startGame(viewH, levelIndex = 0, prev = null) {
   const advancing = !!prev && levelIndex !== game.levelIndex;
   game.levelIndex = levelIndex;
@@ -29,6 +30,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   game.player = createPlayer(game.level, {
     big: advancing ? !!prev.big : false,
     hasBow: advancing ? !!prev.hasBow : false,
+    hasFlight: !!prev?.hasFlight, // flight spell: permanent for the run, like the heart cap
     maxHp: prev?.maxHp ?? 3,
   });
   game.enemies = createEnemies(game.level);

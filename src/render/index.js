@@ -3,6 +3,7 @@
 // (level + entities) -> HUD (screen space).
 import { drawBackground } from './background.js';
 import { drawHud } from './hud.js';
+import { drawDialogue } from './dialogue.js';
 import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
 import { drawPearl } from './pearl.js';
@@ -47,4 +48,5 @@ export function draw(ctx, viewW, viewH) {
     ctx.globalAlpha = 1;
   }
   drawHud(ctx, viewW, viewH);
+  drawDialogue(ctx, viewW, viewH);
 }

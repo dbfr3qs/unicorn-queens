@@ -63,6 +63,7 @@ export function sfx(name) {
     case 'cast': [523, 784, 1047].forEach((f, i) => beep(f, f, 0.12, 'sine', 0.16, i * 0.06)); break;
     case 'whoosh': beep(260, 520, 0.22, 'sine', 0.05); break;
     case 'flightEnd': beep(240, 90, 0.18, 'triangle', 0.12); break;
+    case 'dialog': beep(740, 980, 0.05, 'square', 0.06); break;
   }
 }
 

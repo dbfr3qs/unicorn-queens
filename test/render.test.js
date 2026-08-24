@@ -156,6 +156,15 @@ test('l2 boss hall with shield active (moon disc + charge pips)', () => {
   expect(step({}, 1)).toMatchSnapshot();
 });
 
+test('dialogue box (bottom center)', () => {
+  const g = freshGame();
+  g.level.dialogs = [{
+    id: 'd', x: 0, y: 0, w: 800, h: 600,
+    beats: [{ id: 'b', lines: [{ speaker: 'Witch', text: 'You woke me, queen. The key is west, above the fire.' }] }],
+  }];
+  expect(step({}, 1)).toMatchSnapshot(); // opens during the step, world frozen
+});
+
 test('l2 pearl on pedestal + unsealed stairs', () => {
   const g = freshGame2();
   const mage = g.enemies.find(e => e.kind === 'mage');

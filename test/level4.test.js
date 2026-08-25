@@ -3,6 +3,8 @@
 // tight secret crate, the keyless portcullis, and the sealed ceiling shaft.
 import { describe, it, expect } from 'vitest';
 import { createLevel4 } from '../src/level4.js';
+import { game, startGame, update } from '../src/game.js';
+import { input } from '../src/input.js';
 
 describe('level 4 data', () => {
   const lvl = createLevel4(600);
@@ -57,10 +59,10 @@ describe('level 4 data', () => {
     }
   });
 
-  it('secret crate: in the vault wall, standing-jump tight, heartcap', () => {
+  it('secret crate: in the vault wall, above head height, heartcap', () => {
     const secret = lvl.boxes.find(b => b.drop === 'heartcap');
     expect(secret.x).toBe(3150);
-    expect(secret.y).toBe(gy - 120); // 120 rise vs ~130 apex: tight standing jump
+    expect(secret.y).toBe(gy - 120); // top at 120: a standing jump clears it
   });
 
   it('keyless full-height portcullis at the hall mouth', () => {
@@ -85,5 +87,24 @@ describe('level 4 data', () => {
     expect(lvl.roster.map(e => e.kind).sort()).toEqual([
       'bat', 'bat', 'bat', 'bat', 'dragon', 'ghost', 'ghost',
       'zombie', 'zombie', 'zombie', 'zombie']);
+  });
+});
+
+describe('secret crate reachability', () => {
+  it('breaks with a mid-jump arrow (a standing jump clears it)', () => {
+    startGame(600, 3);
+    const g = game, p = g.player, lvl = g.level;
+    const crate = lvl.boxes.find(b => b.drop === 'heartcap');
+    p.hasBow = true;
+    p.x = 3070; // just left of the crate; drift right while jumping
+    p.y = lvl.groundY - p.h;
+    p.vy = 0;
+    g.camera.x = 2950; // arrows are culled at the view edge: keep it in view
+    input.right = true;
+    input.jump = true;
+    input.fire = true; // the held second arrow leaves at ~90 px rise, in the crate band
+    for (let f = 0; f < 240 && !crate.broken; f++) update(1 / 60, 800, { play: () => {} });
+    input.right = input.jump = input.fire = false;
+    expect(crate.broken).toBe(true);
   });
 });

@@ -165,9 +165,12 @@ A wooden **crate** (the existing box look) built into the vault wall at
 line with the brick courses — visible if you look at the wall, easy to
 miss otherwise. No marker, no glint.
 
-- Reachable by a standing jump (120 px rise vs ~130 px apex — tight, the
-  level-3 nook-hop feel): land on top / stomp it, or hit it with a
-  jump-arrow. Breaks like any box (stomp or arrow).
+- Collectable, but not by a plain jump: the standing jump apex (~130)
+  just clears the crate top (120), and the side-block pushes a jumper
+  off the wall. It breaks like any box — so it takes a **jump-arrow**
+  (fire mid-jump while the arrow band crosses the crate's 440–476
+  height) or an arrow from flight held at that height. That is the
+  secret: notice the crate, and think about the bow.
 - `drop: 'heartcap'`: maxHp 4, permanent. If the player already has it
   (level 3 hall box), the existing heartcap code pays out a gem instead —
   no edge case.
@@ -306,10 +309,12 @@ heartcap), hall (3700 shield, 4650 heart).
 4. **Bats** join the regular enemies: 24×18, 1 hp, stompable and
    arrow-killable, sine swoop on aggro (350×280 px, so they threaten
    ground players), hover-bob otherwise. Four bats in the warren/vault.
-5. **Secret**: a wooden crate in the vault wall (3150, y−120), reachable
-   by a standing jump (tight) or a jump-arrow; `drop: 'heartcap'`
-   (duplicate pays a gem — existing behaviour). Visually found (wood
-   against stone, high, slightly out of line), no marker.
+5. **Secret**: a wooden crate in the vault wall (3150, y−120), collectable
+   by a jump-arrow (or an arrow from flight) — a plain jump clears it;
+   `drop: 'heartcap'` (duplicate pays a gem — existing behaviour).
+   Visually found (wood against stone, high, slightly out of line), no
+   marker. (K6 verification: the original "tight standing jump" spec was
+   wrong — a standing jump's 130 px apex clears the 120 px crate top.)
 6. **Level 3 pearl beat kept**: dragon dies → pearl on pedestal → pickup
    → shaft gate retracts (1.2 s) + light shaft → fly up to the exit.
 7. **Dragon: 14 hp, phase 2 below 7** (meatier than the troll's 8).

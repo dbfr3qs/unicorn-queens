@@ -46,9 +46,10 @@ export function createLevel4(viewH = 600) {
       { x: 2850, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'lantern' },
       { x: 3000, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'grow' },
       // Secret crate: built into the vault wall — wood against stone, high,
-      // slightly out of line with the brick courses. A tight standing jump
-      // (120 rise vs ~130 apex) or a jump-arrow breaks it. A duplicate
-      // heartcap pays out a gem (existing behaviour), so no edge case.
+      // slightly out of line with the brick courses. A standing jump
+      // clears it (130 apex vs 120 top); it breaks with a jump-arrow
+      // fired at mid-jump, or an arrow from flight at its height.
+      // A duplicate heartcap pays out a gem (existing behaviour).
       { x: 3150, y: groundY - 120, w: 36, h: 36, broken: false, kind: 'box', drop: 'heartcap' },
       { x: 3250, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'magnet' },
       { x: 3400, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', mystery: true },

@@ -1,7 +1,7 @@
 // Heart cap: permanent-for-the-run maxHp 4.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer } from '../src/player.js';
 import { loot, score, resetLoot, updateLoot } from '../src/loot.js';
 import { game, startGame } from '../src/game.js';

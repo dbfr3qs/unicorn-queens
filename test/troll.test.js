@@ -3,7 +3,7 @@
 // shield fires, phase 2 thresholds, death event, stomp bounces.
 import { describe, it, expect, beforeEach } from 'vitest';
 import { reseed } from './helpers/seeded-rng.js'; // side effect: deterministic Math.random
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { spawnEnemy, damageEnemy, updateEnemies, E_STOMP_V } from '../src/enemies.js';

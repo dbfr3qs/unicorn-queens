@@ -1,7 +1,7 @@
 // Levitation hops: limited-use air-jumps.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer, updatePlayer, P_H, P_JUMP_V, P_GRAVITY, HOP_V } from '../src/player.js';
 import { loot, resetLoot, spawnLoot, updateLoot } from '../src/loot.js';
 import { createCamera } from '../src/camera.js';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { reachedExit } from '../src/game.js';
 import { updatePearl } from '../src/pearl.js';

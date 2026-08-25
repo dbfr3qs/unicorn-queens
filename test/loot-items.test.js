@@ -5,8 +5,8 @@
 import { describe, it, expect } from 'vitest';
 import { REGISTRY } from '../src/loot-items/index.js';
 import '../src/loot.js'; // side-effect import: registers all item files
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 
 const ALL_KINDS = [
   'gem', 'bow', 'grow', 'heart', 'boots', 'magnet', 'sunbeam',

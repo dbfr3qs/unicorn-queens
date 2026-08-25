@@ -2,10 +2,10 @@
 // segments, lava fissures, the key chain (marker/key/cell/door), the troll
 // boss, the pearl seal, and the sealed staircase-down exit.
 import { describe, it, expect } from 'vitest';
-import { LEVELS } from '../src/levels.js';
-import { createLevel3 } from '../src/level3.js';
+import { LEVELS } from '../src/levels/index.js';
+import { createLevel3 } from '../src/levels/level3.js';
 import { createPlayer } from '../src/player.js';
-import { resolveGroundCollision } from '../src/level.js';
+import { resolveGroundCollision } from '../src/levels/level.js';
 import { spawnEnemy } from '../src/enemies.js';
 import { cellApproach } from '../src/cell.js';
 

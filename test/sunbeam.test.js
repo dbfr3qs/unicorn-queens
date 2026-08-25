@@ -1,7 +1,7 @@
 // Sunbeam: instant screen clear.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer } from '../src/player.js';
 import { loot, resetLoot, spawnLoot, updateLoot } from '../src/loot.js';
 import { fireFireball, fireballs } from '../src/projectiles.js';

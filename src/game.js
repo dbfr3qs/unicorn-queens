@@ -1,5 +1,5 @@
 // Game state + simulation step. Owns the top-level state objects.
-import { LEVELS } from './levels.js';
+import { LEVELS } from './levels/index.js';
 import { burst, updateParticles, resetParticles } from './particles.js';
 import { createCamera, updateCamera, shake } from './camera.js';
 import { createPlayer, updatePlayer } from './player.js';

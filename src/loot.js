@@ -1,6 +1,6 @@
 // Loot: box drops (gem/bow/heart/grow), item physics, and pickup effects.
 // Module-owned state: the loot list, score, and the one-time bow drop.
-import { resolveGroundCollision } from './level.js';
+import { resolveGroundCollision } from './levels/level.js';
 import { P_GRAVITY, P_TERM_VY } from './player.js';
 import { getItem, REGISTRY } from './loot-items/index.js';
 // item imports double as registration; weighted kinds first, in drop-table

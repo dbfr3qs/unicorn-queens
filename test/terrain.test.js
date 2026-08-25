@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLevel, resolveGroundCollision } from '../src/level.js';
+import { createLevel, resolveGroundCollision } from '../src/levels/level.js';
 import { createPlayer, updatePlayer, P_H } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 

@@ -1,7 +1,7 @@
 // Star arrows: piercing star projectiles.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer, updatePlayer, P_H } from '../src/player.js';
 import { loot, resetLoot, spawnLoot, updateLoot } from '../src/loot.js';
 import { arrows, resetArrows, fireArrow, fireStarArrow, updateArrows } from '../src/arrows.js';

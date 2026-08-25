@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { LEVELS } from '../src/levels.js';
+import { LEVELS } from '../src/levels/index.js';
 import { game, startGame, update, reachedExit } from '../src/game.js';
 
 const DT = 1 / 60;

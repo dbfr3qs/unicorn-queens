@@ -1,7 +1,7 @@
 // Lantern: timed ghost repel.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer, P_H, LANTERN_TIME, updatePlayer } from '../src/player.js';
 import { loot, resetLoot, updateLoot } from '../src/loot.js';
 import { spawnEnemy, updateEnemies } from '../src/enemies.js';

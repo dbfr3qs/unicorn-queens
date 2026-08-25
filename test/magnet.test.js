@@ -1,7 +1,7 @@
 // Magnet: timed gem attraction.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer, updatePlayer, MAGNET_TIME } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { loot, resetLoot, spawnLoot, updateLoot } from '../src/loot.js';

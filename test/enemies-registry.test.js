@@ -5,9 +5,9 @@
 import { describe, it, expect } from 'vitest';
 import { REGISTRY } from '../src/enemies/index.js';
 import { spawnEnemy } from '../src/enemies.js'; // side effect: registers all kind files
-import { createLevel } from '../src/level.js';
-import { createLevel2 } from '../src/level2.js';
-import { createLevel4 } from '../src/level4.js';
+import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
+import { createLevel4 } from '../src/levels/level4.js';
 
 const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon'];
 

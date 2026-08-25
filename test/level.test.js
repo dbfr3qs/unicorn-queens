@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLevel, resolveGroundCollision, WORLD_W, GROUND_H } from '../src/level.js';
+import { createLevel, resolveGroundCollision, WORLD_W, GROUND_H } from '../src/levels/level.js';
 
 const DT = 1 / 60;
 const lvl = () => createLevel(600);

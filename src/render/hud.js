@@ -1,6 +1,6 @@
 // HUD: hearts, score, mute/bow hints, win/lose overlay. No state of its own.
 import { game } from '../game.js';
-import { LEVELS } from '../levels.js';
+import { LEVELS } from '../levels/index.js';
 import { score } from '../loot.js';
 import { muted } from '../audio.js';
 import { FLIGHT_TIME, FLIGHT_CD } from '../player.js';

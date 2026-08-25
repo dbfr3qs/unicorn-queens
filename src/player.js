@@ -1,5 +1,5 @@
 // Player: state and physics (jump buffering, coyote time, squash & stretch).
-import { resolveGroundCollision } from './level.js';
+import { resolveGroundCollision } from './levels/level.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { spawnLoot } from './loot.js';

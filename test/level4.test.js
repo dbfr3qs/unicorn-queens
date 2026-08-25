@@ -2,7 +2,7 @@
 // the level fair: jumpable gauntlet, safety bow boxes before the boss, the
 // tight secret crate, the keyless portcullis, and the sealed ceiling shaft.
 import { describe, it, expect } from 'vitest';
-import { createLevel4 } from '../src/level4.js';
+import { createLevel4 } from '../src/levels/level4.js';
 import { game, startGame, update } from '../src/game.js';
 import { input } from '../src/input.js';
 

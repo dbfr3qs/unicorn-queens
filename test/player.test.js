@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer, updatePlayer, P_SPEED, P_GRAVITY, P_JUMP_V, P_BOUNCE_V, P_H } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { resetLoot, loot } from '../src/loot.js';

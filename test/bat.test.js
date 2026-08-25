@@ -1,7 +1,7 @@
 // Bat: hovers at its roost, swoops at the player in a sine curve on aggro
 // (with a quiet flap), returns to roost; stompable and arrow-killable.
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, E_STOMP_V, HURT_INVULN } from '../src/enemies.js';
 import { createCamera } from '../src/camera.js';

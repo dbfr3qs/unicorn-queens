@@ -2,7 +2,7 @@
 // row of 8 widening hitbox segments, growing over 0.15 s, holding for the
 // ttl. You sidestep it — the angle is locked at cone start.
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { HURT_INVULN } from '../src/enemies.js';

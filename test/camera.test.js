@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createCamera, updateCamera, shake } from '../src/camera.js';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 
 const DT = 1 / 60;
 

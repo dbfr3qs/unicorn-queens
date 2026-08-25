@@ -1,6 +1,6 @@
 // Slime: dumb patrol brain (turns at minX/maxX), stompable, owns E_W/E_H;
 // purple body sprite.
-import { resolveGroundCollision } from '../level.js';
+import { resolveGroundCollision } from '../levels/level.js';
 import { P_GRAVITY, P_TERM_VY } from '../player.js';
 import { register } from './index.js';
 import { palette } from '../render/theme.js';

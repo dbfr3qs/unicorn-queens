@@ -5,7 +5,7 @@
 // sunbeam-exempt; takes reflected fireballs. Beatable from the ground.
 import { describe, it, expect, beforeEach } from 'vitest';
 import { reseed } from './helpers/seeded-rng.js'; // deterministic attack picks
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V, HURT_INVULN } from '../src/enemies.js';
 import { createCamera } from '../src/camera.js';

@@ -1,7 +1,7 @@
 // Flight spell: 10 s of four-way flight (S casts, arrows steer), 15 s
 // recharge, landing cancels, permanent once learned.
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import {
   createPlayer, updatePlayer, P_H, P_SPEED,
   FLIGHT_TIME, FLIGHT_CD, FLY_UP, FLY_DOWN, FLY_SINK, FLY_CEIL,

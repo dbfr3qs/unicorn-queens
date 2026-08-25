@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { LEVELS } from '../src/levels.js';
+import { LEVELS } from '../src/levels/index.js';
 import { game, startGame, restartTarget } from '../src/game.js';
 import { BIG_W, BIG_H, P_W, P_H } from '../src/player.js';
 

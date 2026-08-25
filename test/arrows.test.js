@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer, P_H } from '../src/player.js';
 import { spawnEnemy, E_H } from '../src/enemies.js';
 import { createCamera } from '../src/camera.js';

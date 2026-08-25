@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer, P_H, BIG_W, BIG_H } from '../src/player.js';
 import { loot, score, bowGiven, resetLoot, spawnLoot, updateLoot } from '../src/loot.js';
 

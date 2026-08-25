@@ -2,7 +2,7 @@
 // shared hurt, not shootable) and shockwaves (twin ground-bound fronts,
 // one hit each, fizzle at range).
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createLevel } from '../src/level.js';
+import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import {

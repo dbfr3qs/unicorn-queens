@@ -38,6 +38,14 @@ export function freshGame3(viewH = VIEW_H) {
   return game;
 }
 
+// Level 4 (dragon's layer) entry: same seeding, level index 3.
+export function freshGame4(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 3);
+  game.gameTime = 0;
+  return game;
+}
+
 // Simulate `frames` updates with the given keys held, then draw one
 // frame to a fresh recording context. Returns the draw-call log.
 // Input is reset afterwards so scenarios don't leak keys.

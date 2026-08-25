@@ -7,8 +7,9 @@ import { REGISTRY } from '../src/enemies/index.js';
 import { spawnEnemy } from '../src/enemies.js'; // side effect: registers all kind files
 import { createLevel } from '../src/level.js';
 import { createLevel2 } from '../src/level2.js';
+import { createLevel4 } from '../src/level4.js';
 
-const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll'];
+const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon'];
 
 // The KINDS table, per kind: size, stomp rule, and (boss only) hp.
 // The registry must match it exactly.
@@ -18,6 +19,8 @@ const EXPECTED = {
   ghost: { w: 28, h: 26, stompable: false },
   mage: { w: 42, h: 54, stompable: false, hp: 5 },
   troll: { w: 52, h: 64, stompable: false, hp: 8 },
+  bat: { w: 24, h: 18, stompable: true, hp: 1 },
+  dragon: { w: 60, h: 44, stompable: false, hp: 14 },
 };
 
 describe('registry shape', () => {
@@ -34,7 +37,7 @@ describe('registry shape', () => {
     }
   });
 
-  it('all 5 kinds are registered (catches a stub that never calls register)', () => {
+  it('all 7 kinds are registered (catches a stub that never calls register)', () => {
     expect([...REGISTRY.keys()].sort()).toEqual([...ALL_KINDS].sort());
   });
 });
@@ -52,8 +55,8 @@ describe('per-kind values match the original table', () => {
 });
 
 describe('level rosters', () => {
-  it('every roster spec in both levels is a registered kind', () => {
-    for (const lvl of [createLevel(), createLevel2()]) {
+  it('every roster spec in the built levels is a registered kind', () => {
+    for (const lvl of [createLevel(), createLevel2(), createLevel4()]) {
       for (const spec of lvl.roster) {
         expect(REGISTRY.has(spec.kind), `roster kind '${spec.kind}' is registered`).toBe(true);
       }

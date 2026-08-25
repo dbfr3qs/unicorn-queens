@@ -12,8 +12,10 @@ import { getKind } from './enemies/index.js';
 import './enemies/slime.js';
 import './enemies/zombie.js';
 import './enemies/ghost.js';
+import './enemies/bat.js';
 import './enemies/mage.js';
 import './enemies/troll.js';
+import './enemies/dragon.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;

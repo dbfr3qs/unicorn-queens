@@ -34,7 +34,7 @@ export function createLevel3(viewH = 600) {
     platforms: [
       { x: 480, y: groundY - 140, w: 110, kind: 'platform' }, // over fissure 1
       { x: 1460, y: groundY - 120, w: 100, kind: 'platform' }, // west lip, key chain hop 1
-      { x: 1600, y: groundY - 240, w: 90, kind: 'platform' }, // nook ledge, hop 2 (above fissure 2)
+      { x: 1600, y: groundY - 240, w: 90, hidden: true, kind: 'platform' }, // nook ledge, hop 2 — inside the wall until the crumble
       { x: 2800, y: groundY - 110, w: 110, kind: 'platform' }, // over fissure 3
       { x: 3100, y: groundY - 140, w: 120, kind: 'platform' }, // staggered
       { x: 3300, y: groundY - 110, w: 110, kind: 'platform' }, // over fissure 4
@@ -44,6 +44,11 @@ export function createLevel3(viewH = 600) {
       { x: 520, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'sunbeam' },
       { x: 760, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'boots' },
       { x: 1100, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', mystery: true },
+      // Safety bow: a death-restart of level 3 drops the carried bow (only
+      // maxHp and flight survive a restart), which soft-locks the nook and
+      // the troll. This box is on the ground path before the door, breakable
+      // by stomp, so every restart re-acquires a bow before the key nook.
+      { x: 1250, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'bow' },
       { x: 1750, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'star' },
       { x: 2050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heart' },
       { x: 2400, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'lantern' },
@@ -54,8 +59,13 @@ export function createLevel3(viewH = 600) {
       { x: 3700, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'shield' }, // visible on the approach
       { x: 4150, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heartcap' }, // hall boon
     ],
-    marker: { x: 1480, y: groundY - 200, w: 20, h: 20, glintT: 0 }, // points at the alcove right
-    key: { x: 1620, y: groundY - 256, w: 16, h: 16, taken: false }, // rests on the nook ledge
+    // Weak brick in the wall over fissure 2: 3 arrow hits crumble the nook open.
+    // Chest height from the west lip: a plain standing shot from the lip
+    // (arrow y = p.y + 12) crosses the brick band — the puzzle is finding
+    // the brick, not timing the shot.
+    marker: { x: 1590, y: groundY - 150, w: 20, h: 20, glintT: 0, hits: 0 },
+    key: { x: 1620, y: groundY - 256, w: 16, h: 16, taken: false }, // rests on the nook ledge (hidden until revealed)
+    keyNook: { revealed: false, crumbleT: 0 }, // crumbleT > 0: wall crumbling; at 0 the nook opens
     cell: {
       x: 2100, y: groundY - 100, w: 70, h: 100,
       open: false, opening: false, unlockT: 0,

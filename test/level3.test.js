@@ -43,10 +43,12 @@ describe('shape', () => {
 
 describe('key chain', () => {
   it('marker, key on the nook ledge, cell, and full-height door exist', () => {
-    expect(lvl.marker).toMatchObject({ x: 1480, y: gy - 200 });
+    expect(lvl.marker).toMatchObject({ x: 1590, y: gy - 150, hits: 0 }); // weak brick in the wall over fissure 2, chest height from the west lip
     expect(lvl.key).toMatchObject({ x: 1620, y: gy - 256, taken: false });
     const nook = lvl.platforms.find(p => p.x === 1600 && p.w === 90);
     expect(nook).toBeTruthy();
+    expect(nook.hidden).toBe(true); // ledge is inside the wall until the crumble
+    expect(lvl.keyNook).toEqual({ revealed: false, crumbleT: 0 });
     expect(lvl.key.y + lvl.key.h).toBe(nook.y); // the key rests on the ledge
     expect(lvl.cell).toMatchObject({ x: 2100, y: gy - 100, w: 70, h: 100, open: false, witch: 'inside' });
     expect(lvl.door).toMatchObject({ x: 3550, y: 0, h: gy, state: 'locked' }); // floor to ceiling
@@ -58,10 +60,36 @@ describe('key chain', () => {
     lvl.key.taken = true;
     expect(beat.when({ level: lvl })).toBe(false);
   });
+  it('a safety bow box sits on the ground path before the door', () => {
+    const box = lvl.boxes.find(b => b.drop === 'bow');
+    expect(box).toBeTruthy(); // a death-restart drops the carried bow (soft-lock fix)
+    expect(box.x).toBeLessThan(lvl.door.x); // before the door: reachable on a bowless restart
+    expect(box.y).toBe(gy - 36); // ground level: no item needed to reach it
+    expect(box.x).toBeGreaterThan(1100); // calm stretch after the 2nd zombie patrol
+    expect(box.x).toBeLessThan(1460); // right before the west lip / key nook
+  });
   it('the hint rect matches the cell approach zone', () => {
     const d = lvl.dialogs.find(d => d.id === 'cell-hint');
     const a = cellApproach(lvl);
     expect([d.x, d.y, d.w, d.h]).toEqual([a.x, a.y, a.w, a.h]);
+  });
+});
+
+describe('hidden nook', () => {
+  it('the hidden ledge is not solid before the reveal', () => {
+    const p = createPlayer(lvl);
+    p.x = 1620; p.y = gy - 240 - p.h + 2; p.vy = 200; // just crossed the ledge top
+    expect(resolveGroundCollision(p, lvl, 1 / 60)).toBeNull();
+    expect(p.onGround).toBe(false);
+  });
+  it('the ledge is solid once the crumble reveals it', () => {
+    const nookP = lvl.platforms.find(p => p.x === 1600 && p.w === 90);
+    nookP.hidden = false;
+    const p = createPlayer(lvl);
+    p.x = 1620; p.y = gy - 240 - p.h + 2; p.vy = 200;
+    expect(resolveGroundCollision(p, lvl, 1 / 60)).toBe(nookP);
+    expect(p.onGround).toBe(true);
+    nookP.hidden = true; // restore: lvl is shared module state
   });
 });
 

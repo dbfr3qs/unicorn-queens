@@ -21,6 +21,8 @@ export function drawZones(c, lvl, cam, t, viewW) {
       c.restore();
     } else if (z.kind === 'dungeon' || z.kind === 'dungeon-hall') {
       drawDungeon(c, z.kind === 'dungeon-hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
+    } else if (z.kind === 'deep' || z.kind === 'deep-hall') {
+      drawDeep(c, z.kind === 'deep-hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     } else {
       drawStone(c, z.kind === 'hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     }
@@ -76,6 +78,104 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
       c.fillRect(x - 18, gy - 274, 36, 14); // capital
     }
   }
+}
+
+// The Dragon's Layer: green-black stone, moss tufts on the brick joints,
+// seeded drips, floor puddles, phosphorescent moss glow spots (the layer's
+// own dim light), dim torches. The hall variant: darker wall, dark-green
+// pillars, bone dressing. All decoration is a pure function of world x and
+// time — no RNG, so snapshots stay text-stable.
+function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
+  const gy = lvl.groundY;
+  c.fillStyle = isHall ? '#101712' : '#141d16'; // wall
+  c.fillRect(sx0, 0, sx1 - sx0, gy);
+  c.fillStyle = '#0c130e'; // mortar
+  for (let wy = 40; wy < gy; wy += 28) c.fillRect(sx0, wy, sx1 - sx0, 3); // courses
+  for (let wy = 40, row = 0; wy < gy; wy += 28, row++) {
+    const off = row % 2 ? 32 : 0; // staggered vertical joints
+    for (let wx = Math.floor(zx0 / 64) * 64 + off; wx < zx1; wx += 64) {
+      c.fillStyle = '#0c130e';
+      c.fillRect(wx - cam.x, wy, 3, 28);
+      if ((wx * 7 + row * 13) % 11 === 0) { // moss tuft on the joint
+        c.fillStyle = '#2e4a2a';
+        c.fillRect(wx - cam.x - 3, wy - 3, 8, 4);
+        c.fillRect(wx - cam.x + 1, wy - 5, 4, 3);
+      }
+    }
+  }
+  c.fillStyle = '#4a7a3a'; // phosphorescent moss glow spots
+  for (let wx = Math.ceil(zx0 / 260) * 260 + 90; wx < zx1; wx += 260) {
+    c.globalAlpha = 0.08 + Math.sin(t * 0.8 + (wx * 0.13) % 6.28) * 0.03;
+    c.beginPath(); c.arc(wx - cam.x, 380, 26, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
+  }
+  c.fillStyle = '#3a5a4a'; // drips: seeded x, time-phased fall
+  for (let wx = Math.ceil(zx0 / 140) * 140 + 40; wx < zx1; wx += 140) {
+    const ph = (t * 0.45 + (wx * 0.37) % 1) % 1;
+    c.fillRect(wx - cam.x, 200 + ph * (gy - 210), 2, 7);
+  }
+  for (let wx = Math.ceil(zx0 / 230) * 230 + 60; wx < zx1; wx += 230) { // puddles
+    if ((lvl.lava ?? []).some(m => wx + 24 > m.x && wx - 24 < m.x + m.w)) continue;
+    c.fillStyle = '#0a120c';
+    c.fillRect(wx - cam.x - 24, gy, 48, 5);
+    c.fillStyle = '#1d3324'; // faint reflection streak
+    c.fillRect(wx - cam.x - 18, gy, 30, 2);
+  }
+  const every = isHall ? 250 : 320; // torch interval
+  for (let wx = Math.ceil(zx0 / every) * every + 60; wx < zx1; wx += every) {
+    const x = wx - cam.x;
+    const fl = Math.sin(t * 7 + (wx * 0.71) % 6.28) * 2; // seeded flicker
+    c.save(); // warm glow, dimmer than the undercroft
+    c.fillStyle = '#ff9a3c';
+    c.globalAlpha = 0.04;
+    c.beginPath(); c.arc(x, 300, 70, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 0.05;
+    c.beginPath(); c.arc(x, 300, 42, 0, Math.PI * 2); c.fill();
+    c.restore();
+    c.fillStyle = '#2a3a2a'; // sconce
+    c.fillRect(x - 3, 306, 6, 18);
+    c.fillStyle = '#ff8c42';
+    c.fillRect(x - 4 + fl * 0.5, 292 + fl * 0.3, 8, 14);
+    c.fillStyle = '#ffd166';
+    c.fillRect(x - 2, 296 + fl * 0.3, 4, 8);
+  }
+  if (isHall) {
+    for (const px of [3680, 3940, 4420, 4700]) { // dark-green pillars, clear of the shaft
+      const x = px - cam.x;
+      c.fillStyle = '#1a241a';
+      c.fillRect(x - 14, gy - 260, 28, 260);
+      c.fillStyle = '#243324';
+      c.fillRect(x - 18, gy - 274, 36, 14); // capital
+    }
+    for (const px of [3820, 4300, 4600]) drawBones(c, px - cam.x, gy);
+  } else {
+    for (const px of [2750, 3350]) drawBones(c, px - cam.x, gy); // vault dressing
+    drawTreasure(c, 3480 - cam.x, gy);
+  }
+}
+
+// Dragon bones: rib base, three ribs, skull with eye sockets.
+function drawBones(c, x, gy) {
+  c.fillStyle = '#c9c2a8';
+  c.fillRect(x, gy - 6, 26, 6);
+  c.fillRect(x + 4, gy - 12, 4, 8);
+  c.fillRect(x + 12, gy - 14, 4, 10);
+  c.fillRect(x + 20, gy - 11, 4, 7);
+  c.beginPath(); c.arc(x + 34, gy - 9, 7, 0, Math.PI * 2); c.fill(); // skull
+  c.fillStyle = '#101712';
+  c.fillRect(x + 31, gy - 10, 2, 3);
+  c.fillRect(x + 36, gy - 10, 2, 3);
+}
+
+// A mound of gold with a few bright coins.
+function drawTreasure(c, x, gy) {
+  c.fillStyle = '#b8860b';
+  c.fillRect(x, gy - 8, 40, 8);
+  c.fillRect(x + 8, gy - 13, 24, 5);
+  c.fillStyle = '#ffd75e';
+  c.fillRect(x + 6, gy - 6, 4, 4);
+  c.fillRect(x + 18, gy - 10, 4, 4);
+  c.fillRect(x + 30, gy - 6, 4, 4);
 }
 
 function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {

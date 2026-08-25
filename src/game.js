@@ -8,11 +8,12 @@ import { isDialogueOpen, openDialogue, resetDialogue } from './dialogue.js';
 import { createEnemies, updateEnemies, damageEnemy } from './enemies.js';
 import { resetLoot, updateLoot } from './loot.js';
 import { resetArrows, updateArrows } from './arrows.js';
-import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetShockwaves, updateShockwaves } from './projectiles.js';
+import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetShockwaves, updateShockwaves, resetCones, updateCones } from './projectiles.js';
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
+import { updateShaft } from './shaft.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -42,6 +43,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   resetArrows();
   resetFireballs();
   resetBoulders();
+  resetCones();
   resetShockwaves();
   resetParticles();
   game.camera.x = 0;
@@ -80,9 +82,10 @@ export function update(dt, viewW, fx) {
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
-  updateKey(game.level, game.player, fx);
+  updateKey(game.level, game.player, fx, dt);
   updateCell(game.level, game.player, dt, fx);
   updateDoor(game.level, game.player, dt, fx);
+  updateShaft(game.level, fx, dt); // pearl beat: gate retracts over the shaft
   if (game.level.marker && game.level.marker.glintT > 0) {
     game.level.marker.glintT = Math.max(0, game.level.marker.glintT - dt);
   }
@@ -90,6 +93,7 @@ export function update(dt, viewW, fx) {
   if (game.level.sunbeamT > 0) game.level.sunbeamT = Math.max(0, game.level.sunbeamT - dt);
   updateArrows(game.enemies, game.level, game.camera, dt, fx, viewW);
   updateFireballs(game.player, game.level, game.camera, dt, fx, game.enemies);
+  updateCones(game.player, game.level, game.camera, dt, fx);
   updateBoulders(game.player, game.level, game.camera, dt, fx);
   updateShockwaves(game.player, game.camera, dt, fx);
   updateParticles(dt);
@@ -137,11 +141,12 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage') continue;
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }
   resetFireballs();
+  resetCones();
   lvl.sunbeamT = 0.4;
   shake(game.camera, 8, 0.4);
 }

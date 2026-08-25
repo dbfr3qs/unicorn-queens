@@ -7,10 +7,10 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, step } from './helpers/render-harness.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
-import { fireFireball, FIREBALL_SPEED, fireBoulder } from '../src/projectiles.js';
+import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone } from '../src/projectiles.js';
 
 test('initial frame', () => {
   freshGame();
@@ -235,11 +235,29 @@ test('l3 corridor start (brick, torches, zombie, lava fissure 1)', () => {
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l3 key alcove (nook ledge over lava, marker, key)', () => {
+test('l3 key alcove (hidden nook: only the marker brick glints)', () => {
   const g = freshGame3();
   g.player.x = 1470; // at the west lip, looking at the nook
   g.camera.x = 1084; // 1470 + 14 - 400
-  expect(step({}, 1)).toMatchSnapshot(); // marker, ledge, key over the fissure
+  expect(step({}, 1)).toMatchSnapshot(); // no ledge, no key — the wall over the fissure is intact
+});
+
+test('l3 nook mid-crumble (shards falling, glint widening)', () => {
+  const g = freshGame3();
+  g.level.marker.hits = 3;
+  g.level.keyNook.crumbleT = 0.25; // mid the 0.5 s crumble
+  g.player.x = 1470;
+  g.camera.x = 1084; // 1470 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // section darkened, shards partway down
+});
+
+test('l3 nook revealed (framed recess, ledge, key)', () => {
+  const g = freshGame3();
+  g.level.keyNook.revealed = true;
+  g.level.platforms.find(p => p.x === 1600 && p.w === 90).hidden = false;
+  g.player.x = 1470;
+  g.camera.x = 1084; // 1470 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // dark recess, ledge + twinkling key inside
 });
 
 test('l3 jail cell (bars closed, witch inside)', () => {
@@ -280,5 +298,103 @@ test('l3 pearl on pedestal + unsealed stairs (troll dead)', () => {
   g.level.exit.locked = false; // seal broken (the pearl is taken in play)
   g.player.x = 4100; // hall floor, just before the stairs
   g.camera.x = 3600; // max scroll: level.width - viewW
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 4 (dragon's layer) scenarios ----
+// Camera values are player.x + w/2 - viewW/2, so updateCamera holds them
+// still (same convention as the level 3 scenarios).
+
+test('l4 deep warren (moss wall, drips, puddle, sludge pit, bow box)', () => {
+  const g = freshGame4();
+  g.player.x = 150; // just past the first zombie (250, patrols 180-420)
+  g.camera.x = 0; // level start clamp
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l4 gauntlet (platform zigzag over the sludge, ghost above)', () => {
+  const g = freshGame4();
+  g.player.x = 1830; // on the first gauntlet platform (1800-1890)
+  g.player.y = g.level.groundY - 110 - g.player.h; // standing on it
+  g.camera.x = 1444; // 1830 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // zigzag over the green pit, ghost at 2300
+});
+
+test('l4 dragon hall (portcullis, pillars, bones, sealed shaft)', () => {
+  const g = freshGame4();
+  g.player.x = 3850; // hall floor, past the portcullis
+  g.camera.x = 3464; // 3850 + 14 - 400: door at 3550, shaft 4150-4250 in frame
+  expect(step({}, 1)).toMatchSnapshot(); // sealed lattice + green seal glow
+});
+
+test('l4 shaft opening (lattice retracted halfway)', () => {
+  const g = freshGame4();
+  g.level.shaft.state = 'opening';
+  g.level.shaft.openT = 0.6; // halfway through the 1.2 s retract
+  g.level.exit.locked = false;
+  g.player.x = 4080; // hall floor, just west of the shaft
+  g.camera.x = 3694; // 4080 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // lattice half gone, seal glow faded
+});
+
+test('l4 shaft open (golden light shaft, embers, pearl pedestal empty)', () => {
+  const g = freshGame4();
+  g.level.shaft.state = 'open';
+  g.level.exit.locked = false;
+  g.level.pearl.taken = true;
+  g.player.x = 4200; // under the hole
+  g.camera.x = 3814; // 4200 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // gold mouth, light column to the floor
+});
+
+test('l4 bat (mid-swoop at the player, wings flapping)', () => {
+  const g = freshGame4();
+  const bat = g.enemies.find(e => e.kind === 'bat'); // first roost: 700, 280
+  bat.state = 'swoop'; bat.swoopT = 0.5;
+  bat.tx = 700; bat.ty = 500; // diving at the ground
+  g.player.x = 690; // just under the bat's line
+  g.player.y = g.level.groundY - g.player.h;
+  g.camera.x = 304; // 690 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // wings flapping, eye glint
+});
+
+test('l4 dragon (hovering in the band, 14 hp pips, fireball in flight)', () => {
+  const g = freshGame4();
+  const dr = g.enemies.find(e => e.kind === 'dragon');
+  dr.y = 200;
+  g.player.x = 3850; // facing the arena from the left
+  g.camera.x = 3464; // 3850 + 14 - 400
+  fireFireball(3950, 260, 120, 40, { play: () => {} }); // lobbed away from the player
+  expect(step({}, 1)).toMatchSnapshot(); // wings up, pips full
+});
+
+test('l4 dragon (stagger: wings crumpled, hit flash)', () => {
+  const g = freshGame4();
+  const dr = g.enemies.find(e => e.kind === 'dragon');
+  dr.state = 'stagger'; dr.t = 0.15; dr.flash = 0.1;
+  dr.hp = 10; // 10 pips lit, 4 dim
+  g.player.x = 3850;
+  g.camera.x = 3464; // 3850 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l4 dragon (perched, chest glow, fire cone across the hall floor)', () => {
+  const g = freshGame4();
+  const dr = g.enemies.find(e => e.kind === 'dragon');
+  dr.x = 4200; dr.y = 510; // on the ground, inside the arrow band
+  dr.state = 'perch'; dr.perch = 'inhale'; dr.t = 0.3;
+  g.player.x = 3900; // the cone aims at the player
+  g.camera.x = 3514; // 3900 + 14 - 400
+  fireCone(4200 + 30 - 30, 510 + 22 - 4, Math.atan2(542 - (510 + 18), 3914 - 4200), { play: () => {} });
+  expect(step({}, 1)).toMatchSnapshot(); // folded wings, pulsing chest, flame beam
+});
+
+test('l4 dragon (dive: wings spread flat, low over the ground)', () => {
+  const g = freshGame4();
+  const dr = g.enemies.find(e => e.kind === 'dragon');
+  dr.x = 4000; dr.y = 505;
+  dr.state = 'dive'; dr.dive = 'low'; dr.t = 0.5; dr.diveDir = 1;
+  g.player.x = 3850;
+  g.camera.x = 3464; // 3850 + 14 - 400
   expect(step({}, 1)).toMatchSnapshot();
 });

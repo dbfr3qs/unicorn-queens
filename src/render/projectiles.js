@@ -1,6 +1,6 @@
 // Enemy projectiles: fireballs (hot core in an orange glow), troll
 // boulders (rock with speckles), shockwave fronts (dust + rock shard).
-import { fireballs, boulders, shockwaves } from '../projectiles.js';
+import { fireballs, boulders, shockwaves, cones, coneSegment, CONE_SEGS } from '../projectiles.js';
 
 export function drawFireballs(c) {
   for (const f of fireballs) {
@@ -38,5 +38,22 @@ export function drawShockwaves(c) {
     c.fillStyle = '#6b4a32'; // rock shard
     c.fillRect(-4, -4, 8, 8);
     c.restore();
+  }
+}
+
+export function drawCones(c) {
+  // Flame beam: the segment circles, drawn inner (hot) to outer (dim)
+  // along the beam so the core reads over the body.
+  for (const cone of cones) {
+    for (let i = 0; i < CONE_SEGS; i++) {
+      const s = coneSegment(cone, i);
+      c.fillStyle = i % 2 ? '#ff8c42' : '#e85d2a'; // body, alternating depth
+      c.beginPath(); c.arc(s.x, s.y, s.r, 0, Math.PI * 2); c.fill();
+    }
+    for (let i = 0; i < CONE_SEGS; i++) {
+      const s = coneSegment(cone, i);
+      c.fillStyle = '#ffd166'; // hot core
+      c.beginPath(); c.arc(s.x, s.y, s.r * 0.45, 0, Math.PI * 2); c.fill();
+    }
   }
 }

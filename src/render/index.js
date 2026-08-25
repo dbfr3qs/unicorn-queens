@@ -7,14 +7,15 @@ import { drawDialogue } from './dialogue.js';
 import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
 import { drawPearl } from './pearl.js';
-import { drawKey, drawMarker } from './key.js';
+import { drawKey, drawMarker, drawNook } from './key.js';
 import { drawCell } from './cell.js';
 import { drawDoor } from './door.js';
+import { drawShaft } from './shaft.js';
 import { drawPlayer } from './player.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
 import { drawArrows } from './arrows.js';
-import { drawFireballs, drawBoulders, drawShockwaves } from './projectiles.js';
+import { drawFireballs, drawBoulders, drawShockwaves, drawCones } from './projectiles.js';
 import { drawParticles } from './particles.js';
 import { game } from '../game.js';
 import { palette } from './theme.js';
@@ -31,17 +32,20 @@ export function draw(ctx, viewW, viewH) {
   else drawBackground(ctx, level, camera, gameTime);
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
+  drawNook(ctx, level, gameTime); // key nook: wall section / recess, behind platforms
   drawLevel(ctx, level, gameTime);
   drawKey(ctx, level, gameTime);
   drawMarker(ctx, level, gameTime);
   drawCell(ctx, level);
   drawDoor(ctx, level, gameTime);
+  drawShaft(ctx, level, gameTime); // ceiling hole: sealed gate (K2: light shaft)
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
   drawEnemies(ctx, enemies);
   drawLoot(ctx);
   drawArrows(ctx);
   drawFireballs(ctx);
+  drawCones(ctx);
   drawBoulders(ctx);
   drawShockwaves(ctx);
   drawParticles(ctx);

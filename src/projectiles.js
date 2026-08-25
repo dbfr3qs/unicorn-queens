@@ -46,11 +46,11 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
       }
     }
     if (f.dead) continue;
-    if (f.reflected) { // reflected shots damage the mage
-      const mage = enemies.find(e => e.kind === 'mage' && !e.dead);
-      if (mage && f.x < mage.x + mage.w && f.x + f.w > mage.x &&
-          f.y < mage.y + mage.h && f.y + f.h > mage.y) {
-        damageEnemy(mage, fx, cam);
+    if (f.reflected) { // reflected shots damage the bosses
+      const boss = enemies.find(e => (e.kind === 'mage' || e.kind === 'dragon') && !e.dead);
+      if (boss && f.x < boss.x + boss.w && f.x + f.w > boss.x &&
+          f.y < boss.y + boss.h && f.y + f.h > boss.y) {
+        damageEnemy(boss, fx, cam);
         f.dead = true;
         fizzle(f, fx);
       }
@@ -100,6 +100,55 @@ export function fireBoulder(x, y, tx, ty, fx) {
     dead: false,
   });
   fx.play('clatter'); // the throw
+}
+
+// --- Dragon fire cone ----------------------------------------------------
+// A beam of flame from the dragon's mouth: fixed angle set at cone start
+// (you sidestep it, you don't outlast it), a row of ~8 hitbox segments
+// widening with distance (~30 deg spread: ~100 px wide at 200 px). Grows
+// from the mouth over the first 0.15 s, then holds for the ttl.
+export const CONE_TTL = 0.9, CONE_GROW = 0.15, CONE_LEN = 280, CONE_SEGS = 8;
+export const cones = [];
+
+export function resetCones() { cones.length = 0; }
+
+// (x, y) = the mouth; angle in radians; ttl for phase 2's longer breath.
+export function fireCone(x, y, angle, fx, ttl = CONE_TTL) {
+  cones.push({ x, y, angle, age: 0, ttl, dead: false });
+  fx.play('breath');
+}
+
+// Segment i of cone c as {x, y, r}: a circle whose radius widens with
+// distance along the beam (half-width = d * tan(15 deg)).
+export function coneSegment(c, i) {
+  const len = Math.min(c.age / CONE_GROW, 1) * CONE_LEN;
+  const d = ((i + 0.5) / CONE_SEGS) * len;
+  return {
+    x: c.x + Math.cos(c.angle) * d,
+    y: c.y + Math.sin(c.angle) * d,
+    r: 4 + d * Math.tan(Math.PI / 12),
+  };
+}
+
+export function updateCones(p, lvl, cam, dt, fx) {
+  for (const c of cones) {
+    if (c.dead) continue;
+    c.age += dt;
+    if (c.age >= c.ttl) { c.dead = true; fx.play('fizzle'); continue; }
+    const tip = coneSegment(c, CONE_SEGS - 1);
+    if (tip.x < -40 || tip.x > lvl.width + 40 || tip.y < -40 || tip.y > 700) { c.dead = true; continue; }
+    if (!p.dead && p.invuln <= 0) {
+      for (let i = 0; i < CONE_SEGS; i++) {
+        const s = coneSegment(c, i);
+        if (s.x + s.r > p.x && s.x - s.r < p.x + p.w &&
+            s.y + s.r > p.y && s.y - s.r < p.y + p.h) {
+          hurtPlayer(p, cam, fx);
+          break;
+        }
+      }
+    }
+  }
+  for (let i = cones.length - 1; i >= 0; i--) if (cones[i].dead) cones.splice(i, 1);
 }
 
 // Twin ground-bound wavefronts rolling away from (x, groundY).

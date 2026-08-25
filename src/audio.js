@@ -57,6 +57,8 @@ export function sfx(name) {
     case 'fizzle': beep(180, 60, 0.12, 'triangle', 0.08); break;
     case 'boss': beep(140, 40, 0.5, 'sawtooth', 0.25); break;
     case 'bossHit': beep(200, 55, 0.22, 'sawtooth', 0.24); break;
+    case 'roar': beep(90, 180, 0.5, 'sawtooth', 0.22); beep(60, 120, 0.5, 'square', 0.12); break;
+    case 'breath': beep(300, 80, 0.9, 'sawtooth', 0.2); beep(150, 60, 0.9, 'square', 0.14); break;
     case 'pearl': [1318, 1760].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.09)); break;
     case 'seal': beep(160, 35, 0.45, 'square', 0.28); beep(900, 250, 0.08, 'square', 0.1, 0.03); break;
     case 'gate': [392, 587].forEach((f, i) => beep(f, f, 0.22, 'sine', 0.2, i * 0.14)); break;
@@ -69,7 +71,10 @@ export function sfx(name) {
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;
     case 'thud': beep(90, 40, 0.2, 'triangle', 0.35); break;
     case 'clatter': beep(300, 120, 0.15, 'square', 0.18); beep(200, 80, 0.12, 'square', 0.12, 0.05); break;
+    case 'crack': beep(180, 60, 0.12, 'square', 0.3); beep(900, 400, 0.04, 'square', 0.08); break; // brick cracking
+    case 'crumble': beep(90, 30, 0.5, 'sawtooth', 0.3); beep(55, 25, 0.6, 'square', 0.2, 0.12); beep(240, 90, 0.15, 'square', 0.16, 0.25); break; // wall section falling in
     case 'deflect': beep(700, 1100, 0.12, 'square', 0.18); break; // metal ping off the shield
+    case 'flap': beep(250, 800, 0.09, 'triangle', 0.12); break; // bat swoop start: quiet whoosh
     case 'dialog': beep(740, 980, 0.05, 'square', 0.06); break;
   }
 }

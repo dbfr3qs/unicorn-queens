@@ -4,7 +4,7 @@ import { spawnLoot } from './loot.js';
 import { shake } from './camera.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
-import { MARKER_GLINT } from './key.js';
+import { MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from './key.js';
 
 export const arrows = [];
 export const ARROW_SPEED = 520, FIRE_CD = 0.22;
@@ -71,10 +71,19 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
       }
     }
     if (a.dead) continue;
-    if (lvl.marker && // marker brick: purely visual glint, the arrow passes through
+    if (lvl.marker && // marker brick: glint on hit, arrow passes through;
         a.x < lvl.marker.x + lvl.marker.w && a.x + 14 > lvl.marker.x &&
         a.y < lvl.marker.y + lvl.marker.h && a.y + 4 > lvl.marker.y) {
       lvl.marker.glintT = MARKER_GLINT;
+      const nook = lvl.keyNook; // level 3: the marker is the weak brick
+      // the arrow crosses the brick over several frames: one hit per arrow
+      if (nook && !nook.revealed && nook.crumbleT <= 0 && !a.markerHit) {
+        a.markerHit = true;
+        lvl.marker.hits = (lvl.marker.hits ?? 0) + 1;
+        fx.play('crack');
+        burst(lvl.marker.x + lvl.marker.w / 2, lvl.marker.y + lvl.marker.h / 2, FX.brickChip); // chips off the weak brick
+        if (lvl.marker.hits >= MARKER_HITS) nook.crumbleT = CRUMBLE_T;
+      }
     }
   }
   for (let i = arrows.length - 1; i >= 0; i--) if (arrows[i].dead) arrows.splice(i, 1);

@@ -25,13 +25,14 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillStyle = '#1d4e8e'; // surface line
     c.fillRect(m.x, lvl.groundY + 6, m.w, 3);
   }
-  for (const m of lvl.lava ?? []) { // lava fissures (dungeon): glowing, bubbling
+  for (const m of lvl.lava ?? []) { // lava fissures (dungeon) / sludge pits (deep): glowing, bubbling
     const top = lvl.groundY + 4;
-    c.fillStyle = '#3a0a05'; // body
+    const sl = m.sludge; // level 4: green sludge instead of lava
+    c.fillStyle = sl ? '#14200e' : '#3a0a05'; // body
     c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
-    c.fillStyle = '#8a2410'; // surface line
+    c.fillStyle = sl ? '#3a5a1e' : '#8a2410'; // surface line
     c.fillRect(m.x, top, m.w, 3);
-    c.fillStyle = '#c2451e'; // slow bubbles
+    c.fillStyle = sl ? '#5a7a2e' : '#c2451e'; // slow bubbles
     for (let i = 0; i < 3; i++) {
       const bx = m.x + 14 + i * ((m.w - 28) / 2);
       const by = top + 8 + Math.sin(t * 1.6 + i * 2.1 + m.x * 0.05) * 3;
@@ -40,7 +41,7 @@ export function drawLevel(c, lvl, t = 0) {
       c.fill();
     }
     c.globalAlpha = 0.12; // soft glow on the brick above
-    c.fillStyle = '#ff6a2a';
+    c.fillStyle = sl ? '#7aa03a' : '#ff6a2a';
     c.fillRect(m.x - 8, lvl.groundY - 26, m.w + 16, 30);
     c.globalAlpha = 1;
   }
@@ -51,7 +52,7 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillRect(lvl.gate.x - 8, lvl.groundY - 252, lvl.gate.w + 16, 34);
   }
   c.fillStyle = '#4a2d7a';
-  for (const p of lvl.platforms) c.fillRect(p.x, p.y, p.w, 12);
+  for (const p of lvl.platforms) if (!p.hidden) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
   for (const b of lvl.boxes) {
     if (b.broken) continue;
     if (b.mystery) { // wildcard: purple box with a slow swirl

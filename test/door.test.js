@@ -19,6 +19,32 @@ function rig(over = {}) {
 // Stand `dx` px west of the door face, on the ground.
 const atDoor = dx => { const g = game; g.player.x = DOOR_X - dx; g.player.y = g.level.groundY - 44; };
 
+describe('noKey (level 4 portcullis)', () => {
+  it('opens on approach without a key', () => {
+    rig({ noKey: true });
+    atDoor(30);
+    for (let i = 0; i < 80; i++) update(DT, 800, fx); // 1.33 s > DOOR_OPEN 1.0 s
+    expect(game.level.door.state).toBe('open');
+    expect(calls).toContain('rumble');
+  });
+
+  it('does not consume a key it never needed', () => {
+    rig({ noKey: true });
+    game.level.key.taken = true;
+    atDoor(30);
+    for (let i = 0; i < 80; i++) update(DT, 800, fx);
+    expect(game.level.key.consumed).toBe(false);
+  });
+
+  it('drops shut behind the player once past', () => {
+    rig({ noKey: true, state: 'open' });
+    game.player.x = DOOR_X + DOOR_W + 20; // fully past
+    game.player.y = game.level.groundY - 44;
+    for (let i = 0; i < 10; i++) update(DT, 800, fx);
+    expect(game.level.door.state).toBe('closing');
+  });
+});
+
 beforeEach(() => { startGame(600, 0); calls.length = 0; });
 afterEach(() => { input.left = false; input.right = false; startGame(600, 0); });
 

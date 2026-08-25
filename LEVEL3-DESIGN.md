@@ -43,16 +43,21 @@ lava:    600–700      1550–1650      2850–2950      3250–3350
 
 ### Key alcove & jail cell (1400–2600)
 
-- **Marker brick** at ~1480 on the wall (y≈groundY−200): one brick slightly
-  out of pattern with a faint glint (brightens briefly if shot). Points at
-  the alcove to its right.
-- **The key** (~1620, y≈groundY−240): a small brick nook above lava fissure
-  2 (1550-1650). Reached by a precise two-hop chain: platform at the west
-  lip {1460, y−120, 100} → the nook ledge {1600, y−240, 90}. Each hop is a
-  120 px rise (the jump apex is ~130 px, so both are tight but fair).
-  Missing the ledge = lava. The nook is set into the wall, so the key is
-  only visible if you look up / approach the lip — hidden, and the approach
-  is difficult.
+- **The nook is hidden in the wall** above lava fissure 2 (1550–1650):
+  the dungeon wall is drawn across the fissure, so that stretch reads as
+  solid — no ledge, no key, no signpost. Pre-reveal the nook ledge is not
+  drawn and not solid, and the key is not drawn or pickable.
+- **Marker brick** at ~1590 (y≈groundY−150): one of the bricks IN that wall
+  section, slightly out of pattern with a faint glint (brightens when shot).
+  It is the weak brick: **3 arrow hits** crumble the section (~0.5 s, brick
+  dust) and open the nook — the ledge becomes solid and the key appears,
+  twinkling, inside a dark recess. It sits at chest height from the west lip
+  (arrow y = p.y + 12), so a plain standing shot from the lip hits it —
+  the puzzle is *finding* the brick, not timing the shot.
+- **The key** (~1620, y≈groundY−240): rests on the nook ledge {1600,
+  y−240, 90}, reached by a precise two-hop chain: platform at the west lip
+  {1460, y−120, 100} → the nook ledge. Each hop is a 120 px rise (the jump
+  apex is ~130 px, so both are tight but fair). Missing the ledge = lava.
 - **Jail cell** (~2100, ground level): a brick alcove with iron bars, ~70×100,
   witch visible inside. Two dialogue beats (see below).
 - Zombie: (2000, patrol 1900–2100). Ghost: (2250, 230).
@@ -79,7 +84,9 @@ lava:    600–700      1550–1650      2850–2950      3250–3350
 
 ## The key chain
 
-1. **Key** — pickup item, HUD key icon while carried. Two encounter orders:
+1. **Reveal + Key** — shoot the marker brick 3 times to crumble the wall
+   and open the nook, then grab the key (HUD key icon while carried). Two
+   encounter orders:
    - *Missed first pass:* player reaches the cell keyless → witch's hint
      ("hidden to the west, above the fire") → short backtrack → forward,
      linear from there.
@@ -177,9 +184,18 @@ above.
 ## Loot boxes
 
 Same "lots of boxes" tradition, existing pool only (no new loot items).
-~13 boxes: corridor 1 (heart, star, mystery), around the cell (lantern,
-heart), corridor 2 (boots, shield, star, mystery, heartcap), troll hall
-(shield, heart) — visible on the approach like level 2's.
+14 boxes: corridor 1 (gem, sunbeam, boots, mystery), the safety **bow**
+at ~1250 (see below), around the cell (star, heart, lantern, hops),
+corridor 2 (mystery, grow, magnet), troll hall (shield, heartcap) —
+visible on the approach like level 2's.
+- **Safety bow box** (~1250, ground): `drop: 'bow'`. A death-restart of
+  level 3 drops the carried bow (only maxHp and the flight spell survive a
+  restart, `game.js` carry rule), which would soft-lock the nook (needs 3
+  arrows) and the troll (arrow-only damage). The box sits on the ground
+  path before the door, in the calm stretch between the 2nd zombie patrol
+  and the west lip, breakable by stomp — so every restart re-acquires a
+  bow before the key nook. A redundant pickup (already bow-holding) is
+  harmless: `onPickup` just re-sets `hasBow`.
 
 ## Enemies
 
@@ -208,7 +224,7 @@ heart), corridor 2 (boots, shield, star, mystery, heartcap), troll hall
    10 s/15 s cycle, landing-cancels, ceiling clamp, HUD wing meter, audio
 4. Dialogue system: proximity triggers, text box, advance on key press,
    per-trigger state (cell beat 1 vs beat 2)
-5. Key item: hidden alcove + marker brick, pickup, HUD key icon
+5. Key item: hidden nook (marker-brick crumble reveal) + pickup, HUD key icon
 6. Jail cell + witch: two-beat dialogue, unlock animation, spell grant,
    witch exit + fade
 7. Door: portcullis barrier, key consumption + auto-open, drop-shut behind
@@ -238,3 +254,14 @@ heart), corridor 2 (boots, shield, star, mystery, heartcap), troll hall
    mechanic; standard level-complete overlay.
 10. Loot boxes from the **existing pool only**; zombies + ghosts are the only
     regular enemies; torches are decorative.
+11. The nook is **hidden in the wall** above fissure 2: the marker brick is
+    the weak point (3 arrow hits → ~0.5 s crumble → ledge solid, key visible
+    and pickable). Pre-reveal the ledge and key are not drawn, the ledge is
+    not solid, and the key is not pickable. The marker sits at chest height
+    from the west lip so plain standing shots reach it (difficulty lives in
+    discovery, not shot timing).
+12. A **safety bow box** (~1250, ground path before the door) fixes the
+    death-restart soft-lock: restarting level 3 drops the carried bow
+    (carry only happens on an advance, `game.js`), but the troll is
+    arrow-only damage and the nook needs 3 arrows. The box is on the path,
+    ground level, stomp-breakable — no item dependency to reach it.

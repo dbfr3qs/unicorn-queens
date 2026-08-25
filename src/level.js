@@ -66,7 +66,8 @@ export function resolveGroundCollision(entity, lvl, dt) {
       }
     }
     if (!landed) {
-      const solids = lvl.platforms.concat(lvl.boxes.filter(b => !b.broken));
+      // hidden platforms (level 3's nook ledge) are not solid until revealed
+      const solids = lvl.platforms.filter(s => !s.hidden).concat(lvl.boxes.filter(b => !b.broken));
       for (const s of solids) {
         if (right > s.x && left < s.x + s.w && prevBottom <= s.y + 0.5 && bottom >= s.y) {
           entity.y = s.y - entity.h;

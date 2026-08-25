@@ -1,7 +1,9 @@
-// The troll-hall door: an iron-banded stone portcullis. All state lives
-// in lvl.door (level 3 data, P8): { x, y, w, h, state, openT, closeT }.
+// Portcullis door: iron-banded stone. All state lives in lvl.door
+// (level 3 troll-hall, level 4 vault->hall): { x, y, w, h, state, openT,
+// closeT, noKey? }.
 //
 // Full height (floor to ceiling): flight cannot skip the key requirement.
+// noKey (level 4): opens on approach without a key — no item to consume.
 //
 // States: locked -> opening (auto-opens on approach WITH THE KEY: rumble,
 // slides up over DOOR_OPEN s, the key is consumed) -> open (passable;
@@ -14,7 +16,11 @@ export function updateDoor(lvl, p, dt, fx) {
   if (!door) return;
   if (door.state === 'locked') {
     const near = !p.dead && p.x + p.w > door.x - 60 && p.x < door.x + door.w;
-    if (near && lvl.key && lvl.key.taken && !lvl.key.consumed) {
+    if (near && door.noKey) { // keyless (level 4): approach is enough
+      door.state = 'opening';
+      door.openT = DOOR_OPEN;
+      fx.play('rumble');
+    } else if (near && lvl.key && lvl.key.taken && !lvl.key.consumed) {
       door.state = 'opening';
       door.openT = DOOR_OPEN;
       lvl.key.consumed = true; // the key is spent; the HUD icon goes

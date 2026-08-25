@@ -2,7 +2,7 @@
 // arrow hit (purely visual).
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { game, startGame, update } from '../src/game.js';
-import { updateKey, MARKER_GLINT } from '../src/key.js';
+import { updateKey, MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from '../src/key.js';
 import { arrows, updateArrows, resetArrows } from '../src/arrows.js';
 import { particles, resetParticles } from '../src/particles.js';
 import { createCamera } from '../src/camera.js';
@@ -98,5 +98,68 @@ describe('marker brick', () => {
     arrows[0].y -= 40; // well above the brick
     updateArrows([], g.level, cam, DT, fx);
     expect(g.level.marker.glintT).toBe(0);
+  });
+});
+
+// Level 3: the marker brick is the weak point of the hidden nook wall —
+// 3 arrow hits crumble it, the ledge becomes solid, the key appears.
+describe('key nook crumble (level 3)', () => {
+  beforeEach(() => startGame(600, 2));
+
+  const shootMarker = g => {
+    resetArrows(); // clear lingering arrows: exactly one shot per call
+    const cam = createCamera();
+    cam.x = g.level.marker.x - 100; // marker on screen
+    arrows.push({ x: g.level.marker.x - 14, y: g.level.marker.y - 2, vx: 520, dead: false });
+    updateArrows([], g.level, cam, DT, fx);
+  };
+
+  it('two hits only glint; the third starts the crumble', () => {
+    const g = game;
+    shootMarker(g);
+    shootMarker(g);
+    expect(g.level.marker.hits).toBe(2);
+    expect(g.level.keyNook.crumbleT).toBe(0);
+    shootMarker(g);
+    expect(g.level.marker.hits).toBe(MARKER_HITS);
+    expect(g.level.keyNook.crumbleT).toBe(CRUMBLE_T);
+    expect(g.level.keyNook.revealed).toBe(false);
+  });
+
+  it('the crumble finishes: nook revealed, ledge unhidden, no re-trigger', () => {
+    const g = game;
+    shootMarker(g); shootMarker(g); shootMarker(g);
+    for (let i = 0; i < 40; i++) updateKey(g.level, g.player, fx, DT); // 40/60 s > 0.5 s
+    expect(g.level.keyNook.revealed).toBe(true);
+    expect(g.level.platforms.find(p => p.x === 1600 && p.w === 90).hidden).toBe(false);
+    shootMarker(g); // a hit after the reveal does not re-trigger
+    expect(g.level.keyNook.crumbleT).toBe(0);
+  });
+
+  it('hits chip the brick; the reveal bursts debris and rumbles', () => {
+    const g = game;
+    resetCalls();
+    resetParticles();
+    shootMarker(g);
+    expect(calls.filter(n => n === 'crack')).toHaveLength(1);
+    expect(particles.length).toBeGreaterThan(0); // brick chips off the weak brick
+    resetParticles();
+    shootMarker(g); shootMarker(g); // third hit starts the crumble
+    resetCalls(); resetParticles();
+    for (let i = 0; i < 40; i++) updateKey(g.level, g.player, fx, DT); // 40/60 s > 0.5 s
+    expect(g.level.keyNook.revealed).toBe(true);
+    expect(calls.filter(n => n === 'crumble')).toHaveLength(1);
+    expect(particles.length).toBeGreaterThan(0); // the wall section falls in
+  });
+
+  it('the key is not pickable until the nook is revealed', () => {
+    const g = game;
+    g.player.x = g.level.key.x + 2; // overlap the hidden key
+    g.player.y = g.level.key.y + 2;
+    updateKey(g.level, g.player, fx, DT);
+    expect(g.level.key.taken).toBe(false);
+    shootMarker(g); shootMarker(g); shootMarker(g);
+    for (let i = 0; i < 40; i++) updateKey(g.level, g.player, fx, DT); // crumble finishes
+    expect(g.level.key.taken).toBe(true); // picked up as soon as the nook opens
   });
 });

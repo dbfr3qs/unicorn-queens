@@ -7,7 +7,7 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, step } from './helpers/render-harness.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
 import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone } from '../src/projectiles.js';
@@ -396,5 +396,90 @@ test('l4 dragon (dive: wings spread flat, low over the ground)', () => {
   dr.state = 'dive'; dr.dive = 'low'; dr.t = 0.5; dr.diveDir = 1;
   g.player.x = 3850;
   g.camera.x = 3464; // 3850 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 5 (enchanted forest) scenarios ----
+// Camera values are player.x + w/2 - viewW/2 (or the max-scroll clamp),
+// so updateCamera holds them still. Animation phases (glints, bob,
+// brightening) are set via gameTime / direct state so each snapshot shows
+// the marker mid-pulse.
+
+test('l5 gate (spawn: day sky + sun through the arch, intro beat open)', () => {
+  freshGame5();
+  // the player spawns inside the intro band, so frame 1 opens the beat
+  // and freezes the world: the first thing the realm's champion sees.
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 bush (pre-reveal, glint mid-pulse)', () => {
+  const g = freshGame5();
+  g.gameTime = 3.7; // sin(4s-seed) at its peak: the 2x2 glint fully lit
+  g.player.x = 1050; // just west of the bush at 1122-1178
+  g.camera.x = 664; // 1050 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 bush (revealed, horseshoe already collected)', () => {
+  const g = freshGame5();
+  g.level.bushes[0].state = 'revealed';
+  g.level.relics[0].taken = true; // horseshoe: gone from the mound
+  g.player.x = 1190; // standing just east of the open bush
+  g.camera.x = 804; // 1190 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 hollow tree (branch chain, sapphire glinting in the hollow)', () => {
+  const g = freshGame5();
+  g.gameTime = 0.7; // sapphire glint (sin phased by x) near its peak
+  g.player.x = 2200; // ground, below the 2120/2250 branch chain
+  g.camera.x = 1814; // 2200 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 pond (lily-pad crossing, floating pad + acorn, water shimmer)', () => {
+  const g = freshGame5();
+  g.player.x = 2870; // on the second crossing pad (2850-2920)
+  g.player.y = g.level.groundY - 6 - g.player.h; // standing on the pad
+  g.camera.x = 2484; // 2870 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test("l5 queen's glade (mid-bob, horn sparkle, HUD two of three)", () => {
+  const g = freshGame5();
+  g.level.relics[1].taken = true; // sapphire
+  g.level.relics[2].taken = true; // acorn: the counter reads two of three
+  g.gameTime = 0.5; // bob at its peak (0.5 Hz) and the horn sparkle lit
+  g.player.x = 3350; // just outside the beat rect (3400-3660): no dialogue
+  g.camera.x = 2964; // 3350 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 mist gate (locked: dim shimmer, pulsing seal)', () => {
+  const g = freshGame5();
+  g.player.x = 5200; // east of the last slime's patrol
+  g.camera.x = 4800; // max scroll: level.width - viewW
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test("l5 mist gate (mid-brighten after the Queen's story)", () => {
+  const g = freshGame5();
+  g.level.exit.locked = false;
+  g.level.mistgate.openT = 0.75; // halfway through the 1.5 s brighten
+  g.player.x = 5200;
+  g.camera.x = 4800; // max scroll
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l5 bee (mid-sting dash, home flower behind it)', () => {
+  const g = freshGame5();
+  const bee = g.enemies.find(e => e.kind === 'bee'); // first home: 2450, 320
+  bee.homeX = 2450; bee.homeY = 320; // pre-seed so the update keeps the pose
+  bee.phase = 2450 * 0.17;
+  bee.state = 'sting'; bee.stingT = 0.3; bee.stingDist = 40; bee.ty = 320;
+  bee.x = 2410; bee.y = 320; bee.dir = -1; // 40 px into the dash, westbound (band starts at 2400)
+  g.player.x = 2350; // on the ground below its line: safe
+  g.player.y = g.level.groundY - g.player.h;
+  g.camera.x = 1964; // 2350 + 14 - 400
   expect(step({}, 1)).toMatchSnapshot();
 });

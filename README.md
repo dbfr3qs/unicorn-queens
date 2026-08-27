@@ -40,6 +40,30 @@ step. Serve over http — the modules won't load from `file://`.
    the arrow keys (A/D still run, X still shoots); landing on anything
    ends it early. 15 s recharge, forever. No invulnerability while
    airborne.
+4. **The Dragon's Layer** — deep in the castle: green-black stone, moss,
+   puddles, dim torches. Cross the sludge pits (falling in costs a heart
+   and respawns you) and the zigzag platform gauntlet over the big one,
+   then through the keyless portcullis into the vault — a secret crate
+   waits above the treasure, reachable by a jump-arrow. The green dragon
+   has 14 hp, hovers out of ground-arrow range, rains aimed fireballs,
+   dives, and breathes a fire cone from the floor; below 7 hp it gets
+   quicker. Beat it to make the pearl appear, then take it to the seal —
+   the exit is a hole in the ceiling, open only to flight.
+5. **The Enchanted Forest** — outdoors at last: blue sky, a low sun,
+   tree canopy, wildflowers. Three hidden relics, each hidden a different
+   way: a golden horseshoe in a bush (shoot the bush to make it rustle
+   open), a sapphire in the hollow of a tree (climb the branch chain above
+   the pond — the drop into the hollow passes straight through the gem),
+   and a royal acorn on a lone lily pad floating high over the pond (fly
+   to it). Each is +50 score, and the Unicorn Queen, in her glade, counts
+   them as you approach. The pond's lily pads are the safe crossing
+   (falling in costs a heart and respawns you); the bees in the canopy are
+   the new regular enemy — they bob over their flower and dash straight
+   across the path when you come near, stompable, one arrow each. Hand
+   over all three and the Queen tells the truth: the Unicorn King was
+   kidnapped by an evil wizard who rides a flying pig and keeps him atop
+   a snow-topped mountain. The mist gate at the east end brightens and
+   opens. Level 5 is not the finale.
 
 Win a level and press Space to play the next one.
 

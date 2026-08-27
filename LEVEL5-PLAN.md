@@ -1,6 +1,6 @@
 # Level 5 — "The Enchanted Forest" — phased implementation plan
 
-Status: not started. Design: `LEVEL5-DESIGN.md` (confirmed).
+Status: COMPLETE (M1–M7). Design: `LEVEL5-DESIGN.md` (confirmed).
 
 One phase = one commit. After every phase: `npm test` + `npm run smoke`
 green, and the level 1–4 snapshot md5s unchanged — until M6 intentionally
@@ -201,7 +201,28 @@ same seeding pattern):
 
 Verify visual markers by hand, then commit the new snapshot sections.
 
-## M7 — Playthrough + polish
+## M7 — Playthrough + polish (done)
+
+Done: `test/level5-playthrough.test.js` passes — the actual chain (the
+plan's steps, as the physics turned out):
+1. intro beat opens on frame 1 → 3 lines → close.
+2. run to the bush, fire the arrow → revealed → pick up the horseshoe
+   walking east.
+3. east crossing: the full jump skips pad 1 (ground → pad 2 → pad 4 →
+   glade); the Queen's count-1 beat opens mid-arc.
+4. back west (three pad hops), walk under the chain to the takeoff, two
+   30-frame buffered jumps up the branches — the drop into the hollow
+   passes through the sapphire (no hop needed).
+5. fall to the ground, east again → count-2 beat mid-arc; back to the
+   pond edge, cast, rise west, drop onto the acorn (picked up in
+   passing, before the floating pad), sink off its overhang, drop to
+   the pad below → count-3 beat + story on the ground: 4 lines, exit
+   unlocked, `openT` running, `toldStory`, score 150.
+6. east across the stream (log-bridge jump) into the mist gate →
+   `p.won`, hp 4 intact all the way.
+Audio pass: every fx name used in `src/` (45) has a case in
+`audio.js` — verified by diff, no silent misses. README: levels 4 and 5
+entries added (level 4 had never been documented).
 
 - `test/level5-playthrough.test.js` (the `level4-playthrough.test.js`
   pattern — the no-soft-lock guarantee end to end): `startGame(600, 4)`
@@ -222,7 +243,7 @@ Verify visual markers by hand, then commit the new snapshot sections.
 - README: add the level 5 entry (the forest, the three relics, the
   Queen, the mist gate, the bee) + the loot/levels tables stay accurate
   (no new loot kinds).
-- Final verification: `npm test`, `npm run smoke` (five levels), levels
-  1–4 snapshot md5s unchanged, one hand playthrough in the browser
-  (all three relic orders, the pond hit, a death-restart re-arming the
-  safety bow).
+- Final verification: `npm test` (453 green), `npm run smoke` (five
+  levels), levels 1–4 snapshot md5s unchanged (no snapshot diff since
+  M6), hand playthrough in the browser (all three relic orders, the pond
+  hit, a death-restart re-arming the safety bow).

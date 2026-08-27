@@ -13,6 +13,7 @@ import './enemies/slime.js';
 import './enemies/zombie.js';
 import './enemies/ghost.js';
 import './enemies/bat.js';
+import './enemies/bee.js';
 import './enemies/mage.js';
 import './enemies/troll.js';
 import './enemies/dragon.js';

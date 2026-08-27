@@ -108,13 +108,19 @@ describe('level 5 data', () => {
     expect(e.y >= m.y && e.y + e.h <= m.y + m.h).toBe(true);
   });
 
-  it('roster: six slimes, all on ground (bees join in M5)', () => {
-    expect(lvl.roster.map(e => e.kind)).toEqual(
-      ['slime', 'slime', 'slime', 'slime', 'slime', 'slime']);
+  it('roster: six slimes on the ground + six bees in the canopy', () => {
+    const kinds = lvl.roster.map(e => e.kind);
+    expect(kinds.filter(k => k === 'slime')).toHaveLength(6);
+    expect(kinds.filter(k => k === 'bee')).toHaveLength(6);
     for (const e of lvl.roster) {
-      // slime.js clamps the body's right edge to maxX, so maxX must clear the water
-      expect(lvl.ground.some(s => e.minX >= s.x && e.maxX <= s.x + s.w)).toBe(true);
       expect(e.x >= e.minX && e.x <= e.maxX).toBe(true);
+      if (e.kind === 'slime') {
+        // slime.js clamps the body's right edge to maxX, so maxX must clear the water
+        expect(lvl.ground.some(s => e.minX >= s.x && e.maxX <= s.x + s.w)).toBe(true);
+      } else { // the bees hover in the canopy band, well above the ground
+        expect(e.y).toBeGreaterThanOrEqual(280);
+        expect(e.y).toBeLessThan(gy - 100);
+      }
     }
   });
 });

@@ -3,7 +3,7 @@
 // them to the Unicorn Queen in the glade; her story unlocks the mist gate
 // at the wood's east edge. All relic/bush/queen/mistgate state lives in
 // this data; relics.js, the queen's dialogue beats, and mistgate.js read
-// and mutate it. Bees join the roster in M5.
+// and mutate it. The six bees (canopy band) are the level's new regular enemy.
 import { relicsTaken } from '../relics.js';
 export function createLevel5(viewH = 600) {
   const groundY = viewH - 40;
@@ -134,13 +134,20 @@ export function createLevel5(viewH = 600) {
         ],
       },
     ],
-    roster: [ // bees join in M5
+    roster: [
       { kind: 'slime', x: 700, minX: 600, maxX: 950 },
       { kind: 'slime', x: 1400, minX: 1300, maxX: 1700 },
       { kind: 'slime', x: 2050, minX: 1950, maxX: 2300 },
       { kind: 'slime', x: 4100, minX: 4000, maxX: 4190 },
       { kind: 'slime', x: 4700, minX: 4600, maxX: 4900 },
       { kind: 'slime', x: 5150, minX: 5050, maxX: 5350 },
+      // the six bees (canopy band): home x/y + patrol band
+      { kind: 'bee', x: 2450, y: 320, minX: 2400, maxX: 2600 },
+      { kind: 'bee', x: 2750, y: 320, minX: 2650, maxX: 2950 },
+      { kind: 'bee', x: 3100, y: 300, minX: 2950, maxX: 3250 },
+      { kind: 'bee', x: 3850, y: 300, minX: 3750, maxX: 4050 },
+      { kind: 'bee', x: 4400, y: 280, minX: 4300, maxX: 4600 },
+      { kind: 'bee', x: 4850, y: 310, minX: 4750, maxX: 5050 },
     ],
   };
 }

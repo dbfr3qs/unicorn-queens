@@ -14,6 +14,7 @@ import { drawCell } from './cell.js';
 import { drawDoor } from './door.js';
 import { drawShaft } from './shaft.js';
 import { drawPlayer } from './player.js';
+import { drawQueen } from './queen.js';
 import { drawEnemies } from './enemies.js';
 import { drawLoot } from './loot.js';
 import { drawArrows } from './arrows.js';
@@ -46,6 +47,7 @@ export function draw(ctx, viewW, viewH) {
   drawShaft(ctx, level, gameTime); // ceiling hole: sealed gate (K2: light shaft)
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
+  drawQueen(ctx, level, gameTime); // level 5: foreground — the player walks to her
   drawEnemies(ctx, enemies);
   drawLoot(ctx);
   drawArrows(ctx);

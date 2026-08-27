@@ -131,6 +131,7 @@ function checkDialogs(fx) {
     if (!beat.repeat) game.dialogsFired.add(beat.id);
     openDialogue(beat.lines);
     fx.play('dialog');
+    if (beat.onOpen) beat.onOpen(game, fx); // optional story hook (the queen's q3)
     return; // one dialog per frame
   }
 }

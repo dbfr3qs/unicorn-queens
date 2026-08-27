@@ -4,6 +4,7 @@
 // at the wood's east edge. All relic/bush/queen/mistgate state lives in
 // this data; relics.js, the queen's dialogue beats, and mistgate.js read
 // and mutate it. Bees join the roster in M5.
+import { relicsTaken } from '../relics.js';
 export function createLevel5(viewH = 600) {
   const groundY = viewH - 40;
   return {
@@ -76,7 +77,63 @@ export function createLevel5(viewH = 600) {
     // The mist gate at the east edge (M4): locked until the story is told.
     mistgate: { x: 5450, y: 400, w: 100, h: 160, openT: 0 },
     exit: { x: 5470, y: 430, w: 60, h: 130, locked: true },
-    dialogs: [], // the intro + queen beats land with M3
+    dialogs: [
+      {
+        id: 'intro',
+        x: 40, y: groundY - 140, w: 200, h: 140, // the spawn band: the player starts inside
+        beats: [{
+          id: 'l5-intro',
+          lines: [
+            { speaker: 'Unicorn Queen', text: "You slip out of the dragon's lair, into the sunlight." },
+            { speaker: 'Unicorn Queen', text: "The realm's three relics are lost in this forest: the golden horseshoe, the sapphire, the royal acorn." },
+            { speaker: 'Unicorn Queen', text: 'Find all three and bring them to the Unicorn Queen in the glade at the heart of the wood.' },
+          ],
+        }],
+      },
+      {
+        id: 'queen',
+        x: 3400, y: groundY - 140, w: 260, h: 140, // the glade approach zone
+        beats: [
+          {
+            id: 'q0',
+            repeat: true, // re-fires on each approach while her when holds
+            when: g => relicsTaken(g.level) === 0,
+            lines: [
+              { speaker: 'Unicorn Queen', text: 'You seek the relics — the horseshoe, the sapphire, the acorn.' },
+              { speaker: 'Unicorn Queen', text: 'They hide in plain sight. Look closely, champion.' },
+            ],
+          },
+          {
+            id: 'q1',
+            repeat: true,
+            when: g => relicsTaken(g.level) === 1,
+            lines: [{ speaker: 'Unicorn Queen', text: 'One of the three. The wood still holds the other two.' }],
+          },
+          {
+            id: 'q2',
+            repeat: true,
+            when: g => relicsTaken(g.level) === 2,
+            lines: [{ speaker: 'Unicorn Queen', text: 'Two of the three. One more, and I will tell you what ails the kingdom.' }],
+          },
+          {
+            id: 'q3', // once: the story beat
+            when: g => relicsTaken(g.level) === 3,
+            onOpen: (g, f) => { // the hand-over: the mist gate opens
+              g.level.exit.locked = false;
+              g.level.mistgate.openT = 1.5;
+              g.level.queen.toldStory = true;
+              f.play('seal');
+            },
+            lines: [
+              { speaker: 'Unicorn Queen', text: "At last — horseshoe, sapphire, acorn. The realm's relics are whole again." },
+              { speaker: 'Unicorn Queen', text: 'Now hear why the kingdom trembles: it is the king.' },
+              { speaker: 'Unicorn Queen', text: 'An evil wizard has kidnapped the Unicorn King. He rides a flying pig, and has carried the king to the top of a snow-topped mountain.' },
+              { speaker: 'Unicorn Queen', text: "The mist gate at the wood's edge will carry you to the peak. Free the king, champion." },
+            ],
+          },
+        ],
+      },
+    ],
     roster: [ // bees join in M5
       { kind: 'slime', x: 700, minX: 600, maxX: 950 },
       { kind: 'slime', x: 1400, minX: 1300, maxX: 1700 },

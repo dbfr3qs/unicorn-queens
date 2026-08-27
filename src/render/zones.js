@@ -23,6 +23,10 @@ export function drawZones(c, lvl, cam, t, viewW) {
       drawDungeon(c, z.kind === 'dungeon-hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     } else if (z.kind === 'deep' || z.kind === 'deep-hall') {
       drawDeep(c, z.kind === 'deep-hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
+    } else if (z.kind === 'gate') {
+      drawGate(c, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
+    } else if (z.kind === 'forest') {
+      drawForestZone(c, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else {
       drawStone(c, z.kind === 'hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     }
@@ -151,6 +155,126 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   } else {
     for (const px of [2750, 3350]) drawBones(c, px - cam.x, gy); // vault dressing
     drawTreasure(c, 3480 - cam.x, gy);
+  }
+}
+
+// The deep-woods band: from this world x the forest sky and dressing
+// shift one shade darker (level 5).
+const DEEP_X = 3700;
+
+// Daylight sky shared by the gate and forest zones: sky band, warm sun
+// disc with two halo rings (slowest parallax), and four drifting cloud
+// blobs (a pure time function with wrap — no particle state, like the
+// deep zone's drips). All text-snapshot friendly (no gradients).
+function drawDaySky(c, sx0, w, lvl, cam, t, viewW) {
+  c.fillStyle = '#7ec8f0';
+  c.fillRect(sx0, 0, w, lvl.groundY);
+  const sunX = 640 - cam.x * 0.05, sunY = 88;
+  c.save();
+  c.fillStyle = '#ffe9a3';
+  c.globalAlpha = 0.18;
+  c.beginPath(); c.arc(sunX, sunY, 52, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 0.3;
+  c.beginPath(); c.arc(sunX, sunY, 40, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+  c.beginPath(); c.arc(sunX, sunY, 28, 0, Math.PI * 2); c.fill();
+  c.restore();
+  c.fillStyle = '#ffffff';
+  for (let i = 0; i < 4; i++) {
+    const span = viewW + 260;
+    const cx = ((i * 230 + 80 - t * (8 + i * 3)) % span + span) % span - 130;
+    const cy = 56 + ((i * 67) % 110);
+    c.globalAlpha = 0.75;
+    c.beginPath(); c.ellipse(cx, cy, 34 + i * 4, 10 + i, 0, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(cx + 24 + i * 3, cy + 4, 24 + i * 3, 8 + i, 0, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(cx - 22 - i * 2, cy + 5, 20 + i * 2, 7 + i, 0, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
+  }
+}
+
+// A daylight ridge tiled so a 5600 px level stays covered (the shared
+// background ridges only span ~1360/1760 px). `trees` optionally draws a
+// conifer on each peak — the tree line along the near ridge.
+function drawHillRidge(c, peaks, period, off, color, gy, trees) {
+  const shift = off % period;
+  c.save();
+  c.translate(-shift, 0);
+  c.fillStyle = color;
+  for (const k of [0, 1]) {
+    c.beginPath();
+    c.moveTo(k * period - 200, gy);
+    for (const p of peaks) {
+      const x = p.x + k * period;
+      c.lineTo(x, gy);
+      c.lineTo(x + p.w / 2, gy - p.h);
+      c.lineTo(x + p.w, gy);
+    }
+    c.lineTo(k * period + 2000, gy);
+    c.closePath();
+    c.fill();
+    if (trees) {
+      c.fillStyle = trees;
+      for (const p of peaks) {
+        const tx = p.x + p.w / 2 + k * period;
+        c.beginPath();
+        c.moveTo(tx - 9, gy - p.h);
+        c.lineTo(tx, gy - p.h - 26);
+        c.lineTo(tx + 9, gy - p.h);
+        c.closePath();
+        c.fill();
+      }
+      c.fillStyle = color;
+    }
+  }
+  c.restore();
+}
+
+// The castle gate (level 5 opening): the day sky painted across the zone,
+// then the castle wall over it with the arch cut out — sun and hills read
+// through the 280–460 opening before the player walks under it.
+function drawGate(c, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
+  c.save();
+  c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
+  drawDaySky(c, sx0, sx1 - sx0, lvl, cam, t, viewW);
+  drawHillRidge(c, background.far, 1360, cam.x * 0.35, '#79b86a', lvl.groundY, null);
+  drawHillRidge(c, background.near, 1760, cam.x * 0.6, '#4e9a4e', lvl.groundY, '#3a7d42');
+  c.restore();
+  c.fillStyle = '#211537'; // the castle wall (the hall's purple stone)
+  c.fillRect(sx0, 0, 280, lvl.groundY); // west of the arch
+  c.fillRect(460 - cam.x, 0, 40, lvl.groundY); // east of the arch (460–500)
+  c.beginPath(); // lintel with the arched underside (arch top at y 300)
+  c.moveTo(280 - cam.x, 0);
+  c.lineTo(460 - cam.x, 0);
+  c.lineTo(460 - cam.x, 390);
+  c.arc(370 - cam.x, 390, 90, 0, Math.PI, true);
+  c.closePath();
+  c.fill();
+  c.strokeStyle = '#3a2a5c'; // stone trim around the opening
+  c.lineWidth = 10;
+  c.beginPath();
+  c.arc(370 - cam.x, 390, 100, 0, Math.PI, true);
+  c.stroke();
+  c.fillStyle = '#3a2a5c';
+  c.fillRect(275 - cam.x, 390, 10, lvl.groundY - 390); // jambs
+  c.fillRect(455 - cam.x, 390, 10, lvl.groundY - 390);
+}
+
+// The enchanted forest (level 5): the day sky across the zone, then the
+// deep-woods darkening band over world x >= DEEP_X.
+function drawForestZone(c, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
+  c.save();
+  c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
+  drawDaySky(c, sx0, sx1 - sx0, lvl, cam, t, viewW);
+  drawHillRidge(c, background.far, 1360, cam.x * 0.35, '#79b86a', lvl.groundY, null);
+  drawHillRidge(c, background.near, 1760, cam.x * 0.6, '#4e9a4e', lvl.groundY, '#3a7d42');
+  c.restore();
+  if (zx1 > DEEP_X) { // the deep woods: one shade darker
+    const dx0 = Math.max(zx0, DEEP_X) - cam.x;
+    const dw = Math.min(zx1, lvl.width) - Math.max(zx0, DEEP_X);
+    if (dw > 0) {
+      c.fillStyle = 'rgba(8, 30, 16, 0.18)';
+      c.fillRect(dx0, 0, dw, lvl.groundY);
+    }
   }
 }
 

@@ -55,4 +55,13 @@ for (let i = 0; i < FRAMES; i++) {
   if (!cb) throw new Error('requestAnimationFrame chain broke at level-4 frame ' + i);
   cb(ts);
 }
-console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4)`);
+// fifth run: level 5 (gate, forest daylight, pond, mist gate)
+startGame(600, 4);
+game.lastTs = 0;
+for (let i = 0; i < FRAMES; i++) {
+  ts += 16.7;
+  const cb = rafCb; rafCb = null;
+  if (!cb) throw new Error('requestAnimationFrame chain broke at level-5 frame ' + i);
+  cb(ts);
+}
+console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5)`);

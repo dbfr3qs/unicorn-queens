@@ -6,6 +6,7 @@ import { drawHud } from './hud.js';
 import { drawDialogue } from './dialogue.js';
 import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
+import { drawForest } from './forest.js';
 import { drawPearl } from './pearl.js';
 import { drawKey, drawMarker, drawNook } from './key.js';
 import { drawCell } from './cell.js';
@@ -34,6 +35,7 @@ export function draw(ctx, viewW, viewH) {
   ctx.translate(-Math.round(camera.x), 0);
   drawNook(ctx, level, gameTime); // key nook: wall section / recess, behind platforms
   drawLevel(ctx, level, gameTime);
+  drawForest(ctx, level, gameTime); // level 5: trees, hollow tree, flowers, reeds
   drawKey(ctx, level, gameTime);
   drawMarker(ctx, level, gameTime);
   drawCell(ctx, level);

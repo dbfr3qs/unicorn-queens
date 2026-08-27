@@ -14,6 +14,18 @@ export function drawLevel(c, lvl, t = 0) {
       for (let px = seg.x + 22; px < seg.x + seg.w; px += 24) c.fillRect(px, top, 2, 10);
       continue;
     }
+    if (seg.kind === 'stone') { // level 5 courtyard: cobbled grey-blue blocks
+      c.fillStyle = '#343a52';
+      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#454c68';
+      for (let ry = top, row = 0; ry < lvl.height; ry += 12, row++) {
+        const off = row % 2 ? 12 : 0;
+        for (let rx = seg.x + off; rx < seg.x + seg.w; rx += 24) c.fillRect(rx + 1, ry + 1, 22, 10);
+      }
+      c.fillStyle = '#5a627e';
+      c.fillRect(seg.x, top, seg.w, 4);
+      continue;
+    }
     c.fillStyle = palette.night;
     c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
     c.fillStyle = '#7b4fa6';
@@ -25,8 +37,20 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillStyle = '#1d4e8e'; // surface line
     c.fillRect(m.x, lvl.groundY + 6, m.w, 3);
   }
-  for (const m of lvl.lava ?? []) { // lava fissures (dungeon) / sludge pits (deep): glowing, bubbling
+  for (const m of lvl.lava ?? []) { // lava / sludge / water: the level's gap fluid
     const top = lvl.groundY + 4;
+    if (m.water) { // level 5: pond and stream (falling in = the pit rule)
+      c.fillStyle = '#0d2b4e'; // body
+      c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#1d4e8e'; // surface line
+      c.fillRect(m.x, top, m.w, 3);
+      c.fillStyle = '#4e8ed4'; // a slow shimmer, drifting across the surface
+      for (let i = 0; i < 4; i++) {
+        const sx = m.x + Math.min(((t * 24 + i * (m.w / 4)) % m.w), m.w - 10);
+        c.fillRect(sx, top + 6 + Math.sin(t * 2 + i * 1.7) * 2, 10, 2);
+      }
+      continue;
+    }
     const sl = m.sludge; // level 4: green sludge instead of lava
     c.fillStyle = sl ? '#14200e' : '#3a0a05'; // body
     c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
@@ -52,7 +76,13 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillRect(lvl.gate.x - 8, lvl.groundY - 252, lvl.gate.w + 16, 34);
   }
   c.fillStyle = '#4a2d7a';
-  for (const p of lvl.platforms) if (!p.hidden) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
+  for (const p of lvl.platforms) if (!p.hidden && (!p.kind || p.kind === 'platform')) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
+  for (const p of lvl.platforms) { // level 5 kinds: branch, lily, log
+    if (p.hidden || !p.kind || p.kind === 'platform') continue;
+    if (p.kind === 'branch') drawBranch(c, p);
+    else if (p.kind === 'lily') drawLily(c, p);
+    else if (p.kind === 'log') drawLog(c, p);
+  }
   for (const b of lvl.boxes) {
     if (b.broken) continue;
     if (b.mystery) { // wildcard: purple box with a slow swirl
@@ -88,4 +118,36 @@ export function drawLevel(c, lvl, t = 0) {
   c.lineTo(g.x + 4, lvl.groundY - 62);
   c.closePath();
   c.fill();
+}
+
+// Level 5 platform kinds. The solid top edge stays at p.y (the collision
+// rect is the plain one-way platform); the dressing hangs off it.
+function drawBranch(c, p) {
+  c.fillStyle = '#6b4a2a'; // the limb
+  c.fillRect(p.x, p.y + 4, p.w, 8);
+  c.fillStyle = '#3e8a44'; // a leaf tuft
+  c.fillRect(p.x + p.w / 2 - 16, p.y - 8, 32, 10);
+  c.fillStyle = '#57a857';
+  c.fillRect(p.x + p.w / 2 - 9, p.y - 14, 18, 8);
+}
+
+function drawLily(c, p) {
+  c.fillStyle = '#2e6a34'; // the pad, floating on the water
+  c.beginPath(); c.ellipse(p.x + p.w / 2, p.y + 6, p.w / 2, 6, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#57a857'; // the lighter top
+  c.beginPath(); c.ellipse(p.x + p.w / 2, p.y + 4, p.w / 2 - 4, 3.5, 0, 0, Math.PI * 2); c.fill();
+}
+
+function drawLog(c, p) {
+  c.fillStyle = '#6b4a2a'; // the trunk
+  c.fillRect(p.x, p.y, p.w, 14);
+  c.fillStyle = '#8a6a3e'; // lit top
+  c.fillRect(p.x, p.y, p.w, 5);
+  c.fillStyle = '#4a3418'; // rings on the cut end
+  c.beginPath(); c.arc(p.x + p.w - 8, p.y + 7, 6, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#8a6a3e';
+  c.beginPath(); c.arc(p.x + p.w - 8, p.y + 7, 3, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#4a3418'; // bark notches
+  c.fillRect(p.x + 14, p.y + 10, 10, 2);
+  c.fillRect(p.x + 44, p.y + 10, 12, 2);
 }

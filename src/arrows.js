@@ -71,6 +71,20 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
       }
     }
     if (a.dead) continue;
+    for (const b of lvl.bushes ?? []) { // level 5: shoot the bush, the relic is in there
+      if (b.state !== 'hiding') continue;
+      if (a.x < b.x + b.w && a.x + 14 > b.x && a.y < b.y + b.h && a.y + 4 > b.y) {
+        b.state = 'revealed';
+        b.rustleT = 0.4;
+        const r = (lvl.relics ?? []).find(r => r.id === b.relicId);
+        if (r) r.visible = true; // the horseshoe pops out, pickable
+        fx.play('rustle');
+        burst(b.x + b.w / 2, b.y + b.h / 2, FX.rustle); // leaf-puff
+        if (!a.star) a.dead = true; // stars rustle and keep flying (box rule)
+        break;
+      }
+    }
+    if (a.dead) continue;
     if (lvl.marker && // marker brick: glint on hit, arrow passes through;
         a.x < lvl.marker.x + lvl.marker.w && a.x + 14 > lvl.marker.x &&
         a.y < lvl.marker.y + lvl.marker.h && a.y + 4 > lvl.marker.y) {

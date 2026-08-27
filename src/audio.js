@@ -66,6 +66,8 @@ export function sfx(name) {
     case 'whoosh': beep(260, 520, 0.22, 'sine', 0.05); break;
     case 'flightEnd': beep(240, 90, 0.18, 'triangle', 0.12); break;
     case 'key': [1047, 1568].forEach((f, i) => beep(f, f, 0.12, 'sine', 0.18, i * 0.07)); break;
+    case 'relic': [1318, 1976].forEach((f, i) => beep(f, f, 0.12, 'sine', 0.2, i * 0.07)); break; // the key, one step brighter
+    case 'rustle': beep(170, 90, 0.05, 'square', 0.12); beep(200, 110, 0.05, 'square', 0.12, 0.06); break; // two quick low blips
     case 'clank': beep(160, 55, 0.25, 'square', 0.28); beep(90, 40, 0.18, 'square', 0.14, 0.06); break;
     case 'grant': [587, 880, 1175].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.08)); break;
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;

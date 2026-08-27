@@ -11,6 +11,7 @@ import { resetArrows, updateArrows } from './arrows.js';
 import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetShockwaves, updateShockwaves, resetCones, updateCones } from './projectiles.js';
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
+import { updateRelics } from './relics.js';
 import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
@@ -83,6 +84,7 @@ export function update(dt, viewW, fx) {
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx, dt);
+  updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
   updateCell(game.level, game.player, dt, fx);
   updateDoor(game.level, game.player, dt, fx);
   updateShaft(game.level, fx, dt); // pearl beat: gate retracts over the shaft

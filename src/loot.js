@@ -22,6 +22,9 @@ export const loot = [];
 export let score = 0;
 export let bowGiven = false; // first box broken always drops the bow
 
+// score is module-owned; other modules (relics) add through this.
+export function addScore(n) { score += n; }
+
 export function resetLoot() {
   loot.length = 0;
   score = 0;

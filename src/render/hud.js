@@ -31,6 +31,26 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.textAlign = 'center';
   ctx.fillStyle = palette.lavender;
   ctx.fillText('LEVEL ' + (game.levelIndex + 1), viewW / 2, 10);
+  if (game.level.relics) { // level 5: 3-icon counter, just left of the LEVEL text
+    const cols = [palette.gold, palette.teal, '#c98f3d']; // horseshoe, sapphire, acorn
+    for (let i = 0; i < game.level.relics.length; i++) {
+      const ix = viewW / 2 - 84 + i * 22, iy = 11;
+      ctx.fillStyle = game.level.relics[i].taken ? cols[i] : palette.hint; // dim until taken
+      if (i === 0) { // horseshoe: a U
+        ctx.fillRect(ix, iy + 1, 2.5, 9);
+        ctx.fillRect(ix + 7.5, iy + 1, 2.5, 9);
+        ctx.fillRect(ix, iy + 8, 10, 3);
+      } else if (i === 1) { // sapphire: a diamond
+        ctx.beginPath();
+        ctx.moveTo(ix + 5, iy); ctx.lineTo(ix + 10, iy + 4);
+        ctx.lineTo(ix + 5, iy + 12); ctx.lineTo(ix, iy + 4);
+        ctx.closePath(); ctx.fill();
+      } else { // acorn: cap + body
+        ctx.beginPath(); ctx.arc(ix + 5, iy + 8, 5, 0, Math.PI); ctx.fill();
+        ctx.fillRect(ix, iy + 1, 10, 3.5);
+      }
+    }
+  }
   if (player.hasFlight) { // flight meter: gold drains in flight, lavender refills on cooldown
     const bw = 64, bh = 5, bx = viewW / 2 - bw / 2, by = 32;
     const frac = player.flying ? player.flightT / FLIGHT_TIME

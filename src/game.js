@@ -15,6 +15,7 @@ import { updateRelics } from './relics.js';
 import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
+import { updateMistgate } from './mistgate.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -88,6 +89,7 @@ export function update(dt, viewW, fx) {
   updateCell(game.level, game.player, dt, fx);
   updateDoor(game.level, game.player, dt, fx);
   updateShaft(game.level, fx, dt); // pearl beat: gate retracts over the shaft
+  updateMistgate(game.level, dt); // level 5: the mist gate's brightening
   if (game.level.marker && game.level.marker.glintT > 0) {
     game.level.marker.glintT = Math.max(0, game.level.marker.glintT - dt);
   }

@@ -13,6 +13,7 @@ import { drawKey, drawMarker, drawNook } from './key.js';
 import { drawCell } from './cell.js';
 import { drawDoor } from './door.js';
 import { drawShaft } from './shaft.js';
+import { drawMistgate } from './mistgate.js';
 import { drawPlayer } from './player.js';
 import { drawQueen } from './queen.js';
 import { drawEnemies } from './enemies.js';
@@ -45,6 +46,7 @@ export function draw(ctx, viewW, viewH) {
   drawCell(ctx, level);
   drawDoor(ctx, level, gameTime);
   drawShaft(ctx, level, gameTime); // ceiling hole: sealed gate (K2: light shaft)
+  drawMistgate(ctx, level, gameTime); // level 5: the mist gate at the east edge
   drawPearl(ctx, level, gameTime);
   drawPlayer(ctx, player, gameTime);
   drawQueen(ctx, level, gameTime); // level 5: foreground — the player walks to her

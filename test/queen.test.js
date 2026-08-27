@@ -108,7 +108,8 @@ describe('q3: the story beat', () => {
     expect(dialogue.lines[2].text).toContain('flying pig');
     expect(dialogue.lines[3].text).toContain('mist gate');
     expect(game.level.exit.locked).toBe(false);
-    expect(game.level.mistgate.openT).toBe(1.5);
+    // openT is set to 1.5 and decays one DT within the same frame the beat fires
+    expect(game.level.mistgate.openT).toBeCloseTo(1.5 - DT, 5);
     expect(game.level.queen.toldStory).toBe(true);
     expect(calls.filter(n => n === 'seal')).toHaveLength(1);
     close(4);

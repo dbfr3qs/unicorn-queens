@@ -445,24 +445,26 @@ function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs
 // The mire gate (level 6 opening): the gloom painted across the zone, then
 // the green-black stone wall over it with the arch cut out — moon and peak
 // read through the 260–400 opening.
-function drawMireGateWall(c, sx0, lvl) {
+function drawMireGateWall(c, sx0, lvl, cam) {
   const gy = lvl.groundY;
   c.fillStyle = '#232b23'; // the wall (west of the arch)
   c.fillRect(sx0, 0, 260, gy);
   c.beginPath(); // lintel with the arched underside (arch top at y 270)
-  c.moveTo(260, 0);
-  c.lineTo(400, 0);
-  c.lineTo(400, 340);
-  c.arc(330, 340, 70, 0, Math.PI, true);
+  // world x 256–400, scrolled by the camera — sx0 alone would leave the
+  // arch pinned to the screen while the wall scrolls out from under it
+  c.moveTo(260 - cam.x, 0);
+  c.lineTo(400 - cam.x, 0);
+  c.lineTo(400 - cam.x, 340);
+  c.arc(330 - cam.x, 340, 70, 0, Math.PI, true);
   c.closePath();
   c.fill();
   c.strokeStyle = '#39442f'; // stone trim around the opening
   c.lineWidth = 8;
   c.beginPath();
-  c.arc(330, 340, 78, 0, Math.PI, true);
+  c.arc(330 - cam.x, 340, 78, 0, Math.PI, true);
   c.stroke();
   c.fillStyle = '#39442f';
-  c.fillRect(256, 340, 8, gy - 340); // jamb
+  c.fillRect(256 - cam.x, 340, 8, gy - 340); // jamb
 }
 
 // The mire sky zone (level 6): gate, mire, and the darker mire-deep.
@@ -477,7 +479,7 @@ function drawMireZone(c, deep, gate, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
   drawCypressLine(c, cam, viewW, lvl.groundY, 0.7, 230, 100, 70, deep ? '#101810' : '#121c12', deep);
   drawMireFireflies(c, zx0, zx1, cam, t);
   c.restore();
-  if (gate) drawMireGateWall(c, sx0, lvl);
+  if (gate) drawMireGateWall(c, sx0, lvl, cam);
 }
 
 function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {

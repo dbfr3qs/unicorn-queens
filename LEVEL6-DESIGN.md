@@ -489,3 +489,16 @@ in M8:
    impossible. The pillar x is now clamped to the Queen's band
    (5900–6610): it can never rise in the mire, and in the duel it still
    lands where the glint showed.
+
+### Gate arch screen-pinning (found in visual play, fixed post-M8)
+
+`drawMireGateWall` drew the west wall from `sx0` (scrolled) but the
+lintel, trim arc, and jamb at raw screen x 256–400 — world coordinates
+with `cam.x` never subtracted. The arch looked right at spawn (cam.x =
+0, where both formulas agree — which is why the render snapshot missed
+it) but then rode along behind the player and vanished mid-screen when
+the gate zone culled at cam.x > 560. The lintel, trim, and jamb are now
+world-anchored (`- cam.x`); a regression test in `test/render.test.js`
+asserts the lintel arc centre tracks 330 − cam.x at two camera
+positions, and the spawn snapshot is byte-identical (the spawn view is
+untouched).

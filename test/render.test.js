@@ -8,6 +8,8 @@
 // time.
 import { test, expect } from 'vitest';
 import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, step } from './helpers/render-harness.js';
+import { draw } from '../src/render/index.js';
+import { createRecordingCtx } from './helpers/recording-ctx.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
 import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone } from '../src/projectiles.js';
@@ -495,6 +497,22 @@ test('l6 gate (spawn: gloom sky, moon, fog band through the arch, intro beat ope
   // the player spawns inside the intro band, so frame 1 opens the beat
   // and freezes the world: the mire's first words.
   expect(step({}, 1)).toMatchSnapshot();
+});
+
+// Regression: the gate arch's lintel/trim/jamb were once drawn at raw
+// SCREEN x 256–400 while the west wall scrolled from sx0 — the arch
+// followed the player until the zone culled. The lintel arc centre is
+// world (330, 340) r 70, so its screen x must track 330 - cam.x.
+test('l6 gate arch is world-anchored (scrolls with its wall, not pinned to the screen)', () => {
+  for (const camX of [0, 200]) {
+    const g = freshGame6();
+    g.player.x = camX + 386; // outside the 40–240 intro band; no update, pure draw
+    g.camera.x = camX;
+    const { ctx, lines } = createRecordingCtx();
+    draw(ctx, 800, 600);
+    const want = `arc(${330 - camX}, 340, 70, 0, 3.142, true)`;
+    expect(lines, `lintel arc not at screen x ${330 - camX} (cam.x=${camX})`).toContain(want);
+  }
 });
 
 test('l6 nest (webbed, glint mid-pulse)', () => {

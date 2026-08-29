@@ -85,11 +85,12 @@ describe('level 5 data', () => {
     expect(ho.visible).toBe(false); // hidden until the bush is shot
     expect(sa.visible).toBe(true);
     expect(ac.visible).toBe(true);
-    // the horseshoe is inside the bush
+    // the horseshoe sits on the bush top (not inside it — drawBushes
+    // would paint over a sprite buried in the mound)
     const bush = lvl.bushes[0];
     expect([bush.relicId, bush.state]).toEqual(['horseshoe', 'hiding']);
     expect(ho.x >= bush.x && ho.x + ho.w <= bush.x + bush.w).toBe(true);
-    expect(ho.y >= bush.y && ho.y + ho.h <= bush.y + bush.h).toBe(true);
+    expect(ho.y + ho.h <= bush.y).toBe(true);
     // the sapphire sits in the hollow tree's hollow (centre 2330,280, r 24)
     const scx = sa.x + sa.w / 2, scy = sa.y + sa.h / 2;
     expect(Math.hypot(scx - 2330, scy - 280)).toBeLessThan(16);

@@ -62,7 +62,9 @@ export function createLevel5(viewH = 600) {
     // bush (visible only once it is shot); the sapphire and the acorn are
     // in plain sight but out of reach (hollow tree / floating lily pad).
     relics: [
-      { id: 'horseshoe', x: 1160, y: groundY - 28, w: 16, h: 16, taken: false, visible: false },
+      // rests ON the bush top (bush y = groundY - 30) so the sprite is not
+      // painted over by drawBushes once the arrow reveals it
+      { id: 'horseshoe', x: 1142, y: groundY - 46, w: 16, h: 16, taken: false, visible: false },
       { id: 'sapphire', x: 2322, y: 286, w: 16, h: 16, taken: false, visible: true },
       { id: 'acorn', x: 2956, y: 374, w: 16, h: 16, taken: false, visible: true },
     ],

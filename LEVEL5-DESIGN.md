@@ -142,7 +142,7 @@ overlap (the `key.js` pattern): `taken`, sparkle burst, `relic` chime
 
 | # | relic | at | find cue | how to get it |
 |---|---|---|---|---|
-| 1 | **golden horseshoe** | (1160, 532), in the bush at 1150 | a 2×2 white glint in the bush every ~4 s (seeded by x, 0.3 s) — visible only if you look at the bush | **shoot the bush**: any arrow (stars too) → rustle puff + `rustle` sfx → the horseshoe pops out and is pickable |
+| 1 | **golden horseshoe** | (1142, 514), on the bush top at 1150 (rests on the mound, not buried in it — the bush would paint over it) | a 2×2 white glint in the bush every ~4 s (seeded by x, 0.3 s) — visible only if you look at the bush | **shoot the bush**: any arrow (stars too) → rustle puff + `rustle` sfx → the horseshoe pops out onto the bush and is pickable |
 | 2 | **sapphire** | (2322, 286), in the hollow tree | a dark round hollow in a big tree, a faint pulsing teal glint inside | branch chain (2120@450 → 2250@340, small hop into the hollow) **or flight** |
 | 3 | **royal acorn** | (2956, 374), on the floating pad | a lone lily pad floating well above the others, a small gold glint on the acorn | **flight** (or bounce boots) to the pad at 2940@390 — the water below is a hazard |
 

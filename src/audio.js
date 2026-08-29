@@ -56,6 +56,8 @@ export function sfx(name) {
     case 'fireball': beep(280, 140, 0.18, 'sawtooth', 0.1); break;
     case 'fizzle': beep(180, 60, 0.12, 'triangle', 0.08); break;
     case 'boss': beep(140, 40, 0.5, 'sawtooth', 0.25); break;
+    case 'growl': beep(70, 20, 0.6, 'sawtooth', 0.3); beep(50, 18, 0.7, 'square', 0.15, 0.05); break; // the Weaver Queen: the dragon death an octave down
+    case 'spit': beep(300, 150, 0.15, 'sine', 0.18); break; // the Queen's wet whoosh
     case 'bossHit': beep(200, 55, 0.22, 'sawtooth', 0.24); break;
     case 'roar': beep(90, 180, 0.5, 'sawtooth', 0.22); beep(60, 120, 0.5, 'square', 0.12); break;
     case 'breath': beep(300, 80, 0.9, 'sawtooth', 0.2); beep(150, 60, 0.9, 'square', 0.14); break;
@@ -71,6 +73,12 @@ export function sfx(name) {
     case 'buzz': beep(140, 110, 0.07, 'square', 0.14); beep(150, 120, 0.07, 'square', 0.14, 0.08); break; // low square wobble, two beeps
     case 'clank': beep(160, 55, 0.25, 'square', 0.28); beep(90, 40, 0.18, 'square', 0.14, 0.06); break;
     case 'grant': [587, 880, 1175].forEach((f, i) => beep(f, f, 0.14, 'sine', 0.2, i * 0.08)); break;
+    case 'gear': beep(120, 80, 0.08, 'square', 0.3); beep(90, 60, 0.08, 'square', 0.28, 0.1); break; // the winch: two low clunks
+    case 'spin': beep(300, 900, 0.25, 'sine', 0.15); break; // the wheel catching speed
+    case 'creak': beep(200, 90, 0.3, 'sawtooth', 0.12); beep(180, 80, 0.3, 'sawtooth', 0.1, 0.32); break; // the bridge lowering
+    case 'pop': beep(500, 900, 0.05, 'square', 0.2); beep(120, 60, 0.08, 'triangle', 0.25, 0.02); break; // the bubble/sac pops
+    case 'puff': beep(100, 140, 0.09, 'sine', 0.12); beep(120, 90, 0.1, 'sine', 0.1, 0.09); break; // thread puffs away
+    case 'slither': beep(600, 900, 0.15, 'square', 0.12); break; // the snake's hiss-trill
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;
     case 'thud': beep(90, 40, 0.2, 'triangle', 0.35); break;
     case 'clatter': beep(300, 120, 0.15, 'square', 0.18); beep(200, 80, 0.12, 'square', 0.12, 0.05); break;

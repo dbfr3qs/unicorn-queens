@@ -51,6 +51,23 @@ export function drawHud(ctx, viewW, viewH) {
       }
     }
   }
+  if (game.level.cogs) { // level 6: 3-cog counter, lit by the winch sockets
+    const cols = ['#e8e0d0', '#c98f3d', '#7a5fa0']; // heron, adder, weaver
+    for (let i = 0; i < game.level.cogs.length; i++) {
+      const ix = viewW / 2 - 84 + i * 22, iy = 11;
+      const lit = game.level.winch.sockets[i]; // dim until installed in a socket
+      ctx.strokeStyle = lit ? cols[i] : palette.hint;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(ix + 5, iy + 6, 5, 0, Math.PI * 2); ctx.stroke(); // the ring
+      ctx.fillStyle = lit ? cols[i] : palette.hint;
+      for (const a of [0.2, 2.3, 4.4]) { // three spokes
+        ctx.beginPath();
+        ctx.moveTo(ix + 5, iy + 6);
+        ctx.lineTo(ix + 5 + Math.cos(a) * 5, iy + 6 + Math.sin(a) * 5);
+        ctx.stroke();
+      }
+    }
+  }
   if (player.hasFlight) { // flight meter: gold drains in flight, lavender refills on cooldown
     const bw = 64, bh = 5, bx = viewW / 2 - bw / 2, by = 32;
     const frac = player.flying ? player.flightT / FLIGHT_TIME

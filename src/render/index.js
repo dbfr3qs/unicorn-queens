@@ -7,6 +7,7 @@ import { drawDialogue } from './dialogue.js';
 import { drawZones } from './zones.js';
 import { drawLevel } from './level.js';
 import { drawForest } from './forest.js';
+import { drawMireBack, drawMire } from './mire.js';
 import { drawRelics, drawBushes } from './relics.js';
 import { drawPearl } from './pearl.js';
 import { drawKey, drawMarker, drawNook } from './key.js';
@@ -37,8 +38,10 @@ export function draw(ctx, viewW, viewH) {
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
   drawNook(ctx, level, gameTime); // key nook: wall section / recess, behind platforms
+  drawMireBack(ctx, level, gameTime); // level 6: dead cypress trunks, behind platforms
   drawLevel(ctx, level, gameTime);
   drawForest(ctx, level, gameTime); // level 5: trees, hollow tree, flowers, reeds
+  drawMire(ctx, level, gameTime); // level 6: winch, nest web, vent, sac, bridge, exit arch
   drawRelics(ctx, level, gameTime); // level 5: relics + the hiding bush
   drawBushes(ctx, level, gameTime);
   drawKey(ctx, level, gameTime);

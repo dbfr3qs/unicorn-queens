@@ -30,6 +30,8 @@ export function updateDoor(lvl, p, dt, fx) {
     door.openT -= dt;
     if (door.openT <= 0) door.state = 'open';
   } else if (door.state === 'open') {
+    // The web wall (level 6) melts permanently: it never re-seals.
+    if (door.kind === 'webwall') return;
     if (!p.dead && p.x > door.x + door.w + DOOR_PASS) { // fully past
       door.state = 'closing';
       door.closeT = DOOR_CLOSE;

@@ -6,12 +6,28 @@ export function drawFireballs(c) {
   for (const f of fireballs) {
     c.save();
     c.translate(f.x + f.w / 2, f.y + f.h / 2);
-    c.fillStyle = '#c1440e'; // outer glow
-    c.fillRect(-9, -9, 18, 18);
-    c.fillStyle = '#ff8c42'; // body
-    c.fillRect(-7, -7, 14, 14);
-    c.fillStyle = '#ffd166'; // hot core
-    c.fillRect(-3, -3, 6, 6);
+    if (f.web) {
+      // the Weaver Queen's glob: a pale web ball (light disc + threads)
+      c.fillStyle = 'rgba(240, 240, 248, 0.9)'; // light disc
+      c.beginPath(); c.arc(0, 0, 7, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(200, 200, 220, 0.9)';
+      c.lineWidth = 1;
+      for (let i = 0; i < 3; i++) { // crosshatch threads
+        const a = (i / 3) * Math.PI;
+        c.beginPath();
+        c.moveTo(Math.cos(a) * 7, Math.sin(a) * 7);
+        c.lineTo(-Math.cos(a) * 7, -Math.sin(a) * 7);
+        c.stroke();
+      }
+      c.beginPath(); c.arc(0, 0, 3, 0, Math.PI * 2); c.stroke();
+    } else {
+      c.fillStyle = '#c1440e'; // outer glow
+      c.fillRect(-9, -9, 18, 18);
+      c.fillStyle = '#ff8c42'; // body
+      c.fillRect(-7, -7, 14, 14);
+      c.fillStyle = '#ffd166'; // hot core
+      c.fillRect(-3, -3, 6, 6);
+    }
     c.restore();
   }
 }
@@ -20,11 +36,21 @@ export function drawBoulders(c) {
   for (const b of boulders) {
     c.save();
     c.translate(b.x + b.w / 2, b.y + b.h / 2);
-    c.fillStyle = '#6b4a32'; // rock
-    c.fillRect(-9, -9, 18, 18);
-    c.fillStyle = '#4a2d1c'; // speckles
-    c.fillRect(-5, -4, 4, 4);
-    c.fillRect(1, 2, 5, 4);
+    if (b.web) {
+      // the Queen's egg: a white web-wound ovoid with a thread seam
+      c.fillStyle = '#f0f0f8';
+      c.beginPath(); c.ellipse(0, 0, 8, 9, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(200, 200, 220, 0.9)';
+      c.lineWidth = 1;
+      c.beginPath(); c.moveTo(-8, 0); c.quadraticCurveTo(0, 4, 8, 0); c.stroke();
+      c.beginPath(); c.moveTo(0, -9); c.quadraticCurveTo(4, 0, 0, 9); c.stroke();
+    } else {
+      c.fillStyle = '#6b4a32'; // rock
+      c.fillRect(-9, -9, 18, 18);
+      c.fillStyle = '#4a2d1c'; // speckles
+      c.fillRect(-5, -4, 4, 4);
+      c.fillRect(1, 2, 5, 4);
+    }
     c.restore();
   }
 }

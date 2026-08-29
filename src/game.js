@@ -12,6 +12,10 @@ import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetSh
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateRelics } from './relics.js';
+import { updateCogs } from './cogs.js';
+import { updateVent } from './vent.js';
+import { updateBridge } from './bridge.js';
+import { updatePillars } from './enemies/spiderboss.js'; // the Queen's web pillars (need the camera)
 import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
@@ -33,12 +37,17 @@ export const game = {
 export function startGame(viewH, levelIndex = 0, prev = null) {
   const advancing = !!prev && levelIndex !== game.levelIndex;
   game.levelIndex = levelIndex;
-  game.level = LEVELS[levelIndex].make(viewH);
+  const levelDef = LEVELS[levelIndex];
+  game.level = levelDef.make(viewH);
+  // A fresh boot (no outgoing player) takes the level's design carry — the
+  // ?level=N test jump starts with the gear a run would have held. With a
+  // prev (advance / death-restart) the existing carry rules apply instead.
+  const testCarry = prev ? {} : (levelDef.carry ?? {});
   game.player = createPlayer(game.level, {
-    big: advancing ? !!prev.big : false,
-    hasBow: advancing ? !!prev.hasBow : false,
-    hasFlight: !!prev?.hasFlight, // flight spell: permanent for the run, like the heart cap
-    maxHp: prev?.maxHp ?? 3,
+    big: advancing ? !!prev.big : !!testCarry.big,
+    hasBow: advancing ? !!prev.hasBow : !!testCarry.hasBow,
+    hasFlight: !!prev?.hasFlight || !!testCarry.hasFlight, // flight spell: permanent for the run, like the heart cap
+    maxHp: prev?.maxHp ?? testCarry.maxHp ?? 3,
   });
   game.enemies = createEnemies(game.level);
   resetLoot();
@@ -83,9 +92,14 @@ export function update(dt, viewW, fx) {
     fx.play('gate');
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
+  const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);
+  if (queen) updatePillars(queen, game.player, game.level, game.camera, dt, fx); // the web pillars
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx, dt);
   updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
+  updateCogs(game.level, game.player, dt, fx); // level 6: the three cogs
+  updateVent(game.level, dt, fx); // level 6: the mud vent's bubble
+  updateBridge(game.level, dt); // level 6: the winch's bridge
   updateCell(game.level, game.player, dt, fx);
   updateDoor(game.level, game.player, dt, fx);
   updateShaft(game.level, fx, dt); // pearl beat: gate retracts over the shaft
@@ -146,7 +160,7 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }

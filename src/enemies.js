@@ -17,6 +17,9 @@ import './enemies/bee.js';
 import './enemies/mage.js';
 import './enemies/troll.js';
 import './enemies/dragon.js';
+import './enemies/snake.js';
+import './enemies/spider.js';
+import './enemies/spiderboss.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -27,12 +30,16 @@ export function spawnEnemy(spec, lvl) {
   return {
     kind: spec.kind,
     x: spec.x, y: spec.y ?? lvl.groundY - k.h, w: k.w, h: k.h,
+    // the web anchor (spiders hang from {x, y}; unused by other kinds)
+    anchorX: spec.x,
+    anchorY: spec.y ?? lvl.groundY - k.h,
     vx: 0, vy: 0, onGround: false,
     minX: spec.minX ?? 0,
     maxX: spec.maxX ?? lvl.width,
     dir: spec.dir ?? -1,
     hp: k.hp ?? 1,
     dead: false,
+    sleeping: spec.sleeping ?? false, // the elder adder's coil (enemies.js guard)
   };
 }
 
@@ -71,6 +78,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
 
 // Shared stomp vs side contact, applied to every kind.
 function hitPlayer(e, p, cam, fx) {
+  if (e.sleeping) return; // a coiled adder is harmless (no stomp either)
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
   const stomp = p.vy > 0 && p.y + p.h - e.y < 16;

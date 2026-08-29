@@ -1,7 +1,7 @@
 // Enemy projectiles: fireballs from the mage. Unlike the player's arrows,
 // they cannot be shot down, have no gravity, and fizzle out after a while.
 import { burst } from './particles.js';
-import { hurtPlayer } from './player.js';
+import { hurtPlayer, WEB_SLOW_TIME } from './player.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
 
@@ -13,8 +13,15 @@ export function resetFireballs() {
 }
 
 export function fireFireball(x, y, vx, vy, fx) {
-  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false });
+  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: false });
   fx.play('fireball');
+}
+
+// The Weaver Queen's spit: a fireball flagged web: true — a hit deals the
+// shared 1 damage and additionally slows the player (webT = WEB_SLOW_TIME).
+export function fireWebGlob(x, y, vx, vy, fx) {
+  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: true });
+  fx.play('spit');
 }
 
 // Advance fireballs: fizzle on TTL, off-level, or surface contact; the
@@ -43,6 +50,7 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
       } else if (p.invuln <= 0) {
         f.dead = true;
         hurtPlayer(p, cam, fx);
+        if (f.web) p.webT = WEB_SLOW_TIME; // the web-slow rides on the hit
       }
     }
     if (f.dead) continue;
@@ -90,7 +98,7 @@ export function resetShockwaves() { shockwaves.length = 0; }
 // (x, y) is the boulder's spawn top-left; (tx, ty) where it should arrive.
 // The arc is solved for a fixed flight time: vx = dx/T, vy from the
 // constant-gravity displacement equation.
-export function fireBoulder(x, y, tx, ty, fx) {
+export function fireBoulder(x, y, tx, ty, fx, web = false) {
   const T = BOULDER_FLIGHT;
   boulders.push({
     x, y, w: BOULDER_SIZE, h: BOULDER_SIZE,
@@ -98,6 +106,7 @@ export function fireBoulder(x, y, tx, ty, fx) {
     vy: (ty - y - 0.5 * BOULDER_G * T * T) / T,
     ttl: BOULDER_TTL,
     dead: false,
+    web, // the Weaver Queen's eggs render white
   });
   fx.play('clatter'); // the throw
 }

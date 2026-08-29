@@ -39,10 +39,8 @@ afterEach(() => {
 
 describe('level 4 full playthrough', () => {
   it('sludge -> gauntlet -> portcullis -> dragon -> pearl -> fly up the shaft', () => {
-    startGame(600, 3);
+    startGame(600, 3); // bow + flight arrive via the level's design carry
     const g = game, p = g.player, lvl = g.level;
-    p.hasBow = true; // carried from level 3
-    p.hasFlight = true; // the witch's spell, permanent for the run
     // The roamers and the loot boxes are not part of the chain (they have
     // their own tests); clear them so the run is deterministic. The
     // dragon stays — it is the chain.

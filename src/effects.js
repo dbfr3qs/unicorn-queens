@@ -21,6 +21,7 @@ export const FX = {
   fireballFizzle: { count: 8, colors: ['#ff8c42', '#ffd166', '#c1440e'], speed: 70, size: 3, grav: -60, life: 0.25 },
   mageDeath: { count: 30, colors: ['#b57edc', '#ffd75e', '#fff5fa'], speed: 260, up: 160, size: 6, grav: 400, life: 0.9 },
   dragonDeath: { count: 44, colors: ['#3a7a4a', '#ffd75e', '#ff8c42', '#fff'], speed: 320, up: 220, size: 7, grav: 420, life: 1.1 },
+  spiderbossDeath: { count: 44, colors: ['#3a3a48', '#8fd3f4', '#e8e0d0', '#fff'], speed: 320, up: 220, size: 7, grav: 420, life: 1.1 },
   mageSpark: { count: 5, colors: ['#6fe3e1', '#b57edc', '#fff'], speed: 50, up: 30, size: 3, grav: 100, life: 0.35 },
   cast: { count: 12, colors: ['#fff', '#cbb8ff', '#8fd3f4'], speed: 90, up: 70, size: 3, grav: -60, life: 0.5 },
   key: { count: 12, colors: ['#ffd75e', '#fff6d8', '#fff'], speed: 130, up: 60, size: 3, grav: -100, life: 0.5 },
@@ -32,6 +33,7 @@ export const FX = {
   trollDeath: { count: 40, colors: ['#707d63', '#4a5240', '#8a9678', '#ffd75e'], speed: 220, up: 140, size: 5, grav: 400, life: 0.8 },
   shieldSpark: { count: 8, colors: ['#fff', '#ffd75e', '#9aa0a8'], speed: 130, size: 3, grav: 100, life: 0.3 },
   slamDust: { count: 14, colors: ['#8d76b8', '#6b4a32', '#8a8f98'], speed: 90, up: 50, size: 4, grav: 200, life: 0.45 },
+  webPuff: { count: 16, colors: ['#f0f0f5', '#d8d8e8', '#b8b8d0', '#fff'], speed: 90, up: 40, size: 3, grav: -60, life: 0.7 },
   brickChip: { count: 8, colors: ['#4a2d1c', '#3a2412', '#8a6a4a'], speed: 90, size: 3, grav: 500, life: 0.4 },
   nookCrumble: { count: 26, colors: ['#4a2d1c', '#3a2412', '#281810', '#8a6a4a', '#ffd75e'], speed: 140, up: 60, size: 5, grav: 600, life: 0.7 },
 };

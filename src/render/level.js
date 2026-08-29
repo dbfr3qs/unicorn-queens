@@ -77,11 +77,15 @@ export function drawLevel(c, lvl, t = 0) {
   }
   c.fillStyle = '#4a2d7a';
   for (const p of lvl.platforms) if (!p.hidden && (!p.kind || p.kind === 'platform')) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
-  for (const p of lvl.platforms) { // level 5 kinds: branch, lily, log
+  for (const p of lvl.platforms) { // kinds: branch, lily, log (L5); root, nest, altar (L6)
+    // (the L6 bridge span is rendered by render/mire.js in all its states)
     if (p.hidden || !p.kind || p.kind === 'platform') continue;
     if (p.kind === 'branch') drawBranch(c, p);
     else if (p.kind === 'lily') drawLily(c, p);
     else if (p.kind === 'log') drawLog(c, p);
+    else if (p.kind === 'root') drawRoot(c, p);
+    else if (p.kind === 'nest') drawNest(c, p);
+    else if (p.kind === 'altar') drawAltar(c, p);
   }
   for (const b of lvl.boxes) {
     if (b.broken) continue;
@@ -150,4 +154,40 @@ function drawLog(c, p) {
   c.fillStyle = '#4a3418'; // bark notches
   c.fillRect(p.x + 14, p.y + 10, 10, 2);
   c.fillRect(p.x + 44, p.y + 10, 12, 2);
+}
+
+// Level 6 platform kinds. The solid top edge stays at p.y (the collision
+// rect is the plain one-way platform); the dressing hangs off it.
+function drawRoot(c, p) { // a gnarled brown limb, knobby
+  c.fillStyle = '#5a4326'; // the limb
+  c.fillRect(p.x, p.y + 2, p.w, 9);
+  c.fillStyle = '#6b5232'; // lit top
+  c.fillRect(p.x, p.y, p.w, 3);
+  c.fillStyle = '#43311c'; // knobby growths
+  c.beginPath(); c.arc(p.x + 12, p.y + 2, 5, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.arc(p.x + p.w - 18, p.y + 1, 6, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#3a2c18'; // a dangling rootlet
+  c.fillRect(p.x + p.w - 8, p.y + 10, 4, 12);
+}
+
+function drawNest(c, p) { // a stick nest
+  c.fillStyle = '#4a3620'; // the bowl
+  c.beginPath(); c.ellipse(p.x + p.w / 2, p.y + 8, p.w / 2, 10, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#5d4226'; // sticks
+  c.fillRect(p.x + 4, p.y + 2, p.w - 8, 4);
+  c.fillStyle = '#3a2c18'; // stick ends
+  c.fillRect(p.x - 4, p.y + 4, 8, 3);
+  c.fillRect(p.x + p.w - 4, p.y + 6, 8, 3);
+}
+
+function drawAltar(c, p) { // a mossy stone dais, lit top
+  c.fillStyle = '#3a4152'; // the dais block
+  c.fillRect(p.x, p.y, p.w, 16);
+  c.fillStyle = '#4a5268'; // lit top
+  c.fillRect(p.x, p.y, p.w, 5);
+  c.fillStyle = '#2c3242'; // wider base
+  c.fillRect(p.x - 6, p.y + 16, p.w + 12, 8);
+  c.fillStyle = '#2e4a2a'; // moss tufts
+  c.fillRect(p.x + 8, p.y - 3, 12, 4);
+  c.fillRect(p.x + p.w - 20, p.y - 2, 9, 3);
 }

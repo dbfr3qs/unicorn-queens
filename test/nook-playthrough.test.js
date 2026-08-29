@@ -34,9 +34,8 @@ afterEach(() => {
 
 describe('level 3 key chain, first pass (no witch hint)', () => {
   it('lip -> 3 standing shots -> crumble -> ledge -> key', () => {
-    startGame(600, 2);
+    startGame(600, 2); // the bow arrives via the level's design carry
     const g = game, p = g.player, lvl = g.level;
-    p.hasBow = true; // the bow is carried from level 2
     const gy = lvl.groundY;
     // park on the west lip (top gy-120), near its right edge
     p.x = 1500; p.y = (gy - 120) - P_H; p.vy = 0;
@@ -87,8 +86,7 @@ describe('level 3 key chain, first pass (no witch hint)', () => {
 
 describe('death-restart bow safety net', () => {
   it('a level 3 restart drops the carried bow; the bow box restores it', () => {
-    startGame(600, 2);
-    game.player.hasBow = true; // the bow earned in level 2, carried on entry
+    startGame(600, 2); // the bow arrives via the level's design carry
     // death restart: main.js calls startGame(h, levelIndex, player) — the
     // index is unchanged, so only maxHp/flight carry over, the bow does not
     startGame(600, 2, game.player);

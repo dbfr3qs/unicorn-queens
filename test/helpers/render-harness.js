@@ -54,6 +54,14 @@ export function freshGame5(viewH = VIEW_H) {
   return game;
 }
 
+// Level 6 (the Blackmire) entry: same seeding, level index 5.
+export function freshGame6(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 5);
+  game.gameTime = 0;
+  return game;
+}
+
 // Simulate `frames` updates with the given keys held, then draw one
 // frame to a fresh recording context. Returns the draw-call log.
 // Input is reset afterwards so scenarios don't leak keys.

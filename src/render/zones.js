@@ -27,6 +27,8 @@ export function drawZones(c, lvl, cam, t, viewW) {
       drawGate(c, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else if (z.kind === 'forest') {
       drawForestZone(c, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
+    } else if (z.kind === 'miregate' || z.kind === 'mire' || z.kind === 'mire-deep') {
+      drawMireZone(c, z.kind === 'mire-deep', z.kind === 'miregate', z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else {
       drawStone(c, z.kind === 'hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     }
@@ -300,6 +302,182 @@ function drawTreasure(c, x, gy) {
   c.fillRect(x + 6, gy - 6, 4, 4);
   c.fillRect(x + 18, gy - 10, 4, 4);
   c.fillRect(x + 30, gy - 6, 4, 4);
+}
+
+// ---- The Blackmire (level 6) ----
+// Gloom sky, pale moon, the snow-capped peak (the story's anchor), the
+// wizard's fly-by, drifting fog, fireflies, bare cypress lines. All pure
+// functions of world x / screen x and time — no RNG, snapshot-stable.
+// `deep` (mire-deep) darkens a shade and brightens + grows the peak.
+
+// The mire sky: green-black bands (flat fills, no gradients) + the pale
+// moon at a fixed screen position (slowest parallax, two halo rings).
+function drawMireSky(c, sx0, w, lvl, cam, deep) {
+  c.fillStyle = deep ? '#0a130d' : '#0d1a12';
+  c.fillRect(sx0, 0, w, lvl.groundY);
+  c.fillStyle = deep ? '#101d14' : '#13221a'; // faintly lighter horizon band
+  c.fillRect(sx0, lvl.groundY - 140, w, 140);
+  const mx = 620 - cam.x * 0.05, my = 90;
+  c.save();
+  c.fillStyle = '#cfe8c8';
+  c.globalAlpha = 0.1;
+  c.beginPath(); c.arc(mx, my, 54, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 0.2;
+  c.beginPath(); c.arc(mx, my, 42, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+  c.beginPath(); c.arc(mx, my, 26, 0, Math.PI * 2); c.fill();
+  c.restore();
+}
+
+// The peak: a big snow-capped mountain, world-anchored at parallax 0.2.
+function drawMireMountain(c, cam, deep, gy) {
+  const s = deep ? 1.15 : 1;
+  const sx = (5000 - cam.x) * 0.2; // parallax world anchor
+  const top = gy - 340 * s;
+  c.fillStyle = deep ? '#1d2c20' : '#182418';
+  c.beginPath();
+  c.moveTo(sx - 320 * s, gy);
+  c.lineTo(sx, top);
+  c.lineTo(sx + 320 * s, gy);
+  c.closePath();
+  c.fill();
+  c.fillStyle = deep ? '#d8e4d4' : '#c4d4c0'; // snow cap with a ragged base
+  c.beginPath();
+  c.moveTo(sx - 70 * s, top + 80 * s);
+  c.lineTo(sx, top);
+  c.lineTo(sx + 70 * s, top + 80 * s);
+  c.lineTo(sx + 42 * s, top + 60 * s);
+  c.lineTo(sx + 16 * s, top + 76 * s);
+  c.lineTo(sx - 12 * s, top + 58 * s);
+  c.lineTo(sx - 40 * s, top + 74 * s);
+  c.closePath();
+  c.fill();
+}
+
+// The wizard on his flying pig: every ~40 s he crosses the sky (a pure t
+// function, visible ~6 s of the cycle) — the easter-egg story glue.
+function drawMireWizard(c, t, viewW) {
+  const cyc = t % 40;
+  if (cyc > 6) return;
+  const pr = cyc / 6; // 0..1 across the sky
+  const x = -40 + pr * (viewW + 80);
+  const y = 150 - Math.sin(pr * Math.PI) * 18;
+  c.save();
+  c.globalAlpha = 0.55;
+  c.fillStyle = '#42546b'; // dim silhouette
+  c.beginPath(); c.ellipse(x, y, 11, 6, 0, 0, Math.PI * 2); c.fill(); // pig body
+  c.fillRect(x + 9, y - 5, 6, 4); // head
+  c.fillRect(x - 4, y + 4, 2, 5); // legs
+  c.fillRect(x + 3, y + 4, 2, 5);
+  c.beginPath(); c.ellipse(x - 2, y - 8, 6, 3, -0.4, 0, Math.PI * 2); c.fill(); // wing
+  c.fillRect(x - 3, y - 14, 5, 6); // wizard body
+  c.beginPath(); // hat
+  c.moveTo(x - 5, y - 14); c.lineTo(x + 1, y - 22); c.lineTo(x + 4, y - 14);
+  c.closePath(); c.fill();
+  c.restore();
+}
+
+// Drifting fog bands: screen-space wrap (like the daylight clouds), the
+// per-band drift speed encodes the parallax (0.15/0.3/0.45), alpha pulses.
+function drawMireFog(c, t, viewW, deep) {
+  const n = deep ? 4 : 3;
+  c.fillStyle = '#9fb8a0';
+  for (let i = 0; i < n; i++) {
+    const span = viewW + 420;
+    const cx = (((i * 330 + 100 - t * (6 + i * 5)) % span) + span) % span - 210;
+    const cy = 170 + i * 95;
+    c.globalAlpha = 0.05 + Math.sin(t * 0.3 + i * 1.9) * 0.02;
+    c.beginPath(); c.ellipse(cx, cy, 260 + i * 60, 16 + i * 3, 0, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(cx + 140 + i * 30, cy + 8, 160 + i * 40, 12 + i * 2, 0, 0, Math.PI * 2); c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+// Seven fireflies on seeded Lissajous drifts, world-anchored to the zone.
+function drawMireFireflies(c, zx0, zx1, cam, t) {
+  c.fillStyle = '#ffd97a';
+  for (let i = 0; i < 7; i++) {
+    const hx = zx0 + 60 + i * ((zx1 - zx0 - 120) / 6);
+    const hy = 240 + ((i * 53) % 200);
+    const x = hx + Math.sin(t * 0.4 + i * 1.7) * 30 - cam.x;
+    const y = hy + Math.sin(t * 0.7 + i * 2.3) * 18;
+    c.globalAlpha = Math.max(0.1, 0.45 + Math.sin(t * 2 + i * 2.9) * 0.35);
+    c.fillRect(x, y, 2, 2);
+  }
+  c.globalAlpha = 1;
+}
+
+// A bare cypress line tiled in parallax space: trunks with drooping
+// branch nubs. `webs` adds overhead web threads between trunks
+// (the mire-deep only).
+function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs) {
+  const shift = cam.x * par;
+  const start = Math.floor((shift - 120) / period) * period;
+  let prev = null;
+  for (let k = start; k < shift + viewW + 120; k += period) {
+    const i = ((k / period) % 97 + 97) % 97; // seeded index
+    const jx = (i * 71) % 80;
+    const x = k + jx - shift;
+    const h = hMin + ((i * 37) % hVar);
+    c.fillStyle = color;
+    c.fillRect(x - 2, gy - h, 4, h); // trunk
+    for (let b = 1; b <= 4; b++) { // drooping nubs
+      const by = gy - h + (h * b) / 5;
+      const len = 9 + ((i * 13 + b * 7) % 8);
+      c.fillRect(x - 2 - len, by, len, 2);
+      c.fillRect(x + 2, by + 4, len, 2);
+    }
+    if (webs) {
+      const ty = gy - h + 6;
+      if (prev) {
+        c.strokeStyle = 'rgba(230, 238, 226, 0.18)';
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(prev.x, prev.y);
+        c.lineTo(x - 2, ty);
+        c.stroke();
+      }
+      prev = { x: x + 2, y: ty };
+    }
+  }
+}
+
+// The mire gate (level 6 opening): the gloom painted across the zone, then
+// the green-black stone wall over it with the arch cut out — moon and peak
+// read through the 260–400 opening.
+function drawMireGateWall(c, sx0, lvl) {
+  const gy = lvl.groundY;
+  c.fillStyle = '#232b23'; // the wall (west of the arch)
+  c.fillRect(sx0, 0, 260, gy);
+  c.beginPath(); // lintel with the arched underside (arch top at y 270)
+  c.moveTo(260, 0);
+  c.lineTo(400, 0);
+  c.lineTo(400, 340);
+  c.arc(330, 340, 70, 0, Math.PI, true);
+  c.closePath();
+  c.fill();
+  c.strokeStyle = '#39442f'; // stone trim around the opening
+  c.lineWidth = 8;
+  c.beginPath();
+  c.arc(330, 340, 78, 0, Math.PI, true);
+  c.stroke();
+  c.fillStyle = '#39442f';
+  c.fillRect(256, 340, 8, gy - 340); // jamb
+}
+
+// The mire sky zone (level 6): gate, mire, and the darker mire-deep.
+function drawMireZone(c, deep, gate, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
+  c.save();
+  c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
+  drawMireSky(c, sx0, sx1 - sx0, lvl, cam, deep);
+  drawMireMountain(c, cam, deep, lvl.groundY);
+  drawMireWizard(c, t, viewW);
+  drawMireFog(c, t, viewW, deep);
+  drawCypressLine(c, cam, viewW, lvl.groundY, 0.5, 170, 70, 50, deep ? '#141d14' : '#16201a', false);
+  drawCypressLine(c, cam, viewW, lvl.groundY, 0.7, 230, 100, 70, deep ? '#101810' : '#121c12', deep);
+  drawMireFireflies(c, zx0, zx1, cam, t);
+  c.restore();
+  if (gate) drawMireGateWall(c, sx0, lvl);
 }
 
 function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {

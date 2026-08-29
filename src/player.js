@@ -17,6 +17,7 @@ export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 export const FLIGHT_TIME = 10, FLIGHT_CD = 15; // witch's spell: 10 s flight, 15 s recharge
 export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
 export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
+export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow
 
 // carry: permanent acquisitions from the previous level (big, bow),
 // passed when advancing; a fresh start or death-restart carries nothing.
@@ -51,6 +52,7 @@ export function createPlayer(lvl, carry = {}) {
     flightCd: 0, // remaining recharge (s)
     flightLaunch: 0, // a ground cast lifts off upward for a beat
     whooshT: 0,
+    webT: 0, // web-slow remaining (s): binds the legs, not the wings
     won: false,
   };
 }
@@ -86,7 +88,9 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   if (inp.jump && !player.jumpHeld) player.jbuf = JBUF; // buffer the press
   player.jumpHeld = inp.jump;
   player.jbuf = Math.max(0, player.jbuf - dt);
-  player.vx = (inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0);
+  // the web-slow (Weaver Queen) drags the legs — flight is unaffected
+  const slow = player.webT > 0 && !player.flying ? WEB_SLOW : 1;
+  player.vx = ((inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0)) * slow;
   if (player.vx !== 0) player.facing = Math.sign(player.vx);
   player.fireCd = Math.max(0, player.fireCd - dt);
   player.boots = Math.max(0, player.boots - dt);
@@ -95,6 +99,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.hopFx = Math.max(0, player.hopFx - dt);
   player.flightCd = Math.max(0, player.flightCd - dt);
   player.whooshT = Math.max(0, player.whooshT - dt);
+  player.webT = Math.max(0, player.webT - dt);
   player.flightLaunch = Math.max(0, player.flightLaunch - dt);
   if (inp.cast) { // S: cast the flight spell (one-frame flag, consumed here)
     inp.cast = false;

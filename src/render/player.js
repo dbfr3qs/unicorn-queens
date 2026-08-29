@@ -1,5 +1,5 @@
 // Player rendering: unicorn + queen rider, squash & stretch, bow.
-import { P_H, BIG_H } from '../player.js';
+import { P_H, BIG_H, WEB_SLOW_TIME } from '../player.js';
 import { palette } from './theme.js';
 
 export function drawPlayer(c, player, t) {
@@ -46,6 +46,21 @@ export function drawPlayer(c, player, t) {
     c.fillStyle = 'rgba(255, 255, 255, 0.85)';
     c.beginPath(); c.ellipse(-10, -32 + flap, 9, 4, -0.5, 0, Math.PI * 2); c.fill();
     c.beginPath(); c.ellipse(-4, -27 - flap, 7, 3.5, -0.4, 0, Math.PI * 2); c.fill();
+  }
+  if (player.webT > 0) { // web-slow: white threads wrapped across the sprite
+    const a = Math.min(1, (WEB_SLOW_TIME - player.webT) / 0.2) * 0.8; // ramps in over the first 0.2 s
+    c.strokeStyle = 'rgba(240, 240, 248, ' + a.toFixed(2) + ')';
+    c.lineWidth = 1.5;
+    for (let i = 0; i < 3; i++) { // three wrapped threads
+      c.beginPath();
+      c.moveTo(-16, -8 - i * 7);
+      c.quadraticCurveTo(0, -4 - i * 7, 16, -8 - i * 7);
+      c.stroke();
+    }
+    c.beginPath(); // a thread trailing behind
+    c.moveTo(-player.facing * 14, -14);
+    c.quadraticCurveTo(-player.facing * 26, -12, -player.facing * 34, -18);
+    c.stroke();
   }
   if (player.shield > 0) { // mirror shield: moon disc + charge pips
     c.fillStyle = '#cfe8ff';

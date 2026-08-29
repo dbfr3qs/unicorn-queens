@@ -3,6 +3,7 @@ import { game, startGame, startLoop, update, restartTarget } from './game.js';
 import { draw } from './render/index.js';
 import { fx } from './audio.js';
 import { onKeyDown, onKeyUp } from './input.js';
+import { levelIndexFromSearch } from './levels/index.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -25,4 +26,7 @@ addEventListener('keydown', e => {
     game.player.jumpHeld = true;
   }
 });
-startGame(canvas.height);
+// ?level=N (1-based) boots straight into that level for testing, with the
+// gear a run would have carried in (LEVELS[].carry).
+// typeof guard: smoke.mjs boots main.js under Node, where location is absent
+startGame(canvas.height, levelIndexFromSearch(typeof location !== 'undefined' ? location.search : ''));

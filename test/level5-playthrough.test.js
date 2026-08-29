@@ -75,9 +75,9 @@ describe('level 5 full playthrough', () => {
     startGame(600, 4);
     const g = game;
     p = g.player; lvl = g.level;
-    p.hasBow = true; // carried from level 1
-    p.hasFlight = true; // the witch's spell, carried from level 4
-    p.maxHp = 4; p.hp = 4; // the heart cap: permanent
+    // bow + flight come in via startGame's design carry (LEVELS[].carry);
+    // the heart cap is run-specific, so it is set here
+    p.maxHp = 4; p.hp = 4;
     // The roamers and the boxes have their own tests; clear them so the run
     // is deterministic (no enemy on the chain, no loot rolls).
     for (const e of g.enemies) e.dead = true;

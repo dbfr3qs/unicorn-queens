@@ -7,7 +7,7 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, step } from './helpers/render-harness.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
 import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone } from '../src/projectiles.js';
@@ -481,5 +481,109 @@ test('l5 bee (mid-sting dash, home flower behind it)', () => {
   g.player.x = 2350; // on the ground below its line: safe
   g.player.y = g.level.groundY - g.player.h;
   g.camera.x = 1964; // 2350 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 6 (the Blackmire) scenarios ----
+// Camera values are player.x + 14 - 400 (or the max-scroll clamp,
+// 6800 - 800 = 6000), so updateCamera holds them still. The intro beat
+// only opens inside its 40-240 spawn band, so every scenario but the
+// gate places the player outside it.
+
+test('l6 gate (spawn: gloom sky, moon, fog band through the arch, intro beat open)', () => {
+  freshGame6();
+  // the player spawns inside the intro band, so frame 1 opens the beat
+  // and freezes the world: the mire's first words.
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 nest (webbed, glint mid-pulse)', () => {
+  const g = freshGame6();
+  g.gameTime = 1.571; // sin(t*1.57) at its peak: the 2x2 glint fully lit
+  g.player.x = 1050; // ground, below the root chain and the nest
+  g.camera.x = 664; // 1050 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 nest (open, heron cog resting on top)', () => {
+  const g = freshGame6();
+  g.level.nest.state = 'open';
+  g.level.cogs[0].visible = true; // the heron cog at its data spot (942, 154)
+  g.player.x = 1050;
+  g.camera.x = 664; // 1050 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 vent (bubble mid-bob, adder cog sealed inside, lily pads)', () => {
+  const g = freshGame6();
+  g.level.vent.active = true;
+  g.level.vent.t = 3.0; // bob phase (1.2-6.2 s of the 10 s cycle)
+  g.player.x = 1950; // standing on the first crossing pad (1950-2020)
+  g.player.y = g.level.groundY - 6 - g.player.h;
+  g.camera.x = 1564; // 1950 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 altar (egg sac present on the dais, elder adder asleep behind it)', () => {
+  const g = freshGame6();
+  g.level.sac.present = true;
+  g.gameTime = 1.571; // the sac glint at its peak
+  g.player.x = 3950; // just west of the dais (4250-4400)
+  g.camera.x = 3564; // 3950 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // adder (4150) coiled asleep
+});
+
+test('l6 winch temple (socket 0 filled, rune glowed, wheel still)', () => {
+  const g = freshGame6();
+  g.level.cogs[0].taken = true;
+  g.level.cogs[0].installed = true;
+  g.level.winch.sockets[0] = true; // the heron cog in its notch
+  g.player.x = 4750; // west of the winch (4900), inside the fog
+  g.camera.x = 4364; // 4750 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 bridge + web wall (raised slab, sealed lattice)', () => {
+  const g = freshGame6();
+  g.player.x = 5450; // west lip of the pit (5500-5800)
+  g.camera.x = 5064; // 5450 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 bridge + web wall (span down, wall mid-melt)', () => {
+  const g = freshGame6();
+  g.level.bridge.state = 'down';
+  g.level.door.state = 'opening';
+  g.level.door.openT = 0.75; // halfway through the 1.5 s melt
+  g.player.x = 5450;
+  g.camera.x = 5064; // 5450 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 spider hollow (Queen mid-crawl, pips 12/16, web wall at the mouth, pillar mid-rise, her altar)', () => {
+  const g = freshGame6();
+  const q = g.enemies.find(e => e.kind === 'spiderboss');
+  q.x = 6100; q.hp = 12;
+  q.state = 'idle'; q.t = 5; q.legPhase = 2.3; // a long idle: the crawl pose
+  q.pillars = [{ x: 6260, w: 40, h: 140, gy: g.level.groundY, t: 0.4 }]; // risen, standing
+  g.player.x = 6184; // east of the Queen, clear of the pillar
+  g.camera.x = 5798; // 6184 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 exit arch (sealed: dim, seal glow pulsing)', () => {
+  const g = freshGame6();
+  g.gameTime = 1.571; // sin(t*2) mid-pulse on the seal glow
+  g.player.x = 6550; // between the boss altar and the arch
+  g.camera.x = 6000; // max scroll: level.width - viewW
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l6 exit arch (unlocked: bright stairway, rising motes)', () => {
+  const g = freshGame6();
+  g.level.exit.locked = false;
+  g.gameTime = 1.2; // motes at distinct heights
+  g.player.x = 6550;
+  g.camera.x = 6000; // max scroll
   expect(step({}, 1)).toMatchSnapshot();
 });

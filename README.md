@@ -9,6 +9,12 @@ step. Serve over http — the modules won't load from `file://`.
     npm test          # unit tests (vitest)
     npm run smoke     # 300-frame headless wiring check
 
+Booting with `?level=N` (1-based) jumps straight to that level — e.g.
+`http://localhost:9000/?level=5`. The player arrives with the gear a run
+would have carried in at that point (bow from level 3, flight from the
+witch in level 3), so each level is testable as designed. Death and level
+advance still follow the normal carry rules.
+
 ## Levels
 
 1. **Meadow** — a flat night meadow. Slimes, loot boxes, and a goal
@@ -64,6 +70,26 @@ step. Serve over http — the modules won't load from `file://`.
    kidnapped by an evil wizard who rides a flying pig and keeps him atop
    a snow-topped mountain. The mist gate at the east end brightens and
    opens. Level 5 is not the finale.
+6. **The Blackmire** — night again, but this is a swamp under a low
+   moon: fog bands, black water, dead roots. The heron's nest in the
+   cypress is sealed in web — an arrow melts the threads and the
+   heron's cog rests on the rim. Cross the log pool and the lily pool
+   (falling in costs a heart and respawns you); adders slither the
+   banks and ceiling spiders drop to pounce, both one arrow or a stomp
+   each. The winch temple takes the cogs one at a time: the first
+   wakes the mud vent in the lily pool — every 10 s it belches one big
+   bubble; jump-shoot it at the top and the adder's cog floats at the
+   pop point (out of jump reach, so the wings carry it). The second
+   socket makes the elder adder's egg sac appear on the altar dais —
+   stomp it, or shoot it — and the weaver's cog tumbles out. The third
+   lowers the stone bridge over the last pool and melts the web wall at
+   the hollow's mouth. Inside, the Weaver Queen waits: 16 hp, not
+   stompable, and she never leaves her half of the hollow. She crawls
+   at you, lunges, spits web globs (a hit slows you for 2.5 s), and
+   raises web pillars at your feet — the glint shows where, so walk off
+   it. Below 8 hp she also throws a volley of three web eggs. Beat her
+   and the pearl appears on her altar; take it and the exit arch lights
+   up. The mire is not the end.
 
 Win a level and press Space to play the next one.
 

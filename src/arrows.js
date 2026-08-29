@@ -5,6 +5,8 @@ import { shake } from './camera.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
 import { MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from './key.js';
+import { ventBubbleRect, ventBubbleUp } from './vent.js';
+import { popSac } from './cogs.js';
 
 export const arrows = [];
 export const ARROW_SPEED = 520, FIRE_CD = 0.22;
@@ -83,6 +85,50 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
         if (!a.star) a.dead = true; // stars rustle and keep flying (box rule)
         break;
       }
+    }
+    if (a.dead) continue;
+    // The Blackmire's nest web (level 6): an arrow that crosses the
+    // webbed nest's rect unravels it - the heron's cog appears and the
+    // arrow is spent in the threads. Star arrows pass through: the web
+    // parts around them. The window extends 24 px above the rim: a queen
+    // standing on the nest fires at chest height, 24 px over the threads.
+    const nest = lvl.nest;
+    if (nest && nest.state === 'webbed' &&
+        a.x < nest.x + nest.w && a.x + 14 > nest.x &&
+        a.y < nest.y + nest.h && a.y + 4 > nest.y - 24) {
+      nest.state = 'open';
+      nest.unravelT = 0.5; // the thread puffs away (decays in updateCogs)
+      lvl.cogs[0].visible = true; // the heron's cog appears
+      fx.play('puff');
+      burst(nest.x + nest.w / 2, nest.y + nest.h / 2, FX.webPuff);
+      if (!a.star) a.dead = true;
+    }
+    if (a.dead) continue;
+    // The mud vent's bubble: shot while up, it pops and the adder's cog
+    // floats at the pop point.
+    const vent = lvl.vent;
+    if (vent && ventBubbleUp(lvl)) {
+      const r = ventBubbleRect(lvl);
+      if (a.x < r.x + r.w && a.x + 14 > r.x &&
+          a.y < r.y + r.h && a.y + 4 > r.y) {
+        vent.popped = true;
+        lvl.cogs[1].x = vent.x - 8; // float at the pop point
+        lvl.cogs[1].y = 490;
+        lvl.cogs[1].visible = true;
+        fx.play('pop');
+        burst(r.x + r.w / 2, r.y + r.h / 2, FX.webPuff);
+        a.dead = true; // spent in the burst
+      }
+    }
+    if (a.dead) continue;
+    // The egg sac on the altar: an arrow pops it (the stomp route is in
+    // cogs.js) and the weaver's cog floats where the sac was.
+    const sac = lvl.sac;
+    if (sac && sac.present && !sac.popped &&
+        a.x < sac.x + sac.w && a.x + 14 > sac.x &&
+        a.y < sac.y + sac.h && a.y + 4 > sac.y) {
+      popSac(lvl, fx);
+      a.dead = true; // spent in the web
     }
     if (a.dead) continue;
     if (lvl.marker && // marker brick: glint on hit, arrow passes through;

@@ -499,19 +499,27 @@ test('l6 gate (spawn: gloom sky, moon, fog band through the arch, intro beat ope
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-// Regression: the gate arch's lintel/trim/jamb were once drawn at raw
-// SCREEN x 256–400 while the west wall scrolled from sx0 — the arch
-// followed the player until the zone culled. The lintel arc centre is
-// world (330, 340) r 70, so its screen x must track 330 - cam.x.
-test('l6 gate arch is world-anchored (scrolls with its wall, not pinned to the screen)', () => {
+// Regression: the gate arch was once drawn at raw SCREEN x 256–400 while
+// the west wall scrolled from sx0 — the arch followed the player until the
+// zone culled — and its opening (260–400) had no stone on the right, so it
+// read as a floating shelf. The wall is now one world-anchored structure
+// 0–500: stone either side of the 240–420 opening, lintel arc centred on
+// world (330, 390) r 90, and 10 px jambs centred on each edge.
+test('l6 gate arch is world-anchored, with stone on both sides', () => {
   for (const camX of [0, 200]) {
     const g = freshGame6();
     g.player.x = camX + 386; // outside the 40–240 intro band; no update, pure draw
     g.camera.x = camX;
     const { ctx, lines } = createRecordingCtx();
     draw(ctx, 800, 600);
-    const want = `arc(${330 - camX}, 340, 70, 0, 3.142, true)`;
-    expect(lines, `lintel arc not at screen x ${330 - camX} (cam.x=${camX})`).toContain(want);
+    expect(lines, `lintel arc not at screen x ${330 - camX} (cam.x=${camX})`)
+      .toContain(`arc(${330 - camX}, 390, 90, 0, 3.142, true)`);
+    expect(lines, `east stone missing (cam.x=${camX})`)
+      .toContain(`fillRect(${420 - camX}, 0, 80, 560)`);
+    expect(lines, `west jamb missing (cam.x=${camX})`)
+      .toContain(`fillRect(${235 - camX}, 390, 10, 170)`);
+    expect(lines, `east jamb missing (cam.x=${camX})`)
+      .toContain(`fillRect(${415 - camX}, 390, 10, 170)`);
   }
 });
 

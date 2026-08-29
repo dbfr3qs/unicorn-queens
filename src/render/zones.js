@@ -444,27 +444,31 @@ function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs
 
 // The mire gate (level 6 opening): the gloom painted across the zone, then
 // the green-black stone wall over it with the arch cut out — moon and peak
-// read through the 260–400 opening.
+// read through the 240–420 opening, stone on BOTH sides (the L2 castle gate
+// shape: 180-wide opening, 10 px jambs centred on each edge).
 function drawMireGateWall(c, sx0, lvl, cam) {
   const gy = lvl.groundY;
-  c.fillStyle = '#232b23'; // the wall (west of the arch)
-  c.fillRect(sx0, 0, 260, gy);
-  c.beginPath(); // lintel with the arched underside (arch top at y 270)
-  // world x 256–400, scrolled by the camera — sx0 alone would leave the
-  // arch pinned to the screen while the wall scrolls out from under it
-  c.moveTo(260 - cam.x, 0);
-  c.lineTo(400 - cam.x, 0);
-  c.lineTo(400 - cam.x, 340);
-  c.arc(330 - cam.x, 340, 70, 0, Math.PI, true);
+  // one world-anchored structure spanning 0–500: every x is scrolled by
+  // the camera — sx0 alone (or raw screen x) leaves parts of the wall
+  // pinned to the screen while the rest scrolls out from under them.
+  c.fillStyle = '#232b23'; // stone either side of the opening (0–240, 420–500)
+  c.fillRect(sx0, 0, 240, gy);
+  c.fillRect(420 - cam.x, 0, 80, gy);
+  c.beginPath(); // lintel with the arched underside (arch top at y 300)
+  c.moveTo(240 - cam.x, 0);
+  c.lineTo(420 - cam.x, 0);
+  c.lineTo(420 - cam.x, 390);
+  c.arc(330 - cam.x, 390, 90, 0, Math.PI, true);
   c.closePath();
   c.fill();
   c.strokeStyle = '#39442f'; // stone trim around the opening
-  c.lineWidth = 8;
+  c.lineWidth = 10;
   c.beginPath();
-  c.arc(330 - cam.x, 340, 78, 0, Math.PI, true);
+  c.arc(330 - cam.x, 390, 100, 0, Math.PI, true);
   c.stroke();
-  c.fillStyle = '#39442f';
-  c.fillRect(256 - cam.x, 340, 8, gy - 340); // jamb
+  c.fillStyle = '#39442f'; // jambs centred on each edge of the opening
+  c.fillRect(235 - cam.x, 390, 10, gy - 390);
+  c.fillRect(415 - cam.x, 390, 10, gy - 390);
 }
 
 // The mire sky zone (level 6): gate, mire, and the darker mire-deep.

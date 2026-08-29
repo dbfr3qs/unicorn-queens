@@ -61,7 +61,7 @@ Carried in: bow, big, maxHp (4), hasFlight — all permanent.
 ## Layout (left → right, 6800 px wide, view 800×600, groundY 560)
 
 ```
-x:    0    400   1100  1450  1900  2300        4600  5500  5800   6800
+x:    0    500   1100  1450  1900  2300        4600  5500  5800   6800
       ┌──────┬─────────┬─────┬────────┬───────┬───────────────┬───────┬──────────┬─────────┐
       │ARCH  │ HERON   │POOL │ MARSH  │ POOL  │ MARSH EAST +  │ WINCH │ PIT +    │ SPIDER  │
       │      │ GROVE   │logs │ west   │ VENT  │ DEAD FERN     │ TEMPLE│ BRIDGE   │ HOLLOW  │
@@ -72,22 +72,28 @@ x:    0    400   1100  1450  1900  2300        4600  5500  5800   6800
       └──────┴─────────┴─────┴────────┴───────┴───────────────┴───────┴──────────┴─────────┘
 ```
 
-Zones: `{0–400: 'miregate'}, {400–3800: 'mire'}, {3800–6800: 'mire-deep'}`.
+Zones: `{0–500: 'miregate'}, {500–3800: 'mire'}, {3800–6800: 'mire-deep'}`
+(the miregate extends to 500 so the wall's east stone — 420–500 — sits
+inside the zone; a zone's sky is painted clipped to the zone's own span,
+so stone past the edge would be overpainted by the mire sky).
 
 Ground / water (water = the lava render with the `water` recolor from L5;
 falling in = 1 damage + respawn at last safe ground, the existing pit rule):
 
 ```
-ground: 0–400 ('stone') | 400–1100 | 1450–1900 | 2300–5500 (marsh east + winch temple) | 5800–6800
+ground: 0–500 ('stone') | 500–1100 | 1450–1900 | 2300–5500 (marsh east + winch temple) | 5800–6800
 water:  1100–1450 (350, log crossing) | 1900–2300 (400, the vent) | 5500–5800 (300, the bridge pit)
 ```
 
-### The arch (0–400)
+### The arch (0–500)
 
-- Dark stone wall (the `hall` purple stone) with a **stone arch at 240–420**
+- Dark green-black stone wall, one structure spanning 0–500: stone 0–240
+  west of the opening, stone 420–500 east of it, a **stone arch at 240–420**
   through which the mire gloom is visible — the inverse of L5 (darkness
-  through the arch instead of sunlight). Ground kind `stone`, player spawns
-  at x 60.
+  through the arch instead of sunlight). The arch has the L2 castle gate's
+  shape: 10 px jambs centred on each edge of the opening, stone trim
+  (r 100) around the arch centred on (330, 390), arch top 300. Ground kind
+  `stone`, player spawns at x 60.
 - **Intro beat** (one-shot, rect 40–240, fires on frame 1), speaker
   "The Old Winch" (a whisper):
   - "The mist gate spat you out below the peak, not on it — in the mire the wizard's shadow blackened."
@@ -304,7 +310,7 @@ creatures stay in the castle; the forest's stay in the forest).
 
 Two new zone kinds in `src/render/zones.js` (+ the `miregate` arch zone):
 
-- **`mire`** (400–3800): a sickly green-black sky gradient
+- **`mire`** (500–3800): a sickly green-black sky gradient
   (`#0d1a12` → `#16241a`); a pale green moon `#cfe8c8` (parallax 0.05)
   with a low-alpha halo; **three drifting fog bands** (wide soft rects,
   pure time function: slow horizontal drift + alpha pulse, parallax
@@ -318,8 +324,8 @@ Two new zone kinds in `src/render/zones.js` (+ the `miregate` arch zone):
 - **`mire-deep`** (3800–6800): the same dressing one shade darker, denser
   fog (a fourth band), the mountain bigger and brighter (you're getting
   close), overhead webs between the near cypresses.
-- **`miregate`** (0–400): the `hall` stone over a cut-out arch (the L5
-  gate pattern, dark palette) with the mire sky showing through.
+- **`miregate`** (0–500): green-black stone on both sides of the cut-out
+  arch (the L2 gate shape, dark palette) with the mire sky showing through.
 
 World pass (dressing, no collision), new `src/render/mire.js`: dead
 cypresses (the great cypress at 950 with its nest perch), giant ferns
@@ -502,3 +508,22 @@ world-anchored (`- cam.x`); a regression test in `test/render.test.js`
 asserts the lintel arc centre tracks 330 − cam.x at two camera
 positions, and the spawn snapshot is byte-identical (the spawn view is
 untouched).
+
+### Gate arch shape (found in visual play, fixed post-M8)
+
+Even once world-anchored, the arch was the wrong shape: the opening ran
+260–400 — 140 wide, with **no stone east of it** (the opening ended at
+the miregate zone's edge, 400) — so it read as a floating shelf, and the
+trim only touched a single 8 px jamb that straddled the wall edge. M1 had
+drifted from this design's "a stone arch at 240–420": 420 exceeds the
+zone edge, so the east stone was dropped when the level was built. The
+wall is now the L2 castle gate's shape at the design's coordinates —
+opening 240–420, stone on both sides (0–240, 420–500), 10 px jambs
+centred on each edge, trim r 100 around the arch (centre (330, 390),
+top 300). The miregate zone and the `stone` passage extend 400 → 500
+(a zone's sky is painted clipped to the zone's span, so the east stone
+must sit inside the gate zone; miregate and mire paint identical skies,
+so the boundary shift is invisible). The regression test now asserts the
+lintel arc **and both jambs** at two camera positions; snapshot churn is
+confined to the gate block, the zone clips, the passage paving, and the
+zone-laid-out fireflies — L1–L5 byte-identical.

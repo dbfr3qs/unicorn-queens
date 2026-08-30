@@ -104,6 +104,21 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
       if (!a.star) a.dead = true;
     }
     if (a.dead) continue;
+    // The Peak's ice block (level 7): an arrow crossing it while intact
+    // shatters the block and the sigil inside becomes visible. Box rule:
+    // a normal arrow is spent, a star shatters it and keeps flying.
+    const iceBlock = lvl.sigilBlock;
+    if (iceBlock && iceBlock.state === 'intact' &&
+        a.x < iceBlock.x + iceBlock.w && a.x + 14 > iceBlock.x &&
+        a.y < iceBlock.y + iceBlock.h && a.y + 4 > iceBlock.y) {
+      iceBlock.state = 'gone';
+      iceBlock.shatterT = 0.4;
+      lvl.sigil.visible = true;
+      fx.play('crack');
+      burst(iceBlock.x + iceBlock.w / 2, iceBlock.y + iceBlock.h / 2, FX.iceShatter);
+      if (!a.star) a.dead = true;
+    }
+    if (a.dead) continue;
     // The mud vent's bubble: shot while up, it pops and the adder's cog
     // floats at the pop point.
     const vent = lvl.vent;

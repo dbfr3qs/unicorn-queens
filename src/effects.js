@@ -36,4 +36,5 @@ export const FX = {
   webPuff: { count: 16, colors: ['#f0f0f5', '#d8d8e8', '#b8b8d0', '#fff'], speed: 90, up: 40, size: 3, grav: -60, life: 0.7 },
   brickChip: { count: 8, colors: ['#4a2d1c', '#3a2412', '#8a6a4a'], speed: 90, size: 3, grav: 500, life: 0.4 },
   nookCrumble: { count: 26, colors: ['#4a2d1c', '#3a2412', '#281810', '#8a6a4a', '#ffd75e'], speed: 140, up: 60, size: 5, grav: 600, life: 0.7 },
+  iceShatter: { count: 18, colors: ['#8fd3f4', '#c8f0ff', '#fff'], speed: 180, up: 100, size: 4, grav: 500, life: 0.6 }, // the sigil block breaks
 };

@@ -13,6 +13,7 @@ import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateRelics } from './relics.js';
 import { updateCogs } from './cogs.js';
+import { updateSigil } from './sigil.js';
 import { updateVent } from './vent.js';
 import { updateBridge } from './bridge.js';
 import { updatePillars } from './enemies/spiderboss.js'; // the Queen's web pillars (need the camera)
@@ -100,6 +101,7 @@ export function update(dt, viewW, fx) {
   updateKey(game.level, game.player, fx, dt);
   updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
   updateCogs(game.level, game.player, dt, fx); // level 6: the three cogs
+  if (game.level.sigilBlock) updateSigil(game.level, game.player, dt, fx); // level 7: the sigil + iron gate
   updateVent(game.level, dt, fx); // level 6: the mud vent's bubble
   updateBridge(game.level, dt); // level 6: the winch's bridge
   updateCell(game.level, game.player, dt, fx);

@@ -74,6 +74,13 @@ function drawSigilBlock(c, lvl, t) {
     c.fillStyle = '#ffffff';
     c.fillRect(b.x + 24, b.y + 24, 3, 2);
     c.globalAlpha = 1;
+  } else if (b.shatterT > 0) { // the break: two halves fall apart, fading (pure in shatterT)
+    const f = 1 - b.shatterT / 0.4; // 0 → 1 over the 0.4 s break
+    c.fillStyle = '#3a4152';
+    c.globalAlpha = 1 - f;
+    c.fillRect(b.x - f * 12, b.y + 8 + f * 26, b.w / 2, b.h - 8); // left half, tipping out
+    c.fillRect(b.x + b.w / 2 + f * 12, b.y + 8 + f * 30, b.w / 2, b.h - 8); // right half
+    c.globalAlpha = 1;
   } else {
     c.fillStyle = '#3a4152'; // the broken stub
     c.fillRect(b.x, gy - 14, 18, 14);

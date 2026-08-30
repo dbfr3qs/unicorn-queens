@@ -21,21 +21,32 @@ function drawStairs(c, lvl) {
 }
 
 // The wind vane on its post at 700 (top at groundY−120): the level's
-// tell. M1 draws the calm state; M2 switches the head on the phase
-// (telegraph — tail flaps, gust — east + shiver, updraft — pointing up).
-function drawVane(c, lvl) {
+// tell, drawn from the phase the simulation stores (lvl.wind.phase):
+// calm — still; telegraph — the tail flaps; gust — east + shiver; the
+// updraft — the rooster points up, riding the lift.
+function drawVane(c, lvl, t) {
   const gy = lvl.groundY;
   const x = 700, topY = gy - 120;
+  const ph = lvl.wind?.phase ?? 'calm';
   c.fillStyle = '#2c3450'; // the post
   c.fillRect(x - 2, topY, 4, 120);
   c.fillStyle = '#454c68'; // the base
   c.fillRect(x - 8, gy - 8, 16, 8);
-  c.fillStyle = '#8a93b8'; // the rooster, pointing east, still
-  c.fillRect(x + 2, topY - 4, 20, 8); // body
-  c.fillRect(x + 22, topY - 6, 8, 6); // head
-  c.fillRect(x + 30, topY - 4, 4, 2); // beak
-  c.fillRect(x - 4, topY - 10, 6, 10); // tail
-  c.fillRect(x + 6, topY + 4, 3, 6); // leg
+  c.fillStyle = '#8a93b8'; // the rooster
+  const shiver = ph === 'gust' ? Math.sin(t * 40) * 1.5 : 0; // the gust shiver
+  const flap = ph === 'telegraph' ? Math.sin(t * 14) * 3 : 0; // the tail flap
+  if (ph === 'updraft') { // the rooster points up, riding the lift
+    c.fillRect(x + 2, topY - 4, 8, 8); // body, compact
+    c.fillRect(x + 4, topY - 12, 6, 8); // head, raised
+    c.fillRect(x + 6, topY - 16, 2, 4); // beak, up
+    c.fillRect(x - 4, topY - 2, 8, 4); // tail, dropped
+  } else {
+    c.fillRect(x + 2 + shiver, topY - 4, 20, 8); // body
+    c.fillRect(x + 22 + shiver, topY - 6, 8, 6); // head
+    c.fillRect(x + 30 + shiver, topY - 4, 4, 2); // beak
+    c.fillRect(x - 4, topY - 10 + flap, 6, 10); // tail
+    c.fillRect(x + 6, topY + 4, 3, 6); // leg
+  }
 }
 
 // The sigil's ice block (M3 shatters it): a snow-capped stone cube with
@@ -201,7 +212,7 @@ function drawRainbow(c, lvl, t) {
 export function drawPeak(c, lvl, t) {
   if (!lvl.sigilBlock) return; // the peak only (level 7)
   drawStairs(c, lvl);
-  drawVane(c, lvl);
+  drawVane(c, lvl, t);
   drawSigilBlock(c, lvl, t);
   drawCauldronRim(c, lvl);
   drawSpireWallAndPorthole(c, lvl, t);

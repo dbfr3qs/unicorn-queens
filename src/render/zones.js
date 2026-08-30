@@ -493,6 +493,7 @@ function drawMireZone(c, deep, gate, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
 // silhouette, falling snow, pine lines, the spire's interior with its
 // floating orbs, and the open-air throne above the clouds. All pure
 // functions of world x / screen x and time — no RNG, snapshot-stable.
+import { windPhase } from '../wind.js';
 
 // The starlit sky: deep blue-black bands (flat fills, no gradients),
 // ~40 seeded stars at parallax 0.05 with a slow alpha twinkle, and the
@@ -674,8 +675,13 @@ function drawPeakZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
   } else { // peakgate + snowfield: the starlit sky
     drawPeakSky(c, sx0, sx1 - sx0, lvl, cam, t, false);
     drawSpireSilhouette(c, cam, t, lvl.groundY);
-    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.3, 40, 2, 26, 0); // far, small, slow
-    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.5, 24, 3, 46, 0); // near, larger, faster
+    // the flakes tilt with the wind (the level's read): lean west into the
+    // telegraph, swing hard + fall 2.5× in the gust, drift east in the lift
+    const ph = windPhase(t);
+    const tilt = ph === 'gust' ? -40 : ph === 'updraft' ? 18 : ph === 'telegraph' ? -12 : 0;
+    const speedMul = ph === 'gust' ? 2.5 : 1;
+    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.3, 40, 2, 26 * speedMul, tilt); // far, small, slow
+    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.5, 24, 3, 46 * speedMul, tilt); // near, larger, faster
     drawPineLine(c, cam, viewW, lvl.groundY, 0.5, 190, 60, 40, '#16233c');
     drawPineLine(c, cam, viewW, lvl.groundY, 0.7, 260, 90, 50, '#0f1a30');
   }

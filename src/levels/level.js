@@ -44,6 +44,24 @@ export function createLevel(viewH = 600) {
   };
 }
 
+// The kind of surface under a grounded entity's feet ('snow', 'ice',
+// 'stone', 'dais', 'platform', 'box', …) or null: the level 7 ice model
+// asks which ground it stands on. Scans ground then platforms at the
+// entity's centre, within 8 px of the feet (a standing entity sits
+// flush).
+export function standingKind(p, lvl) {
+  if (!p.onGround) return null;
+  const cx = p.x + p.w / 2, feet = p.y + p.h;
+  for (const seg of lvl.ground ?? []) {
+    const top = seg.y ?? lvl.groundY;
+    if (cx >= seg.x && cx < seg.x + seg.w && Math.abs(top - feet) <= 8) return seg.kind;
+  }
+  for (const s of lvl.platforms ?? []) {
+    if (cx >= s.x && cx < s.x + s.w && Math.abs(s.y - feet) <= 8) return s.kind;
+  }
+  return null;
+}
+
 // Land a falling entity on the first surface it crossed this frame.
 // Returns the surface ({kind: 'ground'|'platform'|'box'}) or null.
 export function resolveGroundCollision(entity, lvl, dt) {

@@ -20,6 +20,7 @@ import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
 import { updateMistgate } from './mistgate.js';
+import { updateWind } from './wind.js';
 import { FX } from './effects.js';
 
 export const game = {
@@ -83,6 +84,7 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 export function update(dt, viewW, fx) {
   if (isDialogueOpen()) return; // dialogue: the whole world is frozen, clock included
   game.gameTime += dt;
+  if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame

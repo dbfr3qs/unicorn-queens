@@ -1,5 +1,6 @@
 // Player: state and physics (jump buffering, coyote time, squash & stretch).
-import { resolveGroundCollision } from './levels/level.js';
+import { resolveGroundCollision, standingKind } from './levels/level.js';
+import { inWindZone } from './wind.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
 import { spawnLoot } from './loot.js';
@@ -18,6 +19,7 @@ export const FLIGHT_TIME = 10, FLIGHT_CD = 15; // witch's spell: 10 s flight, 15
 export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
 export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
 export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow
+export const ICE_ACCEL = 900, ICE_DRAG = 0.02, ICE_MAX = 1.3 * P_SPEED; // level 7 ice: steer 900 px/s², ~no friction, 1.3× run cap (338)
 
 // carry: permanent acquisitions from the previous level (big, bow),
 // passed when advancing; a fresh start or death-restart carries nothing.
@@ -51,6 +53,7 @@ export function createPlayer(lvl, carry = {}) {
     flightT: 0, // remaining flight time (s)
     flightCd: 0, // remaining recharge (s)
     flightLaunch: 0, // a ground cast lifts off upward for a beat
+    iceAir: false, // left ice mid-slide: momentum carries through the air
     whooshT: 0,
     webT: 0, // web-slow remaining (s): binds the legs, not the wings
     won: false,
@@ -83,6 +86,7 @@ function endFlight(p, fx) {
 export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   if (player.dead || player.won) { inp.cast = false; return; } // never let a stale cast survive
   const wasOnGround = player.onGround; // landing-cancel compares against this
+  const wasOnIce = player.onGround && standingKind(player, lvl) === 'ice'; // the ice carry
   player.invuln = Math.max(0, player.invuln - dt);
   player.coyote = player.onGround ? COYOTE : Math.max(0, player.coyote - dt);
   if (inp.jump && !player.jumpHeld) player.jbuf = JBUF; // buffer the press
@@ -90,8 +94,27 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.jbuf = Math.max(0, player.jbuf - dt);
   // the web-slow (Weaver Queen) drags the legs — flight is unaffected
   const slow = player.webT > 0 && !player.flying ? WEB_SLOW : 1;
-  player.vx = ((inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0)) * slow;
+  const iceGround = !player.flying && player.onGround && standingKind(player, lvl) === 'ice';
+  const target = ((inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0)) * slow;
+  if (iceGround || (player.iceAir && !player.flying)) {
+    // level 7 ice: momentum. Steer at ICE_ACCEL toward the held direction's
+    // ICE_MAX (never brake below it while holding); no input: ~no friction.
+    const iceTarget = ((inp.right ? 1 : 0) - (inp.left ? 1 : 0)) * ICE_MAX * slow;
+    if (iceTarget !== 0) {
+      player.vx += Math.max(-ICE_ACCEL * dt, Math.min(ICE_ACCEL * dt, iceTarget - player.vx));
+    } else {
+      player.vx *= Math.max(0, 1 - ICE_DRAG * dt);
+      if (Math.abs(player.vx) < 2) player.vx = 0;
+    }
+    player.vx = Math.max(-ICE_MAX, Math.min(ICE_MAX, player.vx));
+  } else {
+    player.vx = target; // normal ground/air/flight: snap, as today
+  }
   if (player.vx !== 0) player.facing = Math.sign(player.vx);
+  // the gust's headwind: a position push on grounded players in the
+  // snowfield — vx untouched (a slide keeps 338 and drifts slide − 100)
+  if (lvl.wind?.phase === 'gust' && !player.flying && player.onGround &&
+      inWindZone(player.x + player.w / 2)) player.x -= 100 * dt;
   player.fireCd = Math.max(0, player.fireCd - dt);
   player.boots = Math.max(0, player.boots - dt);
   player.lantern = Math.max(0, player.lantern - dt);
@@ -140,10 +163,13 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   const prevVy = player.vy;
   if (player.flying) {
+    // the updraft (the peak's 4th gust): the flight timer pauses and a
+    // neutral flyer is lifted gently — up/down still override
+    const lift = lvl.wind?.phase === 'updraft' && inWindZone(player.x + player.w / 2);
     // four-way control: up ascends, down descends, neutral drifts down gently
     player.vy = player.flightLaunch > 0 ? -FLY_UP
-      : inp.up ? -FLY_UP : inp.down ? FLY_DOWN : FLY_SINK;
-    player.flightT -= dt;
+      : inp.up ? -FLY_UP : inp.down ? FLY_DOWN : lift ? -40 : FLY_SINK;
+    if (!lift) player.flightT -= dt;
     if (player.whooshT <= 0) { fx.play('whoosh'); player.whooshT = 0.7; } // loop-free whoosh
     if (player.flightT <= 0) endFlight(player, fx); // ran out of time
   } else {
@@ -189,4 +215,9 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
       player.vy = 0;
     }
   }
+  // the ice carry: leaving ice (a jump, or walking off the edge) keeps the
+  // slide through the air; landing clears it. Flight is never in iceAir's
+  // business (the ice model never applies while flying).
+  if (player.onGround) player.iceAir = false;
+  else if (!player.flying && wasOnIce) player.iceAir = true;
 }

@@ -10,6 +10,7 @@ import { createLevel3 } from './level3.js';
 import { createLevel4 } from './level4.js';
 import { createLevel5 } from './level5.js';
 import { createLevel6 } from './level6.js';
+import { createLevel7 } from './level7.js';
 
 export const LEVELS = [
   { name: 'meadow', make: viewH => createLevel(viewH) },
@@ -18,6 +19,7 @@ export const LEVELS = [
   { name: 'dragons-layer', make: viewH => createLevel4(viewH), carry: { hasBow: true, hasFlight: true } },
   { name: 'enchanted-forest', make: viewH => createLevel5(viewH), carry: { hasBow: true, hasFlight: true } },
   { name: 'blackmire', make: viewH => createLevel6(viewH), carry: { hasBow: true, hasFlight: true } },
+  { name: 'peak', make: viewH => createLevel7(viewH), carry: { hasBow: true, hasFlight: true } },
 ];
 
 // ?level=N (1-based) in the URL boots straight into that level for testing.

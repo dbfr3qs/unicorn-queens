@@ -26,6 +26,26 @@ export function drawLevel(c, lvl, t = 0) {
       c.fillRect(seg.x, top, seg.w, 4);
       continue;
     }
+    if (seg.kind === 'snow') { // level 7 snowfield: deep blue base, white cap
+      c.fillStyle = '#26324e';
+      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#e8f0f8'; // the cap
+      c.fillRect(seg.x, top, seg.w, 10);
+      c.fillStyle = '#b9c9e0'; // faint blue shadow line under the cap
+      c.fillRect(seg.x, top + 10, seg.w, 3);
+      continue;
+    }
+    if (seg.kind === 'ice') { // level 7 ice span: glossy pale blue, glint, cracks
+      c.fillStyle = '#3a5a78';
+      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#bfe4f0'; // the glossy top
+      c.fillRect(seg.x, top, seg.w, 8);
+      c.fillStyle = '#e8f7fc'; // glint streaks
+      for (let px = seg.x + 10; px < seg.x + seg.w - 10; px += 26) c.fillRect(px, top + 2, 12, 2);
+      c.fillStyle = '#7fb8d4'; // a thin crack line
+      c.fillRect(seg.x + Math.max(8, seg.w / 2), top + 8, 3, 8);
+      continue;
+    }
     c.fillStyle = palette.night;
     c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
     c.fillStyle = '#7b4fa6';
@@ -37,7 +57,7 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillStyle = '#1d4e8e'; // surface line
     c.fillRect(m.x, lvl.groundY + 6, m.w, 3);
   }
-  for (const m of lvl.lava ?? []) { // lava / sludge / water: the level's gap fluid
+  for (const m of lvl.lava ?? []) { // lava / sludge / water / crevasse / cauldron
     const top = lvl.groundY + 4;
     if (m.water) { // level 5: pond and stream (falling in = the pit rule)
       c.fillStyle = '#0d2b4e'; // body
@@ -49,6 +69,35 @@ export function drawLevel(c, lvl, t = 0) {
         const sx = m.x + Math.min(((t * 24 + i * (m.w / 4)) % m.w), m.w - 10);
         c.fillRect(sx, top + 6 + Math.sin(t * 2 + i * 1.7) * 2, 10, 2);
       }
+      continue;
+    }
+    if (m.crevasse) { // level 7: a crevasse — a deep blue-black shaft, ice lips
+      c.fillStyle = '#0a1220'; // body
+      c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#1d3a5c'; // a faint glow deep down
+      c.fillRect(m.x, lvl.height - 16, m.w, 4);
+      c.fillStyle = '#e8f0f8'; // the ice lips at the surface
+      c.fillRect(m.x, lvl.groundY - 2, 6, 6);
+      c.fillRect(m.x + m.w - 6, lvl.groundY - 2, 6, 6);
+      continue;
+    }
+    if (m.cauldron) { // level 7: the cauldron pit — dark purple liquid, glow
+      c.fillStyle = '#2a1245'; // body
+      c.fillRect(m.x, top, m.w, Math.max(0, lvl.height - top));
+      c.fillStyle = '#6a3a9a'; // liquid surface
+      c.fillRect(m.x, top, m.w, 4);
+      c.fillStyle = '#9a6ac4'; // slow bubbles (a pure function of t)
+      for (let i = 0; i < 3; i++) {
+        const bx = m.x + 16 + i * ((m.w - 32) / 2);
+        const by = top + 8 + Math.sin(t * 1.4 + i * 2.3 + m.x * 0.05) * 3;
+        c.beginPath();
+        c.arc(bx, by, 2.5, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.globalAlpha = 0.15; // purple glow on the stone above
+      c.fillStyle = '#9a6ac4';
+      c.fillRect(m.x - 8, lvl.groundY - 26, m.w + 16, 30);
+      c.globalAlpha = 1;
       continue;
     }
     const sl = m.sludge; // level 4: green sludge instead of lava
@@ -86,6 +135,8 @@ export function drawLevel(c, lvl, t = 0) {
     else if (p.kind === 'root') drawRoot(c, p);
     else if (p.kind === 'nest') drawNest(c, p);
     else if (p.kind === 'altar') drawAltar(c, p);
+    else if (p.kind === 'ice') drawIceBridge(c, p);
+    else if (p.kind === 'dais') drawDais(c, p, lvl.groundY);
   }
   for (const b of lvl.boxes) {
     if (b.broken) continue;
@@ -190,4 +241,30 @@ function drawAltar(c, p) { // a mossy stone dais, lit top
   c.fillStyle = '#2e4a2a'; // moss tufts
   c.fillRect(p.x + 8, p.y - 3, 12, 4);
   c.fillRect(p.x + p.w - 20, p.y - 2, 9, 3);
+}
+
+// Level 7 platform kinds. The solid top edge stays at p.y (the collision
+// rect is the plain one-way platform); the dressing hangs off it.
+function drawIceBridge(c, p) { // the ice bridge over crevasse 2
+  c.fillStyle = '#bfe4f0'; // the glossy slab (6 px, at water level)
+  c.fillRect(p.x, p.y, p.w, 6);
+  c.fillStyle = '#e8f7fc'; // glint streaks
+  for (let px = p.x + 8; px < p.x + p.w - 10; px += 30) c.fillRect(px, p.y + 1, 14, 2);
+  c.fillStyle = '#7fb8d4'; // the underside shadow
+  c.fillRect(p.x, p.y + 6, p.w, 3);
+}
+
+function drawDais(c, p, gy) { // a snow-capped stone dais on a pillar
+  c.fillStyle = '#3a4152'; // the slab
+  c.fillRect(p.x, p.y, p.w, 10);
+  c.fillStyle = '#e8f0f8'; // the snow cap
+  c.fillRect(p.x, p.y, p.w, 4);
+  c.fillStyle = '#5a627e'; // the rim trim
+  c.fillRect(p.x - 2, p.y + 10, p.w + 4, 3);
+  if (gy - p.y - 13 > 0) { // the pillar down to the ground (the tall daises)
+    c.fillStyle = '#2c3242';
+    c.fillRect(p.x + 10, p.y + 13, p.w - 20, gy - p.y - 13);
+    c.fillStyle = '#454c68'; // pillar joints
+    for (let ry = p.y + 24; ry < gy; ry += 14) c.fillRect(p.x + 10, ry, p.w - 20, 2);
+  }
 }

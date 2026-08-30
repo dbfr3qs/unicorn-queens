@@ -73,4 +73,13 @@ for (let i = 0; i < FRAMES; i++) {
   if (!cb) throw new Error('requestAnimationFrame chain broke at level-6 frame ' + i);
   cb(ts);
 }
-console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5 + 6)`);
+// seventh run: level 7 (gate, snowfield, spire, throne — the iron gate holds)
+startGame(600, 6);
+game.lastTs = 0;
+for (let i = 0; i < FRAMES; i++) {
+  ts += 16.7;
+  const cb = rafCb; rafCb = null;
+  if (!cb) throw new Error('requestAnimationFrame chain broke at level-7 frame ' + i);
+  cb(ts);
+}
+console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5 + 6 + 7)`);

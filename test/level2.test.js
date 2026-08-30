@@ -7,7 +7,7 @@ const fx = { play: () => {} };
 
 describe('level 2 data', () => {
   it('is registered as the second level', () => {
-    expect(LEVELS.length).toBe(6);
+    expect(LEVELS.length).toBe(7);
     expect(LEVELS[1].name).toBe('bridge-castle');
   });
 

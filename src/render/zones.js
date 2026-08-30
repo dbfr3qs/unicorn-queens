@@ -29,6 +29,8 @@ export function drawZones(c, lvl, cam, t, viewW) {
       drawForestZone(c, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else if (z.kind === 'miregate' || z.kind === 'mire' || z.kind === 'mire-deep') {
       drawMireZone(c, z.kind === 'mire-deep', z.kind === 'miregate', z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
+    } else if (z.kind === 'peakgate' || z.kind === 'snowfield' || z.kind === 'spire' || z.kind === 'throne') {
+      drawPeakZone(c, z.kind, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else {
       drawStone(c, z.kind === 'hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     }
@@ -484,6 +486,201 @@ function drawMireZone(c, deep, gate, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
   drawMireFireflies(c, zx0, zx1, cam, t);
   c.restore();
   if (gate) drawMireGateWall(c, sx0, lvl, cam);
+}
+
+// ---- The Peak (level 7) ----
+// Starlit sky (the first starlit level), a silver moon, the spire
+// silhouette, falling snow, pine lines, the spire's interior with its
+// floating orbs, and the open-air throne above the clouds. All pure
+// functions of world x / screen x and time — no RNG, snapshot-stable.
+
+// The starlit sky: deep blue-black bands (flat fills, no gradients),
+// ~40 seeded stars at parallax 0.05 with a slow alpha twinkle, and the
+// silver moon (parallax 0.05, two low-alpha halo rings). `clear` (the
+// throne zone) is higher, thinner air: more stars.
+function drawPeakSky(c, sx0, w, lvl, cam, t, clear) {
+  c.fillStyle = '#0a1428';
+  c.fillRect(sx0, 0, w, lvl.groundY);
+  c.fillStyle = '#1a2c4a'; // faintly lighter horizon band
+  c.fillRect(sx0, lvl.groundY - 120, w, 120);
+  c.fillStyle = '#cfd8ff';
+  const n = clear ? 70 : 40;
+  for (let i = 0; i < n; i++) { // seeded star field, parallax 0.05
+    const x = ((i * 331 + 97) % 997) / 997 * 1200 - cam.x * 0.05;
+    const y = ((i * 211 + 41) % 883) / 883 * (lvl.groundY - 160);
+    c.globalAlpha = 0.4 + 0.3 * Math.sin(t * 1.3 + i * 1.7);
+    c.fillRect(x, y, 2, 2);
+  }
+  c.globalAlpha = 1;
+  const mx = 560 - cam.x * 0.05, my = 96; // the silver moon
+  c.fillStyle = '#e8f0f8';
+  c.globalAlpha = 0.1;
+  c.beginPath(); c.arc(mx, my, 58, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 0.2;
+  c.beginPath(); c.arc(mx, my, 44, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+  c.beginPath(); c.arc(mx, my, 26, 0, Math.PI * 2); c.fill();
+}
+
+// The spire silhouette: a tall dark purple-black spire at parallax 0.2,
+// right of centre, a faint dark glow at its tip (the visual anchor of the
+// goal, seen across the snowfield).
+function drawSpireSilhouette(c, cam, t, gy) {
+  const sx = (4800 - cam.x) * 0.2;
+  const base = gy - 40, top = 60;
+  c.save();
+  c.fillStyle = '#150e22';
+  c.beginPath(); // the shaft
+  c.moveTo(sx - 90, base);
+  c.lineTo(sx - 34, top + 150);
+  c.lineTo(sx - 14, top);
+  c.lineTo(sx + 14, top);
+  c.lineTo(sx + 34, top + 150);
+  c.lineTo(sx + 90, base);
+  c.closePath();
+  c.fill();
+  c.globalAlpha = 0.25 + 0.15 * Math.sin(t * 0.8); // the tip's faint glow
+  c.fillStyle = '#5a4a8a';
+  c.beginPath(); c.arc(sx, top + 6, 16, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+  c.restore();
+}
+
+// Falling snow: one parallax layer. Flake i is seeded in world x and
+// falls at `speed` with wrap; `tilt` (M2: the gust) offsets the drift.
+function drawSnowLayer(c, zx0, zx1, lvl, cam, t, par, n, r, speed, tilt) {
+  const w = zx1 - zx0;
+  c.fillStyle = '#dfe9f5';
+  for (let i = 0; i < n; i++) {
+    const seed = (i * 733 + 29) % 997;
+    const wx = zx0 + (seed / 997) * w;
+    const fall = (t * speed + (seed * 13) % lvl.groundY) % lvl.groundY;
+    const x = wx - cam.x * par + tilt;
+    c.globalAlpha = par > 0.4 ? 0.8 : 0.5;
+    c.fillRect(x, fall, r, r);
+  }
+  c.globalAlpha = 1;
+}
+
+// A pine line tiled in parallax space: dark blue-green conifers (three
+// stacked triangles) with sparse snow caps, seeded per trunk.
+function drawPineLine(c, cam, viewW, gy, par, period, hMin, hVar, color) {
+  const shift = cam.x * par;
+  const start = Math.floor((shift - 120) / period) * period;
+  for (let k = start; k < shift + viewW + 120; k += period) {
+    const i = ((k / period) % 97 + 97) % 97; // seeded index
+    const jx = (i * 71) % 80;
+    const x = k + jx - shift;
+    const h = hMin + ((i * 37) % hVar);
+    c.fillStyle = color;
+    for (let s = 0; s < 3; s++) { // three stacked triangles
+      const yy = gy - (h * s) / 3;
+      const hw = 16 + s * 6;
+      c.beginPath();
+      c.moveTo(x - hw, yy);
+      c.lineTo(x, yy - h / 3 - 8);
+      c.lineTo(x + hw, yy);
+      c.closePath();
+      c.fill();
+    }
+    c.fillStyle = '#dfe9f5'; // a sparse snow cap (seeded: not every pine)
+    if (i % 3 === 0) c.fillRect(x - 5, gy - h - 6, 10, 3);
+  }
+}
+
+// The gate zone (level 7 opening): the starlit sky painted across the
+// zone, then the stone wall over it with the arch cut out — the snowfield
+// sky and the spire read through the 240–420 opening (the L6 gate shape,
+// mirrored: the stair the player climbed is behind the spawn, x 0–100).
+function drawPeakGateWall(c, sx0, lvl, cam) {
+  const gy = lvl.groundY;
+  c.fillStyle = '#2c3450'; // stone either side of the opening (0–240, 420–500)
+  c.fillRect(sx0, 0, 240, gy);
+  c.fillRect(420 - cam.x, 0, 80, gy);
+  c.beginPath(); // lintel with the arched underside (arch top at y 300)
+  c.moveTo(240 - cam.x, 0);
+  c.lineTo(420 - cam.x, 0);
+  c.lineTo(420 - cam.x, 390);
+  c.arc(330 - cam.x, 390, 90, 0, Math.PI, true);
+  c.closePath();
+  c.fill();
+  c.strokeStyle = '#454c68'; // stone trim around the opening
+  c.lineWidth = 10;
+  c.beginPath();
+  c.arc(330 - cam.x, 390, 100, 0, Math.PI, true);
+  c.stroke();
+  c.fillStyle = '#454c68'; // jambs centred on each edge of the opening
+  c.fillRect(235 - cam.x, 390, 10, gy - 390);
+  c.fillRect(415 - cam.x, 390, 10, gy - 390);
+  c.fillStyle = '#e8f0f8'; // snow caps on the wall tops
+  c.fillRect(240 - cam.x, 0, 180, 4);
+  c.fillRect(420 - cam.x, 0, 80, 4);
+}
+
+// The spire interior: purple-black stone (a deeper hall variant) with
+// brick courses, and the seven floating orbs (seeded Lissajous drifts,
+// warm amber, alpha pulse ~2 s — the level's only warm color).
+function drawSpireInterior(c, zx0, zx1, sx0, sx1, lvl, cam, t) {
+  const gy = lvl.groundY;
+  c.fillStyle = '#1a1026'; // wall
+  c.fillRect(sx0, 0, sx1 - sx0, gy);
+  c.fillStyle = '#221631'; // mortar courses
+  for (let wy = 40; wy < gy; wy += 28) c.fillRect(sx0, wy, sx1 - sx0, 3);
+  for (let wy = 40, row = 0; wy < gy; wy += 28, row++) {
+    const off = row % 2 ? 32 : 0; // staggered vertical joints
+    for (let wx = Math.floor(zx0 / 64) * 64 + off; wx < zx1; wx += 64) {
+      c.fillRect(wx - cam.x, wy, 3, 28);
+    }
+  }
+  for (let i = 0; i < 7; i++) { // the floating orbs
+    const hx = zx0 + 150 + i * ((zx1 - zx0 - 300) / 6);
+    const x = hx + Math.sin(t * 0.3 + i * 1.9) * 40 - cam.x;
+    const y = 200 + Math.sin(t * 0.45 + i * 2.6) * 90 + ((i * 53) % 120);
+    c.fillStyle = '#ffd9a0';
+    c.globalAlpha = 0.25 + 0.15 * Math.sin(t * 3 + i * 2.2); // the ~2 s pulse
+    c.beginPath(); c.arc(x, y, 14, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 0.6 + 0.2 * Math.sin(t * 3 + i * 2.2);
+    c.beginPath(); c.arc(x, y, 6, 0, Math.PI * 2); c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+// The throne zone: a clearer starfield (higher is thinner air) and the
+// sea of clouds far below — a soft white-lavender band with drifting
+// puffs (parallax 0.1, a pure time function with wrap).
+function drawCloudSea(c, sx0, w, lvl, cam, t, viewW) {
+  const gy = lvl.groundY;
+  c.fillStyle = '#c8c4e8'; // the band
+  c.fillRect(sx0, gy - 60, w, 60);
+  c.fillStyle = '#e4e0f8';
+  for (let i = 0; i < 5; i++) { // the drifting puffs
+    const span = viewW + 420;
+    const cx = (((i * 300 + 120 - t * (10 + i * 3)) % span) + span) % span - 210 + sx0;
+    c.beginPath(); c.ellipse(cx, gy - 46 + (i % 2) * 10, 90 + i * 14, 14 + i * 2, 0, 0, Math.PI * 2); c.fill();
+  }
+  c.fillStyle = '#f0eefc'; // the bright crest line
+  c.fillRect(sx0, gy - 52, w, 4);
+}
+
+// The peak sky zone (level 7): gate, snowfield, spire interior, throne.
+function drawPeakZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
+  c.save();
+  c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
+  if (kind === 'spire') {
+    drawSpireInterior(c, zx0, zx1, sx0, sx1, lvl, cam, t);
+  } else if (kind === 'throne') {
+    drawPeakSky(c, sx0, sx1 - sx0, lvl, cam, t, true);
+    drawCloudSea(c, sx0, sx1 - sx0, lvl, cam, t, viewW);
+  } else { // peakgate + snowfield: the starlit sky
+    drawPeakSky(c, sx0, sx1 - sx0, lvl, cam, t, false);
+    drawSpireSilhouette(c, cam, t, lvl.groundY);
+    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.3, 40, 2, 26, 0); // far, small, slow
+    drawSnowLayer(c, zx0, zx1, lvl, cam, t, 0.5, 24, 3, 46, 0); // near, larger, faster
+    drawPineLine(c, cam, viewW, lvl.groundY, 0.5, 190, 60, 40, '#16233c');
+    drawPineLine(c, cam, viewW, lvl.groundY, 0.7, 260, 90, 50, '#0f1a30');
+  }
+  c.restore();
+  if (kind === 'peakgate') drawPeakGateWall(c, sx0, lvl, cam);
 }
 
 function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {

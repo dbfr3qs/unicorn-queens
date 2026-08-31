@@ -86,6 +86,17 @@ export function createLevel7(viewH = 600) {
     // the story, not a seal, ends the level's chain).
     exit: { x: 6220, y: 430, w: 60, h: 130, locked: true, kind: 'rainbow' },
     dialogs: [], // M5: the Queen's intro + the King's porthole beat; M7: the ending beat
-    roster: [], // M4: the hares + wraiths; M6: the wizardboss
+    // M4: the hares + wraiths; M6: the wizardboss joins this roster.
+    roster: [
+      { kind: 'hare', x: 800, minX: 700, maxX: 1100 },
+      { kind: 'hare', x: 1750, minX: 1650, maxX: 2050 },
+      { kind: 'hare', x: 2900, minX: 2800, maxX: 3200 },
+      { kind: 'hare', x: 3300, minX: 3250, maxX: 3550 },
+      { kind: 'wraith', x: 1100, y: 420 },
+      { kind: 'wraith', x: 2100, y: 410 },
+      { kind: 'wraith', x: 3000, y: 430 },
+      { kind: 'wraith', x: 5550, y: 420, bound: true },
+      { kind: 'wraith', x: 5950, y: 430, bound: true },
+    ],
   };
 }

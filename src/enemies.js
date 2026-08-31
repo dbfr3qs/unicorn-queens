@@ -20,6 +20,8 @@ import './enemies/dragon.js';
 import './enemies/snake.js';
 import './enemies/spider.js';
 import './enemies/spiderboss.js';
+import './enemies/hare.js';
+import './enemies/wraith.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -40,6 +42,7 @@ export function spawnEnemy(spec, lvl) {
     hp: k.hp ?? 1,
     dead: false,
     sleeping: spec.sleeping ?? false, // the elder adder's coil (enemies.js guard)
+    bound: spec.bound ?? false, // the level 7 arena wraiths (always solid)
   };
 }
 
@@ -82,12 +85,14 @@ function hitPlayer(e, p, cam, fx) {
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
   const stomp = p.vy > 0 && p.y + p.h - e.y < 16;
-  if (stomp && getKind(e.kind).stompable) {
+  const k = getKind(e.kind);
+  if (stomp && k.stompable) {
     e.dead = true;   // stomped
     p.vy = E_STOMP_V; // bounce
     p.cuttable = false;
     fx.play('stomp');
-    burst(e.x + e.w / 2, e.y + e.h / 2, FX.enemyDeath);
+    if (k.stompSound) fx.play(k.stompSound); // the hare: a soft puff over the stomp
+    burst(e.x + e.w / 2, e.y + e.h / 2, k.stompFx ?? FX.enemyDeath);
     shake(cam, 5, 0.18);
   } else if (stomp) {
     p.vy = E_STOMP_V; // bounced off an unstompable enemy (ghost)

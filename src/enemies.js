@@ -22,6 +22,7 @@ import './enemies/spider.js';
 import './enemies/spiderboss.js';
 import './enemies/hare.js';
 import './enemies/wraith.js';
+import './enemies/wizardboss.js';
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;

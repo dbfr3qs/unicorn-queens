@@ -79,6 +79,7 @@ export function sfx(name) {
     case 'pop': beep(500, 900, 0.05, 'square', 0.2); beep(120, 60, 0.08, 'triangle', 0.25, 0.02); break; // the bubble/sac pops
     case 'puff': beep(100, 140, 0.09, 'sine', 0.12); beep(120, 90, 0.1, 'sine', 0.1, 0.09); break; // thread puffs away
     case 'gust': beep(140, 60, 0.6, 'sawtooth', 0.12); break; // the peak wind: one low howl per cycle
+    case 'snort': beep(200, 90, 0.2, 'square', 0.2); break; // the war-pig's snort (the swoop tell + the cone)
     case 'slither': beep(600, 900, 0.15, 'square', 0.12); break; // the snake's hiss-trill
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;
     case 'thud': beep(90, 40, 0.2, 'triangle', 0.35); break;

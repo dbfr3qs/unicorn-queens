@@ -12,7 +12,7 @@ import { createLevel5 } from '../src/levels/level5.js';
 import { createLevel6 } from '../src/levels/level6.js';
 import { createLevel7 } from '../src/levels/level7.js';
 
-const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon', 'bee', 'snake', 'adder', 'spider', 'spiderboss', 'hare', 'wraith'];
+const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon', 'bee', 'snake', 'adder', 'spider', 'spiderboss', 'hare', 'wraith', 'wizardboss'];
 
 // The KINDS table, per kind: size, stomp rule, and (boss only) hp.
 // The registry must match it exactly.
@@ -31,6 +31,7 @@ const EXPECTED = {
   spiderboss: { w: 72, h: 56, stompable: false, hp: 16 },
   hare: { w: 24, h: 20, stompable: true, hp: 1 },
   wraith: { w: 26, h: 30, stompable: false, hp: 1 },
+  wizardboss: { w: 64, h: 48, stompable: false, hp: 16 },
 };
 
 describe('registry shape', () => {
@@ -47,7 +48,7 @@ describe('registry shape', () => {
     }
   });
 
-  it('all 14 kinds are registered (catches a stub that never calls register)', () => {
+  it('all 15 kinds are registered (catches a stub that never calls register)', () => {
     expect([...REGISTRY.keys()].sort()).toEqual([...ALL_KINDS].sort());
   });
 });

@@ -110,7 +110,6 @@ export function createLevel7(viewH = 600) {
         }],
       },
     ], // M7: the ending beat joins this list
-    // M4: the hares + wraiths; M6: the wizardboss joins this roster.
     roster: [
       { kind: 'hare', x: 800, minX: 700, maxX: 1100 },
       { kind: 'hare', x: 1750, minX: 1650, maxX: 2050 },
@@ -121,6 +120,7 @@ export function createLevel7(viewH = 600) {
       { kind: 'wraith', x: 3000, y: 430 },
       { kind: 'wraith', x: 5550, y: 420, bound: true },
       { kind: 'wraith', x: 5950, y: 430, bound: true },
+      { kind: 'wizardboss', x: 6500, minX: 5500, maxX: 6200, sleeping: true }, // off-screen east; wakes on the throne gate
     ],
   };
 }

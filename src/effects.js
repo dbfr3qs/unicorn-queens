@@ -38,4 +38,8 @@ export const FX = {
   nookCrumble: { count: 26, colors: ['#4a2d1c', '#3a2412', '#281810', '#8a6a4a', '#ffd75e'], speed: 140, up: 60, size: 5, grav: 600, life: 0.7 },
   iceShatter: { count: 18, colors: ['#8fd3f4', '#c8f0ff', '#fff'], speed: 180, up: 100, size: 4, grav: 500, life: 0.6 }, // the sigil block breaks
   fluffPuff: { count: 10, colors: ['#ffffff', '#e8e8f0', '#cfcfe0'], speed: 60, up: 40, size: 3, grav: -60, life: 0.6 }, // the hare: the softest death
+  runeShatter: { count: 18, colors: ['#6a3a9a', '#4a2a72', '#9a6ac8'], speed: 140, up: 60, size: 4, grav: 300, life: 0.8 }, // the war-pig's rune breaks
+  snowPuff: { count: 16, colors: ['#ffffff', '#e8f0f8'], speed: 80, up: 60, size: 3, grav: 120, life: 0.7 }, // the pig hits the snow
+  sealColumn: { count: 20, colors: ['#6a3a9a', '#3a2a5c'], speed: 40, up: 100, size: 4, grav: -60, life: 0.9 }, // the seal circle rises
+  ashBurst: { count: 40, colors: ['#8a8a9a', '#6a6a7a', '#a0a0b0'], speed: 180, up: 120, size: 5, grav: -40, life: 1.4 }, // the wizard's death: ash
 };

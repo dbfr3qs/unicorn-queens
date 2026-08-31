@@ -3,6 +3,7 @@ import { burst } from './particles.js';
 import { spawnLoot } from './loot.js';
 import { shake } from './camera.js';
 import { damageEnemy } from './enemies.js';
+import { getKind } from './enemies/index.js';
 import { FX } from './effects.js';
 import { MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from './key.js';
 import { ventBubbleRect, ventBubbleUp } from './vent.js';
@@ -47,6 +48,18 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
     for (const e of enemies) { // hit an enemy
       if (e.dead || (a.hit && a.hit.has(e))) continue; // no double-dips
       if (a.x < e.x + e.w && a.x + 14 > e.x && a.y < e.y + e.h && a.y + 4 > e.y) {
+        // weak-point hook (wizardboss stage 1): a body hit sparks off;
+        // only the rune takes damage. Stars keep flying (the box rule).
+        const k = getKind(e.kind);
+        const weak = k.weakPoint ? k.weakPoint(e) : null;
+        if (weak && !(a.x < weak.x + weak.w && a.x + 14 > weak.x &&
+                      a.y < weak.y + weak.h && a.y + 4 > weak.y)) {
+          fx.play('deflect');
+          burst(a.x + 7, a.y + 2, FX.mageSpark);
+          if (a.star) { a.hit.add(e); } // no re-spark while it passes
+          else { a.dead = true; break; }
+          continue;
+        }
         damageEnemy(e, fx, cam); // hp, per-kind hit reaction, death at 0
         shake(cam, 3, 0.12);
         if (a.star) { // pierce: remember the hit, keep flying on budget

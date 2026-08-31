@@ -17,6 +17,7 @@ import { updateSigil } from './sigil.js';
 import { updateVent } from './vent.js';
 import { updateBridge } from './bridge.js';
 import { updatePillars } from './enemies/spiderboss.js'; // the Queen's web pillars (need the camera)
+import { updateColumns } from './enemies/wizardboss.js'; // the wizard's seal columns (need the camera)
 import { updateCell } from './cell.js';
 import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
@@ -97,6 +98,8 @@ export function update(dt, viewW, fx) {
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);
   if (queen) updatePillars(queen, game.player, game.level, game.camera, dt, fx); // the web pillars
+  const wiz = game.enemies.find(e => e.kind === 'wizardboss' && !e.dead);
+  if (wiz) updateColumns(wiz, game.player, dt, fx, game.camera); // the seal columns
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx, dt);
   updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
@@ -164,7 +167,7 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }

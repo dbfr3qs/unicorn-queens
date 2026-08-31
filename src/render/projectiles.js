@@ -73,12 +73,13 @@ export function drawCones(c) {
   for (const cone of cones) {
     for (let i = 0; i < CONE_SEGS; i++) {
       const s = coneSegment(cone, i);
-      c.fillStyle = i % 2 ? '#ff8c42' : '#e85d2a'; // body, alternating depth
+      // the wizard's snort is dark violet (the L6 web-glob recolor pattern)
+      c.fillStyle = cone.violet ? (i % 2 ? '#6a3a9a' : '#4a2a72') : (i % 2 ? '#ff8c42' : '#e85d2a');
       c.beginPath(); c.arc(s.x, s.y, s.r, 0, Math.PI * 2); c.fill();
     }
     for (let i = 0; i < CONE_SEGS; i++) {
       const s = coneSegment(cone, i);
-      c.fillStyle = '#ffd166'; // hot core
+      c.fillStyle = cone.violet ? '#9a6ac8' : '#ffd166'; // hot core
       c.beginPath(); c.arc(s.x, s.y, s.r * 0.45, 0, Math.PI * 2); c.fill();
     }
   }

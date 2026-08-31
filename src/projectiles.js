@@ -55,7 +55,7 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
     }
     if (f.dead) continue;
     if (f.reflected) { // reflected shots damage the bosses
-      const boss = enemies.find(e => (e.kind === 'mage' || e.kind === 'dragon') && !e.dead);
+      const boss = enemies.find(e => (e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'wizardboss') && !e.dead);
       if (boss && f.x < boss.x + boss.w && f.x + f.w > boss.x &&
           f.y < boss.y + boss.h && f.y + f.h > boss.y) {
         damageEnemy(boss, fx, cam);
@@ -122,9 +122,9 @@ export const cones = [];
 export function resetCones() { cones.length = 0; }
 
 // (x, y) = the mouth; angle in radians; ttl for phase 2's longer breath.
-export function fireCone(x, y, angle, fx, ttl = CONE_TTL) {
-  cones.push({ x, y, angle, age: 0, ttl, dead: false });
-  fx.play('breath');
+export function fireCone(x, y, angle, fx, ttl = CONE_TTL, violet = false) {
+  cones.push({ x, y, angle, age: 0, ttl, dead: false, violet });
+  fx.play(violet ? 'snort' : 'breath');
 }
 
 // Segment i of cone c as {x, y, r}: a circle whose radius widens with

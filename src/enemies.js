@@ -82,7 +82,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
 
 // Shared stomp vs side contact, applied to every kind.
 function hitPlayer(e, p, cam, fx) {
-  if (e.sleeping) return; // a coiled adder is harmless (no stomp either)
+  if (e.sleeping || e.freed) return; // a coiled adder / a freed spirit is harmless (no stomp either)
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
   const stomp = p.vy > 0 && p.y + p.h - e.y < 16;

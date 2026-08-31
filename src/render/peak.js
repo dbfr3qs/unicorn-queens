@@ -215,6 +215,34 @@ function drawRainbow(c, lvl, t) {
   c.globalAlpha = 1;
 }
 
+// The released war-pig (M7): stands where the fight ended (a small
+// breath), then walks west with a bob (a pure function of its x).
+function drawPig(c, lvl, t) {
+  const pig = lvl.pig;
+  if (!pig) return;
+  const bob = pig.state === 'walk' ? Math.sin(pig.x * 0.35) * 2 : 0;
+  const x = pig.x, y = pig.y - bob; // feet on the ground
+  c.fillStyle = '#c98a9a'; // legs
+  c.fillRect(x + 8, y - 10, 6, 10);
+  c.fillRect(x + 18, y - 10, 6, 10);
+  c.fillRect(x + 38, y - 10, 6, 10);
+  c.fillRect(x + 48, y - 10, 6, 10);
+  c.fillStyle = '#e8a8bc'; // the body, broad as a saddle
+  c.beginPath(); c.ellipse(x + 32, y - 24, 28, 16, 0, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.ellipse(x + 6, y - 30, 10, 9, 0, 0, Math.PI * 2); c.fill(); // head, west-bound
+  c.fillStyle = '#f0c0d0'; // the snout
+  c.fillRect(x - 6, y - 32, 8, 8);
+  c.fillStyle = '#d890a8'; // the ear
+  c.beginPath();
+  c.moveTo(x + 2, y - 39); c.lineTo(x + 7, y - 46); c.lineTo(x + 10, y - 38);
+  c.closePath(); c.fill();
+  c.strokeStyle = '#d890a8'; // the tail
+  c.lineWidth = 2;
+  c.beginPath(); c.moveTo(x + 59, y - 26); c.quadraticCurveTo(x + 66, y - 30, x + 63, y - 35); c.stroke();
+  c.fillStyle = '#3a2a3c'; // the eye
+  c.fillRect(x + 4, y - 33, 3, 3);
+}
+
 // The peak world pass.
 export function drawPeak(c, lvl, t) {
   if (!lvl.sigilBlock) return; // the peak only (level 7)
@@ -224,5 +252,6 @@ export function drawPeak(c, lvl, t) {
   drawCauldronRim(c, lvl);
   drawSpireWallAndPorthole(c, lvl, t);
   drawCage(c, lvl, t);
+  drawPig(c, lvl, t);
   drawRainbow(c, lvl, t);
 }

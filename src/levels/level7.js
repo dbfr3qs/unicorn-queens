@@ -109,6 +109,18 @@ export function createLevel7(viewH = 600) {
           ],
         }],
       },
+      {
+        id: 'l7-king-end',
+        x: 5900, y: groundY - 140, w: 300, h: 140, // the open cage: the King speaks once the storm breaks
+        beats: [{
+          id: 'l7-king-end',
+          when: game => game.enemies.some(e => e.kind === 'wizardboss' && e.dead), // the beat waits for the release
+          lines: [
+            { speaker: 'The Unicorn King', text: 'You did it. I am… free. The storm breaks.' },
+            { speaker: 'The Unicorn King', text: 'Thank you. The rainbow is open — walk through, and the Sky Citadel is yours.' },
+          ],
+        }],
+      },
     ], // M7: the ending beat joins this list
     roster: [
       { kind: 'hare', x: 800, minX: 700, maxX: 1100 },

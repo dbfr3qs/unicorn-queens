@@ -80,6 +80,7 @@ export function sfx(name) {
     case 'puff': beep(100, 140, 0.09, 'sine', 0.12); beep(120, 90, 0.1, 'sine', 0.1, 0.09); break; // thread puffs away
     case 'gust': beep(140, 60, 0.6, 'sawtooth', 0.12); break; // the peak wind: one low howl per cycle
     case 'snort': beep(200, 90, 0.2, 'square', 0.2); break; // the war-pig's snort (the swoop tell + the cone)
+    case 'rainbow': [523, 659, 784, 1047].forEach((f, i) => beep(f, f, 0.2, 'sine', 0.18, i * 0.09)); beep(1319, 2093, 0.5, 'sine', 0.1, 0.36); break; // the rainbow lights: the game's first good chord
     case 'slither': beep(600, 900, 0.15, 'square', 0.12); break; // the snake's hiss-trill
     case 'rumble': beep(70, 35, 0.8, 'sawtooth', 0.25); beep(50, 25, 0.9, 'square', 0.15, 0.1); break;
     case 'thud': beep(90, 40, 0.2, 'triangle', 0.35); break;

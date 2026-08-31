@@ -23,6 +23,16 @@ function doorsOf(lvl) {
 
 export function updateDoor(lvl, p, dt, fx) {
   for (const door of doorsOf(lvl)) {
+    if (door.flare) { // the throne-gate flare: a one-shot, then the wall dissolves
+      door.flareT -= dt;
+      if (door.flareT <= 0) {
+        door.flare = false;
+        door.state = 'opening';
+        door.openT = DOOR_OPEN;
+        lvl.throneGateOpen = true; // the wizard reads it (M6)
+      }
+      continue;
+    }
     if (door.state === 'locked') {
       const near = !p.dead && p.x + p.w > door.x - 60 && p.x < door.x + door.w;
       if (near && door.noKey) { // keyless (level 4): approach is enough
@@ -34,6 +44,14 @@ export function updateDoor(lvl, p, dt, fx) {
         door.openT = DOOR_OPEN;
         lvl.key.consumed = true; // the key is spent; the HUD icon goes
         fx.play('rumble');
+      } else if (door.kind === 'thronegate' && lvl.throneTrigger) {
+        // the spire's last hall: standing in the trigger band wakes the seal
+        const tg = lvl.throneTrigger;
+        if (!p.dead && p.x < tg.x + tg.w && p.x + p.w > tg.x && p.y < tg.y + tg.h && p.y + p.h > tg.y) {
+          door.flare = true;
+          door.flareT = 0.8;
+          fx.play('boss');
+        }
       }
     } else if (door.state === 'opening') {
       door.openT -= dt;

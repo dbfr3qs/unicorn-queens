@@ -104,29 +104,36 @@ function drawIronGate(c, door, t) {
 }
 
 // The level 7 throne gate: nothing opens it — the trigger band's flare
-// dissolves it (state 'opening' + openT), so 'opening' renders as the
-// dissolve: the lattice fades out over GATE_DISSOLVE s with rising dark
-// motes. Fully open it draws only the jambs (the west off-ramp stays).
-const GATE_DISSOLVE = 1.5; // must match the openT set by the M5 trigger
+// (door.flare, 0.8 s) dissolves it into state 'opening', which renders
+// as the dissolve: the lattice fades out over DOOR_OPEN s (alpha
+// openT/DOOR_OPEN) with rising dark motes. While the flare runs the
+// seal blazes brighter (an alpha ramp on flareT). Fully open it draws
+// nothing — the arena's west end is the off-ramp.
 function drawThroneGate(c, door, t) {
   const { x, w, h } = door;
-  const frac = door.state === 'open' ? 1
-    : door.state === 'opening' ? 1 - door.openT / GATE_DISSOLVE
-    : 0;
-  c.fillStyle = '#2c3450'; // stone jambs
+  if (door.state === 'open') return; // dissolved: the off-ramp
+  const frac = door.state === 'opening' ? 1 - door.openT / DOOR_OPEN : 0;
+  c.save();
+  c.globalAlpha = 1 - frac; // the dissolve: overall alpha = openT/DOOR_OPEN
+  c.fillStyle = '#2c3450'; // stone jambs, dying with the wall
   c.fillRect(x - 10, 0, 10, h);
   c.fillRect(x + w, 0, 10, h);
-  if (frac >= 1) return; // dissolved: the off-ramp
-  c.save();
-  c.globalAlpha = 1 - frac; // the dissolve
   c.fillStyle = '#23283c'; // the dark iron lattice
   c.fillRect(x, 0, w, h);
   c.fillStyle = '#3a4258'; // vertical bars
   for (const bx of [x + 5, x + 16, x + 27]) c.fillRect(bx, 0, 4, h);
-  c.fillStyle = '#6a3a9a'; // the seal's glow, dying with the lattice
-  c.globalAlpha = (1 - frac) * (0.5 + 0.25 * Math.sin(t * 2));
-  c.beginPath(); c.arc(x + w / 2, h / 2, 14, 0, Math.PI * 2); c.fill();
-  for (let i = 0; i < 6; i++) { // the rising dark motes
+  // the seal: a slow ~3 s pulse while sealed, blazing through the flare
+  let glow = 0.5 + 0.25 * Math.sin(t * 2);
+  let r = 14;
+  if (door.flare) { // the 0.8 s flare: brighter as flareT runs down
+    const f = 1 - door.flareT / 0.8;
+    glow = 0.75 + 0.25 * Math.sin(t * 2) + f * 0.25;
+    r = 14 + f * 8;
+  }
+  c.fillStyle = '#6a3a9a';
+  c.globalAlpha = (1 - frac) * Math.min(1, glow);
+  c.beginPath(); c.arc(x + w / 2, h / 2, r, 0, Math.PI * 2); c.fill();
+  for (let i = 0; i < 6; i++) { // the rising dark motes (pure in t)
     const my = h - ((t * 40 + i * 47) % h);
     c.globalAlpha = (1 - frac) * 0.4;
     c.fillStyle = '#1a1026';

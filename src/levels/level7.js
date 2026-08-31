@@ -85,7 +85,31 @@ export function createLevel7(viewH = 600) {
     // No pearl: the rainbow replaces the pearl+arch pair (L5 precedent —
     // the story, not a seal, ends the level's chain).
     exit: { x: 6220, y: 430, w: 60, h: 130, locked: true, kind: 'rainbow' },
-    dialogs: [], // M5: the Queen's intro + the King's porthole beat; M7: the ending beat
+    dialogs: [
+      {
+        id: 'l7-intro',
+        x: 40, y: groundY - 140, w: 200, h: 140, // the spawn band: the player starts inside
+        beats: [{
+          id: 'l7-intro',
+          lines: [
+            { speaker: 'The Unicorn Queen', text: 'The Peak. I did not want to come here.' },
+            { speaker: 'The Unicorn Queen', text: 'The wind knows me. The ice remembers. That is all.' },
+            { speaker: 'The Unicorn Queen', text: 'Find what fell from the sky. The spire will open for it.' },
+          ],
+        }],
+      },
+      {
+        id: 'l7-king',
+        x: 4380, y: groundY - 140, w: 240, h: 140, // the porthole band
+        beats: [{
+          id: 'l7-king',
+          lines: [
+            { speaker: 'The Unicorn King', text: '(through the porthole) I am sorry. I could not carry you out of that storm.' },
+            { speaker: 'The Unicorn King', text: 'Free me and I will wait no longer. The rainbow is ready — it only needs its storm broken.' },
+          ],
+        }],
+      },
+    ], // M7: the ending beat joins this list
     // M4: the hares + wraiths; M6: the wizardboss joins this roster.
     roster: [
       { kind: 'hare', x: 800, minX: 700, maxX: 1100 },

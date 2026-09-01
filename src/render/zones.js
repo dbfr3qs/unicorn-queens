@@ -31,6 +31,8 @@ export function drawZones(c, lvl, cam, t, viewW) {
       drawMireZone(c, z.kind === 'mire-deep', z.kind === 'miregate', z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else if (z.kind === 'peakgate' || z.kind === 'snowfield' || z.kind === 'spire' || z.kind === 'throne') {
       drawPeakZone(c, z.kind, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
+    } else if (z.kind === 'skybridge' || z.kind === 'citadel' || z.kind === 'citadel-deep' || z.kind === 'observatory') {
+      drawCitadelZone(c, z.kind, z.x0, z.x1, sx0, sx1, lvl, cam, t, viewW);
     } else {
       drawStone(c, z.kind === 'hall', z.x0, z.x1, sx0, sx1, lvl, cam, t);
     }
@@ -733,5 +735,249 @@ function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     c.fillRect(tx - 2 + fl * 0.5, 306 + fl * 0.3, 8, 12);
     c.fillStyle = '#ffd166';
     c.fillRect(tx, 310 + fl * 0.3, 4, 7);
+  }
+}
+
+// Level 8 zone pass: the twilight skybridge, the brass interiors, the gear
+// hall, the open-ceiling observatory. All animation is a pure function of
+// (t, cam.x, the spring cuts, the clock's t/period/gearRot) — no
+// Math.random at draw time, so snapshots stay text-stable.
+function drawCitadelZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
+  c.save();
+  c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
+  const gy = lvl.groundY;
+  const cuts = (lvl.springs ?? []).filter(s => s.cut).length;
+  const clock = lvl.clock;
+  let light = 1 - 0.2 * cuts; // the dim as the springs go
+  if (clock && !clock.stopped && clock.t < 0.3) light = Math.min(1, light + 0.15); // the chime pulse
+  if (kind === 'skybridge') {
+    drawCitadelSky(c, sx0, sx1 - sx0, gy, cam, t, false);
+    drawRainbowTail(c, cam, gy);
+    drawCloudBands(c, sx0, sx1 - sx0, gy, t);
+  } else if (kind === 'observatory') {
+    drawCitadelSky(c, sx0, sx1 - sx0, gy, cam, t, true);
+    drawStarMap(c, zx0, zx1, cam);
+    drawCloudDrop(c, sx0, sx1 - sx0, gy, t);
+  } else {
+    drawCitadelWall(c, kind === 'citadel-deep', zx0, zx1, sx0, sx1, lvl, cam, t);
+  }
+  if (light < 1) { // the light level, over the sky (the world pass stays bright)
+    c.globalAlpha = (1 - light) * 0.6;
+    c.fillStyle = '#08061a';
+    c.fillRect(sx0, 0, sx1 - sx0, gy);
+    c.globalAlpha = 1;
+  }
+  c.restore();
+  if (kind === 'observatory') drawRailing(c, lvl, cam);
+}
+
+function drawCitadelSky(c, x, w, gy, cam, t, observatory) { // twilight, banded (no gradients)
+  const bands = ['#14122c', '#1a1836', '#201c40', '#262350', '#2c2a52'];
+  const step = Math.floor(gy / bands.length);
+  for (let i = 0; i < bands.length; i++) {
+    c.fillStyle = bands[i];
+    c.fillRect(x, i * step, w, step + 1);
+  }
+  const n = observatory ? 26 : 16; // the star field: index-hashed, parallax 0.2
+  const off = (cam.x * 0.2) % 1200;
+  c.fillStyle = '#cfd8ff';
+  for (let i = 0; i < n; i++) {
+    const sxp = x + (((i * 173 + 37) % 1200) - off + 1200) % 1200;
+    if (sxp > x + w) continue;
+    c.fillRect(sxp, 12 + ((i * 97 + 11) % 300), 2, 2);
+  }
+  if (observatory) { // three bright stars with a cross glint
+    for (let i = 0; i < 3; i++) {
+      const sxp = x + (((i * 431 + 89) % 1200) - off + 1200) % 1200;
+      if (sxp > x + w) continue;
+      const syp = 20 + i * 50;
+      c.fillStyle = '#ffffff';
+      c.fillRect(sxp, syp, 3, 3);
+      c.globalAlpha = 0.6;
+      c.fillRect(sxp - 4, syp + 1, 11, 1);
+      c.fillRect(sxp + 1, syp - 4, 1, 11);
+      c.globalAlpha = 1;
+      c.fillStyle = '#cfd8ff';
+    }
+  }
+}
+
+function drawRainbowTail(c, cam, gy) { // the tail the queen climbed, fading west
+  const cx = 500 - cam.x * 0.05; // parallax 0.05
+  const cols = ['#7ec8ff', '#7ea8e8', '#b89ae8', '#e8a8c8', '#ffd7a8'];
+  c.globalAlpha = 0.35;
+  c.lineWidth = 6;
+  for (let i = 0; i < cols.length; i++) {
+    c.strokeStyle = cols[i];
+    c.beginPath();
+    c.arc(cx, gy + 320, 480 - i * 10, -1.25, -0.45);
+    c.stroke();
+  }
+  c.globalAlpha = 1;
+}
+
+function drawCloudBands(c, x, w, gy, t) { // the sea of clouds, two drifting bands
+  c.globalAlpha = 0.5;
+  for (let band = 0; band < 2; band++) {
+    const by = gy - 60 + band * 22;
+    const off = (t * 8 + band * 40) % 160;
+    c.fillStyle = band ? '#a898c8' : '#b8a8d8';
+    for (let bx = x - 160 + off; bx < x + w + 160; bx += 160) {
+      c.beginPath();
+      c.ellipse(bx, by, 70, 14, 0, 0, Math.PI * 2);
+      c.fill();
+    }
+  }
+  c.globalAlpha = 1;
+}
+
+function drawCitadelWall(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t) {
+  const gy = lvl.groundY;
+  const clock = lvl.clock;
+  c.fillStyle = deep ? '#191330' : '#221c3e'; // the wall
+  c.fillRect(sx0, 0, sx1 - sx0, gy);
+  // the great pendulum silhouette (parallax 0.3, 300 px, the clock's angle)
+  const ang = (40 * Math.PI / 180) * Math.sin(2 * Math.PI * clock.t / clock.period);
+  const px = 2000 - cam.x * 0.3, py = 60;
+  if (px > sx0 - 140 && px < sx1 + 140) {
+    c.globalAlpha = deep ? 0.14 : 0.1;
+    c.fillStyle = '#0a0818';
+    c.fillRect(px - 20, py, 40, 24); // the housing
+    c.strokeStyle = '#0a0818';
+    c.lineWidth = 8;
+    c.beginPath(); c.moveTo(px, py + 24); c.lineTo(px + 300 * Math.sin(ang), py + 300 * Math.cos(ang)); c.stroke();
+    c.beginPath(); c.arc(px + 300 * Math.sin(ang), py + 300 * Math.cos(ang), 22, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
+  }
+  // the floor lattice: brass lines every 80 px, world-anchored
+  c.globalAlpha = 0.15;
+  c.fillStyle = '#b8860b';
+  for (let wx = Math.floor(zx0 / 80) * 80; wx < zx1; wx += 80) c.fillRect(wx - cam.x, gy - 3, 2, 3);
+  c.globalAlpha = 1;
+  // the arched windows, every 400 px: twilight + a cloud band + a rainbow wisp
+  for (let wx = Math.ceil(zx0 / 400) * 400; wx < zx1; wx += 400) {
+    const x = wx - cam.x;
+    if (x < sx0 - 80 || x > sx1) continue;
+    c.fillStyle = '#1a1836'; // the sky through the arch
+    c.beginPath();
+    c.arc(x + 30, 200, 30, Math.PI, 0);
+    c.rect(x, 200, 60, 110);
+    c.fill();
+    c.fillStyle = '#2c2a52'; // the cloud band through the glass
+    c.fillRect(x, 262, 60, 14);
+    c.globalAlpha = 0.5; // the far rainbow wisp
+    c.fillStyle = '#e8a8c8';
+    c.fillRect(x + 8, 270, 44, 4);
+    c.globalAlpha = 1;
+    c.fillStyle = '#8a6a2e'; // the brass trim
+    c.fillRect(x - 4, 306, 68, 6);
+    c.fillRect(x - 4, 196, 68, 4);
+  }
+  // the lamps, every 500 px: brass sconces, warm glow (the moths' anchors)
+  for (let wx = Math.ceil(zx0 / 500) * 500; wx < zx1; wx += 500) {
+    const x = wx - cam.x;
+    if (x < sx0 - 40 || x > sx1) continue;
+    c.fillStyle = '#8a6a2e'; // the sconce
+    c.fillRect(x - 3, 330, 6, 26);
+    c.beginPath(); c.arc(x, 330, 8, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 0.25; // the warm glow
+    c.fillStyle = '#ffd75e';
+    c.beginPath(); c.arc(x, 330, 26, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
+  }
+  // the dust motes: 6 per zone, hashed positions, a slow drift
+  c.globalAlpha = 0.3;
+  c.fillStyle = '#d8c8a8';
+  const zw = Math.max(1, sx1 - sx0);
+  for (let i = 0; i < 6; i++) {
+    const mx = sx0 + ((zx0 * 7 + i * 149) % zw);
+    const my = 120 + ((i * 211 + zx0) % 320) + Math.sin(t * 0.7 + i * 1.9) * 14;
+    c.fillRect(mx, my, 2, 2);
+  }
+  c.globalAlpha = 1;
+  if (deep) {
+    drawClockFace(c, 3600, 180, 100, cam, clock); // the clock face above the gear
+    drawGreatGear(c, 3600, 380, cam, clock); // the great gear (parallax 0.5)
+  }
+}
+
+function drawClockFace(c, wx, wy, r, cam, clock) { // the brass face, one hand on the beat
+  const x = wx - cam.x;
+  c.fillStyle = '#12102a';
+  c.beginPath(); c.arc(x, wy, r, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#8a6a2e';
+  c.lineWidth = 6;
+  c.beginPath(); c.arc(x, wy, r, 0, Math.PI * 2); c.stroke();
+  c.fillStyle = '#b8860b'; // the twelve tick marks
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6;
+    c.fillRect(x + Math.cos(a) * (r - 14) - 2, wy + Math.sin(a) * (r - 14) - 2, 4, 4);
+  }
+  const ha = 2 * Math.PI * clock.t / clock.period - Math.PI / 2; // the hand
+  c.strokeStyle = '#d4aa3e';
+  c.lineWidth = 4;
+  c.beginPath(); c.moveTo(x, wy); c.lineTo(x + Math.cos(ha) * (r - 24), wy + Math.sin(ha) * (r - 24)); c.stroke();
+  c.fillStyle = '#b8860b'; // the hub cap
+  c.beginPath(); c.arc(x, wy, 6, 0, Math.PI * 2); c.fill();
+}
+
+function drawGreatGear(c, wx, wy, cam, clock) { // the 500-px gear, turning with gearRot
+  const x = wx - cam.x * 0.5;
+  const r = 250;
+  const rot = (clock.gearRot ?? 0) * Math.PI * 2;
+  c.fillStyle = '#151228';
+  c.beginPath(); c.arc(x, wy, r, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#241d40'; // the teeth: notched rectangles around the rim
+  for (let i = 0; i < 16; i++) {
+    const a = rot + i * Math.PI / 8;
+    c.fillRect(x + Math.cos(a) * (r - 6) - 8, wy + Math.sin(a) * (r - 6) - 8, 16, 16);
+  }
+  c.strokeStyle = '#3a3060'; // the inner ring
+  c.lineWidth = 10;
+  c.beginPath(); c.arc(x, wy, r - 40, 0, Math.PI * 2); c.stroke();
+  c.fillStyle = '#b8860b'; // the hub
+  c.beginPath(); c.arc(x, wy, 26, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#241d40';
+  c.beginPath(); c.arc(x, wy, 12, 0, Math.PI * 2); c.fill();
+}
+
+function drawStarMap(c, zx0, zx1, cam) { // brass lines joining five hashed gem points
+  const span = Math.max(1, zx1 - zx0 - 240);
+  const pts = [];
+  for (let i = 0; i < 5; i++) {
+    pts.push([zx0 + 120 + ((i * 389 + 53) % span) - cam.x, 60 + ((i * 271 + 17) % 240)]);
+  }
+  c.globalAlpha = 0.35;
+  c.strokeStyle = '#8a6a2e';
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < 5; i++) c.lineTo(pts[i][0], pts[i][1]);
+  c.stroke();
+  c.fillStyle = '#ffd75e';
+  for (const [sx, sy] of pts) c.fillRect(sx - 2, sy - 2, 4, 4);
+  c.globalAlpha = 1;
+}
+
+function drawCloudDrop(c, x, w, gy, t) { // the clouds falling past the deck's west end
+  c.globalAlpha = 0.4;
+  c.fillStyle = '#b8a8d8';
+  for (let i = 0; i < 4; i++) {
+    const off = (t * 10 + i * 30) % 120;
+    c.beginPath();
+    c.ellipse(x + off + i * 300, gy - 20 - i * 8, 60, 12, 0, 0, Math.PI * 2);
+    c.fill();
+  }
+  c.globalAlpha = 1;
+}
+
+function drawRailing(c, lvl, cam) { // brass railing: the shaft lip and the rim
+  const spans = [[5660, 5820], [5940, 6000]];
+  c.fillStyle = '#8a6a2e';
+  for (const [a, b] of spans) {
+    const x0 = a - cam.x, x1 = b - cam.x;
+    if (x1 < -40 || x0 > 840) continue;
+    c.fillRect(x0, lvl.groundY - 26, x1 - x0, 3); // the top rail
+    for (let wx = a; wx <= b; wx += 40) c.fillRect(wx - cam.x, lvl.groundY - 26, 3, 26); // the posts
   }
 }

@@ -82,4 +82,13 @@ for (let i = 0; i < FRAMES; i++) {
   if (!cb) throw new Error('requestAnimationFrame chain broke at level-7 frame ' + i);
   cb(ts);
 }
-console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5 + 6 + 7)`);
+// eighth run: level 8 (skybridge, citadel, gear hall, observatory — the gear door holds)
+startGame(600, 7);
+game.lastTs = 0;
+for (let i = 0; i < FRAMES; i++) {
+  ts += 16.7;
+  const cb = rafCb; rafCb = null;
+  if (!cb) throw new Error('requestAnimationFrame chain broke at level-8 frame ' + i);
+  cb(ts);
+}
+console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)`);

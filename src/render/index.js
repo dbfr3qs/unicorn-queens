@@ -9,6 +9,7 @@ import { drawLevel } from './level.js';
 import { drawForest } from './forest.js';
 import { drawMireBack, drawMire } from './mire.js';
 import { drawPeak } from './peak.js';
+import { drawCitadel } from './citadel.js';
 import { drawRelics, drawBushes } from './relics.js';
 import { drawPearl } from './pearl.js';
 import { drawKey, drawMarker, drawNook } from './key.js';
@@ -44,6 +45,7 @@ export function draw(ctx, viewW, viewH) {
   drawForest(ctx, level, gameTime); // level 5: trees, hollow tree, flowers, reeds
   drawMire(ctx, level, gameTime); // level 6: winch, nest web, vent, sac, bridge, exit arch
   drawPeak(ctx, level, gameTime); // level 7: stairs, vane, sigil, cage, rainbow
+  drawCitadel(ctx, level, gameTime); // level 8: island, bookcase wall, gear door, pendulum, astrolabe
   drawRelics(ctx, level, gameTime); // level 5: relics + the hiding bush
   drawBushes(ctx, level, gameTime);
   drawKey(ctx, level, gameTime);

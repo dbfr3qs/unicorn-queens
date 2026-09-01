@@ -15,7 +15,7 @@
 // opens it once and it never re-seals), thronegate (level 7 — the
 // trigger's flare dissolves it; the arena's west end stays an off-ramp).
 export const DOOR_OPEN = 1.0, DOOR_CLOSE = 1.0, DOOR_PASS = 10;
-const STAYS_OPEN = new Set(['webwall', 'irongate', 'thronegate']);
+const STAYS_OPEN = new Set(['webwall', 'irongate', 'thronegate', 'geardoor', 'bookwall', 'shelfpanel']);
 
 function doorsOf(lvl) {
   return lvl.doors ?? (lvl.door ? [lvl.door] : []);

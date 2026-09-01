@@ -90,6 +90,35 @@ advance still follow the normal carry rules.
    it. Below 8 hp she also throws a volley of three web eggs. Beat her
    and the pearl appears on her altar; take it and the exit arch lights
    up. The mire is not the end.
+7. **The Peak** — the snow-topped mountain the mist gate carried you up
+   to. The wind is the level's weather: every 10 s the vane howls and a
+   gust shoves grounded players west across the snowfield; every fourth
+   gust turns into an updraft that lifts a flyer. Ice patches are
+   slippery — you keep your speed through them, which is how you clear
+   the two crevasses (falling costs a heart and respawns you); the ice
+   bridge over the second one is comfort, not a gate. The Queen's riddle
+   is real: the old sigil sleeps inside an ice block — an arrow shatters
+   the block, the pickup is +50, and the iron gate at the spire's mouth
+   opens remotely. Inside, cross the storm's cauldron pit over its little
+   dais (hop-hop), and look through the porthole: the caged King gives
+   you the plan. Snow hares hop the fields (one arrow, or a stomp that
+   puffs them to fluff); frost wraiths drift the air and pass under
+   arrows aimed at the ground (one arrow to the chest). The throne gate
+   dissolves when you first approach it — and that is what wakes the
+   wizard. He rides a war-pig with 16 hp, in two stages of 8. Stage one
+   the pig hovers out of ground-arrow reach: only the rune on the flank
+   facing you takes hits (arrows to the body deflect), he lofts lead-aimed
+   dark bolts, swoops at you and sits on the ground for half a second
+   after (the designed arrow window), and snorts a violet cone from the
+   bottom of his arc. At 8 hp the rune shatters and the pig crashes; the
+   wizard is stunned on the floor for 2 s, full body. Then he rises as
+   the sorcerer: he drifts, fires bolts, slams the floor into shockwaves,
+   and raises seal columns where the circle glints — walk off it. Below
+   4 hp his bolts spread into a fan. This one is not killed. When the
+   wizard is done, the bound spirits are freed, the cage door swings
+   open, the war-pig stands up and walks back down the mountain, and the
+   King's word lights the rainbow — the game's first good chord. Walk
+   through it.
 
 Win a level and press Space to play the next one.
 

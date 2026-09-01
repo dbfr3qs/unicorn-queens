@@ -7,7 +7,7 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, step } from './helpers/render-harness.js';
 import { draw } from '../src/render/index.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
 import { loot } from '../src/loot.js';
@@ -611,5 +611,155 @@ test('l6 exit arch (unlocked: bright stairway, rising motes)', () => {
   g.gameTime = 1.2; // motes at distinct heights
   g.player.x = 6550;
   g.camera.x = 6000; // max scroll
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 7 (the peak) scenarios ----
+// Camera = player.x + 14 - 400, clamped to the max scroll of
+// 6300 - 800 = 5500. The intro beat only opens inside its 40-240 spawn
+// band, so every scenario but the gate places the player outside it.
+// The l7-king band is 4380-4620 and the l7-king-end band 5900-6200:
+// scenarios there stand just outside the king band or keep the wizard
+// alive so the when-gate holds.
+
+test('l7 gate (spawn: starfield through the arch, the moon, the stairs, the calm vane, intro beat open)', () => {
+  freshGame7();
+  // the player spawns inside the 40-240 intro band: frame 1 opens the
+  // beat and the world freezes behind the dialogue.
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 snowfield mid-gust (tilted snow, the vane east, the 1100 wraith solid with the frost rim)', () => {
+  const g = freshGame7();
+  g.gameTime = 7.5; // the gust band (7-10 s of the 10 s cycle)
+  g.player.x = 1000;
+  g.player.y = g.level.groundY - 100; // airborne: the gust push is grounded-only
+  g.player.vy = 0;
+  g.camera.x = 614; // 1000 + 14 - 400: the vane (700) and the wraith (1100) both in frame
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 ice bridge (sliding at ICE_MAX over the crevasse, the run-up, the far lip)', () => {
+  const g = freshGame7();
+  g.player.x = 2440;
+  g.player.y = g.level.groundY - 6 - g.player.h; // on the ice bridge span
+  g.player.onGround = true; // standing: the ice branch applies (not the snap)
+  g.player.vx = 338; // state-mutated: full ice speed
+  g.camera.x = 2054; // 2440 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 cauldron pit (the dais in mid-pit, both stone lips)', () => {
+  const g = freshGame7();
+  g.player.x = 3950; // on the dais (3925-3985)
+  g.player.y = g.level.groundY - 6 - g.player.h;
+  g.camera.x = 3564; // 3950 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 sigil block (intact, glint mid-pulse)', () => {
+  const g = freshGame7();
+  g.gameTime = 3.43; // sin(t*1.57 + 40.17) at its peak: the glint fully lit
+  g.player.x = 3150; // east of the block (3090-3146)
+  g.camera.x = 2764; // 3150 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 sigil (block shattered to the stub, the sigil on the ground mid-glint)', () => {
+  const g = freshGame7();
+  g.level.sigilBlock.state = 'gone';
+  g.level.sigilBlock.shatterT = 0; // past the break: the two stubs
+  g.level.sigil.visible = true;
+  g.gameTime = 3.43; // the sigil's glint near its peak
+  g.player.x = 3150;
+  g.camera.x = 2764; // 3150 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 iron gate (mid-rise, half off its floor)', () => {
+  const g = freshGame7();
+  g.level.doors[0].state = 'opening';
+  g.level.doors[0].openT = 0.5; // halfway through the 1.0 s rise
+  g.player.x = 3700; // just east of the gate (3600-3640)
+  g.camera.x = 3314; // 3700 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 spire porthole (the cage in the glass, the glint while the beat is unspent)', () => {
+  const g = freshGame7();
+  g.gameTime = 3.59; // sin(t*1.57 + 58.76) at its peak
+  g.player.x = 4350; // just west of the 4380-4620 band: the beat stays unspent
+  g.camera.x = 3964; // 4350 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // the porthole at 4520 with the glint
+});
+
+test('l7 throne gate (sealed: the purple seal glow at its pulse peak)', () => {
+  const g = freshGame7();
+  g.gameTime = 0.785; // sin(t*2) at 1: the seal glow brightest
+  g.player.x = 5250; // west of the 5280-5400 trigger band: no flare
+  g.camera.x = 4864; // 5250 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // the gate at 5400, the 5350 shield box
+});
+
+test('l7 throne gate (mid-flare: the seal brightening and swelling)', () => {
+  const g = freshGame7();
+  g.gameTime = 0.785;
+  g.level.doors[1].flare = true;
+  g.level.doors[1].flareT = 0.4; // halfway through the 0.8 s flare
+  g.player.x = 5250;
+  g.camera.x = 4864; // 5250 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 throne gate (mid-dissolve: the lattice fading, the dark motes)', () => {
+  const g = freshGame7();
+  g.gameTime = 0.3; // the motes at distinct heights
+  g.level.doors[1].state = 'opening';
+  g.level.doors[1].openT = 0.5; // halfway through the 1.0 s dissolve
+  g.player.x = 5250;
+  g.camera.x = 4864; // 5250 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 arena stage 1 (the wizard on the pig mid-hover, 8/16 pips, the swoop telegraph, the bound wraiths)', () => {
+  const g = freshGame7();
+  const w = g.enemies.find(e => e.kind === 'wizardboss');
+  w.sleeping = false; // out of dormancy for the snapshot
+  w.stage = 1; w.age = 0; // the hover clock: age 0 = (6200, groundY-160)
+  w.hp = 8; w.shattered = true; // 8/16 pips; pre-shattered so the edge stays quiet
+  w.state = 'swoopTele'; w.t = 0.5; // the crouched snort telegraph
+  g.gameTime = 2.0;
+  g.player.x = 5900; // west of the pig: the rune turns to face the player
+  g.camera.x = 5500; // max scroll
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 arena stage 2 (the sorcerer at 4 hp, ember eyes, a seal column mid-stand)', () => {
+  const g = freshGame7();
+  const w = g.enemies.find(e => e.kind === 'wizardboss');
+  w.sleeping = false;
+  w.stage = 2; w.w = 56; w.h = 56; // the risen form
+  w.hp = 4; // the ember-eyes threshold
+  w.x = 5800; w.y = g.level.groundY - 56;
+  w.state = 'idle'; w.t = 5; // a long idle: the drift pose
+  w.columns = [{ x: 5700, w: 40, h: 140, t: 0.4, baseY: g.level.groundY, hit: false, dead: false }]; // risen, standing
+  g.gameTime = 2.0;
+  g.player.x = 5750; // between the column and the sorcerer
+  g.camera.x = 5364; // 5750 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l7 ending (the lit rainbow, the cage mid-swing, the pig walking west, a freed wraith mid-fade, the win overlay)', () => {
+  const g = freshGame7();
+  g.gameTime = 1.571; // the rainbow shimmer mid-pulse
+  g.level.exit.locked = false; // the lit rainbow
+  g.level.cage.open = true;
+  g.level.cage.openT = 0.6; // halfway through the 1.2 s swing
+  g.level.pig = { x: 5800, y: g.level.groundY, state: 'walk', t: 0, w: 64, h: 48 };
+  const freed = g.enemies.find(e => e.kind === 'wraith' && e.bound && e.x > 5900);
+  freed.freed = true; freed.freeT = 0.5; // halfway faded
+  g.player.x = 5950;
+  g.player.won = true; // the win overlay over the released arena
+  g.camera.x = 5500; // max scroll
   expect(step({}, 1)).toMatchSnapshot();
 });

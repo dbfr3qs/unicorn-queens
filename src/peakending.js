@@ -2,8 +2,11 @@
 // on the wizard's death edge. The bound arena wraiths are freed (one
 // `grant` for the lot), the King's cage door swings open over 1.2 s
 // (`gate`), the war-pig stands up where the fight ended and walks off
-// west (pig.js), and the rainbow lights (the `rainbow` — the game's
-// first good chord — over the `seal` of the storm breaking). Exactly
+// west (pig.js), and the `rainbow` chord plays (the game's first good
+// chord) over the `seal` of the storm breaking. The rainbow exit itself
+// stays sealed until the King's end beat — his word lights it (the
+// stage-2 camp overlaps the exit rect, so a release-time unlock would
+// skip the beat). Exactly
 // once per run (lvl.ending7.started); afterwards this only decays the
 // cage swing and steps the pig.
 import { updatePig } from './pig.js';
@@ -20,7 +23,7 @@ export function updatePeakEnding(lvl, enemies, dt, fx) {
     lvl.cage.openT = 1.2;
     fx.play('gate');
     lvl.pig = { x: wiz.x, y: lvl.groundY, state: 'stand', t: 0.5, w: 64, h: 48 };
-    lvl.exit.locked = false; // the rainbow lights
+    // the exit stays locked: the King's end beat (onOpen) opens it
     fx.play('rainbow');
     fx.play('seal');
   }

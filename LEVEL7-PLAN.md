@@ -54,7 +54,8 @@ in the **Deviations** list below.
 6. **Wizardboss** — two-stage boss on one entity (pig → sorcerer), the
    dragon.js pattern (state machine, pips, `onHit`, `onDeath`).
 7. **Peak ending** — `src/peakending.js` + `src/pig.js`: the release
-   sequence (pig walk-off, wraiths freed, cage opens, rainbow lights).
+   sequence (pig walk-off, wraiths freed, cage opens). The rainbow exit
+   opens with the King's end beat, not at release (Deviation 11).
 8. **M1 verification is "to the iron gate", not the throne gate**
    (Deviation 2): the iron gate is locked in M1 and full height (flight
    cannot skip it), so the design's "walkable end-to-end to the throne gate"
@@ -66,6 +67,17 @@ in the **Deviations** list below.
 10. **Wizard dormant flag** — the design's `dormant` roster flag is
     implemented as the generic `sleeping` flag (the elder-adder precedent,
     already copied by `spawnEnemy`).
+11. **The exit opens with the King's word, not at release** — the design
+    says the rainbow lights at release. But the stage-2 contact-safe camp
+    (x ≥ 6216, the sorcerer's clamp 6160 + 56) overlaps the exit rect
+    (6220–6280): an unlock at the death edge would win the player on the
+    release frame and skip the King's end beat (its `when` gate is only
+    re-checked on band entry). So `peakending.js` no longer touches
+    `exit.locked` (the `rainbow` chord still plays at release — the storm
+    breaking) and the `l7-king-end` beat carries
+    `onOpen: g => { g.level.exit.locked = false; }` (the level-5
+    hand-over pattern). The lit rainbow and the passable exit both arrive
+    with the line "The rainbow is open — walk through".
 
 ---
 
@@ -765,7 +777,8 @@ Tests — `test/peakending.test.js`:
   → next `updatePeakEnding`: `ending7.started === true` exactly once
   (a second call is a no-op); the bound wraiths `freed` (+ `grant`);
   `cage.open` + `openT === 1.2` (+ `gate`); `lvl.pig` exists at the
-  boss's x, state `stand`; `exit.locked === false` (+ `rainbow` + `seal`).
+  boss's x, state `stand`; `exit.locked` still `true` (Deviation 11)
+  (+ `rainbow` + `seal`).
 - The pig: stand 0.5s → walk (x decreasing ≈ 40 px/s) → past 5450 →
   `lvl.pig === null`.
 - Wraith release: a freed wraith fades over 1s → `dead`; no contact
@@ -773,8 +786,10 @@ Tests — `test/peakending.test.js`:
 - The king-end beat: fires with the boss dead and the player in
   5900–6200; does **not** fire while the boss is alive (the `when` guard);
   no repeat.
-- The exit: locked while the boss is alive (walking in → no `p.won`);
-  after the death, walking into the rainbow → `p.won === true`.
+- The exit: locked while the boss is alive **and at the release**
+  (standing in the dim arc → no `p.won`); the King's end beat's `onOpen`
+  unlocks it, and walking into the lit rainbow → `p.won === true`
+  (Deviation 11).
 
 Hand-check: `?level=7` (full chain) — kill the wizard: the ash, the pig
 shakes off the snow and walks off west, the wraiths sparkle away, the

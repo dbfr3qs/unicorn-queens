@@ -115,6 +115,7 @@ export function createLevel7(viewH = 600) {
         beats: [{
           id: 'l7-king-end',
           when: game => game.enemies.some(e => e.kind === 'wizardboss' && e.dead), // the beat waits for the release
+          onOpen: g => { g.level.exit.locked = false; }, // his word lights the rainbow (release cannot: the stage-2 camp overlaps the exit rect)
           lines: [
             { speaker: 'The Unicorn King', text: 'You did it. I am… free. The storm breaks.' },
             { speaker: 'The Unicorn King', text: 'Thank you. The rainbow is open — walk through, and the Sky Citadel is yours.' },

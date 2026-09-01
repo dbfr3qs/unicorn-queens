@@ -290,6 +290,24 @@ function draw(c, e) {
   } else {
     drawSorcerer(c, e);
   }
+  // the seal columns (world-space, like the Queen's pillars): rise, stand,
+  // then sink back fading — the player must see the box before it bites
+  for (const col of e.columns ?? []) {
+    if (col.dead) continue;
+    const RISE = 0.3, STAND = 0.8, DECAY = 0.5; // must match updateColumns
+    let h = col.h, a = 1;
+    if (col.t < RISE) h = col.h * (col.t / RISE);
+    else if (col.t > RISE + STAND) {
+      h = col.h * ((RISE + STAND + DECAY - col.t) / DECAY);
+      a = (RISE + STAND + DECAY - col.t) / DECAY;
+    }
+    c.globalAlpha = a * 0.9;
+    c.fillStyle = '#3a2a5c'; // the dark violet column
+    c.fillRect(col.x, col.baseY - h, col.w, h);
+    c.fillStyle = '#6a3a9a'; // the seal band at the top
+    c.fillRect(col.x, col.baseY - h, col.w, 6);
+    c.globalAlpha = 1;
+  }
   if (!e.dead) { // hp pips: two rows of eight, world space above the boss
     for (let i = 0; i < 16; i++) {
       const row = i < 8 ? 0 : 1, col = i % 8;
@@ -411,7 +429,8 @@ function drawSorcerer(c, e) {
   c.strokeStyle = '#8a93b8';
   c.lineWidth = 3;
   c.beginPath(); c.moveTo(8, 20); c.lineTo(tipX, tipY); c.stroke();
-  const glow = low ? 0.7 + 0.3 * Math.sin(e.phase * 3) : 0.5 + 0.25 * Math.sin(e.phase * 2);
+  const ph = e.phase ?? 0; // the dormant boss never runs its update: no NaN glow
+  const glow = low ? 0.7 + 0.3 * Math.sin(ph * 3) : 0.5 + 0.25 * Math.sin(ph * 2);
   c.globalAlpha = glow;
   c.fillStyle = low ? '#ffd166' : '#9a6ac8'; // the staff-tip glow
   c.beginPath(); c.arc(tipX, tipY, low ? 7 : 5, 0, Math.PI * 2); c.fill();

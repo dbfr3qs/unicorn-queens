@@ -2,7 +2,8 @@
 // wraiths freed, the cage opens, the pig appears, the rainbow lights —
 // exactly once), the pig's walk-off, the freed wraith's 1 s fade with no
 // contact damage, the King's end beat (gated on the wizard's death), and
-// the exit (locked while the wizard lives, open after).
+// the exit (locked while the wizard lives and at the release; the
+// King's end beat opens it).
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel7 } from '../src/levels/level7.js';
 import { createPlayer } from '../src/player.js';
@@ -57,7 +58,7 @@ describe('the death edge', () => {
     expect(lvl.pig.x).toBe(6000); // where the fight ended
     expect(lvl.pig.y).toBe(lvl.groundY);
     expect(lvl.pig.state).toBe('stand');
-    expect(lvl.exit.locked).toBe(false); // the rainbow lights
+    expect(lvl.exit.locked).toBe(true); // the seal holds until the King's end beat
 
     const again = [];
     updatePeakEnding(lvl, [boss, w1, w2, w3], DT, fx(again)); // a second call is a no-op
@@ -143,7 +144,7 @@ describe("the King's end beat", () => {
 });
 
 describe('the rainbow exit', () => {
-  it('is sealed while the wizard lives and opens after the release', () => {
+  it('is sealed while the wizard lives and at the release; the King\'s end beat opens it', () => {
     startGame(600, 6);
     update(DT, 800, fx([])); // the intro
     advanceDialogue(); advanceDialogue(); advanceDialogue();
@@ -156,8 +157,18 @@ describe('the rainbow exit', () => {
     wiz.dead = true; // the release edge
     const calls = [];
     update(DT, 800, fx(calls));
-    expect(game.level.exit.locked).toBe(false);
-    expect(p.won).toBe(true); // the lit rainbow: the standard win
-    expect(calls).toContain('win');
+    expect(game.level.exit.locked).toBe(true); // the seal holds until the King speaks
+    expect(p.won).toBe(false); // standing in the dim arc is not a win
+    // The King's end beat (band 5900–6200) is what opens it (onOpen).
+    p.x = 5950;
+    update(DT, 800, fx([])); // entry edge: the when gate now passes
+    expect(isDialogueOpen()).toBe(true);
+    advanceDialogue(); advanceDialogue(); // the beat closes
+    expect(game.level.exit.locked).toBe(false); // his word lights the rainbow
+    p.x = 6240; // walk through the lit rainbow
+    const win = [];
+    update(DT, 800, fx(win));
+    expect(p.won).toBe(true); // the standard win
+    expect(win).toContain('win');
   });
 });

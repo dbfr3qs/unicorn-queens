@@ -138,7 +138,17 @@ export function createLevel8(viewH = 600) {
         ],
       },
     ], // M5: the arena beat; M7: the shaft lip join this list
-    // M4: the Sentinels + the clockwork moths; M6: the Warden.
-    roster: [],
+    // The biome's regulars: three patrolling Sentinels (the 5050 one sleeps
+    // until the arena beat) + five clockwork moths on their lamp sconces.
+    // M6: the Warden joins here.
+    roster: [
+      { kind: 'sentinel', x: 2450, band: [2380, 2560] }, // the library, west of the wall
+      { kind: 'sentinel', x: 3100, band: [3060, 3300] }, // the hub, west edge
+      { kind: 'sentinel', x: 3500, band: [3400, 3800] }, // the hub, the clock's flank
+      { kind: 'sentinel', x: 5050, band: [4950, 5250], sleeping: true }, // the arena approach; the beat wakes it
+      { kind: 'moth', x: 800, y: 400 }, { kind: 'moth', x: 1400, y: 380 },
+      { kind: 'moth', x: 2650, y: 420 }, { kind: 'moth', x: 3300, y: 380 },
+      { kind: 'moth', x: 4400, y: 420 },
+    ],
   };
 }

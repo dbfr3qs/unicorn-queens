@@ -133,8 +133,15 @@ describe('pearl + exit', () => {
 });
 
 describe('roster + dialogs', () => {
-  it('roster starts empty (M4 adds the regulars)', () => {
-    expect(lvl.roster).toEqual([]);
+  it('M4 adds the regulars: 4 sentinels + 5 clockwork moths', () => {
+    const s = lvl.roster.filter(r => r.kind === 'sentinel');
+    const m = lvl.roster.filter(r => r.kind === 'moth');
+    expect(lvl.roster).toHaveLength(9);
+    expect(s).toHaveLength(4);
+    expect(m).toHaveLength(5);
+    // the arena-approach sentinel sleeps until the Warden wakes it (M5)
+    expect(s.filter(r => r.sleeping)).toHaveLength(1);
+    expect(s.find(r => r.sleeping).x).toBe(5050);
   });
 
   it('carries the M3 beats: the Warden intro + the Great Clock hub (c0/c1/c2)', () => {

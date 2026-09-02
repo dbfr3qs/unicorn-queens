@@ -176,6 +176,7 @@ describe('updateClock', () => {
     s.lvl.roster.push({ kind: 'warden', dead: true, dyingT: 3.3 });
     s.lvl.clock.stopped = true;
     s.step(1.0);
-    expect(s.lvl.roster[0].dyingT).toBeCloseTo(2.3, 5);
+    const warden = s.lvl.roster.find(e => e.kind === 'warden');
+    expect(warden.dyingT).toBeCloseTo(2.3, 5);
   });
 });

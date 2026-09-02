@@ -20,6 +20,13 @@ export function drawFireballs(c) {
         c.stroke();
       }
       c.beginPath(); c.arc(0, 0, 3, 0, Math.PI * 2); c.stroke();
+    } else if (f.cyan) { // the Sentinel/Warden's cyan bolt (level 8)
+      c.fillStyle = '#2a8f9e'; // outer glow
+      c.fillRect(-9, -9, 18, 18);
+      c.fillStyle = '#6fe3e1'; // body
+      c.fillRect(-7, -7, 14, 14);
+      c.fillStyle = '#d8ffff'; // hot core
+      c.fillRect(-3, -3, 6, 6);
     } else {
       c.fillStyle = '#c1440e'; // outer glow
       c.fillRect(-9, -9, 18, 18);

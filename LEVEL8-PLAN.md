@@ -14,7 +14,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 - [x] **M1** — level data + zones + citadel world pass (walkable to the sealed gear door)
 - [x] **M2** — the Great Clock + on-beat traversal (gear platform, bookcase wall, pendulum bridge)
 - [x] **M3** — the three mainsprings + intro/hub beats
-- [ ] **M4** — the Sentinels + the clockwork moths
+- [x] **M4** — the Sentinels + the clockwork moths
 - [ ] **M5** — gear door + astrolabe + arena beat + trapdoor
 - [ ] **M6** — the Warden boss
 - [ ] **M7** — the ending (rest, the King's silhouette, the flight dive)
@@ -147,6 +147,17 @@ Ticked as each phase lands (the commit is the gate's proof):
     shelves" / "dais + spring 2" and fairness-first requires a severable object to
     be visible — so M3 adds `drawSprings` to the `citadel.js` world pass (a pure
     read of `s.cut`: uncut = bright brass + cyan core charge, cut = dim slack coil).
+19. **M4 deterministic seeding is from `e.x`, not a "reseeded spawn RNG".** The
+    M4 sketch says the Sentinel `boltCd` and the moth's Lissajous A/B/T/φ are
+    "seeded from the reseeded spawn RNG (house determinism)", but no such mechanism
+    exists in the codebase — the house pattern is seeding from the spawn `e.x` via
+    modular arithmetic (the hare's `e.dartCd = e.x % DART_CD`, the bee's
+    `e.phase = e.x * 0.17`). So the Sentinel seeds `e.boltCd = (e.x % 40) / 10`
+    (0–3.9 s, desyncing the four guards) and the moth seeds
+    `A = 40 + (e.x % 31)`, `B = 18 + (e.x % 13)`, `T = 4 + (e.x % 21) / 10`,
+    `φ = (e.x % 63) / 10`, `dartCd = (e.x % 25) / 10` — all at first update, no
+    `Math.random`, fully reproducible per spawn x. (The moth's wing flap is likewise
+    a pure function of the moth's own drift clock `e.t`, not `gameTime`.)
 
 ---
 
@@ -640,7 +651,7 @@ data shape: beat-level `when`, `repeat` on c0 only, hub x-band 3550–3850.)
 **Goal**: the biome's regulars fight — the Sentinels (shield + chest bolt, on-beat)
 and the clockwork moths (drift + dart). Stompable, 12-box economy intact.
 
-### - [ ] 1. `src/enemies/sentinel.js` (new, registry: `stompSound: 'gear'`… verify
+### - [x] 1. `src/enemies/sentinel.js` (new, registry: `stompSound: 'gear'`… verify
 the case name; fallback 'stomp' + `stompFx: FX.gearBurst`)
 
 - 40×44, hp 2, speed 25, patrol band, `dir`, stompable (the L7 stomp override:
@@ -670,7 +681,7 @@ the case name; fallback 'stomp' + `stompFx: FX.gearBurst`)
   #ffd75e), the shield when up (a 46×30 brass arc in front, alpha 0.85, drawn from
   `e.shieldUp` — a pure read).
 
-### - [ ] 2. `src/enemies/moth.js` (new, registry: `stompFx: FX.mageSpark`)
+### - [x] 2. `src/enemies/moth.js` (new, registry: `stompFx: FX.mageSpark`)
 
 - 20×16, hp 1, stompable (mageSpark — the existing spark).
 - **Drift**: Lissajous around its lamp anchor (the spawn x/y): `x = ax + A·sin(2π·t/T
@@ -686,7 +697,7 @@ the case name; fallback 'stomp' + `stompFx: FX.gearBurst`)
 - **Lamps**: the zone pass already draws a sconce every 500 px (M1) — the roster
   anchors sit on them (see below); no new render.
 
-### - [ ] 3. Roster — the level data gains the regulars
+### - [x] 3. Roster — the level data gains the regulars
 
 ```js
 roster: [
@@ -705,7 +716,7 @@ The design's x's. The 5050 Sentinel guards the arena approach: it is
 the Warden. The other three Sentinels patrol from M4; the moths are ambient and
 never sleep.
 
-### - [ ] 4. Tests — `test/sentinel.test.js` + `test/moth.test.js` (new)
+### - [x] 4. Tests — `test/sentinel.test.js` + `test/moth.test.js` (new)
 
 Sentinel (a level with the clock ticking, fake fx):
 - **shield window**: at clock.t 0.5 `e.shieldUp === true`; at t 2.0 false.
@@ -725,11 +736,15 @@ Moth:
   (re-anchored).
 - **stomp**: hp 1 → dead, mageSpark.
 
-### - [ ] 5. Verify
+### - [x] 5. Verify
 
-- `npm test` green; `npm run smoke` green (the roster now populates L8 — the smoke
-  runs the level's update loop; keep it stable); L1–7 snapshot md5s unchanged (no L8
-  render scenarios yet).
+- `npm test` green (733); `npm run smoke` green (levels 1–8; the roster now
+  populates L8 and the smoke stays stable); L1–7 snapshot md5
+  `17e278a750e7a12d53821c7da26b8344` unchanged (no L8 render scenarios yet).
+  Gate also required three test updates: the registry now lists 17 kinds (+ the L8
+  roster check), the L8 "roster starts empty" assertion now expects the 9 regulars,
+  and the clock Warden-rest test finds the Warden by kind (the roster is no longer
+  empty, so it is not `roster[0]`).
 
 **Gate**: commit `L8 M4: the Sentinels + the clockwork moths`.
 

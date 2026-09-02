@@ -12,8 +12,8 @@ export function resetFireballs() {
   fireballs.length = 0;
 }
 
-export function fireFireball(x, y, vx, vy, fx) {
-  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: false });
+export function fireFireball(x, y, vx, vy, fx, cyan = false) {
+  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: false, cyan });
   fx.play('fireball');
 }
 

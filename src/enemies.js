@@ -23,6 +23,8 @@ import './enemies/spiderboss.js';
 import './enemies/hare.js';
 import './enemies/wraith.js';
 import './enemies/wizardboss.js';
+import './enemies/sentinel.js'; // level 8: the citadel's clockwork guardians
+import './enemies/moth.js'; // level 8: the clockwork moths
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -37,8 +39,9 @@ export function spawnEnemy(spec, lvl) {
     anchorX: spec.x,
     anchorY: spec.y ?? lvl.groundY - k.h,
     vx: 0, vy: 0, onGround: false,
-    minX: spec.minX ?? 0,
-    maxX: spec.maxX ?? lvl.width,
+    // a roster `band: [a, b]` is shorthand for the patrol minX/maxX
+    minX: spec.minX ?? spec.band?.[0] ?? 0,
+    maxX: spec.maxX ?? spec.band?.[1] ?? lvl.width,
     dir: spec.dir ?? -1,
     hp: k.hp ?? 1,
     dead: false,

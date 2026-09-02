@@ -61,6 +61,16 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
           else { a.dead = true; break; }
           continue;
         }
+        // arrowBlocked hook (level 8 sentinel shield): a front-facing arrow
+        // into a raised shield clangs off. Stars remember the hit and keep
+        // flying (the weak-point pattern).
+        if (k.arrowBlocked && k.arrowBlocked(e, a)) {
+          fx.play('deflect');
+          burst(a.x + 7, a.y + 2, FX.mageSpark);
+          if (a.star) { a.hit.add(e); continue; }
+          a.dead = true;
+          break;
+        }
         damageEnemy(e, fx, cam); // hp, per-kind hit reaction, death at 0
         shake(cam, 3, 0.12);
         if (a.star) { // pierce: remember the hit, keep flying on budget

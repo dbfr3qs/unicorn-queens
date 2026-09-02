@@ -24,6 +24,7 @@ import { updateDoor, resolveDoor } from './door.js';
 import { updateShaft } from './shaft.js';
 import { updateMistgate } from './mistgate.js';
 import { updateWind } from './wind.js';
+import { updateClock } from './clock.js'; // level 8: the Great Clock
 import { FX } from './effects.js';
 
 export const game = {
@@ -88,6 +89,7 @@ export function update(dt, viewW, fx) {
   if (isDialogueOpen()) return; // dialogue: the whole world is frozen, clock included
   game.gameTime += dt;
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
+  if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx); // the machines move before the player does
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame

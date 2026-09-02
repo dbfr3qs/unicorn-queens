@@ -30,7 +30,8 @@ function beep(freq, endFreq, dur, type, vol, delay) {
   osc.stop(t0 + dur + 0.02);
 }
 
-export function sfx(name) {
+export function sfx(name, arg) {
+  const mul = arg ?? 1; // pitch multiplier (the Great Clock chime: -6% per mainspring cut)
   switch (name) {
     case 'jump':  beep(300, 560, 0.12, 'square', 0.12); break;
     case 'stomp': beep(220, 70, 0.15, 'triangle', 0.3); break;
@@ -88,6 +89,10 @@ export function sfx(name) {
     case 'crack': beep(180, 60, 0.12, 'square', 0.3); beep(900, 400, 0.04, 'square', 0.08); break; // brick cracking
     case 'crumble': beep(90, 30, 0.5, 'sawtooth', 0.3); beep(55, 25, 0.6, 'square', 0.2, 0.12); beep(240, 90, 0.15, 'square', 0.16, 0.25); break; // wall section falling in
     case 'deflect': beep(700, 1100, 0.12, 'square', 0.18); break; // metal ping off the shield
+    case 'chime': beep(880 * mul, 440 * mul, 0.5, 'sine', 0.18); beep(110 * mul, 110 * mul, 0.8, 'triangle', 0.08, 0.05); break; // the Great Clock: the bell + the low drone
+    case 'chimeFar': beep(880 * mul, 440 * mul, 0.35, 'sine', 0.1); break; // the chime, heard out on the skybridge
+    case 'spring': beep(1200, 300, 0.25, 'square', 0.2); break; // a mainspring cut free
+    case 'toll': beep(140, 70, 1.6, 'sine', 0.3); break; // the clock's last beat (the Warden's rest)
     case 'flap': beep(250, 800, 0.09, 'triangle', 0.12); break; // bat swoop start: quiet whoosh
     case 'dialog': beep(740, 980, 0.05, 'square', 0.06); break;
   }

@@ -70,11 +70,16 @@ export function createLevel8(viewH = 600) {
       { x: 5050, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'shield' },
       { x: 5600, y: groundY - 36, w: 36, h: 36, broken: false, kind: 'box', drop: 'heart' },
     ],
-    // One door in M1 (the sealed gear door, M5 unseals it on the third
-    // cut). M2 adds the bookcase wall: two static bookwall doors + the
-    // shelfpanel door the clock flips between locked and open.
+    // M5 unseals the gear door on the third cut. The bookcase wall (2520–2760)
+    // The bookcase wall's bays (2520–2600, 2720–2760) are scenery only — they
+    // are the 3D bookshelves on either *side* of the door, drawn by the world
+    // pass, not solid side-walls: a solid west bay would block the player's
+    // east path before they could reach the panel opening (deviation 17).
+    // Only the sliding panel is the wall's door; the clock flips it between
+    // locked and open on each chime.
     doors: [
       { x: 4900, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'geardoor' },
+      { x: 2600, y: 0, w: 120, h: groundY, state: 'locked', openT: 0, kind: 'shelfpanel' }, // the sliding panel (the clock drives it)
     ],
     // The Great Clock (M2 starts ticking; M1 draws it static at t = 1.0,
     // no chime pulse, the panel drawn open).

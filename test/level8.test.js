@@ -100,9 +100,10 @@ describe('boxes', () => {
 });
 
 describe('doors + clock + story state', () => {
-  it('has the sealed gear door as its only door', () => {
+  it('has the sealed gear door + the bookcase wall (the sliding panel; bays are scenery)', () => {
     expect(lvl.doors).toEqual([
       { x: 4900, y: 0, w: 40, h: 560, state: 'locked', openT: 0, kind: 'geardoor' },
+      { x: 2600, y: 0, w: 120, h: 560, state: 'locked', openT: 0, kind: 'shelfpanel' },
     ]);
   });
 

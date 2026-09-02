@@ -12,7 +12,7 @@ additive snapshot diff, verified against the saved snap).
 Ticked as each phase lands (the commit is the gate's proof):
 
 - [x] **M1** — level data + zones + citadel world pass (walkable to the sealed gear door)
-- [ ] **M2** — the Great Clock + on-beat traversal (gear platform, bookcase wall, pendulum bridge)
+- [x] **M2** — the Great Clock + on-beat traversal (gear platform, bookcase wall, pendulum bridge)
 - [ ] **M3** — the three mainsprings + intro/hub beats
 - [ ] **M4** — the Sentinels + the clockwork moths
 - [ ] **M5** — gear door + astrolabe + arena beat + trapdoor
@@ -126,6 +126,17 @@ Ticked as each phase lands (the commit is the gate's proof):
     text from "press Space to play again" to "press Space for next level" (the
     overlay branches on a next level existing). Same structural diff as the
     L6→L7 transition; the L1–7 snapshots are otherwise byte-identical.
+16. **(Superseded by 17) Bookcase-bay floor arch**: deviation 2's full-height bays
+    (h = 560) made the panel opening (2600–2720) geometrically unreachable — the
+    solid west bay (2520–2600) held the player at 2492 before the wall. The first
+    fix proposed an 80 px floor arch (collision h = 480); it was never built.
+17. **Bookcase bays removed from the doors array — scenery only**: the two `bookwall`
+    bay entries (2520–2600, 2720–2760) are dropped entirely; `citadel.js` draws the
+    bays from hardcoded geometry, independent of `lvl.doors`. The `shelfpanel`
+    (2600–2720) is the wall's sole collision door: locked it holds the player at the
+    panel face (2600 − w = 2572), open the player passes 2600–2720 and continues
+    through the (now non-solid) 2720–2760 to open floor. All M1 render coordinates
+    and the M2 test spec (2650 passes open; 2590 → 2572 locked) are preserved.
 
 ---
 
@@ -369,7 +380,7 @@ pure function of state / t:
 **Goal**: the chime ticks; the gear platform, the bookcase panel, and the pendulum
 rod move on the beat; the player can cross all four grates on-beat.
 
-### - [ ] 1. `src/clock.js` (new)
+### - [x] 1. `src/clock.js` (new)
 
 ```js
 // The Great Clock: one accumulator; the chime on each wrap; the period
@@ -441,7 +452,7 @@ if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx)
 
 (Dialogue freezes the whole update — the clock stops with it, house behavior.)
 
-### - [ ] 2. sfx — `src/audio.js`
+### - [x] 2. sfx — `src/audio.js`
 
 - `export function sfx(name, arg)` — `const mul = arg ?? 1;` used only by the new
   cases.
@@ -453,7 +464,7 @@ if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx)
 - ('clank', 'seal', 'gear', 'grant', 'boss' etc. already exist — verify 'clank' in
   the case list at build time; the fallback for the gear door is 'gear'.)
 
-### - [ ] 3. Rendering switches to the live reads
+### - [x] 3. Rendering switches to the live reads
 
 - Zone pass: the pendulum silhouette, the clock-face hand, and the great gear now
   read `lvl.clock` / `lvl.gearRot` (M1 already reads these fields — no code change if
@@ -462,7 +473,7 @@ if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx)
   uses `pendulumPose(lvl)` (the M1 inline expressions are replaced — identical output
   at the same inputs).
 
-### - [ ] 4. Tests — `test/clock.test.js` (new)
+### - [x] 4. Tests — `test/clock.test.js` (new)
 
 Pure-read tests: `periodFor(0..3)` → 6.0 / 6.8 / 7.6 / 8.4; `chimePitch(3) ≈ 0.83`;
 `gearSpeed(2, false) === 0.5`, `gearSpeed(0, true) === 0`; `lightLevel(3, true) === 0.2`.
@@ -488,7 +499,7 @@ Simulation tests (createLevel8 + a fake fx recorder, dt 1/60):
 - **gearRot**: advances while running; frozen when `clock.stopped` (set it, step, no
   change).
 
-### - [ ] 5. Verify
+### - [x] 5. Verify
 
 - `npm test` green; `npm run smoke` green; L1–7 snapshot md5s unchanged.
 - Headless deterministic crossing of all four grates (temporary script, deleted

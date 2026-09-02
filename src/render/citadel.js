@@ -7,6 +7,7 @@
 // (the clock's t/period/gearRot, the door's openT, dyingT), so snapshots
 // stay text-stable.
 import { game } from '../game.js';
+import { panelFrac, pendulumPose } from '../clock.js'; // the same reads the M2 collision uses
 
 export function drawCitadel(c, lvl, t) {
   if (!lvl.zones?.some(z => z.kind === 'skybridge' || z.kind === 'citadel')) return; // the citadel only
@@ -62,18 +63,12 @@ function drawBookcaseForest(c, lvl) {
 
 // The bookcase wall (2520–2760): two static bays and the sliding panel
 // (2600–2720). The panel is a 320-px-tall bookcase slab; closed it covers
-// 240..groundY, open it has risen 240 px. The slide frac is a pure read
-// of clock.t (M2 exports panelFrac; the draw switches to it).
+// 240..groundY, open it has risen 240 px. The slide frac is the clock's
+// panelFrac (the same read the M2 collision uses).
 function drawBookcaseWall(c, lvl) {
   const gy = lvl.groundY;
   const clock = lvl.clock;
-  const held = lvl.shelfPanel?.held ?? false;
-  let frac;
-  if (held) frac = 1;
-  else if (clock.t < 0.4) frac = clock.t / 0.4;
-  else if (clock.t < 1.6) frac = 1;
-  else if (clock.t < 2.0) frac = (2.0 - clock.t) / 0.4;
-  else frac = 0;
+  const frac = panelFrac(clock, lvl.shelfPanel?.held ?? false);
   const spines = ['#5a3a5e', '#3a4a6a', '#6a4a2e', '#3e5a4a'];
   const drawBay = (x, w0, yTop, yBot) => {
     c.fillStyle = '#2e2444';
@@ -133,10 +128,7 @@ function drawGearDoor(c, lvl, t) {
 // the 420-px arm at θ = 40°·sin(2π·t/period), the blade at the tip. The
 // same pose the M2 collision reads (pendulumPose — one source of truth).
 function drawPendulumArm(c, lvl) {
-  const clock = lvl.clock;
-  const th = (40 * Math.PI / 180) * Math.sin(2 * Math.PI * clock.t / clock.period);
-  const px = 4000, py = 100;
-  const tx = px + 420 * Math.sin(th), ty = py + 420 * Math.cos(th);
+  const { px, py, tx, ty } = pendulumPose(lvl); // the same pose the M2 collision reads
   c.fillStyle = '#8a6a2e'; // the pivot housing
   c.fillRect(px - 30, 80, 60, 40);
   c.fillStyle = '#5e4a1e';

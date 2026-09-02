@@ -13,7 +13,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 
 - [x] **M1** — level data + zones + citadel world pass (walkable to the sealed gear door)
 - [x] **M2** — the Great Clock + on-beat traversal (gear platform, bookcase wall, pendulum bridge)
-- [ ] **M3** — the three mainsprings + intro/hub beats
+- [x] **M3** — the three mainsprings + intro/hub beats
 - [ ] **M4** — the Sentinels + the clockwork moths
 - [ ] **M5** — gear door + astrolabe + arena beat + trapdoor
 - [ ] **M6** — the Warden boss
@@ -137,6 +137,16 @@ Ticked as each phase lands (the commit is the gate's proof):
     panel face (2600 − w = 2572), open the player passes 2600–2720 and continues
     through the (now non-solid) 2720–2760 to open floor. All M1 render coordinates
     and the M2 test spec (2650 passes open; 2590 → 2572 locked) are preserved.
+18. **M3 reuses clock.js's `clockCuts`/`lightLevel` and draws the springs in the
+    world pass.** The M3 sketch defines `cuts()` and `lightLevel()` inside
+    `springs.js`, but the plan's own note ("re-exported from clock.js (M3 switch)")
+    points to clock.js as the single source of truth. So `springs.js` exports
+    `cuts` as a thin alias of `clockCuts`, and the zone pass imports
+    `lightLevel` + `clockCuts` from clock.js (identical output). Separately, the M3
+    checklist omits drawing the springs, but M8's scenarios name "spring 1 on its
+    shelves" / "dais + spring 2" and fairness-first requires a severable object to
+    be visible — so M3 adds `drawSprings` to the `citadel.js` world pass (a pure
+    read of `s.cut`: uncut = bright brass + cyan core charge, cut = dim slack coil).
 
 ---
 
@@ -517,7 +527,7 @@ Simulation tests (createLevel8 + a fake fx recorder, dt 1/60):
 period lengthens, the world slows and dims; the intro and the hub beats play their
 rhythm lines (c0 repeat at 0 cuts, c1 after one, c2 after two).
 
-### - [ ] 1. `src/springs.js` (new)
+### - [x] 1. `src/springs.js` (new)
 
 ```js
 // The mainsprings: sever by touch (adjacent) or by a single arrow. Each cut
@@ -574,7 +584,7 @@ export function cutSpring(lvl, s, fx) {
 - The chime pitch already reads `chimePitch(cuts)` in updateClock — verify it uses the
   live cut count (it does: `clockCuts(lvl)` per chime).
 
-### - [ ] 2. Beats — the level data gains two dialog groups
+### - [x] 2. Beats — the level data gains two dialog groups
 
 ```js
 dialogs: [
@@ -602,7 +612,7 @@ dialogs: [
 (Exact line wording follows LEVEL8-DESIGN.md's beats section — this sketch fixes the
 data shape: beat-level `when`, `repeat` on c0 only, hub x-band 3550–3850.)
 
-### - [ ] 3. Tests — `test/springs.test.js` (new)
+### - [x] 3. Tests — `test/springs.test.js` (new)
 
 - **touch cut**: player overlapped on spring 1 (a level with the clock ticking) →
   `s.cut === true`, score +50, 'spring' + 'relic' recorded, `clock.period === 6.8`.
@@ -615,7 +625,7 @@ data shape: beat-level `when`, `repeat` on c0 only, hub x-band 3550–3850.)
   0 cuts; after cutting spring 1 and re-entering the hub, c1 fires (c0's `when`
   now false, c0 not re-fired); after two cuts, c2; c1/c2 fire exactly once.
 
-### - [ ] 4. Verify
+### - [x] 4. Verify
 
 - `npm test` green; `npm run smoke` green; L1–7 snapshot md5s unchanged.
 - Headless: sever spring 1 by arrow from the second shelf; confirm the chime pitch

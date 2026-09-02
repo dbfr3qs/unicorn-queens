@@ -16,6 +16,7 @@ export function drawCitadel(c, lvl, t) {
   drawBookcaseWall(c, lvl);
   drawGearDoor(c, lvl, t);
   drawPendulumArm(c, lvl);
+  drawSprings(c, lvl);
   drawAstrolabe(c, lvl);
   drawKingSil(c, lvl);
   drawWardenStatue(c, lvl);
@@ -142,6 +143,37 @@ function drawPendulumArm(c, lvl) {
   c.fillRect(tx - 7, ty + 16, 14, 4);
   c.fillStyle = '#b8860b'; // the pivot boss
   c.beginPath(); c.arc(px, py, 8, 0, Math.PI * 2); c.fill();
+}
+
+// The three mainsprings: wound brass coils that keep the Great Clock
+// beating. Uncut they sit bright with a cyan charge at the core; cut they
+// hang slack and dim (the unspool). A pure read of s.cut (no time term), so
+// the snapshots stay text-stable.
+function drawSprings(c, lvl) {
+  for (const s of lvl.springs ?? []) {
+    const cx = s.x + s.w / 2;
+    const top = s.y, h = s.h;
+    c.fillStyle = s.cut ? '#3a2e12' : '#5e4a1e'; // the mounting studs (both states)
+    c.fillRect(s.x - 3, top, 3, 4);
+    c.fillRect(s.x + s.w, top, 3, 4);
+    if (!s.cut) {
+      c.fillStyle = '#b8860b'; // the coil body
+      c.fillRect(s.x, top, s.w, h);
+      c.fillStyle = '#d4aa3e'; // the bright windings
+      c.fillRect(s.x + 2, top + 2, s.w - 4, 3);
+      c.fillRect(s.x + 2, top + 9, s.w - 4, 3);
+      c.fillRect(s.x + 2, top + 16, s.w - 4, 2);
+      c.fillStyle = '#6fe3e1'; // the wound charge at the core
+      c.fillRect(cx - 2, top + 6, 4, 7);
+    } else {
+      c.fillStyle = '#5e4a1e'; // the slackened coil, drooped
+      c.fillRect(s.x + 3, top + 1, s.w - 6, h - 2);
+      c.fillStyle = '#6b5a34'; // the drooped windings
+      c.fillRect(s.x + 4, top + 3, s.w - 8, 2);
+      c.fillRect(s.x + 4, top + 9, s.w - 8, 2);
+      c.fillRect(s.x + 4, top + 15, s.w - 8, 2);
+    }
+  }
 }
 
 // The astrolabe on its plinth: a 60×40 brass disc, etched rings, star

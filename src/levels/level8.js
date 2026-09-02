@@ -7,6 +7,8 @@
 // falls from the astrolabe, the trapdoor over the cloud shaft drops, and
 // the level ends in a flight dive. All clock/spring/ending state lives in
 // this data; the M2–M7 subsystems read and mutate it.
+import { clockCuts } from '../clock.js'; // the beat `when` gates read the live cut count
+
 export function createLevel8(viewH = 600) {
   const groundY = viewH - 40;
   return {
@@ -100,8 +102,42 @@ export function createLevel8(viewH = 600) {
     // Under the trapdoor lid: a flier through the shaft wins (reachedExit);
     // a walker takes the pit rule. The flight-only exit, as geometry.
     exit: { x: 5820, y: groundY, w: 120, h: 100, locked: true },
-    // M3: intro (spawn) + hub beats; M5: the arena beat; M7: the shaft lip.
-    dialogs: [],
+    // M3: intro (spawn, the Warden's omen) + the Great Clock's hub beats
+    // (c0 repeats at 0 cuts, c1/c2 voice the winding-down, each once).
+    dialogs: [
+      {
+        id: 'l8-intro',
+        x: 40, y: groundY - 140, w: 200, h: 140, // the spawn band: the player starts inside
+        beats: [{
+          id: 'l8-intro',
+          lines: [
+            { speaker: 'The Warden', text: 'YOU WALK THE CITADEL. THE ANCHOR IS WOUND DOWN. THREE SPRINGS LIE CUT LOOSE.' },
+            { speaker: 'The Warden', text: 'I KEEP THE HEARTBEAT. I AM STILL WOUND.' },
+          ],
+        }],
+      },
+      {
+        id: 'l8-hub',
+        x: 3550, y: groundY - 140, w: 300, h: 140, // the clock-hub band, in front of the face
+        beats: [
+          {
+            id: 'l8-hub-0', repeat: true, when: g => clockCuts(g.level) === 0,
+            lines: [
+              { speaker: 'The Great Clock', text: 'THE HEARTBEAT FADES. THREE SPRINGS LIE CUT LOOSE — THE QUEEN’S HANDS, OR HER WARDEN’S. I CANNOT TELL.' },
+              { speaker: 'The Great Clock', text: 'THE FIRST SLEEPS HIGH IN THE GATE HALL. THE SECOND BEHIND THE LIBRARY SHELF — THE SHELF OPENS WITH THE CHIME. THE THIRD IN MY OWN SWEEP.' },
+            ],
+          },
+          {
+            id: 'l8-hub-1', when: g => clockCuts(g.level) === 1,
+            lines: [{ speaker: 'The Great Clock', text: 'ONE SPRING ANSWERS. THE HUM DROPS. THE LIGHT DIMS. THE HEARTBEAT SLOWS.' }],
+          },
+          {
+            id: 'l8-hub-2', when: g => clockCuts(g.level) === 2,
+            lines: [{ speaker: 'The Great Clock', text: 'TWO. THE PENDULUM STRETCHES ITS SWING. SOON THE CITADEL SLEEPS — AND SO DO I.' }],
+          },
+        ],
+      },
+    ], // M5: the arena beat; M7: the shaft lip join this list
     // M4: the Sentinels + the clockwork moths; M6: the Warden.
     roster: [],
   };

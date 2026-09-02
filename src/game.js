@@ -25,6 +25,7 @@ import { updateShaft } from './shaft.js';
 import { updateMistgate } from './mistgate.js';
 import { updateWind } from './wind.js';
 import { updateClock } from './clock.js'; // level 8: the Great Clock
+import { updateSprings } from './springs.js'; // level 8: the mainsprings (touch-sever)
 import { FX } from './effects.js';
 
 export const game = {
@@ -90,6 +91,7 @@ export function update(dt, viewW, fx) {
   game.gameTime += dt;
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
   if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx); // the machines move before the player does
+  if (game.level.springs) updateSprings(game.level, game.player, dt, fx); // level 8: touch-sever a mainspring
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame

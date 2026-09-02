@@ -6,6 +6,7 @@ import { damageEnemy } from './enemies.js';
 import { getKind } from './enemies/index.js';
 import { FX } from './effects.js';
 import { MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from './key.js';
+import { cutSpring } from './springs.js'; // level 8: one arrow severs a mainspring
 import { ventBubbleRect, ventBubbleUp } from './vent.js';
 import { popSac } from './cogs.js';
 
@@ -96,6 +97,15 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
         fx.play('rustle');
         burst(b.x + b.w / 2, b.y + b.h / 2, FX.rustle); // leaf-puff
         if (!a.star) a.dead = true; // stars rustle and keep flying (box rule)
+        break;
+      }
+    }
+    if (a.dead) continue;
+    for (const s of lvl.springs ?? []) { // level 8: one arrow severs a mainspring
+      if (s.cut) continue;
+      if (a.x < s.x + s.w && a.x + 14 > s.x && a.y < s.y + s.h && a.y + 4 > s.y) {
+        cutSpring(lvl, s, fx);
+        if (!a.star) a.dead = true; // stars sever and keep flying (the box rule)
         break;
       }
     }

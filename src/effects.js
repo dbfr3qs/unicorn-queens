@@ -42,4 +42,6 @@ export const FX = {
   snowPuff: { count: 16, colors: ['#ffffff', '#e8f0f8'], speed: 80, up: 60, size: 3, grav: 120, life: 0.7 }, // the pig hits the snow
   sealColumn: { count: 20, colors: ['#6a3a9a', '#3a2a5c'], speed: 40, up: 100, size: 4, grav: -60, life: 0.9 }, // the seal circle rises
   ashBurst: { count: 40, colors: ['#8a8a9a', '#6a6a7a', '#a0a0b0'], speed: 180, up: 120, size: 5, grav: -40, life: 1.4 }, // the wizard's death: ash
+  springUnspool: { count: 10, colors: ['#ffd75e', '#6fe3e1', '#e8b86d'], speed: 90, up: 60, size: 3, grav: -120, life: 0.8 }, // a mainspring cuts loose and spirals up
+  gearBurst: { count: 8, colors: ['#c98f3d', '#8a5f22', '#e8b86d'], speed: 150, up: 80, size: 5, grav: 600, life: 0.5 }, // a Sentinel's brass shards
 };

@@ -133,8 +133,22 @@ describe('pearl + exit', () => {
 });
 
 describe('roster + dialogs', () => {
-  it('starts empty (M4 adds the regulars, M5–M7 the beats)', () => {
+  it('roster starts empty (M4 adds the regulars)', () => {
     expect(lvl.roster).toEqual([]);
-    expect(lvl.dialogs).toEqual([]);
+  });
+
+  it('carries the M3 beats: the Warden intro + the Great Clock hub (c0/c1/c2)', () => {
+    const ids = lvl.dialogs.map(d => d.id);
+    expect(ids).toEqual(['l8-intro', 'l8-hub']);
+    const intro = lvl.dialogs[0];
+    expect(intro.beats).toHaveLength(1);
+    expect(intro.beats[0].lines.map(l => l.speaker)).toEqual(['The Warden', 'The Warden']);
+    const hub = lvl.dialogs[1];
+    expect(hub.x).toBe(3550); // the hub band, in front of the clock face
+    expect(hub.beats.map(b => b.id)).toEqual(['l8-hub-0', 'l8-hub-1', 'l8-hub-2']);
+    expect(hub.beats[0].repeat).toBe(true); // c0 repeats at 0 cuts
+    expect(hub.beats[0].when({ level: lvl })).toBe(true); // 0 cuts now
+    expect(hub.beats[1].when({ level: lvl })).toBe(false);
+    expect(hub.beats[1].repeat).toBeFalsy(); // c1 fires once
   });
 });

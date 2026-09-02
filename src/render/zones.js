@@ -3,6 +3,7 @@
 // torches, and the boss hall with columns and banners. Screen space with
 // parallax, like drawBackground; zones come from level data.
 import { background, drawRidge, drawStars } from './background.js';
+import { lightLevel, clockCuts } from '../clock.js'; // level 8: the spring dim (M3 shared read)
 
 export function drawZones(c, lvl, cam, t, viewW) {
   const left = cam.x - 160, right = cam.x + viewW + 160; // margin for parallax
@@ -746,9 +747,8 @@ function drawCitadelZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
   c.save();
   c.beginPath(); c.rect(sx0, 0, sx1 - sx0, lvl.groundY); c.clip();
   const gy = lvl.groundY;
-  const cuts = (lvl.springs ?? []).filter(s => s.cut).length;
   const clock = lvl.clock;
-  let light = 1 - 0.2 * cuts; // the dim as the springs go
+  let light = lightLevel(clockCuts(lvl), clock ? clock.stopped : false); // the dim as the springs go (M3)
   if (clock && !clock.stopped && clock.t < 0.3) light = Math.min(1, light + 0.15); // the chime pulse
   if (kind === 'skybridge') {
     drawCitadelSky(c, sx0, sx1 - sx0, gy, cam, t, false);

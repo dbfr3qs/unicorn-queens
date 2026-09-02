@@ -15,7 +15,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 - [x] **M2** — the Great Clock + on-beat traversal (gear platform, bookcase wall, pendulum bridge)
 - [x] **M3** — the three mainsprings + intro/hub beats
 - [x] **M4** — the Sentinels + the clockwork moths
-- [ ] **M5** — gear door + astrolabe + arena beat + trapdoor
+- [x] **M5** — gear door + astrolabe + arena beat + trapdoor
 - [ ] **M6** — the Warden boss
 - [ ] **M7** — the ending (rest, the King's silhouette, the flight dive)
 - [ ] **M8** — snapshots + headless playthrough + README
@@ -756,7 +756,7 @@ Moth:
 the arena beat wakes the Warden (and the 5050 Sentinel); the pearl's showWhen is
 live; the pearl-taken opens the trapdoor lid over the shaft.
 
-### - [ ] 1. The gear door opens on the third cut
+### - [x] 1. The gear door opens on the third cut
 
 In `cutSpring` (springs.js), after the period update:
 
@@ -774,7 +774,7 @@ if (n >= 3) { // the third mainspring: the gear door unseals
 west to hunt boxes; the door never re-seals). The world pass already draws the
 retraction from `door.openT` (M1).
 
-### - [ ] 2. The arena beat + the trapdoor
+### - [x] 2. The arena beat + the trapdoor
 
 Level data (M5 adds to `dialogs`):
 
@@ -813,7 +813,7 @@ if (lvl.trapdoor && !lvl.trapdoor.open && lvl.pearl && lvl.pearl.taken) {
 (The standard pearl path has already set `exit.locked = false` — a flier through the
 shaft wins via reachedExit; a walker takes the pit rule. No game.js change.)
 
-### - [ ] 3. The astrolabe + pearl (data live from M1; verify now)
+### - [x] 3. The astrolabe + pearl (data live from M1; verify now)
 
 - `updatePearl` is called by game.js when `lvl.pearl` exists (verify the call site —
   L6 pattern: `if (game.level.pearl) updatePearl(...)`; if L6 gates it differently,
@@ -821,7 +821,7 @@ shaft wins via reachedExit; a walker takes the pit rule. No game.js change.)
 - showWhen (M1 data) turns true only when the Warden is dead AND `dyingT <= 0` —
   M6 makes that real; M5 tests it with a fake Warden entity.
 
-### - [ ] 4. Tests — `test/citadel-gate.test.js` (new)
+### - [x] 4. Tests — `test/citadel-gate.test.js` (new)
 
 - **gear door**: with two cuts, cutting the third → door.state 'opening', openT 1.2,
   'seal' + 'clank' recorded; after 1.2 s → 'open'; a player at x 4890 walks through
@@ -838,7 +838,7 @@ shaft wins via reachedExit; a walker takes the pit rule. No game.js change.)
   the pit rule (1 dmg + respawn) while a flying player in the exit rect wins
   (reachedExit → `game.player.won`) — the flight-only guarantee (deviation 1).
 
-### - [ ] 5. Verify
+### - [x] 5. Verify
 
 - `npm test` green; `npm run smoke` green; L1–7 snapshot md5s unchanged.
 

@@ -31,4 +31,11 @@ export function cutSpring(lvl, s, fx) {
   fx.play('spring');
   fx.play('relic');
   burst(s.x + s.w / 2, s.y + s.h / 2, FX.springUnspool);
+  if (n >= 3) { // the third mainspring: the gear door grinds open (stays open)
+    const d = lvl.doors.find(d => d.kind === 'geardoor');
+    if (d && d.state === 'locked') {
+      d.state = 'opening'; d.openT = 1.2; // the world pass reads the retraction
+      fx.play('seal'); fx.play('clank');
+    }
+  }
 }

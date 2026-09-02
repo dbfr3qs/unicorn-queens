@@ -144,9 +144,9 @@ describe('roster + dialogs', () => {
     expect(s.find(r => r.sleeping).x).toBe(5050);
   });
 
-  it('carries the M3 beats: the Warden intro + the Great Clock hub (c0/c1/c2)', () => {
+  it('carries the M3 + M5 beats: the intro, the Great Clock hub, the arena beat', () => {
     const ids = lvl.dialogs.map(d => d.id);
-    expect(ids).toEqual(['l8-intro', 'l8-hub']);
+    expect(ids).toEqual(['l8-intro', 'l8-hub', 'l8-arena']);
     const intro = lvl.dialogs[0];
     expect(intro.beats).toHaveLength(1);
     expect(intro.beats[0].lines.map(l => l.speaker)).toEqual(['The Warden', 'The Warden']);
@@ -157,5 +157,10 @@ describe('roster + dialogs', () => {
     expect(hub.beats[0].when({ level: lvl })).toBe(true); // 0 cuts now
     expect(hub.beats[1].when({ level: lvl })).toBe(false);
     expect(hub.beats[1].repeat).toBeFalsy(); // c1 fires once
+    // the M5 arena beat: gated on 3 cuts, at the threshold of the Warden's arena
+    const arena = lvl.dialogs[2];
+    expect(arena.x).toBe(4900); // the gear door threshold
+    expect(arena.beats).toHaveLength(1);
+    expect(arena.beats[0].when({ level: lvl })).toBe(false); // 0 cuts now
   });
 });

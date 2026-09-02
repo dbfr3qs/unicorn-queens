@@ -58,6 +58,14 @@ export function updateClock(lvl, p, enemies, dt, fx) {
   // the toll at the 1.0 crossing).
   const w = enemies?.find(e => e.kind === 'warden' && e.dead);
   if (w && w.dyingT > 0) w.dyingT = Math.max(0, w.dyingT - dt);
+  // The trapdoor (M5): the pearl-taken drops the lid over the shaft. Runs
+  // every frame, even once the clock has stopped (the Warden's rest).
+  if (lvl.trapdoor && !lvl.trapdoor.open && lvl.pearl && lvl.pearl.taken) {
+    lvl.trapdoor.open = true;
+    const lid = lvl.platforms.find(pl => pl.kind === 'trapdoor');
+    if (lid) lid.hidden = true; // the lid drops; the shaft is open
+    fx.play('seal');
+  }
   if (c.stopped) return;
 
   c.t += dt;

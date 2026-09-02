@@ -137,7 +137,26 @@ export function createLevel8(viewH = 600) {
           },
         ],
       },
-    ], // M5: the arena beat; M7: the shaft lip join this list
+      {
+        id: 'l8-arena',
+        x: 4900, y: groundY - 140, w: 250, h: 140, // the threshold of the Warden's arena
+        beats: [{
+          id: 'l8-arena',
+          when: g => clockCuts(g.level) === 3, // only once the third spring is cut
+          onOpen: (g, fx) => { // M6 adds the Warden; the 5050 Sentinel wakes now
+            const w = g.enemies.find(e => e.kind === 'warden');
+            if (w) w.sleeping = false;
+            const s = g.enemies.find(e => e.kind === 'sentinel' && e.sleeping);
+            if (s) s.sleeping = false;
+            fx.play('boss');
+          },
+          lines: [
+            { speaker: 'The Warden', text: 'THREE SPRINGS GONE. THE CLOCK STAMMERS. AND YOU ARE STILL HERE.' },
+            { speaker: 'The Warden', text: 'THEN HEAR THE LAST BEAT, QUEEN. I WAS WOUND TO KEEP YOU OUT. I WILL UNMAKE MYSELF BEFORE I LET YOU PAST.' },
+          ],
+        }],
+      },
+    ], // M7: the shaft lip joins this list
     // The biome's regulars: three patrolling Sentinels (the 5050 one sleeps
     // until the arena beat) + five clockwork moths on their lamp sconces.
     // M6: the Warden joins here.

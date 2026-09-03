@@ -13,7 +13,7 @@ import { createLevel6 } from '../src/levels/level6.js';
 import { createLevel7 } from '../src/levels/level7.js';
 import { createLevel8 } from '../src/levels/level8.js';
 
-const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon', 'bee', 'snake', 'adder', 'spider', 'spiderboss', 'hare', 'wraith', 'wizardboss', 'sentinel', 'moth'];
+const ALL_KINDS = ['slime', 'zombie', 'ghost', 'mage', 'troll', 'bat', 'dragon', 'bee', 'snake', 'adder', 'spider', 'spiderboss', 'hare', 'wraith', 'wizardboss', 'sentinel', 'moth', 'warden'];
 
 // The KINDS table, per kind: size, stomp rule, and (boss only) hp.
 // The registry must match it exactly.
@@ -35,6 +35,7 @@ const EXPECTED = {
   wizardboss: { w: 64, h: 48, stompable: false, hp: 16 },
   sentinel: { w: 40, h: 44, stompable: true, hp: 2 },
   moth: { w: 20, h: 16, stompable: true, hp: 1 },
+  warden: { w: 60, h: 64, stompable: false, hp: 16 },
 };
 
 describe('registry shape', () => {
@@ -51,7 +52,7 @@ describe('registry shape', () => {
     }
   });
 
-  it('all 17 kinds are registered (catches a stub that never calls register)', () => {
+  it('all 18 kinds are registered (catches a stub that never calls register)', () => {
     expect([...REGISTRY.keys()].sort()).toEqual([...ALL_KINDS].sort());
   });
 });

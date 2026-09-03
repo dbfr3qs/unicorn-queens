@@ -55,10 +55,11 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
     }
     if (f.dead) continue;
     if (f.reflected) { // reflected shots damage the bosses
-      const boss = enemies.find(e => (e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'wizardboss') && !e.dead);
+      const boss = enemies.find(e => (e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'wizardboss' || e.kind === 'warden') && !e.dead);
       if (boss && f.x < boss.x + boss.w && f.x + f.w > boss.x &&
           f.y < boss.y + boss.h && f.y + f.h > boss.y) {
-        damageEnemy(boss, fx, cam);
+        // mult 1: a bolt is always 1 on the Warden, even in the window
+        damageEnemy(boss, fx, cam, 1, lvl);
         f.dead = true;
         fizzle(f, fx);
       }
@@ -161,10 +162,12 @@ export function updateCones(p, lvl, cam, dt, fx) {
 }
 
 // Twin ground-bound wavefronts rolling away from (x, groundY).
-export function fireShockwaves(x, groundY, fx) {
+export function fireShockwaves(x, groundY, fx, ttl = SHOCK_TTL) {
+  // ttl optional: the level 8 Warden passes 2.5 — the wave expires at the
+  // arena ends (deviation 6). Default SHOCK_TTL: level 4 unchanged.
   const y = groundY - SHOCK_H;
-  shockwaves.push({ x: x - 6, y, w: SHOCK_W, h: SHOCK_H, vx: -SHOCK_SPEED, ttl: SHOCK_TTL, hit: false, dead: false });
-  shockwaves.push({ x: x + 6, y, w: SHOCK_W, h: SHOCK_H, vx: SHOCK_SPEED, ttl: SHOCK_TTL, hit: false, dead: false });
+  shockwaves.push({ x: x - 6, y, w: SHOCK_W, h: SHOCK_H, vx: -SHOCK_SPEED, ttl, hit: false, dead: false });
+  shockwaves.push({ x: x + 6, y, w: SHOCK_W, h: SHOCK_H, vx: SHOCK_SPEED, ttl, hit: false, dead: false });
   fx.play('rumble');
 }
 

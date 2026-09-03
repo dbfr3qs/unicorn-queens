@@ -25,6 +25,7 @@ import './enemies/wraith.js';
 import './enemies/wizardboss.js';
 import './enemies/sentinel.js'; // level 8: the citadel's clockwork guardians
 import './enemies/moth.js'; // level 8: the clockwork moths
+import './enemies/warden.js'; // level 8 boss: the citadel's keeper
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;
@@ -53,14 +54,18 @@ export function spawnEnemy(spec, lvl) {
 // Shared one-point damage (arrows and friends): -1 hp, per-kind hit
 // reaction (onHit), death at 0 with per-kind sound, burst and optional
 // onDeath hook (the troll uses it for the death shake).
-export function damageEnemy(e, fx, cam) {
-  e.hp -= 1;
+export function damageEnemy(e, fx, cam, mult = 1, lvl) {
+  e.hp -= mult;
   const k = getKind(e.kind);
   if (e.hp <= 0) {
     e.dead = true;
-    fx.play(k.deathSound ?? 'thwack');
-    burst(e.x + e.w / 2, e.y + e.h / 2, k.deathFx ?? FX.enemyDeath);
-    if (k.onDeath) k.onDeath(e, fx, cam);
+    if (k.onZero) {
+      k.onZero(e, fx, cam, lvl); // level 8 Warden: a rest, not a kill
+    } else {
+      fx.play(k.deathSound ?? 'thwack');
+      burst(e.x + e.w / 2, e.y + e.h / 2, k.deathFx ?? FX.enemyDeath);
+      if (k.onDeath) k.onDeath(e, fx, cam);
+    }
   } else {
     fx.play(k.hitSound ?? 'thwack');
     if (k.onHit) k.onHit(e);

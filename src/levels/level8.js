@@ -168,6 +168,7 @@ export function createLevel8(viewH = 600) {
       { kind: 'moth', x: 800, y: 400 }, { kind: 'moth', x: 1400, y: 380 },
       { kind: 'moth', x: 2650, y: 420 }, { kind: 'moth', x: 3300, y: 380 },
       { kind: 'moth', x: 4400, y: 420 },
+      { kind: 'warden', x: 5300, band: [5100, 5800], sleeping: true }, // the keeper; the arena beat wakes him
     ],
   };
 }

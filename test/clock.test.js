@@ -176,7 +176,8 @@ describe('updateClock', () => {
     s.lvl.roster.push({ kind: 'warden', dead: true, dyingT: 3.3 });
     s.lvl.clock.stopped = true;
     s.step(1.0);
-    const warden = s.lvl.roster.find(e => e.kind === 'warden');
+    // the roster carries the sleeping M6 warden too — the rest is the DEAD one
+    const warden = s.lvl.roster.find(e => e.kind === 'warden' && e.dead);
     expect(warden.dyingT).toBeCloseTo(2.3, 5);
   });
 });

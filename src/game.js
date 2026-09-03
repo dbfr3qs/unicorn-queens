@@ -173,7 +173,7 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }

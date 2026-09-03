@@ -75,7 +75,7 @@ describe('the gear door', () => {
 });
 
 describe('the arena beat', () => {
-  it('fires on entry at cuts 3 and wakes the 5050 Sentinel; silent at cuts 2', () => {
+  it('fires on entry at cuts 3 and wakes the Warden + the 5050 Sentinel; silent at cuts 2', () => {
     closeIntro();
     const lvl = game.level;
     const enter = () => { game.player.x = 5000; game.player.y = lvl.groundY - 36; update(DT, 800, fx([])); };
@@ -95,6 +95,10 @@ describe('the arena beat', () => {
     expect(game.dialogsFired.has('l8-arena')).toBe(true);
     const sentinel = game.enemies.find(e => e.kind === 'sentinel' && !e.sleeping && e.x > 4900);
     expect(sentinel).toBeTruthy();
+    // M6: the real Warden stands up (the M5 guarded no-op is now live)
+    const warden = game.enemies.find(e => e.kind === 'warden');
+    expect(warden).toBeTruthy();
+    expect(warden.sleeping).toBe(false);
     while (isDialogueOpen()) advanceDialogue();
   });
 });

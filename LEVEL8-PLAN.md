@@ -16,7 +16,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 - [x] **M3** — the three mainsprings + intro/hub beats
 - [x] **M4** — the Sentinels + the clockwork moths
 - [x] **M5** — gear door + astrolabe + arena beat + trapdoor
-- [ ] **M6** — the Warden boss
+- [x] **M6** — the Warden boss
 - [ ] **M7** — the ending (rest, the King's silhouette, the flight dive)
 - [ ] **M8** — snapshots + headless playthrough + README
 
@@ -158,6 +158,14 @@ Ticked as each phase lands (the commit is the gate's proof):
     `φ = (e.x % 63) / 10`, `dartCd = (e.x % 25) / 10` — all at first update, no
     `Math.random`, fully reproducible per spawn x. (The moth's wing flap is likewise
     a pure function of the moth's own drift clock `e.t`, not `gameTime`.)
+20. **P2 attack weights follow the plan: 30/30/40 (slam/bolt/sweep).** The design
+    says 30/35/35; the plan (written after, and the spec the tests assert) says
+    30/30/40. The plan wins: `r < 0.3` slam, `r < 0.6` bolt, else sweep.
+21. **The chime advance is instant on the wrap, not a 0.3 s slide.** The design
+    describes a short slide; the plan says "on the t wrap, 40 px toward the player
+    (60 px in P2), clamped to the band" and its test asserts the position changes
+    by exactly 40/60 px on the wrap frame. Instant is simpler, deterministic, and
+    matches the plan — the Warden steps once per chime.
 
 ---
 
@@ -852,7 +860,7 @@ shaft wins via reachedExit; a walker takes the pit rule. No game.js change.)
 attacks, the 0.6 s reset window (arrows deal 3), and a death that is a rest, not a
 kill (statue + toll + the pearl).
 
-### - [ ] 1. `src/enemies/warden.js` (new; registry entry)
+### - [x] 1. `src/enemies/warden.js` (new; registry entry)
 
 - 60×64, hp 16, `stompable: false` (the dragon rule: the stomp bounces — the
   registry's `stompable` flag is the house mechanism; verify the exact field name
@@ -925,14 +933,14 @@ kill (statue + toll + the pearl).
   hand), 16 pips above. Sleeping: standing at attention, the core at a slow 2 s
   pulse (the "still wound" tell).
 
-### - [ ] 2. FX + sfx
+### - [x] 2. FX + sfx
 
 - `FX.gearBurst` (shared with the Sentinel stomp): 8 brass shards + 4 spark motes.
 - sfx: 'clank' (verify — the slam windup), 'toll' (M2), the standard 'bossHit' / 'boss'
   paths via the existing damageEnemy/reaction code (verify the boss-hit sfx name
   against the spiderboss flow — reuse whatever it plays).
 
-### - [ ] 3. Tests — `test/warden.test.js` (new)
+### - [x] 3. Tests — `test/warden.test.js` (new)
 
 Setup: createLevel8, push the Warden (awake, hp 16), the clock ticking, cam.x 5500
 (the L7 M6 viewport rule — arrows are viewport-culled; the arena spans 5100–5800),
@@ -964,7 +972,7 @@ a fake fx recorder, reseeded RNG.
 - **idempotent onZero**: a reflected bolt into a dying (hp 0, not yet… he's dead
   immediately) — instead: call onZero twice → dyingT stays 3.3, no double toll.
 
-### - [ ] 4. Verify
+### - [x] 4. Verify
 
 - `npm test` green; `npm run smoke` green (the Warden is in the roster — the smoke
   update loop must stay stable with a sleeping boss; the L7 pattern: sleeping bosses
@@ -977,6 +985,15 @@ a fake fx recorder, reseeded RNG.
   replacement), but the fight script must still avoid wasting arrows on a staggered
   Warden (stagger = 0.3 s of free time; windowed arrows are worth 3× — the script
   only fires in the window or on a stagger that doesn't cross the window).
+- **Measured** (temporary `dbg8duel.mjs`, deleted after): camp 150 px west of the
+  clamped Warden (player x≈4943, Warden band-min 5100), so the chime bolt (~0.63 s)
+  and the slam shockwave (~0.83 s) both arrive just after the 0.6 s window — the
+  script fires the windowed volleys first, then jumps the threat. **Result: WIN in
+  2441 frames (~40.7 s)** with a 6-hp verification buffer (the M8 playthrough carries
+  the real 3 + hearts and must camp tighter / dodge cleaner). **Phase 2 (hp ≤ 8) began
+  at frame 936 (~15.6 s)** — P1 936 f, P2 1505 f. The rest ran 199 frames to
+  `dyingT 0`, then the pearl showed and `clock.stopped` held. These are the reference
+  timings for the M8 playthrough's duel segment.
 
 **Gate**: commit `L8 M6: the Warden (the boss)`.
 

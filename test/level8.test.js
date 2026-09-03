@@ -133,12 +133,15 @@ describe('pearl + exit', () => {
 });
 
 describe('roster + dialogs', () => {
-  it('M4 adds the regulars: 4 sentinels + 5 clockwork moths', () => {
+  it('M4 adds the regulars, M6 adds the keeper: 4 sentinels + 5 moths + the Warden', () => {
     const s = lvl.roster.filter(r => r.kind === 'sentinel');
     const m = lvl.roster.filter(r => r.kind === 'moth');
-    expect(lvl.roster).toHaveLength(9);
+    const w = lvl.roster.filter(r => r.kind === 'warden');
+    expect(lvl.roster).toHaveLength(10);
     expect(s).toHaveLength(4);
     expect(m).toHaveLength(5);
+    expect(w).toHaveLength(1);
+    expect(w[0]).toEqual({ kind: 'warden', x: 5300, band: [5100, 5800], sleeping: true });
     // the arena-approach sentinel sleeps until the Warden wakes it (M5)
     expect(s.filter(r => r.sleeping)).toHaveLength(1);
     expect(s.find(r => r.sleeping).x).toBe(5050);

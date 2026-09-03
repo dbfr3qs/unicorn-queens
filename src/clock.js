@@ -54,10 +54,18 @@ export function updateClock(lvl, p, enemies, dt, fx) {
   if (!lvl.clock) return;
   const c = lvl.clock;
   const cuts = clockCuts(lvl);
-  // The Warden's rest runs down even once the clock has stopped (M6 adds
-  // the toll at the 1.0 crossing).
+  // The Warden's rest runs down even once the clock has stopped. The toll
+  // sounds at the 1.0 crossing — the clock's last beat — latched so it
+  // sounds exactly once.
   const w = enemies?.find(e => e.kind === 'warden' && e.dead);
-  if (w && w.dyingT > 0) w.dyingT = Math.max(0, w.dyingT - dt);
+  if (w && w.dyingT > 0) {
+    const before = w.dyingT;
+    w.dyingT = Math.max(0, w.dyingT - dt);
+    if (before > 1.0 && w.dyingT <= 1.0 && !w.tolled) {
+      w.tolled = true;
+      fx.play('toll');
+    }
+  }
   // The trapdoor (M5): the pearl-taken drops the lid over the shaft. Runs
   // every frame, even once the clock has stopped (the Warden's rest).
   if (lvl.trapdoor && !lvl.trapdoor.open && lvl.pearl && lvl.pearl.taken) {

@@ -71,7 +71,10 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
           a.dead = true;
           break;
         }
-        damageEnemy(e, fx, cam); // hp, per-kind hit reaction, death at 0
+        // mult: the level 8 Warden's reset window (arrows 3 in, 1 out; stars
+        // always 3 — never 6). Default 1 — every other kind is unchanged.
+        const mult = k.hitValue ? k.hitValue(e, a.star) : 1;
+        damageEnemy(e, fx, cam, mult, lvl); // hp, per-kind hit reaction, death at 0
         shake(cam, 3, 0.12);
         if (a.star) { // pierce: remember the hit, keep flying on budget
           a.hit.add(e);

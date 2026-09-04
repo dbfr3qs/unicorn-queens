@@ -836,9 +836,12 @@ function drawCitadelWall(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t) {
   const clock = lvl.clock;
   c.fillStyle = deep ? '#191330' : '#221c3e'; // the wall
   c.fillRect(sx0, 0, sx1 - sx0, gy);
-  // the great pendulum silhouette (parallax 0.3, 300 px, the clock's angle)
+  // the great pendulum silhouette (parallax 0.3, 300 px, the clock's angle).
+  // Anchored at 800: visible cam 0–2667, i.e. behind the gate hall and the
+  // library (design: "swinging behind the hall") — the old 2000 anchor put
+  // it off-view in its own zone (M8 viewport verification).
   const ang = (40 * Math.PI / 180) * Math.sin(2 * Math.PI * clock.t / clock.period);
-  const px = 2000 - cam.x * 0.3, py = 60;
+  const px = 800 - cam.x * 0.3, py = 60;
   if (px > sx0 - 140 && px < sx1 + 140) {
     c.globalAlpha = deep ? 0.14 : 0.1;
     c.fillStyle = '#0a0818';
@@ -897,7 +900,10 @@ function drawCitadelWall(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t) {
   c.globalAlpha = 1;
   if (deep) {
     drawClockFace(c, 3600, 180, 100, cam, clock); // the clock face above the gear
-    drawGreatGear(c, 3600, 380, cam, clock); // the great gear (parallax 0.5)
+    // Anchored at 2100: on-view through the deep atrium (cam 3300–4600),
+    // centred at the hub — the old 3600 anchor left it off-view at the face
+    // (M8 viewport verification).
+    drawGreatGear(c, 2100, 380, cam, clock); // the great gear (parallax 0.5)
   }
 }
 

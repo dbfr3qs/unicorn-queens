@@ -93,6 +93,18 @@ describe('updateClock', () => {
     expect(far.plays.filter(([n]) => n === 'chime' || n === 'chimeFar')).toEqual([['chimeFar', 1]]);
   });
 
+  it('the chime arg falls a notch at each cut stage (0.94^cuts, fx end-to-end)', () => {
+    for (const cuts of [0, 1, 2, 3]) {
+      const s = sim();
+      for (let i = 0; i < cuts; i++) s.lvl.springs[i].cut = true;
+      s.step(7.0); // exactly one wrap (the period is still 6.0 here)
+      expect(
+        s.plays.filter(([n]) => n === 'chime' || n === 'chimeFar'),
+        `stage ${cuts}`,
+      ).toEqual([['chime', 0.94 ** cuts]]);
+    }
+  });
+
   it('slides the gear platform between its slots, one per chime', () => {
     const s = sim();
     const g = gearOf(s.lvl);

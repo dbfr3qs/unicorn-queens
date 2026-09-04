@@ -7,12 +7,12 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, freshGame8, step } from './helpers/render-harness.js';
 import { draw } from '../src/render/index.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
-import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone } from '../src/projectiles.js';
+import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone, fireballs } from '../src/projectiles.js';
 
 test('initial frame', () => {
   freshGame();
@@ -762,4 +762,143 @@ test('l7 ending (the lit rainbow, the cage mid-swing, the pig walking west, a fr
   g.player.won = true; // the win overlay over the released arena
   g.camera.x = 5500; // max scroll
   expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- level 8 (the sky citadel) scenarios ----
+// L8's max scroll is 5200 (width 6000 − view 800), so the far-end scenarios
+// frame at that clamp — the L7 "cam 5500" rule, generalized to the level.
+
+test('l8 island spawn (twilight sky, rainbow tail, cloud sea, the island edge — the intro beat open)', () => {
+  freshGame8();
+  expect(step({}, 1)).toMatchSnapshot(); // frame 1: the player spawns inside the l8-intro band
+});
+
+test('l8 gate hall (the pendulum silhouette, arched windows, floor lattice, lamps)', () => {
+  const g = freshGame8();
+  g.player.x = 1100; g.player.y = g.level.groundY - 36;
+  g.camera.x = 714; // 1100 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 gear platform mid-slide (t 0.25 after the chime, the plate between slots, the player carried)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 0.25;
+  g.level.clock.chimeCount = 1; // the slide runs slot 1700 -> 1770
+  const plate = g.level.platforms.find(pl => pl.kind === 'gear');
+  plate.x = 1735; // gearPlatX(0.25); the update re-derives it and carries the player
+  g.player.x = 1750; g.player.y = plate.y - 36; g.player.onGround = true; g.player.vy = 0;
+  g.camera.x = 1364; // 1750 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l8 spring 1 on its shelves (the two shelf steps, the coil on the upper shelf)', () => {
+  const g = freshGame8();
+  g.player.x = 1400; g.player.y = 450 - 36; g.player.onGround = true; g.player.vy = 0;
+  g.camera.x = 1014; // 1400 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 library (the bookcase forest, the lamps, a moth mid-drift)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 4.0; // the panel's closed half of the period
+  const moth = g.enemies.find(e => e.kind === 'moth' && e.x > 2600);
+  moth.state = 'drift'; moth.t = 2.2; moth.x = 2628; moth.y = 441; // off its 2650/420 sconce
+  g.player.x = 2750; g.player.y = g.level.groundY - 36;
+  g.camera.x = 2364; // 2750 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 bookcase wall (the panel up, the dais and spring 2 under the opening)', () => {
+  const g = freshGame8();
+  // clock.t 1.0 (the fresh value): panelFrac 1 — the slab fully up
+  g.player.x = 2680; g.player.y = g.level.groundY - 36; // under the opening
+  g.camera.x = 2294; // 2680 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 clock hub (the face with its hand off the top, the great gear)', () => {
+  const g = freshGame8();
+  g.player.x = 3650; g.player.y = g.level.groundY - 36;
+  g.camera.x = 3264; // 3650 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 pendulum bridge (the rod vertical on the chime frame, the player on the west platform)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 0; // θ = 0: the tip at (4000, 520)
+  g.player.x = 3850; g.player.y = 554 - 36; g.player.onGround = true; g.player.vy = 0;
+  g.camera.x = 3464; // 3850 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 pendulum bridge (the rod at its extreme, the crossing clear)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 1.5; // period/4: θ = +40°, the tip at ~(4270, 422)
+  g.player.x = 4130; g.player.y = 554 - 36; g.player.onGround = true; g.player.vy = 0;
+  g.camera.x = 3744; // 4130 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 observatory (the star map, the railings, the astrolabe on its plinth)', () => {
+  const g = freshGame8();
+  g.player.x = 5286; g.player.y = g.level.groundY - 36;
+  g.camera.x = 4900; // 5286 + 14 - 400
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 warden phase 1 (the reset window, the core at pulse peak, a chime bolt in flight)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 0.3; // inside the 0.6 s reset window
+  const w = g.enemies.find(e => e.kind === 'warden');
+  w.sleeping = false; w.state = 'idle'; w.t = 1.2; w.dir = 1;
+  w.inWindow = true; w.phase = 0.075; // the 0.3 s core pulse at its peak
+  fireballs.push({ x: 5480, y: 540, w: 14, h: 14, vx: 0, vy: 0, ttl: 3, dead: false, cool: 0, reflected: false, web: false, cyan: true }); // the bolt between him and the queen
+  g.player.x = 5586; g.player.y = g.level.groundY - 36;
+  g.camera.x = 5200; // max scroll
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 warden phase 2 (the sweep telegraph, the 240 px band pulsing toward the player)', () => {
+  const g = freshGame8();
+  g.level.clock.t = 1.5; // the off-beat where P2 attacks begin
+  const w = g.enemies.find(e => e.kind === 'warden');
+  w.sleeping = false; w.hp = 8; w.dir = 1; // P2
+  w.x = 5400; w.state = 'sweepTele'; w.t = 0.5;
+  w.sweepDir = 1;
+  w.sweepBand = { x: w.x + w.w, w: 240 }; // the floor band east of him, toward the player
+  w.phase = 0.13; // the tele pulse mid-swelling
+  g.player.x = 5586; g.player.y = g.level.groundY - 36;
+  g.camera.x = 5200; // max scroll
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 the warden statue (dyingT 0.5: bowed, the ember lit, the pearl still hidden)', () => {
+  const g = freshGame8();
+  g.level.springs.forEach(s => s.cut = true); // all three: the final dim
+  g.level.clock.stopped = true;
+  const w = g.enemies.find(e => e.kind === 'warden');
+  w.sleeping = false; w.dead = true; w.dyingT = 0.5; w.tolled = true;
+  w.x = 5450;
+  g.player.x = 5586; g.player.y = g.level.groundY - 36;
+  g.camera.x = 5200; // max scroll
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l8 the open shaft (the lid down, the shaft glow, the King on the rim, the pearl taken)', () => {
+  const g = freshGame8();
+  g.gameTime = 2.5; // the shaft's mist bands mid-drift
+  g.level.springs.forEach(s => s.cut = true);
+  g.level.clock.stopped = true;
+  g.level.trapdoor.open = true;
+  const lid = g.level.platforms.find(pl => pl.kind === 'trapdoor');
+  lid.hidden = true; // the lid has dropped into the shaft
+  g.level.kingSil.present = true;
+  g.level.pearl.visible = true; g.level.pearl.taken = true;
+  g.level.exit.locked = false;
+  const w = g.enemies.find(e => e.kind === 'warden');
+  w.sleeping = false; w.dead = true; w.dyingT = 0; w.tolled = true; // fully rested
+  w.x = 5450;
+  g.player.x = 5586; g.player.y = g.level.groundY - 36;
+  g.camera.x = 5200; // max scroll
+  expect(step({}, 0)).toMatchSnapshot();
 });

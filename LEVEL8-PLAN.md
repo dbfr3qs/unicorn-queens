@@ -18,7 +18,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 - [x] **M5** — gear door + astrolabe + arena beat + trapdoor
 - [x] **M6** — the Warden boss
 - [x] **M7** — the ending (rest, the King's silhouette, the flight dive)
-- [ ] **M8** — snapshots + headless playthrough + README
+- [x] **M8** — snapshots + headless playthrough + README
 
 ## Existing systems (reused unchanged)
 
@@ -170,6 +170,30 @@ Ticked as each phase lands (the commit is the gate's proof):
     (60 px in P2), clamped to the band" and its test asserts the position changes
     by exactly 40/60 px on the wrap frame. Instant is simpler, deterministic, and
     matches the plan — the Warden steps once per chime.
+22. **The pendulum silhouette is re-anchored 2000 → 800** (M8 Step A). At parallax
+    0.3 the 2000 anchor is only on-view for cam > ~3533 (the observatory) — its
+    design home is "swinging behind the hall" (gate hall + library, cam 0–2667).
+    The scenarios name it in the gate hall; the anchor moved, the parallax kept.
+23. **The great gear is re-anchored 3600 → 2100** (M8 Step A). At parallax 0.5 the
+    3600 anchor is off-view at the hub (its screen x ≈ 0 only at cam 7200, past the
+    clamp); anchored at 2100 it is on-view through the deep atrium and centred in
+    the hub frame beside the clock face. Parallax kept per the design.
+24. **The hidden trapdoor still renders** (M8 Step A). `hidden` is the house
+    "non-solid + invisible" flag, but the dropped lid is a *pose*, not an absence:
+    the platform loop now lets `kind 'trapdoor'` through while hidden, and
+    `drawTrapdoor` draws the flush lid or the lid swung down into the shaft from
+    `lvl.trapdoor.open`. L8-only (the only level with the kind).
+25. **Spring 3 is touched in flight, not jumped** (M8 Step B). The plan says
+    "spring 3 by a jump from the left platform," but the spring sits 114 px above
+    the platform and 180 px east: a full jump passes ~40 px above it (apex 126 px,
+    ~165 px out — measured, see Step B notes) and an arrow misses by ~30 px. The
+    flight touch (cast from the same left platform, drift through the spring's
+    y-band, glide down to the east platform) is the deterministic equivalent and
+    keeps the plan's anchor ("from the left platform").
+26. **Closing a dialogue beat clears all input** (M8 Step B). `advanceDialogue`
+    resets every key (the L7 lesson the plan already warns about) — the playthrough
+    re-asserts held keys after *every* beat close (hub, arena, shaft), not just the
+    intro.
 
 ---
 
@@ -1089,7 +1113,7 @@ snapshot diff since M7 must be **purely additive** (L1–7 byte-identical).
 
 Split into three steps, committed together (the L7 M8 pattern):
 
-### - [ ] Step A — render scenarios
+### - [x] Step A — render scenarios
 
 - **Harness**: `freshGame8()` in `test/helpers/render-harness.js` (LEVELS index 7,
   the freshGame7 pattern). Camera clamp: [0, 5200] (width 6000 − 800).
@@ -1127,8 +1151,18 @@ Split into three steps, committed together (the L7 M8 pattern):
 - Render fixes found during verification land here (the L7 M8 precedent: the
   seal-column draw fix). Expect candidates: the panel slide at held, the rod at the
   exact chime frame (t 0), the statue bow at dyingT 0.5.
+- **As-built notes** (M8 Step A, landed): the plan's `cam 5500` / `cam ~5750` for
+  scenarios 11–14 are past the clamp — the L7 viewport rule generalized is *max
+  scroll = width − view = 5200*, so the four far-end scenarios frame at 5200 (the
+  Warden arena, shaft, rim and King silhouette all still compose). The other camera
+  hints are approximate; each camera is derived from the player's stand position
+  (`cam = player.x + 14 − 400`, the house framing) and the platform/zone geometry.
+  The verification pass confirmed every title-named element in-viewport; it found
+  the two off-view zone anchors (deviations 22–23) and the hidden-trapdoor draw
+  skip (deviation 24). Snapshots are purely additive (46k lines, L1–7
+  byte-identical); `npm test` 779 green; smoke OK.
 
-### - [ ] Step B — the headless playthrough
+### - [x] Step B — the headless playthrough
 
 `test/level8-playthrough.test.js` (the L7 pattern: deterministic, reseeded RNG,
 fake fx, the input-driven player, caps on every wait):
@@ -1165,7 +1199,35 @@ Assertions throughout: the score (≥ 3 × 50 springs + box/gem contributions),
 `exit.locked` flipped only at the pearl, the Warden dead with dyingT 0, the
 silhouette present, the clock stopped.
 
-### - [ ] Step C — the audio pass + README + final gate
+- **As-built notes** (M8 Step B, landed): every jump zone is calibrated against the
+  real integrator, not closed-form parabolas — the engine is semi-implicit Euler
+  (gravity applied before position), so a full 30f jump measures ~165 px out / 126 px
+  rise (first airborne frame vy −540), not the 201–243 px / 130.7 px the continuous
+  math predicts. Measured same-level offsets (walk-and-hold): 6f ≈ 139 px, 8f ≈ 156,
+  12f ≈ 191, 16f ≈ 217, 30f ≈ 238; landings on a higher surface come earlier by the
+  descent shortfall. As-built route: shelf 1 = 16f hop from (1230, 1245) → lands
+  ~1377–1391; shelf 2 = 12f from (1385, 1395) → lands ~1489–1499, **overlapping
+  spring 1, so the touch is the landing itself** (no left-step); gear = 6f from
+  (1560, 1605) onto the 1700 slot → 1707–1752, ride the slide standing still
+  (input cleared first — holding right walks the player off the east edge into the
+  pit), 6f off from (1815, 1832) → ~1970; bookcase pits = 6f from (2120, 2175) /
+  (2845, 2870); dais = 6f from (2495, 2525) in the west bay → 2604–2634, **the
+  landing overlaps spring 2** (from further west the dais face blocks and the player
+  falls under the wall into pit 2); pendulum = 6f from (3690, 3745) at the rod's
+  east extreme; spring 3 = flight touch (deviation 25) → glide onto the east
+  platform ~4104–4145; pedestal = 12f from (5280, 5300) → 5444–5464, **the landing
+  overlaps the pearl** (a 6f hop cannot clear the pedestal's 40 px face). The gear
+  door asserts `until(state === 'open')` — the 3rd cut starts a 1.0 s 'opening'.
+  The arena beat's band (4900–5150) opens and freezes the player at ~4872 the moment
+  the right edge crosses 4900: walk in, close, re-assert right, hold camp 4935–4955.
+  Sentinels are killed in-route from the west (front arrows never blocked — the
+  shield's polarity is test-locked); the duel reuses the M6 camp/dodge with
+  `reseed()` first, cap 3600f (5 windows × 504f at period 8.4 + overhead); moths are
+  pre-cleared in setup (their darting makes shelf approaches un-scriptable — they
+  have their own tests). Deterministic: 3 consecutive runs green; `npm test` 780
+  green (77 files); smoke OK levels 1–8.
+
+### - [x] Step C — the audio pass + README + final gate
 
 - **Audio pass**: every `fx.play` name in L8 code (level8.js, clock.js, springs.js,
   sentinel.js, moth.js, warden.js, the arrows/projectiles/door touch points) has a
@@ -1178,6 +1240,18 @@ silhouette present, the clock stopped.
   comparison, the L7 M8 check).
 - Tick the **Build ledger** (all eight) + every `- [ ]` sub-checkbox in this file as
   the work lands; the ledger is the file's own progress record.
+
+- **As-built notes** (M8 Step C, landed): audio audit — all 32 fx names called from
+  L8 code (level8, clock, springs, sentinel, moth, warden, pearl, door, arrows,
+  projectiles, game, player) have cases in audio.js; the only "uncalled" cases are
+  registry-field consumers (`hitSound`/`deathSound`/`stompSound`) and L1–7 sounds,
+  so no unused new cases. The chime pitch arg is verified end-to-end at every cut
+  stage in `test/clock.test.js` (fake fx records `['chime', 0.94**cuts]` for
+  cuts 0–3). README level-8 entry added (the house format: the Anchor, the rhythm
+  mechanics, the three-spring wind-down, the Warden, the rest + the dive). Final
+  gate: `npm test` 781 green (77 files), smoke OK levels 1–8, the render snap diff
+  since M7 is 46351 insertions / 0 deletions — purely additive, L1–7
+  byte-identical.
 
 **Gate**: commit `L8 M8: snapshots + playthrough + README` — Level 8 complete.
 

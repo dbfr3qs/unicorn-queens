@@ -70,6 +70,14 @@ export function freshGame7(viewH = VIEW_H) {
   return game;
 }
 
+// Level 8 (the sky citadel) entry: same seeding, level index 7.
+export function freshGame8(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 7);
+  game.gameTime = 0;
+  return game;
+}
+
 // Simulate `frames` updates with the given keys held, then draw one
 // frame to a fresh recording context. Returns the draw-call log.
 // Input is reset afterwards so scenarios don't leak keys.

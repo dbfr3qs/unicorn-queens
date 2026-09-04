@@ -161,7 +161,9 @@ export function drawLevel(c, lvl, t = 0) {
   for (const p of lvl.platforms) if (!p.hidden && (!p.kind || p.kind === 'platform')) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
   for (const p of lvl.platforms) { // kinds: branch, lily, log (L5); root, nest, altar (L6)
     // (the L6 bridge span is rendered by render/mire.js in all its states)
-    if (p.hidden || !p.kind || p.kind === 'platform') continue;
+    // The trapdoor keeps rendering while hidden — hidden only removes its
+    // collision; drawTrapdoor draws the flush lid or the dropped-lid pose.
+    if ((p.hidden && p.kind !== 'trapdoor') || !p.kind || p.kind === 'platform') continue;
     if (p.kind === 'branch') drawBranch(c, p);
     else if (p.kind === 'lily') drawLily(c, p);
     else if (p.kind === 'log') drawLog(c, p);

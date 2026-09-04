@@ -119,6 +119,43 @@ advance still follow the normal carry rules.
    open, the war-pig stands up and walks back down the mountain, and the
    King's word lights the rainbow — the game's first good chord. Walk
    through it.
+8. **The Sky Citadel** — the rainbow out of the throne arena lands you
+   on a cloud island adrift in twilight, the game's first sky that is
+   neither day nor night: deep blue-violet, stars out in the "day", the
+   cloud sea far below, the rainbow's tail still streaming off the
+   spawn island. This is the Frost Queen's **Anchor** — the Great Clock
+   at its heart keeps the realm's freeze beating, and the Queen has cut
+   its three mainsprings loose as she withdraws. It is a rhythm level:
+   everything mechanical moves on the clock's beat, and you learn the
+   tempo by ear — the gear platform that shuttles between its two slots
+   (ride the slide across the first pit, feet still), the bookcase
+   panel that opens for a 2 s window (it holds rather than crushes if
+   you're caught in it), and the pendulum bridge (the rod hangs at the
+   chime and swings to its extremes at the quarters of the beat; time
+   the crossing to the swing). Cut all three springs, each a different
+   puzzle — one waits on a shelf chain above the gate hall, one on the
+   dais below the panel, one over the pendulum's arc — and each cut
+   drops the hum a notch, dims the light a shade, slows the gears, and
+   stretches the chime's period: the citadel winds down around you.
+   Clockwork moths dart between the lamps (one arrow each), and the
+   sentinels patrol: their shields come up for a second on each chime
+   and block arrows that fly the way the sentinel faces — a shot from
+   behind always lands. The third cut opens the gear door, and the
+   observatory beyond holds the **Warden**, an automaton of brass and
+   starlight bound to the machine — the game's third bound creature.
+   Sixteen hits, not stompable. In his first phase he attacks on the
+   beat — a floor slam into shockwaves, or a bolt of starlight — and
+   steps forward with every chime; but 0.6 s after each chime his core
+   glows as he resets, and arrows in that window do triple damage. At
+   8 he also attacks off the beat and sweeps a floor band with a long
+   telegraph: camp the west edge of his reach, fire the windows, jump
+   the shockwaves. He is not destroyed — the core dims to ember, he
+   bows, and the clock tolls its last beat. The gears stop, the lights
+   dim one final shade, and a pearl appears on the astrolabe. Take it
+   and the King's silhouette steps onto the rim, the shaft trapdoor
+   swings open, and he tells you the anchor is broken and the way down
+   is open. Fly down through the cloud shaft — the ceiling hole of
+   level 4, inverted — to the ice below. The citadel stands still.
 
 Win a level and press Space to play the next one.
 

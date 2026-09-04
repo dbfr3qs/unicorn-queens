@@ -17,7 +17,7 @@ Ticked as each phase lands (the commit is the gate's proof):
 - [x] **M4** — the Sentinels + the clockwork moths
 - [x] **M5** — gear door + astrolabe + arena beat + trapdoor
 - [x] **M6** — the Warden boss
-- [ ] **M7** — the ending (rest, the King's silhouette, the flight dive)
+- [x] **M7** — the ending (rest, the King's silhouette, the flight dive)
 - [ ] **M8** — snapshots + headless playthrough + README
 
 ## Existing systems (reused unchanged)
@@ -75,11 +75,15 @@ Ticked as each phase lands (the commit is the gate's proof):
 
 ### Deviations from the design (documented up front)
 
-1. **Flight-only exit = geometry, not a flag.** No `flightOnly` flag exists anywhere
-   (L4 precedent: the ceiling hole is pure geometry). The shaft lip is a
+1. **Flight-only exit (corrected in M7).** The shaft lip is a
    **trapdoor-lid platform** `{5820, 554, 120, 'trapdoor'}`; on pearl-taken it becomes
    `hidden: true` and the standard pearl path sets `exit.locked = false`. A walker
-   into the open shaft takes the standard pit rule. `reachedExit` is unchanged.
+   into the open shaft takes the standard pit rule. As written this was
+   "geometry, not a flag" (L4 precedent) — but L4's ceiling hole is only
+   geometry because no walker can jump to the roof; the shaft is a **floor** hole,
+   so a falling walker overlaps the exit rect (560–660) ~76 px before the pit
+   line (`p.y > 600`) and would win. Corrected per design §10: `exit.flightOnly`
+   gates `reachedExit` on `p.flying` (L8-only flag; every other exit unchanged).
 2. **The bookcase wall = three door entries.** Two static full-height `bookwall` doors
    (2520–2600, 2720–2760; always locked → solid side-walls via resolveDoor) + one
    `shelfpanel` door (2600–2720, full height) whose state the clock flips between
@@ -1005,7 +1009,7 @@ a fake fx recorder, reseeded RNG.
 shaft-lip beat plays (two lines), and the level ends with a **flight dive** through
 the cloud shaft. The Warden stands where he fell.
 
-### - [ ] 1. The King's silhouette (in updateClock — L8-owned, every frame)
+### - [x] 1. The King's silhouette (in updateClock — L8-owned, every frame)
 
 ```js
 if (lvl.kingSil && !lvl.kingSil.present && lvl.pearl && lvl.pearl.taken) {
@@ -1019,7 +1023,7 @@ silhouette on the rim (5950) with the single white glint. (Same frame as the
 trapdoor opening: the lid drops, the silhouette steps onto the rim — the King's
 "thank you" without words.)
 
-### - [ ] 2. The shaft-lip beat (level data)
+### - [x] 2. The shaft-lip beat (level data)
 
 ```js
 { // the King, at the lip of the shaft
@@ -1035,18 +1039,23 @@ trapdoor opening: the lid drops, the silhouette steps onto the rim — the King'
 (The beat band ends at the shaft edge 5820 — standing in the band is safe; the
 shaft itself is the exit.)
 
-### - [ ] 3. The flight dive (no new code)
+### - [x] 3. The flight dive (verified in M7; one-line gate added)
 
 - Pearl taken → standard pearl path sets `exit.locked = false`; updateClock drops
   the lid (M5). A **flying** player in the exit rect (5820–5940, y 560–660) →
   reachedExit → win (the standard victory overlay; the level-9 carry lands when L9
   exists — until then, house behavior: same-level restart).
 - A **walking** player into the open shaft → the pit rule (1 dmg + respawn at
-  safeX/safeY) — the flight-only guarantee, geometrically (deviation 1).
+  safeX/safeY). **M7 correction:** deviation 1's "geometry alone" premise was
+  unsound for a floor hole (a falling walker overlaps the exit rect before the
+  pit line and would win). Fixed with the design §10 `exit.flightOnly` flag:
+  `reachedExit` now requires `p.flying` when set (L8-only; L2–L7 exits
+  unchanged). M5's flyer fixture gained `flying: true` and a not-flying
+  same-spot negative.
 - The dive is the comfort: FLIGHT_TIME 10 / FLIGHT_CD 15 carried from L7; the shaft
   is 120 px wide — a relaxed glide, no precision required.
 
-### - [ ] 4. Tests — `test/citadel-ending.test.js` (new)
+### - [x] 4. Tests — `test/citadel-ending.test.js` (new)
 
 - **silhouette**: pearl taken → `kingSil.present === true`, 'grant' recorded (once —
   latch).
@@ -1061,7 +1070,7 @@ shaft itself is the exit.)
   (dead, dyingT 0) — the world pass would still draw him (assert the entity state;
   the draw is covered by M8 scenarios).
 
-### - [ ] 5. Verify
+### - [x] 5. Verify
 
 - `npm test` green; `npm run smoke` green; L1–7 snapshot md5s unchanged.
 - Headless ending run (temporary script, deleted): kill the Warden (the M6 script's

@@ -127,8 +127,8 @@ describe('pearl + exit', () => {
     expect(lvl.pearl.showWhen([{ kind: 'warden', dead: true, dyingT: 0 }])).toBe(true);
   });
 
-  it('exits through the cloud shaft under the trapdoor lid', () => {
-    expect(lvl.exit).toEqual({ x: 5820, y: 560, w: 120, h: 100, locked: true });
+  it('exits through the cloud shaft under the trapdoor lid (flight-only, M7)', () => {
+    expect(lvl.exit).toEqual({ x: 5820, y: 560, w: 120, h: 100, locked: true, flightOnly: true });
   });
 });
 
@@ -147,9 +147,9 @@ describe('roster + dialogs', () => {
     expect(s.find(r => r.sleeping).x).toBe(5050);
   });
 
-  it('carries the M3 + M5 beats: the intro, the Great Clock hub, the arena beat', () => {
+  it('carries the M3 + M5 + M7 beats: intro, the Great Clock hub, the arena, the shaft lip', () => {
     const ids = lvl.dialogs.map(d => d.id);
-    expect(ids).toEqual(['l8-intro', 'l8-hub', 'l8-arena']);
+    expect(ids).toEqual(['l8-intro', 'l8-hub', 'l8-arena', 'l8-shaft']);
     const intro = lvl.dialogs[0];
     expect(intro.beats).toHaveLength(1);
     expect(intro.beats[0].lines.map(l => l.speaker)).toEqual(['The Warden', 'The Warden']);
@@ -165,5 +165,14 @@ describe('roster + dialogs', () => {
     expect(arena.x).toBe(4900); // the gear door threshold
     expect(arena.beats).toHaveLength(1);
     expect(arena.beats[0].when({ level: lvl })).toBe(false); // 0 cuts now
+    // the M7 shaft-lip beat: the King, at the lip (5700–5820), fires on entry
+    // only once the pearl is taken
+    const shaft = lvl.dialogs[3];
+    expect(shaft.x).toBe(5700);
+    expect(shaft.w).toBe(120); // ends at the shaft edge 5820; the shaft itself is the exit
+    expect(shaft.beats).toHaveLength(1);
+    expect(shaft.beats[0].lines).toHaveLength(2);
+    expect(shaft.beats[0].lines.every(l => l.speaker === 'The Unicorn King')).toBe(true);
+    expect(shaft.beats[0].when({ level: lvl })).toBe(false); // pearl not taken
   });
 });

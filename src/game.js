@@ -195,6 +195,7 @@ export function restartTarget() {
 export function reachedExit(p, lvl) {
   if (lvl.exit) {
     return !lvl.exit.locked &&
+      (!lvl.exit.flightOnly || !!p.flying) && // L8: the shaft is a flight dive
       p.x < lvl.exit.x + lvl.exit.w && p.x + p.w > lvl.exit.x &&
       p.y < lvl.exit.y + lvl.exit.h && p.y + p.h > lvl.exit.y;
   }

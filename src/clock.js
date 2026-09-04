@@ -74,6 +74,12 @@ export function updateClock(lvl, p, enemies, dt, fx) {
     if (lid) lid.hidden = true; // the lid drops; the shaft is open
     fx.play('seal');
   }
+  // The King's silhouette (M7): same frame as the lid drops — his "thank
+  // you" without words. Latched, and runs even once the clock is stopped.
+  if (lvl.kingSil && !lvl.kingSil.present && lvl.pearl && lvl.pearl.taken) {
+    lvl.kingSil.present = true;
+    fx.play('grant');
+  }
   if (c.stopped) return;
 
   c.t += dt;

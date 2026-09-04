@@ -100,8 +100,11 @@ export function createLevel8(viewH = 600) {
         e => e.kind === 'warden' && e.dead && (e.dyingT ?? 0) <= 0),
     },
     // Under the trapdoor lid: a flier through the shaft wins (reachedExit);
-    // a walker takes the pit rule. The flight-only exit, as geometry.
-    exit: { x: 5820, y: groundY, w: 120, h: 100, locked: true },
+    // a walker takes the pit rule. The flight-only exit: the exit rect is a
+    // floor hole, so a falling walker overlaps it before the pit line —
+    // flightOnly is the gate (design §10; deviation 1 as written is
+    // geometrically unsound for a floor hole, corrected in M7).
+    exit: { x: 5820, y: groundY, w: 120, h: 100, locked: true, flightOnly: true },
     // M3: intro (spawn, the Warden's omen) + the Great Clock's hub beats
     // (c0 repeats at 0 cuts, c1/c2 voice the winding-down, each once).
     dialogs: [
@@ -156,7 +159,19 @@ export function createLevel8(viewH = 600) {
           ],
         }],
       },
-    ], // M7: the shaft lip joins this list
+      {
+        id: 'l8-shaft',
+        x: 5700, y: groundY - 140, w: 120, h: 140, // the shaft lip (5700–5820); the shaft itself (5820–5940) is the exit
+        beats: [{
+          id: 'l8-shaft',
+          when: g => g.level.pearl && g.level.pearl.taken, // fires on entry, pearl taken
+          lines: [
+            { speaker: 'The Unicorn King', text: 'So the last spring is still. The Warden rests. And the citadel, at last, stands still.' },
+            { speaker: 'The Unicorn King', text: 'The way down is open, queen — through the clouds, to the ice. The throne is waiting. Fly true.' },
+          ],
+        }],
+      },
+    ], // M7: the shaft-lip beat (one-shot, gated on the pearl)
     // The biome's regulars: three patrolling Sentinels (the 5050 one sleeps
     // until the arena beat) + five clockwork moths on their lamp sconces.
     // M6: the Warden joins here.

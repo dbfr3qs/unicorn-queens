@@ -138,12 +138,16 @@ describe('the trapdoor', () => {
     expect(lvl.trapdoor.open).toBe(true);
     expect(lid.hidden).toBe(true);
     expect(calls).toContain('seal');
-    // flight-only: a flier in the exit rect wins; a walker who drops into the
-    // shaft is below the pit rule (1 dmg + respawn)
-    const flyer = { x: 5850, y: 570, w: 28, h: 36 };
+    // flight-only: a flier in the exit rect wins; a walker who drops into
+    // the shaft takes the pit rule (1 dmg + respawn). The floor-hole exit
+    // rect is gated by flightOnly (a falling walker overlaps it before the
+    // pit line, so geometry alone can't keep them out).
+    const flyer = { x: 5850, y: 570, w: 28, h: 36, flying: true };
     expect(reachedExit(flyer, lvl)).toBe(true);
     expect(flyer.y > lvl.height).toBe(false); // above the pit line: no fall damage
-    const walker = { x: 5850, y: 620, w: 28, h: 36 };
-    expect(walker.y > lvl.height).toBe(true); // below the pit line: the fall rule
+    const walker = { x: 5850, y: 570, w: 28, h: 36 }; // same spot, not flying
+    expect(reachedExit(walker, lvl)).toBe(false); // the flightOnly gate
+    const fallen = { x: 5850, y: 620, w: 28, h: 36 };
+    expect(fallen.y > lvl.height).toBe(true); // below the pit line: the fall rule
   });
 });

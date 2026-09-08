@@ -87,9 +87,9 @@ for (const [slot, alts] of Object.entries(VARIANTS)) {
 // combinations worth hearing as a whole
 PRESETS['kit — drums only'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare']);
 PRESETS['kit — drums + bass'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare', 'roll']);
-PRESETS['kit — full house stack'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare', 'roll', 'arpChord', 'lead']);
-PRESETS['level 1 — meadow (sketch)'] = stackOf(118, ['kick', 'hatsOpen', 'slow', 'arpSlow', 'lead']);
-PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClosed', 'gearTick', 'pulseBass', 'bell']);
+PRESETS['kit — full house stack'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare', 'roll', 'chord', 'lead']);
+PRESETS['level 1 — meadow (sketch)'] = stackOf(118, ['kick', 'hatsOpen', 'slow', 'chord', 'lead']);
+PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClosed', 'gearTick', 'pulseBass', 'chordWide', 'bell']);
 PRESETS['level 9 — thaw, layer 4 of 4'] = stackOf(128, ['kick', 'hatsOpen', 'slow', 'seasick', 'sparkle']);
 PRESETS['transition — riser into the drop'] = stackOf(124, ['kick', 'roll', 'riser']);
 
@@ -110,6 +110,23 @@ presetEl.addEventListener('change', () => { codeEl.value = PRESETS[presetEl.valu
 // page can be checked without ears (see MUSIC-PLAN.md M1).
 window.__lab = { scriptLoaded: false, inited: false, playing: false, error: null };
 
+// The REAL stop, captured the moment it exists and before anything is
+// evaluated.
+//
+// Strudel ships two different `hush`es. @strudel/web's is the transport
+// stop (`repl.stop()`); @strudel/core's is a *pattern* function that only
+// returns silence. evaluate() runs evalScope(), which copies every loaded
+// module's exports onto globalThis — and core's hush lands last, so from
+// the first press of play onwards the global `hush` is the pattern one:
+// pressing stop built a silent pattern and threw it away. Hence the button
+// that did nothing.
+//
+// The window is narrow at both ends. Nothing is on globalThis until
+// initStrudel() has run its evalScope, and the first evaluate() clobbers
+// it — so the capture has to be here, in between, and the button must
+// never read the global again.
+let stopTransport = null;
+
 if (typeof initStrudel !== 'function') {
   say('FAIL: vendor/strudel/index.js did not load, or did not define initStrudel().\n'
     + 'Are you opening this over http? (file:// will not work.)', 'bad');
@@ -121,6 +138,7 @@ if (typeof initStrudel !== 'function') {
   initStrudel()
     .then(() => {
       window.__lab.inited = true;
+      stopTransport = typeof hush === 'function' ? hush : null;
       say('ready — bundle loaded, synths registered. Press play.\n'
         + 'The AudioContext stays suspended until the first click; that is the browser autoplay policy, not a fault.', 'ok');
       $('play').disabled = false;
@@ -171,7 +189,7 @@ async function selftest() {
   for (const [name, src] of Object.entries(PRESETS)) {
     try { await evaluate(src, false); } catch (e) { failed.push(`${name}: ${e}`); }
   }
-  hush();
+  stopTransport?.();
   lines.push(`presets evaluated:  ${Object.keys(PRESETS).length - failed.length}/${Object.keys(PRESETS).length} ok`);
   for (const f of failed) lines.push('  FAIL ' + f);
 
@@ -215,7 +233,7 @@ if (new URLSearchParams(location.search).has('selftest')) {
 
 $('play').addEventListener('click', run);
 $('stop').addEventListener('click', () => {
-  hush();
+  stopTransport?.();
   window.__lab.playing = false;
   say('stopped.', '');
 });

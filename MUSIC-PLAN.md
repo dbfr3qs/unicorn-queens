@@ -323,11 +323,35 @@ That is why the selftest now **counts events** instead of trusting
 `evaluate()`: `48 events, 48 onsets, max 1 note at once`. Clean
 evaluation proves nothing about whether a pattern makes sound.
 
-**Still open, and it needs ears.** `VARIANTS` carries three A/B/C/D sets:
-`duty` (pulse width), `arpRate` (sweep speed, with a real chord as the
-control), and `era` — the same bar played the old way and the new way,
-which is the direct answer to the note above. Pick winners and fold them
-into `PAD`/`LEAD`.
+**The A/B verdict: `era B`, `duty C`, `arpRate D` — and two of the three
+doctrine rules lost.**
+
+| rule | proposed | verdict |
+|---|---|---|
+| 1. narrow pulse widths | `pw(.125)`, the nasal "NES" tone | **rejected** — `pw(.5)`, a plain square, won. Narrow duties survive as accents (`gearTick`, `sparkle`) |
+| 2. chords must be arpeggios | the most recognisable 8-bit gesture | **rejected** — the real simultaneous chord won. Arpeggios moved to `ARP` as a per-level texture |
+| 3. no reverb | `room()` is the modern tell | **kept** |
+
+Also kept: `coarse()` for the aliasing grit, and the flat-gate triangle
+bass. So the *timbre* rules earned their place and the *polyphony* rules
+did not — which makes sense, since the four-voice limit is a constraint
+we don't actually have. `PAD` is now real chords (default `PAD.chord`),
+`ARP` holds the sweeps, and the header in chip.js records the verdict
+rather than the theory.
+
+**"The drums are too dominant"** is now a budget in the chip.js header
+and four enforced tests, so it can't drift back when a voice is added:
+`kick <= bass` and `hats < chords`. Writing the check found two real
+breaches — `kickHard` at `.65` against a `.62` bass, and the closed hat
+at `.26` against a `.24` chord — both since corrected. (It also found
+two bugs in my own gain parser: a greedy regex was reading `.delay(.25)`
+as a gain and `[...]*4` as a level of 4.)
+
+42/42 presets evaluate; 1042 tests and smoke green.
+
+**Still open:** the `duty` and `arpRate` sets stay pickable, because
+both are worth re-judging once a track is arranged around them rather
+than heard in isolation.
 
 **M3 — first track.** Level 1 "meadow", full 32-bar arrangement, as a
 Strudel source string. Listen, iterate, lock it. This calibrates every

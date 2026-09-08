@@ -3,7 +3,7 @@
 // (without running it) so a typo fails here instead of going silently
 // missing at playback.
 import { describe, it, expect } from 'vitest';
-import { CHIP, DRUMS, BASS, LEAD, PAD, FX, VARIANTS, cpm, stackOf } from '../src/music/chip.js';
+import { CHIP, DRUMS, BASS, LEAD, PAD, ARP, FX, VARIANTS, cpm, stackOf } from '../src/music/chip.js';
 
 // new Function() parses without executing: no Strudel, no AudioContext,
 // nothing evaluated. It catches unbalanced parens, broken method chains
@@ -22,7 +22,7 @@ describe('chip rack', () => {
   });
 
   it('collects every voice into CHIP without name collisions', () => {
-    const groups = [DRUMS, BASS, LEAD, PAD, FX];
+    const groups = [DRUMS, BASS, LEAD, PAD, ARP, FX];
     const total = groups.reduce((n, g) => n + Object.keys(g).length, 0);
     // a collision would silently drop a voice during the spread
     expect(Object.keys(CHIP).length).toBe(total);
@@ -51,7 +51,7 @@ describe('chip rack', () => {
   // the cheap structural guards; music-lab's ?selftest=1 does the real
   // event count in a browser, since Strudel is not a project dependency.
   describe('the arpeggio spelling', () => {
-    const pads = Object.entries(PAD);
+    const pads = Object.entries(ARP);
 
     it.each(pads)('%s never calls .arp(), which silently yields nothing', (_n, src) => {
       expect(src).not.toMatch(/\.arp\(/);
@@ -74,15 +74,72 @@ describe('chip rack', () => {
     });
   });
 
+  // "The drums are too dominant" was the verdict on the first full stack.
+  // The fix was a set of gain cuts, which is exactly the kind of thing
+  // that drifts back the next time a voice is added. The mix budget in
+  // the chip.js header states the relationships; these enforce them.
+  describe('the mix budget', () => {
+    // gain() takes a number, a mini-notation pattern of them
+    // (`gain("[.26 .12]*4")`), or a signal (`gain(saw.range(.05,.4))`).
+    // Scan for the balanced closing paren rather than regex-matching it:
+    // a greedy `[^)]*` runs straight into the *next* call and silently
+    // reads .delay(.25) as a gain.
+    const argOf = (src, at) => {
+      let depth = 0;
+      for (let i = at; i < src.length; i++) {
+        if (src[i] === '(') depth++;
+        else if (src[i] === ')' && --depth === 0) return src.slice(at + 1, i);
+      }
+      throw new Error('unbalanced gain( in: ' + src.slice(at, at + 40));
+    };
+    const gainsOf = src => [...src.matchAll(/\.gain\(/g)]
+      .map(m => argOf(src, m.index + '.gain'.length))
+      // `*4` is a mini-notation repeat and `.slow(16)` a rate — counts, not levels
+      .map(a => a.replace(/\*\s*\d+/g, '').replace(/\.\w+\(\s*[\d.]+\s*\)/g, ''))
+      .flatMap(t => (t.match(/\d*\.?\d+/g) || []).map(Number));
+    const peak = src => Math.max(...gainsOf(src));
+
+    it('finds a gain on every voice it should', () => {
+      // guards the regexes above: a silent parse failure would make every
+      // assertion below vacuously true
+      for (const [name, src] of Object.entries({ ...DRUMS, ...BASS, ...PAD, ...ARP })) {
+        expect(gainsOf(src).length, `no gain found in ${name}`).toBeGreaterThan(0);
+      }
+    });
+
+    it('never lets the kick out-shout the bass', () => {
+      expect(peak(DRUMS.kick)).toBeLessThanOrEqual(peak(BASS.roll));
+      expect(peak(DRUMS.kickHard)).toBeLessThanOrEqual(peak(BASS.roll));
+    });
+
+    it('keeps the hats behind the harmony', () => {
+      const hats = Math.max(peak(DRUMS.hatsClosed), peak(DRUMS.hatsOpen));
+      expect(hats).toBeLessThan(peak(PAD.chord));
+    });
+
+    it('keeps the snare under the kick', () => {
+      expect(peak(DRUMS.snare)).toBeLessThan(peak(DRUMS.kick));
+    });
+
+    it('keeps every voice under unity', () => {
+      for (const [name, src] of Object.entries(CHIP)) {
+        for (const g of gainsOf(src)) {
+          expect(g, `${name} gain ${g}`).toBeLessThanOrEqual(1);
+        }
+      }
+    });
+  });
+
   it('keeps the era A/B genuinely different', () => {
     // This pair is the answer to "it does not sound 8-bit enough", so a
     // copy-paste slip that made them identical would be quietly useless.
     const { era } = VARIANTS;
     const [before, after] = Object.values(era);
-    expect(before).toMatch(/room\(/);      // reverb: the modern tell
-    expect(after).not.toMatch(/room\(/);   // doctrine rule 3
-    expect(after).toMatch(/\]\*\d+/);      // doctrine rule 2: arpeggiated chord
-    expect(after).toMatch(/pw\(/);         // doctrine rule 1
+    expect(before).toMatch(/room\(/);       // reverb: the clearest modern tell
+    expect(after).not.toMatch(/room\(/);    // rule 3, the one that survived A/B
+    expect(after).toMatch(/coarse\(/);      // the grit that replaced crush()
+    expect(after).toMatch(/pw\(\.5\)/);     // duty verdict: the plain square
+    expect(after).toMatch(/s\("triangle"\)/); // flat-gate triangle bass
   });
 });
 

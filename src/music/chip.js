@@ -29,26 +29,59 @@
 //   1x triangle fixed volume, no envelope — hence its flat, buzzy bass
 //   1x noise    the entire drum kit
 //
-// Three rules fall out of that, and they matter more than any amount of
-// bit-crushing:
+// Three rules were proposed from that, and then A/B'd by ear. Two lost.
+// What follows is the verdict, not the theory — where they disagree the
+// ear wins, because this is a soundtrack and not a hardware emulator.
 //
-//   1. Use narrow pulse widths. A 50% square is a plain square and the
-//      *least* characteristic of the three settings the chip offered;
-//      pw(.125) is the thin nasal tone people actually hear as "NES".
-//   2. Chords are arpeggios. Two pulse channels cannot voice a triad, so
-//      chip music sweeps the chord fast enough to fuse into one buzzing
-//      timbre. Nothing else reads as 8-bit so immediately, and nothing
-//      substitutes for it.
-//   3. No reverb. There was no room() in 1985. Space is faked with a
-//      short slap delay, or not at all.
+//   1. REJECTED — "use narrow pulse widths". pw(.125) is the thin nasal
+//      tone that reads most obviously as "NES", but pw(.5) — a plain
+//      square, supposedly the least characteristic setting — was the
+//      one that actually sounded better here. It is fuller and sits
+//      under gameplay without whining. Narrow duties survive as accent
+//      colours (gearTick, sparkle), not as the default.
 //
-// coarse() earns its place here too: reducing the sample rate aliases
-// the high harmonics, which is the grit a clean modern oscillator
-// lacks. crush() alone does not get you there.
+//   2. REJECTED — "chords must be arpeggios". The hardware could not
+//      voice a triad, so chip music swept it fast enough to fuse. It is
+//      the most recognisable 8-bit gesture and it lost anyway: the real
+//      simultaneous chord was preferred. Arpeggios stay in ARP below as
+//      a texture to reach for per level, not as the way chords are
+//      spelled. A four-voice limit is a constraint we do not have and
+//      pretending otherwise cost more than it bought.
 //
-// VARIANTS at the bottom keeps the pre-doctrine voices around for an
-// honest A/B, since "authentic" and "good under gameplay" are not the
-// same question.
+//   3. KEPT — no reverb. room() is the clearest modern tell of the
+//      three. Space is a short slap delay, or nothing.
+//
+// Also kept: coarse(), which aliases the high harmonics and is where the
+// digital grit actually comes from (crush() alone does not get you
+// there), and the triangle-with-a-flat-gate bass.
+//
+// The useful summary: the *timbre* rules earned their place, the
+// *polyphony* rules did not. VARIANTS at the bottom keeps every
+// alternative pickable so this stays re-judgeable rather than settled by
+// argument.
+//
+// ---- the mix budget ----------------------------------------------------
+// Drums were dominating the first full stack. Gains are budgeted by role
+// so new voices do not drift back into that; keep new entries inside the
+// band for their row.
+//
+//   kick          .55-.65
+//   snare         .28-.34
+//   hats          .08-.20     stays under the chords
+//   bass          .40-.62     carries the tune as much as the lead does
+//   chords / arps .18-.28
+//   lead          .28-.38     sits just above the chords
+//   accents       .05-.16     gearTick, sparkle
+//
+// The absolute numbers matter less than two relationships, which are the
+// actual content of "the drums are too dominant" and are enforced in
+// test/music-chip.test.js so they cannot drift back:
+//
+//   kick <= bass     percussion never louder than the thing playing the tune
+//   hats <  chords   the top end stays behind the harmony
+//
+// These are pre-master: MUSIC-PLAN.md §7 still has the game-vs-sfx
+// balance to settle, and the whole stack will likely sit near .25.
 
 // ---- drums -------------------------------------------------------------
 // All percussion is synthesised: pitch-enveloped sines and filtered
@@ -65,35 +98,35 @@ export const DRUMS = {
   kick: `s("triangle*4").note("c2")
   .attack(.001).decay(.11).sustain(0)
   .penv(30).pdecay(.03)
-  .coarse(2).distort(1.2).gain(.9)`,
+  .coarse(2).distort(1.2).gain(.6)`,
 
   // Harder variant for the boss layer and the faster levels.
   kickHard: `s("triangle*4").note("c2")
   .attack(.001).decay(.09).sustain(0)
   .penv(36).pdecay(.024)
-  .coarse(3).distort(2).gain(.95)`,
+  .coarse(3).distort(2).gain(.62)`,
 
   // The noise channel is the whole kit, so the hats are deliberately
   // crunchy rather than silky: coarse() to drop the rate, and no
   // careful band-passing. Accents keep it from machine-gunning.
   hatsClosed: `s("white*8").decay(.02).sustain(0)
-  .coarse(7).hpf(6000).gain("[.45 .22]*4")`,
+  .coarse(7).hpf(6000).gain("[.2 .1]*4")`,
 
   // The offbeat open hat — the most house-defining element here. Lands
   // on the "and" of every beat, between the kicks.
   hatsOpen: `s("~ white").fast(4).decay(.09).sustain(0)
-  .coarse(7).hpf(4800).gain(.38)`,
+  .coarse(7).hpf(4800).gain(.18)`,
 
   // Snare/clap on 2 and 4. One crunchy noise burst, no pitched layer —
   // a second voice for the snare is a luxury four channels do not have.
   snare: `s("~ white ~ white").decay(.1).sustain(0)
-  .coarse(5).bpf(1600).distort(1.3).gain(.5)`,
+  .coarse(5).bpf(1600).distort(1.3).gain(.3)`,
 
   // Level 8's clockwork tick: a 12.5% pulse at the top of its range,
   // clipped to almost nothing.
   gearTick: `s("pulse*16").note("c7").pw(.125)
   .attack(.001).decay(.008).sustain(0)
-  .gain("[.16 .06 .1 .06]*4").coarse(3)`,
+  .gain("[.12 .05 .08 .05]*4").coarse(3)`,
 };
 
 // ---- bass --------------------------------------------------------------
@@ -125,14 +158,15 @@ export const BASS = {
   .attack(.001).sustain(1).release(.02).gain(.4)`,
 };
 
-// ---- lead / arp --------------------------------------------------------
+// ---- lead ---------------------------------------------------------------
 
 export const LEAD = {
-  // The melody voice: a 12.5% pulse with fast vibrato, the classic chip
-  // lead. delaytime(.1875) is a dotted eighth at 4 cycles to the bar —
+  // The melody voice. pw(.5) per the duty verdict — fuller than the
+  // narrow duties and it stays audible over the drums without having to
+  // be loud. delaytime(.1875) is a dotted eighth at 4 cycles to the bar —
   // the trance delay, kept because the echoes land between the notes.
   // A slap delay is period-plausible in a way reverb is not.
-  lead: `note("<a4 e4 c5 e4>").s("pulse").pw(.125)
+  lead: `note("<a4 e4 c5 e4>").s("pulse").pw(.5)
   .attack(.001).decay(.04).sustain(.8).release(.02)
   .vib(6).vibmod(.15)
   .coarse(2).gain(.3)
@@ -166,14 +200,41 @@ export const LEAD = {
   .pan(sine.range(.25,.75).slow(5))`,
 };
 
-// ---- "pads" ------------------------------------------------------------
-// A pad is a lie on this hardware. There is no third pulse channel to
-// hold a chord and no reverb for it to sit in. What actually fills that
-// role in chip music is the arpeggio: sweep the triad fast enough and
-// the ear fuses it into a single buzzing timbre that reads as harmony.
+// ---- chords ------------------------------------------------------------
+// Doctrine rule 2 was rejected: the plain simultaneous chord beat every
+// arpeggio rate in the A/B, so this is the default harmony voice and the
+// sweeps live in ARP below. pw(.5) follows the same verdict as the lead.
 //
-// This is rule 2 of the doctrine above, and it is the biggest single
-// difference between "synth pretending to be a chip" and "chip".
+// No reverb (rule 3 stands) — depth comes from the slap delay and from
+// keeping the voicing low and narrow.
+
+export const PAD = {
+  // The default. Four bars, one chord each.
+  chord: `note("<[a3,c4,e4] [f3,a3,c4] [g3,b3,d4] [e3,g3,b3]>")
+  .s("pulse").pw(.5)
+  .attack(.02).decay(.3).sustain(.55).release(.25)
+  .coarse(2).gain(.24)
+  .delay(.25).delaytime(.375).delayfeedback(.2)`,
+
+  // Wider voicing with the 7th on top, for the big levels (7, 8).
+  chordWide: `note("<[a3,c4,e4,g4] [f3,a3,c4,e4] [g3,b3,d4,f4] [e3,g3,b3,d4]>")
+  .s("pulse").pw(.5)
+  .attack(.02).decay(.3).sustain(.5).release(.3)
+  .coarse(2).gain(.2)
+  .delay(.25).delaytime(.375).delayfeedback(.2)`,
+
+  // Stabs rather than a bed: the house chord on the offbeat.
+  stab: `note("~ [a3,c4,e4] ~ [g3,b3,d4]")
+  .s("pulse").pw(.5)
+  .attack(.001).decay(.12).sustain(0)
+  .coarse(2).gain(.26)
+  .delay(.3).delaytime(.1875).delayfeedback(.25)`,
+};
+
+// ---- arpeggios ---------------------------------------------------------
+// Kept as a *texture* to reach for per level, not as the way chords are
+// spelled — see doctrine rule 2 above. Still the most recognisable 8-bit
+// gesture when a level wants it (9's thaw, 6's mire).
 //
 // Spelled as an explicit sequence, `<[a3 c4 e4]*16 [f3 a3 c4]*16>`,
 // rather than with Strudel's .arp(). Two reasons:
@@ -198,8 +259,8 @@ export const LEAD = {
 //   *16  the classic NES shimmer, notes just distinguishable
 //   *8   an audible arpeggio figure
 
-export const PAD = {
-  // The default. Fuses into a chord, keeps a visible flutter.
+export const ARP = {
+  // Fuses into a chord, keeps a visible flutter.
   arpChord: `note("<[a3 c4 e4]*16 [f3 a3 c4]*16 [g3 b3 d4]*16 [e3 g3 b3]*16>")
   .s("pulse").pw(.25)
   .attack(.001).decay(.02).sustain(.75).release(.01)
@@ -255,28 +316,29 @@ export const FX = {
 const HARMONY = '<[a3,c4,e4] [f3,a3,c4] [g3,b3,d4] [e3,g3,b3]>';
 
 export const VARIANTS = {
-  // Rule 1: duty cycle. This is the single cheapest authenticity win —
-  // same notes, same everything, four different chip characters.
+  // Rule 1: duty cycle. Same notes throughout, four chip characters.
+  // C won — the plain square. Left here because it is the cheapest dial
+  // in the rack and worth re-judging once a track is arranged around it.
   duty: {
     'A — pw .125, thin and nasal (most "NES")': `note("<a4 e4 c5 e4>*4").s("pulse").pw(.125)
   .attack(.001).decay(.04).sustain(.8).release(.02).coarse(2).gain(.3)`,
     'B — pw .25, reedy (the workhorse)': `note("<a4 e4 c5 e4>*4").s("pulse").pw(.25)
   .attack(.001).decay(.04).sustain(.8).release(.02).coarse(2).gain(.3)`,
-    'C — pw .5, a plain square (least characteristic)': `note("<a4 e4 c5 e4>*4").s("pulse").pw(.5)
+    'C — pw .5, a plain square — WINNER, now the default': `note("<a4 e4 c5 e4>*4").s("pulse").pw(.5)
   .attack(.001).decay(.04).sustain(.8).release(.02).coarse(2).gain(.3)`,
     'D — pw swept, the duty-modulation whine': `note("<a4 e4 c5 e4>*4").s("pulse").pw(.5).pwrate(1.5).pwsweep(.4)
   .attack(.001).decay(.04).sustain(.8).release(.02).coarse(2).gain(.3)`,
   },
 
-  // Rule 2: how hard the arpeggio fuses. D is the control — the chord
-  // played as an actual chord, which the hardware could not do. If D
-  // sounds better to you than A-C, the doctrine is wrong for this game
-  // and we should say so rather than chase authenticity.
+  // Rule 2: how hard the arpeggio fuses. D was the control — the chord
+  // played as an actual chord, which the hardware could not do — and D
+  // won, so the doctrine lost and PAD.chord is the default. A-C survive
+  // as ARP, a per-level texture.
   arpRate: {
-    'A — *32, fuses into a chord (nearest real hardware)': PAD.arpBuzz,
-    'B — *16, classic shimmer (default)': PAD.arpChord,
-    'C — *8, audible figure': PAD.arpSlow,
-    'D — no arpeggio, real simultaneous chord (impossible on the hardware)':
+    'A — *32, fuses into a chord (nearest real hardware)': ARP.arpBuzz,
+    'B — *16, classic shimmer': ARP.arpChord,
+    'C — *8, audible figure': ARP.arpSlow,
+    'D — no arpeggio, real simultaneous chord — WINNER, now PAD.chord':
       `note("${HARMONY}").s("pulse").pw(.25)
   .attack(.001).decay(.03).sustain(.7).release(.02).coarse(2).gain(.24)`,
   },
@@ -298,7 +360,7 @@ export const VARIANTS = {
     ${DRUMS.kick},
     ${DRUMS.hatsClosed},
     ${BASS.roll},
-    ${PAD.arpChord}
+    ${PAD.chord}
   )`,
   },
 };
@@ -306,7 +368,7 @@ export const VARIANTS = {
 // ---- composition -------------------------------------------------------
 
 /** All voices, flat, by name. */
-export const CHIP = { ...DRUMS, ...BASS, ...LEAD, ...PAD, ...FX };
+export const CHIP = { ...DRUMS, ...BASS, ...LEAD, ...PAD, ...ARP, ...FX };
 
 /** `setcpm` line for a tempo in BPM, assuming 4/4 (4 beats per cycle). */
 export function cpm(bpm) {

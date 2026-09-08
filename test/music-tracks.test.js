@@ -23,6 +23,13 @@ describe('render', () => {
     for (const [, m] of masks) expect(m.split(' ')).toHaveLength(32);
   });
 
+  it('ends on the pattern expression, so a caller can append methods', () => {
+    // src/music.js appends .mul(gain(...)) for its master volume. If
+    // render() ever ended on a statement instead, that would become a
+    // syntax error at playback and nowhere else.
+    parses(`${render(meadow)}\n  .mul(gain(0.5))`);
+  });
+
   it('rejects a mask that is not 32 bars', () => {
     expect(() => render({ bpm: 118, layers: { kick: '1111' } }))
       .toThrow(/32 bars, got 4/);

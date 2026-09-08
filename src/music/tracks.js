@@ -35,6 +35,11 @@ function bars(mask) {
 /**
  * Runnable Strudel source for a track: each layer gated by its mask,
  * stacked, at the track's tempo.
+ *
+ * Contract: the returned program *ends on the pattern expression*, so a
+ * caller may append pattern methods to it. src/music.js relies on this
+ * to add its master gain (`.mul(gain(...))`). Tested in
+ * test/music-tracks.test.js — do not add a trailing statement here.
  */
 export function render(track) {
   const layers = Object.entries(track.layers).map(([voice, mask]) => {

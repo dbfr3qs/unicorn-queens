@@ -388,10 +388,46 @@ and `ARP.arpBuzz` ran a two-bar cycle that drifted against everything
 else. All now on one progression, with a test that counts the
 alternatives in each `<...>` so they cannot drift apart again.
 
-**M4 — the director.** `src/music.js` + `tracks.js` + tests. Still not
-wired into the game. **Decision gate: §3.1.** Everything up to here is
-portable to a hand-rolled sequencer, so this is the last cheap moment to
-change course.
+**M4 — the director. ✅ DONE.** [src/music.js](src/music.js) — still not
+wired into the game; that is M5.
+
+```js
+initMusic(load?)      // lazy, once, survives failure
+setTrack(levelName)   // no-op if that level is already playing
+stopMusic()
+setMusicMuted/toggle  duck(on)  setVolume(v)
+_setBackend/_reset    // the test seam
+```
+
+Two decisions worth recording:
+
+**Master volume rides a live signal, not a re-evaluation.** `.gain()`
+*overrides* each voice's own level (0.6 → 0.5); `.mul(gain(x))`
+multiplies (0.6 → 0.3), which is what a master control must do. Better
+still, Strudel signals are functions of time, so
+`signal(() => gainNow())` is read fresh at every event — volume, mute
+and duck take effect on the next *event* rather than the next bar, with
+no re-evaluation. That matters for ducking, which follows dialogue and
+would otherwise lag by up to ~2 s (§3.3).
+
+**Re-entering the same level does not restart the track.** `startGame()`
+runs on death-restarts as well as advances, and re-cueing the music every
+time the player dies gets grating fast — this settles §7 Q2.
+
+A level with no track yet falls silent instead of throwing, so the game
+stays playable while M7 fills the other eight in. A bundle that fails to
+load logs and leaves the director inert: music must never take the game
+with it.
+
+Verified twice over: 19 director tests drive it in Node against a
+recorder backend (the same seam the game's `fx` uses), and a throwaway
+browser harness exercised the real script-injection path — track queued
+before the bundle existed then played on arrival, clock advancing,
+live gain responding to volume and duck, silent on a trackless level.
+
+**Decision gate §3.1 is still open**, and it is now the last cheap moment:
+everything so far is portable to a hand-rolled sequencer, but M5 wires
+Strudel into the game proper.
 
 **M5 — wire it in.** The call sites in §5. Level transitions, mute keys,
 dialogue ducking. Smoke + tests green.

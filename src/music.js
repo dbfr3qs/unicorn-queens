@@ -67,11 +67,15 @@ async function loadStrudel() {
     el.onerror = () => reject(new Error('music: could not load ' + url));
     document.head.append(el);
   });
-  // initStrudel() registers the audio unlock and prebakes the synths. No
-  // samples are fetched, so this needs no network.
+  // initStrudel() prebakes the synths (no samples, so no network) and
+  // registers its own audio unlock — which listens for *mousedown only*.
+  // This game is played on the keyboard, so that unlock never fires and
+  // the context stays suspended forever: clock running, events
+  // scheduled, silence out. resumeAudio() below is what actually starts
+  // the sound, driven by the keypress that got us here.
   await globalThis.initStrudel();
-  const { evaluate, hush, signal, gain } = globalThis;
-  return { evaluate, hush, signal, gain };
+  const { evaluate, hush, signal, gain, initAudio, getAudioContext } = globalThis;
+  return { evaluate, hush, signal, gain, initAudio, getAudioContext };
 }
 
 /**
@@ -80,11 +84,20 @@ async function loadStrudel() {
  * gesture — the browser will not start audio otherwise.
  */
 export async function initMusic(load = loadStrudel) {
+  // Every call, not just the first: browsers only honour a resume during
+  // (or after) a real user gesture, and input.js calls this on every
+  // keydown. The first press starts the ~200 KB fetch, so the press that
+  // actually unlocks the context is usually a later one.
+  resumeAudio();
   if (music.loaded) return true;
   if (initMusic.inFlight) return initMusic.inFlight;
   initMusic.inFlight = (async () => {
     try {
       _setBackend(await load());
+      resumeAudio(); // the gesture that started the load still counts
+      if (backend?.getAudioContext?.()?.state !== 'running') {
+        console.warn('music: audio is suspended — press a key or click the page');
+      }
       return true;
     } catch (err) {
       // Music is a nicety: a failure here must never take the game with
@@ -96,6 +109,31 @@ export async function initMusic(load = loadStrudel) {
     }
   })();
   return initMusic.inFlight;
+}
+
+/**
+ * Start or resume the audio context.
+ *
+ * Strudel's own unlock (`initAudioOnFirstClick`) binds to `mousedown`,
+ * so a keyboard-only game never triggers it. Its `initAudio()` does the
+ * full job — loads the worklets and resumes — and is safe to call again.
+ * Failures are swallowed: a browser refusing to resume outside a gesture
+ * is expected, and the next keypress will try again.
+ */
+export function resumeAudio() {
+  try {
+    backend?.initAudio?.();
+    const ctx = backend?.getAudioContext?.();
+    if (!ctx) return;
+    if (ctx.state !== 'running') ctx.resume();
+    // Say so once, so "why is there no music" is answerable from the
+    // console instead of by guessing. Silence with state 'running' is a
+    // mix problem; silence with 'suspended' is this unlock.
+    if (ctx.state === 'running' && !resumeAudio.announced) {
+      resumeAudio.announced = true;
+      console.info('music: audio running');
+    }
+  } catch { /* not yet permitted; the next keypress retries */ }
 }
 
 // ---- playback ----------------------------------------------------------
@@ -172,6 +210,7 @@ export function _reset() {
   backend = null;
   pending = null;
   initMusic.inFlight = null;
+  resumeAudio.announced = false;
   Object.assign(music, {
     loaded: false, track: null, playing: false,
     muted: false, ducked: false, volume: 0.25,

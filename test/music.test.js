@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   music, setTrack, stopMusic, initMusic, gainNow,
-  setMusicMuted, toggleMusicMuted, duck, setVolume,
+  setMusicMuted, toggleMusicMuted, duck, setVolume, resumeAudio,
   _setBackend, _reset,
 } from '../src/music.js';
 
@@ -162,6 +162,67 @@ describe('the live gain', () => {
     expect(r.calls.some(c => c[0] === 'signal')).toBe(true);
     setVolume(0.5);
     expect(recorder.live()).toBeCloseTo(0.5);
+  });
+});
+
+// The bug that made the game silent while every headless check passed:
+// Strudel's own unlock (initAudioOnFirstClick) binds to *mousedown*, so
+// a keyboard-only game never fires it. The context is created, the clock
+// runs, events schedule, and nothing reaches the speakers.
+describe('the keyboard audio unlock', () => {
+  const unlockable = (state = 'suspended') => {
+    const calls = [];
+    const ctx = { get state() { return state; }, resume: () => { calls.push('resume'); state = 'running'; } };
+    return {
+      calls, ctx,
+      evaluate: () => {}, hush: () => {}, signal: fn => fn, gain: v => v,
+      initAudio: () => calls.push('initAudio'),
+      getAudioContext: () => ctx,
+    };
+  };
+
+  it('resumes a suspended context', () => {
+    const b = unlockable();
+    _setBackend(b);
+    resumeAudio();
+    expect(b.calls).toContain('initAudio');
+    expect(b.calls).toContain('resume');
+    expect(b.ctx.state).toBe('running');
+  });
+
+  it('leaves a running context alone', () => {
+    const b = unlockable('running');
+    _setBackend(b);
+    resumeAudio();
+    expect(b.calls).not.toContain('resume');
+  });
+
+  it('runs on every initMusic call, not just the first', async () => {
+    // input.js calls initMusic on every keydown. The press that starts
+    // the ~200 KB fetch is rarely the one that gets to unlock the
+    // context, so later presses have to keep trying.
+    const b = unlockable();
+    await initMusic(async () => b);
+    const after = b.calls.length;
+    await initMusic(async () => b);
+    await initMusic(async () => b);
+    expect(b.calls.length).toBeGreaterThan(after);
+  });
+
+  it('swallows a browser that refuses to resume', () => {
+    // resuming outside a gesture throws in some browsers; the next
+    // keypress will try again, and the game must not break meanwhile
+    _setBackend({
+      evaluate: () => {}, hush: () => {}, signal: fn => fn, gain: v => v,
+      initAudio: () => { throw new Error('not allowed'); },
+      getAudioContext: () => { throw new Error('not allowed'); },
+    });
+    expect(() => resumeAudio()).not.toThrow();
+  });
+
+  it('does nothing before the bundle exists', () => {
+    _reset();
+    expect(() => resumeAudio()).not.toThrow();
   });
 });
 

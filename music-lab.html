@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unicorn Queens — music lab</title>
+<!--
+  Standalone composition bench for the soundtrack (MUSIC-PLAN.md).
+  Not part of the game: nothing in src/ loads this, and the game does not
+  load Strudel until MUSIC-PLAN.md M5.
+
+  Serve it — the vendored bundle needs an http origin for AudioWorklet:
+      npm run serve      ->  http://localhost:9000/music-lab.html
+
+  Patterns are Strudel *source strings*, evaluated with the same
+  semantics as strudel.cc (double quotes = mini-notation). So anything
+  that sounds right here can be pasted straight into the REPL, and
+  anything tuned in the REPL can be pasted straight back.
+-->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; min-height: 100vh; background: #1a1025; color: #e8dcf5;
+         font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+  h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; color: #d9b8ff; }
+  p.sub { margin: 0 0 20px; color: #9a8ab0; font-size: 13px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  button { font: inherit; padding: 7px 16px; border-radius: 4px; cursor: pointer;
+           background: #2d1f42; color: #e8dcf5; border: 1px solid #b57edc; }
+  button:hover { background: #3d2a58; }
+  button:disabled { opacity: .4; cursor: default; }
+  button.primary { background: #b57edc; color: #1a1025; font-weight: 600; }
+  select { font: inherit; padding: 6px 10px; background: #2d1f42; color: #e8dcf5;
+           border: 1px solid #6b5a80; border-radius: 4px; }
+  textarea { width: 100%; box-sizing: border-box; min-height: 300px; padding: 12px;
+             font: 13px/1.6 ui-monospace, Menlo, monospace; tab-size: 2;
+             background: #0d0815; color: #e8dcf5; border: 1px solid #6b5a80;
+             border-radius: 4px; resize: vertical; }
+  #status { padding: 8px 12px; border-radius: 4px; border: 1px solid #6b5a80;
+            background: #0d0815; min-height: 20px; white-space: pre-wrap; font-size: 13px; }
+  .ok { color: #8fe08f; } .bad { color: #ff8a8a; } .wait { color: #e0d08f; }
+  .hint { color: #9a8ab0; font-size: 12px; margin-top: 10px; }
+  kbd { background: #2d1f42; border: 1px solid #6b5a80; border-radius: 3px; padding: 1px 5px; font-size: 11px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Unicorn Queens — music lab</h1>
+  <p class="sub">M1 spike: does the vendored Strudel bundle make a noise?</p>
+
+  <div class="row">
+    <button id="play" class="primary" disabled>▶ play</button>
+    <button id="stop" disabled>■ stop</button>
+    <select id="preset"></select>
+    <span class="hint" style="margin:0"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to re-evaluate while playing</span>
+  </div>
+
+  <div id="status" class="wait">loading vendor/strudel/index.js …</div>
+
+  <p class="hint">Edit freely. Presets overwrite the editor — copy anything you want to keep.</p>
+  <textarea id="code" spellcheck="false"></textarea>
+</main>
+
+<script src="./vendor/strudel/index.js"></script>
+<script>
+// ---- presets -----------------------------------------------------------
+// M1 only needs the first one to work. The rest are the first sketches of
+// the chip rack from MUSIC-PLAN.md §4, here to be tuned by ear in M2.
+const PRESETS = {
+  'smoke test — is anything alive?': `note("<c a f e>(3,8)").jux(rev)`,
+
+  'chip rack — kick': `setcpm(124/4)
+s("sine*4").note("c1")
+  .decay(.13).sustain(0)
+  .penv(36).pdecay(.035)
+  .distort(1.1).gain(.9)`,
+
+  'chip rack — hats (house offbeat)': `setcpm(124/4)
+stack(
+  s("white*8").decay(.025).sustain(0).hpf(8000).gain("[.5 .3]*4"),
+  s("~ white").fast(4).decay(.11).sustain(0).hpf(6500).gain(.42)
+)`,
+
+  'chip rack — bass (rolling 16ths)': `setcpm(124/4)
+note("<a1 a1 f1 g1>*16").s("square")
+  .lpf(420).lpenv(3.2).lpdecay(.06).lpq(9)
+  .decay(.07).sustain(0).gain(.7)`,
+
+  'chip rack — arp (dotted-8th delay)': `setcpm(124/4)
+note("a3 c4 e4 a4 e4 c4".fast(2)).s("square").crush(8)
+  .decay(.09).sustain(0).gain(.4)
+  .delay(.45).delaytime(.1875).room(.3)`,
+
+  'chip rack — pad (stacked detune)': `setcpm(124/4)
+note("<[a3,c4,e4,b4] [f3,a3,c4,g4]>".add("<0 .08 -.08>"))
+  .s("square").attack(.9).release(1.4)
+  .lpf(2600).gain(.22).room(.6)`,
+
+  'level 1 — meadow (rough sketch)': `setcpm(118/4)
+stack(
+  s("sine*4").note("c1").decay(.13).sustain(0)
+    .penv(36).pdecay(.035).distort(1.1).gain(.85),
+  s("~ white").fast(4).decay(.09).sustain(0).hpf(6500).gain(.3),
+  note("<a1 a1 f1 g1>*8").s("square")
+    .lpf(380).lpenv(3).lpdecay(.06).lpq(8)
+    .decay(.07).sustain(0).gain(.5),
+  note("<[a3,c4,e4] [f3,a3,c4] [g3,b3,d4] [e3,g3,b3]>")
+    .s("square").attack(.9).release(1.6)
+    .lpf(2200).gain(.18).room(.7),
+  note("a4 ~ e4 ~ c5 ~ e4 ~").s("square").crush(8)
+    .decay(.08).sustain(0).gain(.22)
+    .delay(.4).delaytime(.1875).room(.4)
+)`,
+};
+
+// ---- ui ----------------------------------------------------------------
+const $ = id => document.getElementById(id);
+const statusEl = $('status'), codeEl = $('code'), presetEl = $('preset');
+
+function say(msg, cls) { statusEl.textContent = msg; statusEl.className = cls || ''; }
+
+for (const name of Object.keys(PRESETS)) {
+  presetEl.append(Object.assign(document.createElement('option'), { value: name, textContent: name }));
+}
+codeEl.value = PRESETS[presetEl.value];
+presetEl.addEventListener('change', () => { codeEl.value = PRESETS[presetEl.value]; });
+
+// ---- strudel -----------------------------------------------------------
+// window.__lab is the machine-readable version of the status line, so the
+// page can be checked without ears (see MUSIC-PLAN.md M1).
+window.__lab = { scriptLoaded: false, inited: false, playing: false, error: null };
+
+if (typeof initStrudel !== 'function') {
+  say('FAIL: vendor/strudel/index.js did not load, or did not define initStrudel().\n'
+    + 'Are you opening this over http? (file:// will not work.)', 'bad');
+  window.__lab.error = 'bundle missing';
+} else {
+  window.__lab.scriptLoaded = true;
+  // initStrudel() registers the audio unlock and kicks off the prebake
+  // (registerSynthSounds only — no samples are fetched).
+  initStrudel()
+    .then(() => {
+      window.__lab.inited = true;
+      say('ready — bundle loaded, synths registered. Press play.\n'
+        + 'The AudioContext stays suspended until the first click; that is the browser autoplay policy, not a fault.', 'ok');
+      $('play').disabled = false;
+      $('stop').disabled = false;
+    })
+    .catch(err => {
+      window.__lab.error = String(err);
+      say('FAIL during initStrudel(): ' + err + '\n'
+        + 'If this mentions AudioWorklet, check the origin is secure (localhost counts).', 'bad');
+    });
+}
+
+async function run() {
+  try {
+    await evaluate(codeEl.value);   // REPL semantics: "..." is mini-notation
+    window.__lab.playing = true;
+    window.__lab.error = null;
+    say('playing. Edit and press Ctrl+Enter to hear changes on the next cycle.', 'ok');
+  } catch (err) {
+    window.__lab.error = String(err);
+    say('pattern error: ' + err, 'bad');
+  }
+}
+
+// ---- self-test ---------------------------------------------------------
+// ?selftest=1 runs the whole chain without a click and reports what came
+// up: AudioContext state, the inlined AudioWorklets, the SharedWorker
+// clock. Lets a headless browser prove the audio graph *builds* — it
+// still cannot prove it sounds good. Needs autoplay blocking disabled
+// (media.autoplay.blocking_policy=0), else the context stays suspended.
+async function selftest() {
+  const lines = [];
+  const probe = () => {
+    try {
+      const ac = getAudioContext();
+      return { state: ac.state, t: ac.currentTime.toFixed(3), rate: ac.sampleRate };
+    } catch (e) { return { state: 'no context: ' + e, t: '-', rate: '-' }; }
+  };
+  lines.push('bundle loaded:      ' + window.__lab.scriptLoaded);
+  lines.push('initStrudel():      ' + window.__lab.inited);
+  lines.push('SharedWorker avail: ' + (typeof SharedWorker === 'function'));
+  await run();
+  lines.push('evaluate():         ' + (window.__lab.error ? 'FAIL ' + window.__lab.error : 'ok'));
+  const a = probe();
+  lines.push(`audio ctx (t=0s):   state=${a.state} time=${a.t} rate=${a.rate}`);
+  await new Promise(r => setTimeout(r, 3000));
+  const b = probe();
+  lines.push(`audio ctx (t=3s):   state=${b.state} time=${b.t}`);
+  const advanced = parseFloat(b.t) > parseFloat(a.t);
+  lines.push('clock advancing:    ' + advanced);
+  const pass = window.__lab.inited && !window.__lab.error && b.state === 'running' && advanced;
+  window.__lab.selftest = pass;
+  const report = (pass ? 'SELFTEST PASS\n' : 'SELFTEST INCOMPLETE\n') + lines.join('\n');
+  say(report, pass ? 'ok' : 'bad');
+  // headless runs screenshot at load, long before this finishes — post the
+  // result so a probe server can read it. 404s harmlessly under npm run serve.
+  try { await fetch('/_selftest', { method: 'POST', body: report }); } catch {}
+}
+if (new URLSearchParams(location.search).has('selftest')) {
+  const iv = setInterval(() => { if (window.__lab.inited || window.__lab.error) { clearInterval(iv); selftest(); } }, 200);
+}
+
+$('play').addEventListener('click', run);
+$('stop').addEventListener('click', () => {
+  hush();
+  window.__lab.playing = false;
+  say('stopped.', '');
+});
+codeEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+});
+</script>
+</body>
+</html>

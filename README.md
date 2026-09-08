@@ -157,7 +157,53 @@ advance still follow the normal carry rules.
    is open. Fly down through the cloud shaft — the ceiling hole of
    level 4, inverted — to the ice below. The citadel stands still.
 
-Win a level and press Space to play the next one.
+9. **The Frozen Throne** — the shaft drops you onto a glacier under a
+   sky that has not seen dawn in a hundred years, with an ice palace on
+   the horizon and the King walking beside you. Three frost seals bar
+   the way east, and three hearths sleep under them: find each **sun
+   seed** — one caught inside a frozen fountain, one on the crest of a
+   frozen wave, one in the block of ice a robin is trapped in (both
+   shells open to an arrow) — and carry it to its hearth. Each fire you
+   light steps the sky one shade toward dawn, thins the frost film in
+   the hall, raises the drone a semitone, melts a ring of floor from ice
+   to wet stone, and cracks its seal open. It also frees something the
+   winter caught: a hare runs home, a wraith goes out like a held
+   breath, a frozen scholar drips for a second. **Bounce boots grip the
+   ice here** — the peak's slide, finally answered — but the glacier
+   golems spit beads of frost that land as fresh slick patches, and a
+   patch slides in boots or out of them. Frost sprites hover and throw
+   darts. In the hall behind the third seal, five people stand frozen
+   mid-step.
+
+   Past the last seal the **Frost Queen** sits on her throne with a
+   century of winter in her. Speak to her and the shell comes off: 24
+   hits, arrow-only, three rows of pips over the arena. She keeps
+   spacing rather than chasing — a frost bolt, a floor slam into two
+   waves that die at the arena walls, an ice spike that glints for a
+   beat before it rises (too tall to jump: walk out of the glint). At
+   16 she stops for a second, her staff flares, and a frozen guard in
+   the hall cracks and drips; then she breathes a short cone that
+   leaves a patch where it lands, and doubles the spikes. At 8 the same
+   again with the child, and the last winter lunges in bursts and calls
+   a three-second blizzard — dense snow, a gentle drift on your footing,
+   three slow waves. The King's pad is the only floor in the room that
+   does not slide; the arena's two heart boxes are worth leaving on the
+   floor until you need them.
+
+   The last arrow does not kill her. Her staff shatters, her armour
+   peels, she kneels, and she becomes light and goes. While that light
+   is still rising the King walks to the dais, raises the horn, and a
+   warm beam sweeps the whole level west to east: the sun crests the
+   glacier, the fountains run, the wave finally breaks, the five in the
+   hall crack and fade into the light, and a robin flies back in and
+   perches on the throne rim. She gets the last word — she froze the
+   world to stop a plague that was already a century gone — and he gets
+   the one after. Then the card: **THE REALM THAWS**. Space starts a new
+   run at level 1, with nothing carried.
+
+Win a level and press Space to play the next one — except the last one,
+which has no goal line and no exit: the ending state is the only way out,
+and Space at the end card starts the game over.
 
 ## Loot
 
@@ -191,8 +237,33 @@ the only exception. Score and the one-time bow reset each level.
 - Shoot: X or J
 - Flight spell (once learned, level 3): S — fly for 10 s; while
   flying, up/down arrows rise and descend
-- Sound: M
+- Sound: M mutes everything; N mutes just the music
 - Next level / retry (after win/loss): Space
+
+## Music
+
+The soundtrack is live-coded with [Strudel](https://strudel.cc): 8-bit
+house/trance, synthesised on the fly rather than streamed, so it costs
+~209 KB of code and no audio assets.
+
+- `src/music/chip.js` — the voice palette. Its header records which
+  chiptune conventions were kept and which were rejected by ear.
+- `src/music/tracks.js` — per-level arrangements. A track is named
+  layers, each with a 32-bar mask of ones and zeros, so the form reads
+  as text.
+- `src/music.js` — the director: which track plays, and how loud.
+- `music-lab.html` — the composition bench. `npm run serve`, then
+  <http://localhost:9000/music-lab.html>: preset picker, editable
+  pattern, Ctrl+Enter to re-evaluate while it plays. Patterns are
+  Strudel source strings, so anything tuned here pastes straight into
+  strudel.cc and back.
+
+`music-lab.html?selftest=1` runs the whole audio chain without a click
+and reports what came up — bundle, worklets, clock, and whether every
+preset still evaluates. Useful after touching the palette, since code
+kept in strings has no linter.
+
+Only level 1 has a track so far; levels without one play silence.
 
 ## Layout
 
@@ -200,6 +271,13 @@ the only exception. Score and the one-time bow reset each level.
   camera, game state). No canvas calls.
 - `src/render/` — all drawing, split per entity, plus a shared `theme.js`
   (palette/fonts) and `background.js`.
+- `assets/sprites/` + `src/sprites.js` — the generated pixel art, and the
+  loader for it. Sheets are requested at import and consumed as they decode;
+  there is no loading screen and no switch. The vector draws still in the
+  renderers are the fallback for the frames before a sheet has decoded and
+  for anywhere that cannot decode one at all — which is how the whole test
+  suite runs, since Node has no `Image`. That is also why the render
+  snapshots record vector calls.
 - `src/loot-items/` — one file per loot kind. Each file registers
   `{ kind, weight?, onPickup, update?, draw }` with the registry in
   `index.js`, so a kind's effect, drop weight, and sprite all live in the
@@ -268,3 +346,11 @@ Each test is a *state*, not a playthrough: `freshGame()` resets to a
 known state (and re-seeds the RNG so tests don't depend on order), then
 either mutate game state directly or hold keys for N frames with
 `step({ right: true }, 90)`. See the existing scenarios for the pattern.
+
+## Licence
+
+AGPL-3.0-or-later (see `LICENSE`). The game vendors
+[Strudel](https://codeberg.org/uzu/strudel) for its soundtrack —
+`vendor/strudel/`, unmodified, and AGPL itself — so the combined work
+takes the same licence. If it is ever served publicly, players are
+entitled to the source.

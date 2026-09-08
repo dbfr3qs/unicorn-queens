@@ -114,42 +114,18 @@ add9 chords, lydian brightness on the outdoor levels, and arps that walk
 in fourths** rather than the usual minor-triad trance climb. Sparkle
 without saccharine.
 
-Verified building blocks (`penv`/`pdecay`, `lpenv`, `crush`, `distort`,
-`room`, `delaytime`, `partials`, `vib` are all real Strudel params):
+**The palette now lives in [src/music/chip.js](src/music/chip.js)** —
+this section's original sketches are superseded by it, and by the A/B
+verdicts in M2c below. The short version of what survived contact with
+ears:
 
-```js
-// KICK — pitch-enveloped sine, the house four-on-the-floor
-const kick = s("sine*4").note("c1").decay(.13).sustain(0)
-               .penv(36).pdecay(.035).distort(1.1).gain(.9)
-
-// HAT — filtered white noise; the offbeat open hat is the house tell
-const hats = stack(
-  s("white*8").decay(.025).sustain(0).hpf(8000).gain(".5 .3"),
-  s("~ white").fast(4).decay(.11).sustain(0).hpf(6500).gain(.42)  // offbeats
-)
-
-// CLAP — band-passed noise on 2 and 4
-const clap = s("~ white ~ white").decay(.085).sustain(0).bpf(1900).gain(.55)
-
-// BASS — rolling 16ths, plucked with a filter envelope
-const bass = note("<a1 a1 f1 g1>*16").s("square")
-               .lpf(420).lpenv(3.2).lpdecay(.06).lpq(9)
-               .decay(.07).sustain(0).gain(.7)
-
-// LEAD ARP — the trance arp, bit-crushed, dotted-8th delay
-const arp  = note("a3 c4 e4 a4 e4 c4".fast(2)).s("square").crush(8)
-               .decay(.09).sustain(0).gain(.4)
-               .delay(.45).delaytime(.1875).room(.3)
-
-// PAD — a chip "supersaw": stacked squares micro-detuned against each other
-const pad  = note("<a3,c4,e4,b4  f3,a3,c4,g4>".add("<0 .08 -.08>"))
-               .s("square").attack(.9).release(1.4).lpf(2600)
-               .gain(.22).room(.6)
-```
-
-Two of these need proving by ear in M2: the `.add()` detune trick for
-the pad (Strudel has no `.detune`, so we stack micro-offset copies), and
-whether `crush(8)` on the lead reads as "8-bit" or just as "broken".
+- `s("pulse").pw(.5)` for lead and chords, not narrow duties
+- real simultaneous chords, not arpeggios (arpeggios kept in `ARP` as a
+  per-level texture)
+- triangle bass with a flat gate, no filter envelope
+- `coarse()` for grit, and **no `room()`** — reverb is the clearest
+  modern tell
+- every default voice on one progression, Am - F - G - Em
 
 **Global feel:** `setcpm(124/4)` — 124 BPM in 4/4. House tempo, and slow
 enough that 16th arps stay legible under gameplay.
@@ -429,8 +405,26 @@ live gain responding to volume and duck, silent on a trackless level.
 everything so far is portable to a hand-rolled sequencer, but M5 wires
 Strudel into the game proper.
 
-**M5 — wire it in.** The call sites in §5. Level transitions, mute keys,
-dialogue ducking. Smoke + tests green.
+**M5 — wire it in. ✅ DONE.** Four call sites, all existing seams:
+
+- [input.js](src/input.js) — `initMusic()` beside `initAudio()` on first
+  keypress, which satisfies the autoplay policy for free. **M** mutes
+  everything, **N** mutes only the music (handy while balancing one
+  against the other).
+- [game.js `startGame`](src/game.js#L54) — `setTrack(levelDef.name)`.
+- [game.js `update`](src/game.js#L98) — `duck(true)` on the existing
+  `isDialogueOpen()` early return.
+
+Verified in the **real booted game** headlessly, not just in the lab:
+track queued before the bundle loaded, playing after the first keypress,
+audio clock running, N and M behaving separately, a jump to level 5
+(no track yet) going silent, and level 1 resuming. 1094 tests and smoke
+green.
+
+§3.1 is **settled: AGPL-3.0-or-later**, `LICENSE` added and declared in
+`package.json`. Rendering to audio files stays available as a later exit
+(program output is not covered by the program's licence, and we use no
+samples) — the director's injectable backend is the seam for it.
 
 **M6 — intensity.** Layer in/out on boss cues; level 9's thaw-driven
 build. This is the milestone that makes it feel like a game soundtrack

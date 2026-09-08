@@ -12,6 +12,10 @@ import { resetFireballs, updateFireballs, resetBoulders, updateBoulders, resetSh
 import { updatePearl } from './pearl.js';
 import { updateKey } from './key.js';
 import { updateRelics } from './relics.js';
+import { updateThaw } from './thaw.js'; // level 9: the hearths, the rings, the seals
+import { updateKing } from './king.js'; // level 9: the King walks east with you
+import { updateQueenWake, updateQueenDying, blizzardWobble, BLIZZ_DRIFT } from './enemies/queenboss.js'; // level 9: the Frost Queen
+import { updateEnding } from './ending9.js'; // level 9: the spring returns
 import { updateCogs } from './cogs.js';
 import { updateSigil } from './sigil.js';
 import { updatePeakEnding } from './peakending.js'; // level 7: the release sequence
@@ -27,6 +31,7 @@ import { updateWind } from './wind.js';
 import { updateClock } from './clock.js'; // level 8: the Great Clock
 import { updateSprings } from './springs.js'; // level 8: the mainsprings (touch-sever)
 import { FX } from './effects.js';
+import { setTrack, duck } from './music.js'; // the soundtrack follows the level
 
 export const game = {
   level: null, player: null, enemies: null,
@@ -44,6 +49,9 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   const advancing = !!prev && levelIndex !== game.levelIndex;
   game.levelIndex = levelIndex;
   const levelDef = LEVELS[levelIndex];
+  // Re-entering the same level is a no-op inside setTrack, so a death
+  // restart keeps the music running rather than re-cueing it.
+  setTrack(levelDef.name);
   game.level = levelDef.make(viewH);
   // A fresh boot (no outgoing player) takes the level's design carry — the
   // ?level=N test jump starts with the gear a run would have held. With a
@@ -87,8 +95,23 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 }
 
 export function update(dt, viewW, fx) {
-  if (isDialogueOpen()) return; // dialogue: the whole world is frozen, clock included
+  if (isDialogueOpen()) { duck(true); return; } // dialogue: the whole world is frozen, clock included
+  duck(false);
   game.gameTime += dt;
+  // Level 9's ending owns the world once it starts: no input, no camera move,
+  // no pit rule, no damage. The scene keeps rendering and animating, and the
+  // only live key is Space at the card (main.js).
+  if (game.level.ending9?.started) {
+    updateEnding(game, dt, fx);
+    const q = game.enemies.find(e => e.kind === 'queenboss' && e.dying);
+    if (q) updateQueenDying(q, game.level, game.enemies, dt, fx);
+    updateParticles(dt);
+    if (game.camera.shake > 0) {
+      game.camera.shake = Math.max(0, game.camera.shake - dt);
+      game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
+    }
+    return;
+  }
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
   if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx); // the machines move before the player does
   if (game.level.springs) updateSprings(game.level, game.player, dt, fx); // level 8: touch-sever a mainspring
@@ -100,15 +123,25 @@ export function update(dt, viewW, fx) {
     game.gateChimed = true;
     fx.play('gate');
   }
+  if (game.level.blizzard && !game.player.dead) {
+    // the storm's drift, applied here rather than in the player so it reaches
+    // a flying queen too — the level 7 wind's pattern, gentler
+    game.player.vx += BLIZZ_DRIFT * blizzardWobble(game.gameTime) * dt;
+  }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);
   if (queen) updatePillars(queen, game.player, game.level, game.camera, dt, fx); // the web pillars
   const wiz = game.enemies.find(e => e.kind === 'wizardboss' && !e.dead);
   if (wiz) updateColumns(wiz, game.player, dt, fx, game.camera); // the seal columns
+  const dyingQueen = game.enemies.find(e => e.kind === 'queenboss' && e.dying);
+  if (dyingQueen) updateQueenDying(dyingQueen, game.level, game.enemies, dt, fx); // level 9: the release runs outside the enemy loop (she is dead to it)
   updatePearl(game.level, game.player, game.enemies, fx);
   updateKey(game.level, game.player, fx, dt);
   updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
   updateCogs(game.level, game.player, dt, fx); // level 6: the three cogs
+  if (game.level.thaw) updateThaw(game.level, game.player, dt, fx); // level 9: after the pickup, so a seed planted the frame it is taken still counts
+  if (game.level.king) updateKing(game.level, game.player, dt, fx); // level 9: after the seals, so he steps through the frame one opens
+  if (game.level.queenUnfreeze) updateQueenWake(game.level, game.enemies, dt, fx, game.camera); // level 9: the level moves her, not her own brain
   if (game.level.sigilBlock) updateSigil(game.level, game.player, dt, fx); // level 7: the sigil + iron gate
   if (game.level.ending7) updatePeakEnding(game.level, game.enemies, dt, fx); // level 7: the release sequence
   updateVent(game.level, dt, fx); // level 6: the mud vent's bubble
@@ -173,7 +206,7 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden' || e.kind === 'queenboss') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
     while (!e.dead) damageEnemy(e, fx);
   }
@@ -199,5 +232,5 @@ export function reachedExit(p, lvl) {
       p.x < lvl.exit.x + lvl.exit.w && p.x + p.w > lvl.exit.x &&
       p.y < lvl.exit.y + lvl.exit.h && p.y + p.h > lvl.exit.y;
   }
-  return p.x + p.w >= lvl.goal.x;
+  return !!lvl.goal && p.x + p.w >= lvl.goal.x; // level 9 has neither: it can never win
 }

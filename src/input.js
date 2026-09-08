@@ -1,7 +1,9 @@
 // Input: keyboard state and event handlers (DOM registration lives in main.js).
-// First keypress unlocks audio; M toggles mute. While a dialogue box is
-// open the world is frozen and Space/Enter/arrows advance the lines.
-import { initAudio, toggleMuted, fx } from './audio.js';
+// First keypress unlocks audio and starts the music; M mutes everything,
+// N mutes just the music. While a dialogue box is open the world is
+// frozen and Space/Enter/arrows advance the lines.
+import { initAudio, toggleMuted, muted, fx } from './audio.js';
+import { initMusic, setMusicMuted, toggleMusicMuted } from './music.js';
 import { isDialogueOpen, advanceDialogue } from './dialogue.js';
 
 export const input = { left: false, right: false, jump: false, fire: false, up: false, down: false, cast: false };
@@ -17,8 +19,12 @@ export function setKey(code, down) {
 
 export function onKeyDown(e) {
   initAudio(); // unlock audio on first input
+  initMusic(); // and fetch the music bundle (lazy, once, failure-tolerant)
   if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault();
-  if (e.code === 'KeyM') toggleMuted();
+  // M is the master mute: sfx and music together. N leaves the sfx alone,
+  // which is what you want while tuning one against the other.
+  if (e.code === 'KeyM') { toggleMuted(); setMusicMuted(muted); }
+  if (e.code === 'KeyN') toggleMusicMuted();
   if (isDialogueOpen()) {
     // dialogue open: advance keys only, never game input
     if (!e.repeat && (e.code === 'Space' || e.code === 'Enter' ||

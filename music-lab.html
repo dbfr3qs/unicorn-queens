@@ -61,56 +61,37 @@
 </main>
 
 <script src="./vendor/strudel/index.js"></script>
-<script>
+<script type="module">
+// The palette lives in src/music/chip.js so the bench and the game read
+// the same text — anything tuned here is already what ships.
+import { CHIP, VARIANTS, cpm, stackOf } from './src/music/chip.js';
+
 // ---- presets -----------------------------------------------------------
-// M1 only needs the first one to work. The rest are the first sketches of
-// the chip rack from MUSIC-PLAN.md §4, here to be tuned by ear in M2.
 const PRESETS = {
   'smoke test — is anything alive?': `note("<c a f e>(3,8)").jux(rev)`,
-
-  'chip rack — kick': `setcpm(124/4)
-s("sine*4").note("c1")
-  .decay(.13).sustain(0)
-  .penv(36).pdecay(.035)
-  .distort(1.1).gain(.9)`,
-
-  'chip rack — hats (house offbeat)': `setcpm(124/4)
-stack(
-  s("white*8").decay(.025).sustain(0).hpf(8000).gain("[.5 .3]*4"),
-  s("~ white").fast(4).decay(.11).sustain(0).hpf(6500).gain(.42)
-)`,
-
-  'chip rack — bass (rolling 16ths)': `setcpm(124/4)
-note("<a1 a1 f1 g1>*16").s("square")
-  .lpf(420).lpenv(3.2).lpdecay(.06).lpq(9)
-  .decay(.07).sustain(0).gain(.7)`,
-
-  'chip rack — arp (dotted-8th delay)': `setcpm(124/4)
-note("a3 c4 e4 a4 e4 c4".fast(2)).s("square").crush(8)
-  .decay(.09).sustain(0).gain(.4)
-  .delay(.45).delaytime(.1875).room(.3)`,
-
-  'chip rack — pad (stacked detune)': `setcpm(124/4)
-note("<[a3,c4,e4,b4] [f3,a3,c4,g4]>".add("<0 .08 -.08>"))
-  .s("square").attack(.9).release(1.4)
-  .lpf(2600).gain(.22).room(.6)`,
-
-  'level 1 — meadow (rough sketch)': `setcpm(118/4)
-stack(
-  s("sine*4").note("c1").decay(.13).sustain(0)
-    .penv(36).pdecay(.035).distort(1.1).gain(.85),
-  s("~ white").fast(4).decay(.09).sustain(0).hpf(6500).gain(.3),
-  note("<a1 a1 f1 g1>*8").s("square")
-    .lpf(380).lpenv(3).lpdecay(.06).lpq(8)
-    .decay(.07).sustain(0).gain(.5),
-  note("<[a3,c4,e4] [f3,a3,c4] [g3,b3,d4] [e3,g3,b3]>")
-    .s("square").attack(.9).release(1.6)
-    .lpf(2200).gain(.18).room(.7),
-  note("a4 ~ e4 ~ c5 ~ e4 ~").s("square").crush(8)
-    .decay(.08).sustain(0).gain(.22)
-    .delay(.4).delaytime(.1875).room(.4)
-)`,
 };
+
+// every voice, solo, at house tempo
+for (const [name, src] of Object.entries(CHIP)) {
+  PRESETS[`voice — ${name}`] = `${cpm(124)}\n${src}`;
+}
+
+// the two A/B questions M1 flagged: the pad's fake supersaw and how much
+// bit-crush reads as "8-bit" rather than "broken"
+for (const [slot, alts] of Object.entries(VARIANTS)) {
+  for (const [label, src] of Object.entries(alts)) {
+    PRESETS[`${slot} variant ${label}`] = `${cpm(124)}\n${src}`;
+  }
+}
+
+// combinations worth hearing as a whole
+PRESETS['kit — drums only'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap']);
+PRESETS['kit — drums + bass'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap', 'roll']);
+PRESETS['kit — full house stack'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap', 'roll', 'arp', 'wide']);
+PRESETS['level 1 — meadow (sketch)'] = stackOf(118, ['kick', 'hatsOpen', 'slow', 'plain', 'arp']);
+PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClosed', 'gearTick', 'roll', 'bell']);
+PRESETS['level 9 — thaw, layer 4 of 4'] = stackOf(128, ['kick', 'hatsOpen', 'slow', 'seasick', 'sparkle']);
+PRESETS['transition — riser into the drop'] = stackOf(124, ['kick', 'roll', 'riser']);
 
 // ---- ui ----------------------------------------------------------------
 const $ = id => document.getElementById(id);
@@ -181,6 +162,19 @@ async function selftest() {
   lines.push('bundle loaded:      ' + window.__lab.scriptLoaded);
   lines.push('initStrudel():      ' + window.__lab.inited);
   lines.push('SharedWorker avail: ' + (typeof SharedWorker === 'function'));
+
+  // Evaluate every preset. JS-syntax validity is already covered by
+  // test/music-chip.test.js; what only a real Strudel can answer is
+  // whether the *parameters* exist — penv, lpenv, vibmod, partials,
+  // segment and friends were taken from the docs, not from a run.
+  const failed = [];
+  for (const [name, src] of Object.entries(PRESETS)) {
+    try { await evaluate(src, false); } catch (e) { failed.push(`${name}: ${e}`); }
+  }
+  hush();
+  lines.push(`presets evaluated:  ${Object.keys(PRESETS).length - failed.length}/${Object.keys(PRESETS).length} ok`);
+  for (const f of failed) lines.push('  FAIL ' + f);
+
   await run();
   lines.push('evaluate():         ' + (window.__lab.error ? 'FAIL ' + window.__lab.error : 'ok'));
   const a = probe();

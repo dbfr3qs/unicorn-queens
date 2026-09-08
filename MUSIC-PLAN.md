@@ -276,9 +276,28 @@ advances in real time. `npm test` (972) and `npm run smoke` still green.
 **Not verified: what it sounds like.** That needs ears — open
 `http://localhost:9000/music-lab.html` and press play.
 
-**M2 — the chip rack.** Build `src/music/chip.js` (§4) and give the lab
-page a snippet picker. Tune the kick, hat and detuned pad by ear. This
-is where the "does it actually sound 8-bit" question gets answered.
+**M2 — the chip rack. ◐ built, not yet tuned.**
+[src/music/chip.js](src/music/chip.js) holds the palette — 17 voices
+across `DRUMS`/`BASS`/`LEAD`/`PAD`/`FX`, plus `stackOf()` to compose
+them. The lab imports it, so bench and game read one source of truth.
+
+Two layers of checking, because these fragments are code kept in strings
+and nothing else would look at them:
+
+- [test/music-chip.test.js](test/music-chip.test.js) parses every
+  fragment with `new Function` (parse only, never run) — catches
+  unbalanced parens and broken chains in Node. 34 tests.
+- `?selftest=1` now evaluates **all 35 presets in a real Strudel**:
+  `presets evaluated: 35/35 ok`. That confirms the parameters exist —
+  `penv`, `lpenv`, `lpq`, `partials`, `vib`/`vibmod`, `segment`,
+  `crush`, `distort`, `saw`/`sine.range` — which the docs promised but
+  no run had shown.
+
+**Still open, and it needs ears:** `VARIANTS` in chip.js carries the two
+A/B questions as pickable presets — four fake-supersaw pad spellings
+(Strudel has no `.detune`, so width comes from stacked `.add()` copies)
+and four bit-crush depths for the arp. Pick a winner for each and fold
+it back into `PAD`/`LEAD`.
 
 **M3 — first track.** Level 1 "meadow", full 32-bar arrangement, as a
 Strudel source string. Listen, iterate, lock it. This calibrates every

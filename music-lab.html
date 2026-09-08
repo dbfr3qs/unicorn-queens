@@ -45,7 +45,7 @@
 <body>
 <main>
   <h1>Unicorn Queens — music lab</h1>
-  <p class="sub">M1 spike: does the vendored Strudel bundle make a noise?</p>
+  <p class="sub">Composition bench for the soundtrack. Palette: <code>src/music/chip.js</code>.</p>
 
   <div class="row">
     <button id="play" class="primary" disabled>▶ play</button>
@@ -76,8 +76,8 @@ for (const [name, src] of Object.entries(CHIP)) {
   PRESETS[`voice — ${name}`] = `${cpm(124)}\n${src}`;
 }
 
-// the two A/B questions M1 flagged: the pad's fake supersaw and how much
-// bit-crush reads as "8-bit" rather than "broken"
+// the open sound-design questions, as pickable A/B/C/D sets. "era" is the
+// direct before/after for the four-channel doctrine (chip.js header).
 for (const [slot, alts] of Object.entries(VARIANTS)) {
   for (const [label, src] of Object.entries(alts)) {
     PRESETS[`${slot} variant ${label}`] = `${cpm(124)}\n${src}`;
@@ -85,11 +85,11 @@ for (const [slot, alts] of Object.entries(VARIANTS)) {
 }
 
 // combinations worth hearing as a whole
-PRESETS['kit — drums only'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap']);
-PRESETS['kit — drums + bass'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap', 'roll']);
-PRESETS['kit — full house stack'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'clap', 'roll', 'arp', 'wide']);
-PRESETS['level 1 — meadow (sketch)'] = stackOf(118, ['kick', 'hatsOpen', 'slow', 'plain', 'arp']);
-PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClosed', 'gearTick', 'roll', 'bell']);
+PRESETS['kit — drums only'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare']);
+PRESETS['kit — drums + bass'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare', 'roll']);
+PRESETS['kit — full house stack'] = stackOf(124, ['kick', 'hatsClosed', 'hatsOpen', 'snare', 'roll', 'arpChord', 'lead']);
+PRESETS['level 1 — meadow (sketch)'] = stackOf(118, ['kick', 'hatsOpen', 'slow', 'arpSlow', 'lead']);
+PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClosed', 'gearTick', 'pulseBass', 'bell']);
 PRESETS['level 9 — thaw, layer 4 of 4'] = stackOf(128, ['kick', 'hatsOpen', 'slow', 'seasick', 'sparkle']);
 PRESETS['transition — riser into the drop'] = stackOf(124, ['kick', 'roll', 'riser']);
 
@@ -174,6 +174,23 @@ async function selftest() {
   hush();
   lines.push(`presets evaluated:  ${Object.keys(PRESETS).length - failed.length}/${Object.keys(PRESETS).length} ok`);
   for (const f of failed) lines.push('  FAIL ' + f);
+
+  // Doctrine rule 2 (chip.js header): the "pad" must be a *sequence* of
+  // single notes, not a stack. This probe exists because .arp() evaluated
+  // perfectly and then produced zero events — silence that no amount of
+  // error-checking would have caught. Count events, never trust evaluate().
+  try {
+    const one = note("<[a3 c4 e4]>").queryArc(0, 1).length;          // 3, stacked
+    const swept = note(CHIP.arpChord.match(/note\("([^"]+)"\)/)[1]).queryArc(0, 1);
+    const onsets = new Set(swept.map(h => h.whole.begin.valueOf()));
+    const maxStacked = Math.max(...[...onsets].map(o =>
+      swept.filter(h => h.whole.begin.valueOf() === o).length));
+    lines.push(`arp rule:           ${swept.length} events, ${onsets.size} onsets, `
+      + `max ${maxStacked} note(s) at once (chord baseline ${one})`);
+    lines.push('arpeggiates:        ' + (onsets.size >= 24 && maxStacked === 1));
+  } catch (e) {
+    lines.push('arp rule:           PROBE FAILED ' + e);
+  }
 
   await run();
   lines.push('evaluate():         ' + (window.__lab.error ? 'FAIL ' + window.__lab.error : 'ok'));

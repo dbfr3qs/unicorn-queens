@@ -293,11 +293,41 @@ and nothing else would look at them:
   `crush`, `distort`, `saw`/`sine.range` — which the docs promised but
   no run had shown.
 
-**Still open, and it needs ears:** `VARIANTS` in chip.js carries the two
-A/B questions as pickable presets — four fake-supersaw pad spellings
-(Strudel has no `.detune`, so width comes from stacked `.add()` copies)
-and four bit-crush depths for the arp. Pick a winner for each and fold
-it back into `PAD`/`LEAD`.
+**Then the verdict came back: "it doesn't sound 8-bit enough."** Correct
+— the first palette was a modern synth in a chiptune hat. The rewrite
+put the hardware's constraints in charge (the four-channel doctrine, in
+the chip.js header):
+
+| | before | after |
+|---|---|---|
+| lead/pad voice | `square` (a 50% pulse — the *least* characteristic NES duty) | `pulse` with `pw(.125)`/`.25`/`.375` |
+| chords | real simultaneous triads | arpeggios sweeping 24–96 notes/cycle |
+| bass | filtered square with a pluck envelope | triangle, flat gate, no filter |
+| space | `room(.6)` reverb | slap `delay`, or nothing |
+| grit | `crush` | `coarse` (sample-rate aliasing) |
+
+Chords-as-arpeggios is the big one: two pulse channels cannot voice a
+triad, so chip music sweeps it fast enough to fuse. Nothing else reads
+as 8-bit so immediately.
+
+**One bug worth remembering.** The first arpeggio used Strudel's
+`.arp("up").fast(16)`. It evaluated with no error and produced **zero
+events** — silent pads. Every spelling failed, including the documented
+`n().chord().arp()` route; `.arp()` throws at query time in this build.
+The fix is the explicit `<[a3 c4 e4]*16 ...>`, which is what chip
+trackers wrote anyway, and which keeps the chord change independent of
+the sweep rate — `.fast()` on the outside speeds the chord changes too
+and smears every chord into every cycle.
+
+That is why the selftest now **counts events** instead of trusting
+`evaluate()`: `48 events, 48 onsets, max 1 note at once`. Clean
+evaluation proves nothing about whether a pattern makes sound.
+
+**Still open, and it needs ears.** `VARIANTS` carries three A/B/C/D sets:
+`duty` (pulse width), `arpRate` (sweep speed, with a real chord as the
+control), and `era` — the same bar played the old way and the new way,
+which is the direct answer to the note above. Pick winners and fold them
+into `PAD`/`LEAD`.
 
 **M3 — first track.** Level 1 "meadow", full 32-bar arrangement, as a
 Strudel source string. Listen, iterate, lock it. This calibrates every

@@ -3,7 +3,7 @@
 // browser. These cover the assembly; music-lab's ?selftest=1 evaluates
 // the result in a real Strudel.
 import { describe, it, expect } from 'vitest';
-import { TRACKS, meadow, render, trackFor } from '../src/music/tracks.js';
+import { TRACKS, meadow, render, trackFor, withNotes } from '../src/music/tracks.js';
 import { CHIP } from '../src/music/chip.js';
 import { LEVELS } from '../src/levels/index.js';
 
@@ -53,11 +53,63 @@ describe('render', () => {
   });
 });
 
-describe('the meadow track', () => {
-  it('names only real chip voices', () => {
-    for (const voice of Object.keys(meadow.layers)) expect(CHIP).toHaveProperty(voice);
+describe('every track', () => {
+  const all = Object.entries(TRACKS);
+
+  it.each(all)('%s names only real chip voices', (_n, track) => {
+    for (const voice of Object.keys(track.layers)) expect(CHIP).toHaveProperty(voice);
   });
 
+  it.each(all)('%s lays its masks out in four rows of eight', (_n, track) => {
+    // bars() ignores whitespace, so a misgrouped mask still *works* — it
+    // just stops being readable, which is the only reason the layout
+    // exists. Six of them were wrong when first written.
+    for (const [voice, mask] of Object.entries(track.layers)) {
+      expect(mask.split(/\s+/).map(g => g.length), `${voice}`).toEqual([8, 8, 8, 8]);
+    }
+  });
+
+  it.each(all)('%s gives a tempo in the house/trance range', (_n, track) => {
+    expect(track.bpm).toBeGreaterThanOrEqual(115);
+    expect(track.bpm).toBeLessThanOrEqual(135);
+  });
+
+  it.each(all)('%s only overrides notes for voices it actually plays', (_n, track) => {
+    for (const voice of Object.keys(track.notes ?? {})) {
+      expect(Object.keys(track.layers)).toContain(voice);
+    }
+  });
+
+  it.each(all)('%s never re-pitches a drum voice', (_n, track) => {
+    // the kick's first note() is its tuning, not a melody: substituting
+    // there would silently detune the drum rather than transpose a part
+    for (const voice of Object.keys(track.notes ?? {})) {
+      expect(['kick', 'kickHard', 'snare', 'snareHalf', 'hatsOpen', 'hatsClosed', 'gearTick'])
+        .not.toContain(voice);
+    }
+  });
+
+  it.each(all)('%s starts quieter than it finishes somewhere in the form', (_n, track) => {
+    // an all-ones track is the looping stack the 32-bar form replaced
+    const masks = Object.values(track.layers).map(m => m.replace(/\s/g, ''));
+    expect(masks.every(m => m === '1'.repeat(32))).toBe(false);
+  });
+});
+
+describe('withNotes', () => {
+  it('keeps the voice and swaps the pitches', () => {
+    const out = withNotes(CHIP.chord, '<[d3,f3,a3]>');
+    expect(out).toContain('[d3,f3,a3]');
+    expect(out).toContain('pw(.5)');      // timbre survives
+    expect(out).toContain('gain(.24)');   // and so does the mix budget
+  });
+
+  it('replaces only the first note(), so a tuned drum keeps its tuning', () => {
+    expect(() => withNotes(CHIP.hatsClosed, '<a3>')).toThrow(/no note\(\) to replace/);
+  });
+});
+
+describe('the meadow track', () => {
   it('starts sparse and never runs the whole 32 bars flat out', () => {
     // The point of the form: if every layer were all-ones this would be
     // the looping stack it replaced.
@@ -82,9 +134,17 @@ describe('the registry', () => {
     parses(trackFor('meadow'));
   });
 
-  it('returns null for a level with no track yet, rather than throwing', () => {
-    // M7 fills the rest in; until then the game must stay playable
-    expect(trackFor('frozen-throne')).toBeNull();
+  it('covers every level in the game', () => {
+    // the point of M7. A level with no entry plays silence, which is easy
+    // to not notice — so assert the two lists match exactly.
+    expect(Object.keys(TRACKS).sort()).toEqual(LEVELS.map(l => l.name).sort());
+  });
+
+  it('returns runnable source for every level', () => {
+    for (const level of LEVELS) parses(trackFor(level.name));
+  });
+
+  it('returns null for a name that is not a level, rather than throwing', () => {
     expect(trackFor('no-such-level')).toBeNull();
   });
 });

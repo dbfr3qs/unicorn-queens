@@ -263,7 +263,8 @@ and reports what came up — bundle, worklets, clock, and whether every
 preset still evaluates. Useful after touching the palette, since code
 kept in strings has no linter.
 
-Only level 1 has a track so far; levels without one play silence.
+All nine levels have a track, each in its own mode; a level whose
+name has no entry plays silence rather than failing.
 
 ## Layout
 

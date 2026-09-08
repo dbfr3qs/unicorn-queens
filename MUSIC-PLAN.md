@@ -430,8 +430,41 @@ samples) — the director's injectable backend is the seam for it.
 build. This is the milestone that makes it feel like a game soundtrack
 rather than a loop.
 
-**M7 — the other eight tracks.** Grind through the table in §4, one
-level per turn, plus the four short cues. Update README.
+**M7 — the other eight tracks. ✅ DONE.** All nine levels have music.
+
+The blocker was that every chip.js voice is written in A minor, because a
+palette has to be written in *some* key. Transposing one progression
+through nine levels would make them sound like one tune moved around, so
+`render()` now takes per-track **note overrides** (`withNotes`): a track
+supplies its own pitch content and keeps the voice's timbre, envelope,
+effects and mix budget.
+
+| # | level | BPM | mode | the idea |
+|---|---|---|---|---|
+| 1 | meadow | 118 | A aeolian | tutorial; stays out of the way |
+| 2 | bridge-castle | 124 | D dorian | major IV over minor i — somewhere to be |
+| 3 | undercroft | 126 | E phrygian | ♭II; bass-forward, lead-starved |
+| 4 | dragons-layer | 128 | C minor | dense throughout, one hole at 25-28 |
+| 5 | enchanted-forest | 124 | F lydian | the ♯4; the only happy one |
+| 6 | blackmire | 122 | G minor | half-time backbeat, vibrato'd chords |
+| 7 | peak | 130 | A minor → C | breakdown at 17, riser 21-24, drop on 25 |
+| 8 | sky-citadel | 132 | D mixolydian | ♭VII; gearTick never stops, bell melody |
+| 9 | frozen-throne | 128 | B♭ minor | opens on almost nothing, a layer every 8 bars |
+
+Level 9's shape is groundwork for M6: the layers already enter one at a
+time, so the intensity gate can drive them from `thaw.js`'s hearth count
+instead of the bar number.
+
+Measured rather than assumed — density per section, loop length, peak
+concurrent voices:
+
+- Every form has real contrast. Two did not at first: the mire ran
+  47/59/51/61 because its arpeggio never stopped (now 47/59/**15**/61),
+  and the peak ran at 52 events/sec against 7-28 everywhere else (its
+  `*32` sweep halved to `*16`).
+- Peak concurrency is 5-13 voices against Strudel's `maxPolyphony` of
+  **128** — worth checking, because exceeding it drops notes silently.
+- 52/52 presets evaluate; 1160 tests and smoke green.
 
 M1–M3 is roughly an evening and gets you something to listen to. M4–M5
 is the real engineering, and it's small.

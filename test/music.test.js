@@ -60,17 +60,19 @@ describe('setTrack', () => {
     const r = recorder();
     _setBackend(r);
     setTrack('meadow');
-    setTrack('bridge-castle'); // no track yet
+    setTrack('bridge-castle');
     setTrack('meadow');
-    expect(evaluated(r)).toHaveLength(2);
+    expect(evaluated(r)).toHaveLength(3);
   });
 
-  it('falls silent for a level with no track yet, rather than throwing', () => {
-    // the other eight levels are M7; the game must stay playable
+  it('falls silent for a name with no track, rather than throwing', () => {
+    // Every level has a track since M7, so this is now the guard for a
+    // renamed or misspelled level rather than an unfinished one — the
+    // game must stay playable either way.
     const r = recorder();
     _setBackend(r);
     setTrack('meadow');
-    setTrack('frozen-throne');
+    setTrack('no-such-level');
     expect(hushes(r)).toHaveLength(1);
     expect(music.playing).toBe(false);
   });
@@ -89,10 +91,10 @@ describe('setTrack', () => {
   it('only plays the most recent queued track', () => {
     const r = recorder();
     setTrack('meadow');
-    setTrack('frozen-throne');
+    setTrack('no-such-level');
     _setBackend(r);
-    expect(evaluated(r)).toHaveLength(0); // frozen-throne has no track
-    expect(music.track).toBe('frozen-throne');
+    expect(evaluated(r)).toHaveLength(0); // the last one asked for has none
+    expect(music.track).toBe('no-such-level');
   });
 });
 

@@ -122,6 +122,11 @@ export const DRUMS = {
   snare: `s("~ white ~ white").decay(.1).sustain(0)
   .coarse(5).bpf(1600).distort(1.3).gain(.3)`,
 
+  // Half-time: the backbeat moves to bar-centre, which halves the
+  // perceived tempo without touching the kick. Level 6's swamp drag.
+  snareHalf: `s("~ ~ white ~").decay(.14).sustain(0)
+  .coarse(5).bpf(1400).distort(1.2).gain(.3)`,
+
   // Level 8's clockwork tick: a 12.5% pulse at the top of its range,
   // clipped to almost nothing.
   gearTick: `s("pulse*16").note("c7").pw(.125)

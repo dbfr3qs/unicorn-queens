@@ -353,9 +353,40 @@ as a gain and `[...]*4` as a level of 4.)
 both are worth re-judging once a track is arranged around them rather
 than heard in isolation.
 
-**M3 — first track.** Level 1 "meadow", full 32-bar arrangement, as a
-Strudel source string. Listen, iterate, lock it. This calibrates every
-other track.
+**M3 — first track. ◐ built, needs a listen.**
+[src/music/tracks.js](src/music/tracks.js) holds the level 1 "meadow"
+arrangement and the machinery the other eight will reuse.
+
+A track is **not one pattern** but named layers, each with a 32-bar mask
+of ones and zeros laid out in four rows of eight, so the form is legible
+as text:
+
+```js
+    //          1-8      9-16     17-24    25-32
+    chord:   '11111111 11111111 11111111 11111111',
+    sparkle: '10001000 10001000 00000000 10001000',
+    slow:    '00000000 11111111 11111111 11111111',
+    kick:    '00000000 11111111 11111111 11111100',
+    hatsOpen:'00000000 11111111 11111111 11110000',
+    lead:    '00000000 00000000 11111111 00000000',
+```
+
+That shape is chosen with M6 in mind: layers that can already be masked
+in and out are exactly the handle gameplay-driven intensity needs, so
+the boss cue and level 9's thaw become a second gate multiplied into the
+first rather than a restructuring.
+
+Verified by querying the rendered pattern (Node, no browser): density
+runs `3-5 → 19-21 → 20 → tapering to 11` events per bar across the four
+sections, no silent bars, 476 events over the form. It evaluates in a
+real Strudel too — 43/43 presets.
+
+**A real bug found on the way in.** The palette's bass was rooted
+`A A F G` while the chords played `Am F G Em`, so bars 2-4 disagreed —
+audible, and present since M2. `LEAD.arp` sat on Am for all four bars,
+and `ARP.arpBuzz` ran a two-bar cycle that drifted against everything
+else. All now on one progression, with a test that counts the
+alternatives in each `<...>` so they cannot drift apart again.
 
 **M4 — the director.** `src/music.js` + `tracks.js` + tests. Still not
 wired into the game. **Decision gate: §3.1.** Everything up to here is

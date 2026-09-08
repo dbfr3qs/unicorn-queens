@@ -65,6 +65,7 @@
 // The palette lives in src/music/chip.js so the bench and the game read
 // the same text — anything tuned here is already what ships.
 import { CHIP, VARIANTS, cpm, stackOf } from './src/music/chip.js';
+import { TRACKS, render } from './src/music/tracks.js';
 
 // ---- presets -----------------------------------------------------------
 const PRESETS = {
@@ -93,6 +94,11 @@ PRESETS['level 8 — clockwork (sketch)'] = stackOf(132, ['kickHard', 'hatsClose
 PRESETS['level 9 — thaw, layer 4 of 4'] = stackOf(128, ['kick', 'hatsOpen', 'slow', 'seasick', 'sparkle']);
 PRESETS['transition — riser into the drop'] = stackOf(124, ['kick', 'roll', 'riser']);
 
+// the real arrangements: 32-bar forms with parts entering and leaving
+for (const [name, track] of Object.entries(TRACKS)) {
+  PRESETS[`TRACK — ${name} (32 bars)`] = render(track);
+}
+
 // ---- ui ----------------------------------------------------------------
 const $ = id => document.getElementById(id);
 const statusEl = $('status'), codeEl = $('code'), presetEl = $('preset');
@@ -102,6 +108,7 @@ function say(msg, cls) { statusEl.textContent = msg; statusEl.className = cls ||
 for (const name of Object.keys(PRESETS)) {
   presetEl.append(Object.assign(document.createElement('option'), { value: name, textContent: name }));
 }
+presetEl.value = Object.keys(PRESETS).find(k => k.startsWith('TRACK —')) ?? presetEl.value;
 codeEl.value = PRESETS[presetEl.value];
 presetEl.addEventListener('change', () => { codeEl.value = PRESETS[presetEl.value]; });
 

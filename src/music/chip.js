@@ -137,24 +137,24 @@ export const BASS = {
   // why chip bass sounds the way it does, so the envelope here is a
   // near-square gate rather than the plucky filter sweep a house bass
   // would normally get.
-  roll: `note("<a1 a1 f1 g1>*16").s("triangle")
+  roll: `note("<a1 f1 g1 e1>*16").s("triangle")
   .attack(.001).decay(.03).sustain(.9).release(.01)
   .coarse(2).gain(.62)`,
 
   // Half-time cousin for the sparse levels (1, and 9's opening).
-  slow: `note("<a1 a1 f1 g1>*8").s("triangle")
+  slow: `note("<a1 f1 g1 e1>*8").s("triangle")
   .attack(.001).decay(.03).sustain(.9).release(.01)
   .coarse(2).gain(.5)`,
 
   // A 25% pulse bass instead of the triangle: reedier, cuts harder
   // through a busy mix. Mega Man rather than Super Mario Bros.
-  pulseBass: `note("<a1 a1 f1 g1>*16").s("pulse").pw(.25)
+  pulseBass: `note("<a1 f1 g1 e1>*16").s("pulse").pw(.25)
   .attack(.001).decay(.04).sustain(.7).release(.01)
   .coarse(2).gain(.5)`,
 
   // Sub: an octave down, flat. Weight rather than motion. Strictly this
   // is a fifth channel the NES never had — use it sparingly.
-  sub: `note("<a0 a0 f0 g0>").s("triangle")
+  sub: `note("<a0 f0 g0 e0>").s("triangle")
   .attack(.001).sustain(1).release(.02).gain(.4)`,
 };
 
@@ -166,20 +166,20 @@ export const LEAD = {
   // be loud. delaytime(.1875) is a dotted eighth at 4 cycles to the bar —
   // the trance delay, kept because the echoes land between the notes.
   // A slap delay is period-plausible in a way reverb is not.
-  lead: `note("<a4 e4 c5 e4>").s("pulse").pw(.5)
+  lead: `note("<a4 c5 b4 g4>").s("pulse").pw(.5)
   .attack(.001).decay(.04).sustain(.8).release(.02)
   .vib(6).vibmod(.15)
   .coarse(2).gain(.3)
   .delay(.3).delaytime(.1875).delayfeedback(.28)`,
 
   // The trance arp, now on a 25% pulse instead of a square.
-  arp: `note("a3 c4 e4 a4 e4 c4".fast(2)).s("pulse").pw(.25)
+  arp: `note("<[a3 c4 e4 a4 e4 c4]*2 [f3 a3 c4 f4 c4 a3]*2 [g3 b3 d4 g4 d4 b3]*2 [e3 g3 b3 e4 b3 g3]*2>").s("pulse").pw(.25)
   .attack(.001).decay(.05).sustain(0)
   .coarse(2).gain(.38)
   .delay(.4).delaytime(.1875).delayfeedback(.3)`,
 
   // Octave-doubled, for level 4 and the boss layer.
-  arpOct: `note("a3 c4 e4 a4 e4 c4".fast(2)).add(note("<0 12>")).s("pulse").pw(.25)
+  arpOct: `note("<[a3 c4 e4 a4 e4 c4]*2 [f3 a3 c4 f4 c4 a3]*2 [g3 b3 d4 g4 d4 b3]*2 [e3 g3 b3 e4 b3 g3]*2>").add(note("<0 12>")).s("pulse").pw(.25)
   .attack(.001).decay(.05).sustain(0)
   .coarse(2).gain(.32)
   .delay(.4).delaytime(.1875).delayfeedback(.3)`,
@@ -187,7 +187,7 @@ export const LEAD = {
   // Level 8's clockwork bell. partials() builds it additively, which is
   // the one voice here that a real NES could not have produced — kept
   // because the level is about a clock, not about 1985.
-  bell: `note("<a5 e5 c5 e5>").s("sine").partials("1 .5 .25 .35 .1")
+  bell: `note("<a5 c5 b5 g5>").s("sine").partials("1 .5 .25 .35 .1")
   .decay(.6).sustain(0).gain(.3)
   .delay(.35).delaytime(.125).delayfeedback(.35)`,
 
@@ -267,7 +267,7 @@ export const ARP = {
   .coarse(2).gain(.24)`,
 
   // Faster and thinner: a solid harmonic wash for busy sections.
-  arpBuzz: `note("<[a3 c4 e4 b4]*32 [f3 a3 c4 g4]*32>")
+  arpBuzz: `note("<[a3 c4 e4 b4]*32 [f3 a3 c4 g4]*32 [g3 b3 d4 a4]*32 [e3 g3 b3 f4]*32>")
   .s("pulse").pw(.125)
   .attack(.001).decay(.015).sustain(.7).release(.01)
   .coarse(2).gain(.18)`,

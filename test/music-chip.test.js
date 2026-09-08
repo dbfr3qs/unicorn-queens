@@ -74,6 +74,49 @@ describe('chip rack', () => {
     });
   });
 
+  // The palette's default voices all sit on one four-bar progression,
+  // Am - F - G - Em. They did not always: the bass ran A A F G against a
+  // chord track of Am F G Em, so bars 2-4 disagreed, and arpBuzz ran a
+  // two-bar cycle that drifted against everything else. Both were audible
+  // and neither was caught by anything, so: count the alternatives.
+  describe('the four-bar progression', () => {
+    // `<a b c d>` cycles one entry per bar. Count entries at bracket
+    // depth zero, so `<[a3 c4]*8 [f3 a3]*8>` counts 2, not 4.
+    const cycleLength = src => {
+      // the `>` may be followed by a repeat, as in `<a1 f1 g1 e1>*16`
+      const m = src.match(/note\("<([^"]*)>[^"]*"\)/);
+      if (!m) return null;
+      let depth = 0, n = 1, prevSpace = true;
+      for (const ch of m[1]) {
+        if (ch === '[') depth++;
+        else if (ch === ']') depth--;
+        else if (ch === ' ' && depth === 0) { if (!prevSpace) n++; prevSpace = true; continue; }
+        prevSpace = false;
+      }
+      return n;
+    };
+
+    // stab and seasick are deliberately outside this: stab is a within-bar
+    // figure, seasick is the mire's own key.
+    const onTheProgression = {
+      ...BASS, chord: PAD.chord, chordWide: PAD.chordWide,
+      lead: LEAD.lead, arp: LEAD.arp, arpOct: LEAD.arpOct, bell: LEAD.bell,
+      arpChord: ARP.arpChord, arpBuzz: ARP.arpBuzz, arpSlow: ARP.arpSlow,
+    };
+
+    it.each(Object.entries(onTheProgression))('%s spans four bars', (name, src) => {
+      expect(cycleLength(src), `${name} is not a 4-bar cycle`).toBe(4);
+    });
+
+    it('roots the bass on Am F G Em', () => {
+      for (const [name, src] of Object.entries(BASS)) {
+        const roots = src.match(/note\("<([a-g]#?b?\d) ([a-g]#?b?\d) ([a-g]#?b?\d) ([a-g]#?b?\d)>/);
+        expect(roots, `${name} has no four-root cycle`).not.toBeNull();
+        expect(roots.slice(1).map(r => r[0])).toEqual(['a', 'f', 'g', 'e']);
+      }
+    });
+  });
+
   // "The drums are too dominant" was the verdict on the first full stack.
   // The fix was a set of gain cuts, which is exactly the kind of thing
   // that drifts back the next time a voice is added. The mix budget in

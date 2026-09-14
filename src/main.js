@@ -21,11 +21,35 @@ addEventListener('keyup', onKeyUp);
 // index.html's canvas:fullscreen rule scales it to fit. This needs a real
 // gesture — the browser refuses it otherwise — which is why there is no pad
 // button for it: a pad's presses are synthetic and would be refused.
+// Already fullscreen by another road: launched from the home screen, where
+// the manifest asked for it. Nothing to toggle, and no button to show.
+const standalone = () => (typeof navigator !== 'undefined' && navigator.standalone === true) ||
+  (typeof matchMedia === 'function' && matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
+
 function toggleFullscreen() {
   const req = canvas.requestFullscreen || canvas.webkitRequestFullscreen;
   const exit = document.exitFullscreen || document.webkitExitFullscreen;
   const on = document.fullscreenElement || document.webkitFullscreenElement;
-  if (on) exit?.call(document); else req?.call(canvas);
+  if (on) return exit?.call(document);
+  if (req) return req.call(canvas);
+  // No fullscreen API at all: that is an iPhone (Safari there has it only
+  // for video). The way to a fullscreen game on an iPhone is the home
+  // screen, so say so, once, where the button was pressed.
+  toast('No fullscreen in Safari on iPhone — Share → Add to Home Screen, then open it from there.');
+}
+
+let toastEl = null;
+function toast(text) {
+  if (typeof document.createElement !== 'function' || !document.body) return;
+  if (!toastEl) {
+    toastEl = document.createElement('div');
+    toastEl.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);max-width:min(92vw,520px);padding:10px 14px;border-radius:8px;background:rgba(26,16,37,0.92);color:#e8dcff;border:1px solid #b57edc;font:13px monospace;text-align:center;z-index:3;pointer-events:none;';
+    document.body.appendChild(toastEl);
+  }
+  toastEl.textContent = text;
+  toastEl.hidden = false;
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { toastEl.hidden = true; }, 6000);
 }
 addEventListener('keydown', e => { if (e.code === 'KeyF' && !e.repeat && e.isTrusted) toggleFullscreen(); });
 const fsLink = document.getElementById('fullscreen'); // absent under smoke.mjs's stub document
@@ -33,11 +57,12 @@ if (typeof fsLink?.addEventListener === 'function') fsLink.addEventListener('cli
 // A coarse pointer means a thumb: put the buttons up. Going fullscreen from
 // the touch button also asks for landscape, where the phone allows it.
 if (wantsTouch()) {
-  initTouch(() => {
+  const root = initTouch(() => {
     toggleFullscreen();
     screen.orientation?.lock?.('landscape').catch(() => {});
   });
   if (fsLink) fsLink.hidden = true; // the ⛶ button does this job on touch
+  if (standalone()) root?.querySelector('.fs')?.remove(); // launched fullscreen already
 }
 // A tap or click unlocks audio too. Keys already do (input.js); this is
 // for the player on a controller or a touchscreen, whose presses arrive as

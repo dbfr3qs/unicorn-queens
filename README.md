@@ -278,6 +278,13 @@ dialogue too), and two thumbs at once are two keys at once. Adding the
 page to the home screen gets rid of the browser bars; the manifest asks
 for fullscreen and landscape when launched that way.
 
+Two iPhone particulars, both handled: Safari there has no fullscreen for
+anything but video, so ⛶ explains the home-screen route instead (and is
+not shown at all once launched from there); and Web Audio on an iPhone
+follows the ring/silent switch, so the first tap also starts a looping
+inaudible `<audio>` element, which moves the page's audio session to
+playback and lets the game's sound through with the switch on silent.
+
 ## Music
 
 The soundtrack is live-coded with [Strudel](https://strudel.cc): 8-bit

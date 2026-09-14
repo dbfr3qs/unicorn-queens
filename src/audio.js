@@ -8,7 +8,30 @@ export function toggleMuted() {
   muted = !muted;
 }
 
+// A tenth of a second of silence, as a WAV, for the iPhone. Web Audio on an
+// iPhone follows the ring/silent switch: with the switch on silent, a running
+// context plays nothing, and the HUD says "sound on" while it does. HTML
+// media does not follow the switch — and once an <audio> element is playing,
+// the page's whole audio session is treated as playback and Web Audio comes
+// through as well. So the first real gesture also starts this, looping and
+// inaudible, and leaves it running. (The iPad has no switch; it never needed
+// this.)
+const SILENCE = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+let unmute = null;
+function unmuteIOS() {
+  if (unmute || typeof Audio === 'undefined') return;
+  try {
+    unmute = new Audio(SILENCE);
+    unmute.loop = true;
+    unmute.setAttribute('playsinline', '');
+    unmute.volume = 0.01; // not 0: a muted element does not count as playback
+    const p = unmute.play();
+    if (p?.catch) p.catch(() => { unmute = null; }); // no gesture yet: try again on the next
+  } catch { unmute = null; }
+}
+
 export function initAudio() {
+  unmuteIOS();
   if (!audioCtx) {
     try { audioCtx = new (globalThis.AudioContext || globalThis.webkitAudioContext)(); } catch (e) { audioCtx = null; }
   }

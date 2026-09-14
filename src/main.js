@@ -8,6 +8,7 @@ import { initTouch, wantsTouch } from './touch.js'; // a phone or tablet: on-scr
 import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
 import { cardReady } from './ending9.js'; // level 9: the end card
+import { startIntro, endIntro } from './intro.js'; // the opening scene
 import { spritesLoaded, loadProgress } from './sprites.js';
 import { palette, fonts } from './render/theme.js';
 
@@ -49,11 +50,11 @@ for (const ev of ['pointerdown', 'touchend']) addEventListener(ev, () => { initA
 if (typeof document !== 'undefined' && typeof document.createElement === 'function') initMusic();
 addEventListener('keydown', e => {
   if (e.repeat) return; // holding jump through the end screen must not auto-advance
+  if (game.intro) { endIntro(); return; } // any key: straight to level 1 (a pad's or a thumb's key too)
   if (e.code === 'Space' && cardReady(game.level)) {
-    // The end card: a true new game. No prev player, so no carry at all —
-    // back to level 1 small, bowless and unable to fly, the way it started.
-    startGame(canvas.height, 0);
-    game.player.jumpHeld = true;
+    // The end card: a true new game, from the opening. No prev player, so no
+    // carry at all — back to level 1 small, bowless and unable to fly.
+    startIntro(canvas.height);
     return;
   }
   if (e.code === 'Space' && (game.player.dead || game.player.won)) {
@@ -67,9 +68,14 @@ addEventListener('keydown', e => {
   }
 });
 // ?level=N (1-based) boots straight into that level for testing, with the
-// gear a run would have carried in (LEVELS[].carry).
-// typeof guard: smoke.mjs boots main.js under Node, where location is absent
-startGame(canvas.height, levelIndexFromSearch(typeof location !== 'undefined' ? location.search : ''));
+// gear a run would have carried in (LEVELS[].carry). A plain start opens
+// with the story. typeof guard: smoke.mjs boots main.js under Node, where
+// location is absent — it gets the intro, and runs it.
+{
+  const search = typeof location !== 'undefined' ? location.search : '';
+  if (/[?&]level=/.test(search)) startGame(canvas.height, levelIndexFromSearch(search));
+  else startIntro(canvas.height);
+}
 
 // A bar and a word while the sheets come down. Drawn on its own rAF rather
 // than through the game loop, because the game loop has not started yet —

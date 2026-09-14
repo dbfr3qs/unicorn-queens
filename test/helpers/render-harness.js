@@ -7,6 +7,7 @@
 // must stay first).
 import { reseed } from './seeded-rng.js';
 import { game, startGame, update } from '../../src/game.js';
+import { startIntro } from '../../src/intro.js';
 import { draw } from '../../src/render/index.js';
 import { input } from '../../src/input.js';
 import { createRecordingCtx, pretty } from './recording-ctx.js';
@@ -15,8 +16,19 @@ export const VIEW_W = 800, VIEW_H = 600, DT = 1 / 60;
 
 const noopFx = { play: () => {} }; // audio is never exercised in these tests
 
+// The opening scene, at time t of its clock (the scene is a pure function
+// of it; the cues before t are skipped, not fired — a snapshot has no ears).
+export function freshIntro(t = 0, viewH = VIEW_H) {
+  reseed();
+  startIntro(viewH);
+  game.intro.t = t;
+  game.intro.cue = Infinity;
+  return game;
+}
+
 export function freshGame(viewH = VIEW_H) {
   reseed(); // each test gets the same RNG sequence
+  game.intro = null; // a scenario's game never starts inside the opening
   startGame(viewH);
   game.gameTime = 0; // per-test deterministic animation phase (bob/twinkle/flicker)
   return game;

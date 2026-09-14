@@ -14,6 +14,7 @@ import { updateKey } from './key.js';
 import { updateRelics } from './relics.js';
 import { updateThaw } from './thaw.js'; // level 9: the hearths, the rings, the seals
 import { updateKing } from './king.js'; // level 9: the King walks east with you
+import { updateIntro } from './intro.js'; // the opening scene (a cycle: intro.js imports game.js; both only use each other at call time)
 import { updateQueenWake, updateQueenDying, blizzardWobble, BLIZZ_DRIFT } from './enemies/queenboss.js'; // level 9: the Frost Queen
 import { updateEnding } from './ending9.js'; // level 9: the spring returns
 import { updateCogs } from './cogs.js';
@@ -35,6 +36,7 @@ import { setTrack, duck } from './music.js'; // the soundtrack follows the level
 
 export const game = {
   level: null, player: null, enemies: null,
+  intro: null, // the opening scene while it plays (intro.js); null in play
   camera: createCamera(),
   levelIndex: 0,
   gateChimed: false, // one-shot gate chime per level entry
@@ -95,6 +97,7 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 }
 
 export function update(dt, viewW, fx) {
+  if (game.intro) { updateIntro(dt, fx); return; } // the opening: level 1 waits underneath, untouched
   if (isDialogueOpen()) { duck(true); return; } // dialogue: the whole world is frozen, clock included
   duck(false);
   game.gameTime += dt;

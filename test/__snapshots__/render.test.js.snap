@@ -5394,6 +5394,4152 @@ save()
 restore()"
 `;
 
+exports[`intro: the card (black, the title at full) 1`] = `
+"fillStyle=#0d0815
+fillRect(0, 0, 800, 600)
+save()
+  translate(0, 0)
+  translate(0, -332)
+  scale(1.5, 1.5)
+  save()
+    beginPath()
+    rect(-653, 0, 5600, 560)
+    clip()
+    fillStyle=#7ec8f0
+    fillRect(-653, 0, 5600, 560)
+    save()
+      fillStyle=#ffe9a3
+      globalAlpha=0.18
+      beginPath()
+      arc(607.35, 88, 52, 0, 6.283)
+      fill()
+      globalAlpha=0.3
+      beginPath()
+      arc(607.35, 88, 40, 0, 6.283)
+      fill()
+      globalAlpha=1
+      beginPath()
+      arc(607.35, 88, 28, 0, 6.283)
+      fill()
+    restore()
+    fillStyle=#ffffff
+    globalAlpha=0.75
+    beginPath()
+    ellipse(605.6, 56, 34, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(629.6, 60, 24, 8, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(583.6, 61, 20, 7, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(-9.383, 123, 38, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(17.617, 127, 27, 9, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(-33.383, 128, 22, 8, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(168.967, 80, 42, 12, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(198.967, 84, 30, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(142.967, 85, 24, 9, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(347.317, 147, 46, 13, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(380.317, 151, 33, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(319.317, 152, 26, 10, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    save()
+      translate(-228.55, 0)
+      fillStyle=#79b86a
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-14.836, 418.73)
+      lineTo(70.329, 560)
+      lineTo(36.263, 560)
+      lineTo(187.873, 391.071)
+      lineTo(339.483, 560)
+      lineTo(278.839, 560)
+      lineTo(418.079, 390.476)
+      lineTo(557.32, 560)
+      lineTo(501.623, 560)
+      lineTo(593.072, 450.832)
+      lineTo(684.52, 560)
+      lineTo(647.941, 560)
+      lineTo(755.776, 430.073)
+      lineTo(863.611, 560)
+      lineTo(820.477, 560)
+      lineTo(904.503, 457.786)
+      lineTo(988.528, 560)
+      lineTo(954.918, 560)
+      lineTo(1105.091, 431.899)
+      lineTo(1255.263, 560)
+      lineTo(1195.194, 560)
+      lineTo(1319.076, 373.884)
+      lineTo(1442.957, 560)
+      lineTo(1393.405, 560)
+      lineTo(1511.999, 452.707)
+      lineTo(1630.594, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1160, 560)
+      lineTo(1260, 560)
+      lineTo(1345.164, 418.73)
+      lineTo(1430.329, 560)
+      lineTo(1396.263, 560)
+      lineTo(1547.873, 391.071)
+      lineTo(1699.483, 560)
+      lineTo(1638.839, 560)
+      lineTo(1778.079, 390.476)
+      lineTo(1917.32, 560)
+      lineTo(1861.623, 560)
+      lineTo(1953.072, 450.832)
+      lineTo(2044.52, 560)
+      lineTo(2007.941, 560)
+      lineTo(2115.776, 430.073)
+      lineTo(2223.611, 560)
+      lineTo(2180.477, 560)
+      lineTo(2264.503, 457.786)
+      lineTo(2348.528, 560)
+      lineTo(2314.918, 560)
+      lineTo(2465.091, 431.899)
+      lineTo(2615.263, 560)
+      lineTo(2555.194, 560)
+      lineTo(2679.076, 373.884)
+      lineTo(2802.957, 560)
+      lineTo(2753.405, 560)
+      lineTo(2871.999, 452.707)
+      lineTo(2990.594, 560)
+      lineTo(3360, 560)
+      closePath()
+      fill()
+    restore()
+    save()
+      translate(-391.8, 0)
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-10.004, 353.87)
+      lineTo(79.991, 560)
+      lineTo(43.993, 560)
+      lineTo(163.422, 305.448)
+      lineTo(282.851, 560)
+      lineTo(235.079, 560)
+      lineTo(360.954, 307.983)
+      lineTo(486.829, 560)
+      lineTo(436.479, 560)
+      lineTo(562.742, 314.442)
+      lineTo(689.004, 560)
+      lineTo(638.499, 560)
+      lineTo(748.332, 411.839)
+      lineTo(858.164, 560)
+      lineTo(814.231, 560)
+      lineTo(915.725, 331.122)
+      lineTo(1017.218, 560)
+      lineTo(976.621, 560)
+      lineTo(1084.506, 318.682)
+      lineTo(1192.392, 560)
+      lineTo(1149.237, 560)
+      lineTo(1242.011, 322.483)
+      lineTo(1334.784, 560)
+      lineTo(1297.675, 560)
+      lineTo(1414.84, 301.852)
+      lineTo(1532.005, 560)
+      lineTo(1485.139, 560)
+      lineTo(1566.512, 324.105)
+      lineTo(1647.886, 560)
+      lineTo(1615.337, 560)
+      lineTo(1702.135, 405.03)
+      lineTo(1788.934, 560)
+      lineTo(1754.214, 560)
+      lineTo(1838.061, 349.011)
+      lineTo(1921.908, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(-19.004, 353.87)
+      lineTo(-10.004, 327.87)
+      lineTo(-1.004, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(154.422, 305.448)
+      lineTo(163.422, 279.448)
+      lineTo(172.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(351.954, 307.983)
+      lineTo(360.954, 281.983)
+      lineTo(369.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(553.742, 314.442)
+      lineTo(562.742, 288.442)
+      lineTo(571.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(739.332, 411.839)
+      lineTo(748.332, 385.839)
+      lineTo(757.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(906.725, 331.122)
+      lineTo(915.725, 305.122)
+      lineTo(924.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1075.506, 318.682)
+      lineTo(1084.506, 292.682)
+      lineTo(1093.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1233.011, 322.483)
+      lineTo(1242.011, 296.483)
+      lineTo(1251.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1405.84, 301.852)
+      lineTo(1414.84, 275.852)
+      lineTo(1423.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1557.512, 324.105)
+      lineTo(1566.512, 298.105)
+      lineTo(1575.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1693.135, 405.03)
+      lineTo(1702.135, 379.03)
+      lineTo(1711.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1829.061, 349.011)
+      lineTo(1838.061, 323.011)
+      lineTo(1847.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(1560, 560)
+      lineTo(1660, 560)
+      lineTo(1749.996, 353.87)
+      lineTo(1839.991, 560)
+      lineTo(1803.993, 560)
+      lineTo(1923.422, 305.448)
+      lineTo(2042.851, 560)
+      lineTo(1995.079, 560)
+      lineTo(2120.954, 307.983)
+      lineTo(2246.829, 560)
+      lineTo(2196.479, 560)
+      lineTo(2322.742, 314.442)
+      lineTo(2449.004, 560)
+      lineTo(2398.499, 560)
+      lineTo(2508.332, 411.839)
+      lineTo(2618.164, 560)
+      lineTo(2574.231, 560)
+      lineTo(2675.725, 331.122)
+      lineTo(2777.218, 560)
+      lineTo(2736.621, 560)
+      lineTo(2844.506, 318.682)
+      lineTo(2952.392, 560)
+      lineTo(2909.237, 560)
+      lineTo(3002.011, 322.483)
+      lineTo(3094.784, 560)
+      lineTo(3057.675, 560)
+      lineTo(3174.84, 301.852)
+      lineTo(3292.005, 560)
+      lineTo(3245.139, 560)
+      lineTo(3326.512, 324.105)
+      lineTo(3407.886, 560)
+      lineTo(3375.337, 560)
+      lineTo(3462.135, 405.03)
+      lineTo(3548.934, 560)
+      lineTo(3514.214, 560)
+      lineTo(3598.061, 349.011)
+      lineTo(3681.908, 560)
+      lineTo(3760, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(1740.996, 353.87)
+      lineTo(1749.996, 327.87)
+      lineTo(1758.996, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1914.422, 305.448)
+      lineTo(1923.422, 279.448)
+      lineTo(1932.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2111.954, 307.983)
+      lineTo(2120.954, 281.983)
+      lineTo(2129.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2313.742, 314.442)
+      lineTo(2322.742, 288.442)
+      lineTo(2331.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2499.332, 411.839)
+      lineTo(2508.332, 385.839)
+      lineTo(2517.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2666.725, 331.122)
+      lineTo(2675.725, 305.122)
+      lineTo(2684.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2835.506, 318.682)
+      lineTo(2844.506, 292.682)
+      lineTo(2853.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2993.011, 322.483)
+      lineTo(3002.011, 296.483)
+      lineTo(3011.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3165.84, 301.852)
+      lineTo(3174.84, 275.852)
+      lineTo(3183.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3317.512, 324.105)
+      lineTo(3326.512, 298.105)
+      lineTo(3335.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3453.135, 405.03)
+      lineTo(3462.135, 379.03)
+      lineTo(3471.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3589.061, 349.011)
+      lineTo(3598.061, 323.011)
+      lineTo(3607.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+    restore()
+  restore()
+  fillStyle=rgba(8, 30, 16, 0.18)
+  fillRect(3047, 0, 1900, 560)
+  save()
+    translate(-653, 0)
+    fillStyle=#2d1b4e
+    fillRect(0, 560, 2650, 40)
+    fillStyle=#7b4fa6
+    fillRect(0, 560, 2650, 4)
+    fillStyle=#2d1b4e
+    fillRect(3250, 560, 950, 40)
+    fillStyle=#7b4fa6
+    fillRect(3250, 560, 950, 4)
+    fillStyle=#2d1b4e
+    fillRect(4300, 560, 1300, 40)
+    fillStyle=#7b4fa6
+    fillRect(4300, 560, 1300, 4)
+    fillStyle=#0d2b4e
+    fillRect(2650, 564, 600, 36)
+    fillStyle=#1d4e8e
+    fillRect(2650, 564, 600, 3)
+    fillStyle=#4e8ed4
+    fillRect(3063.2, 570.248, 10, 2)
+    fillRect(3213.2, 568, 10, 2)
+    fillRect(2763.2, 570.268, 10, 2)
+    fillRect(2913.2, 571.931, 10, 2)
+    fillStyle=#0d2b4e
+    fillRect(4200, 564, 100, 36)
+    fillStyle=#1d4e8e
+    fillRect(4200, 564, 100, 3)
+    fillStyle=#4e8ed4
+    fillRect(4213.2, 570.248, 10, 2)
+    fillRect(4238.2, 568, 10, 2)
+    fillRect(4263.2, 570.268, 10, 2)
+    fillRect(4288.2, 571.931, 10, 2)
+    fillStyle=#4a2d7a
+    fillStyle=#6b4a2a
+    fillRect(800, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(839, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(846, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(1010, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(1044, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(1051, 356, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2120, 454, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2149, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(2156, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2250, 344, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2279, 332, 32, 10)
+    fillStyle=#57a857
+    fillRect(2286, 326, 18, 8)
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2735, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2735, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2885, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2885, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3035, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3035, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3185, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3185, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2970, 396, 30, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2970, 394, 26, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#6b4a2a
+    fillRect(4195, 546, 110, 14)
+    fillStyle=#8a6a3e
+    fillRect(4195, 546, 110, 5)
+    fillStyle=#4a3418
+    beginPath()
+    arc(4297, 553, 6, 0, 6.283)
+    fill()
+    fillStyle=#8a6a3e
+    beginPath()
+    arc(4297, 553, 3, 0, 6.283)
+    fill()
+    fillStyle=#4a3418
+    fillRect(4209, 556, 10, 2)
+    fillRect(4239, 556, 12, 2)
+    fillStyle=#6b4a2a
+    fillRect(3800, 444, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(3834, 432, 32, 10)
+    fillStyle=#57a857
+    fillRect(3841, 426, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4650, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(4689, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(4696, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4900, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(4934, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(4941, 356, 18, 8)
+    fillStyle=#c98f3d
+    fillRect(540, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(541.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(901.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1700, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1701.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1718, 542, 8, 37.66, 41.86)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(2500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3901.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(4450, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(4451.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(4468, 542, 8, 65.16, 69.36)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(4650, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(4651.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5100, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5101.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5301.5, 525.5, 33, 33)
+    fillStyle=#5d4226
+    fillRect(111, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(120, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(82, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(158, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(104, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(140, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(331, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(340, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(302, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(378, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(324, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(360, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(551, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(560, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(522, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(598, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(544, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(580, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(904, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(913, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(875, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(951, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(897, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(933, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1257, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1266, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1228, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1304, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1250, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1286, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1480, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1489, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1451, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1527, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1473, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1509, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1833, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1842, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1804, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1880, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1826, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1862, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(2056, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2065, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2027, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2103, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(2049, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2085, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3338, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3347, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3309, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3385, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3331, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3367, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(3914, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(3923, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3885, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3961, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(3907, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3943, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4490, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4499, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4461, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4537, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4483, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4519, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4843, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4852, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4814, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4890, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4836, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4872, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(5066, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(5075, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5037, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5113, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(5059, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5095, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3637.85, 47, 24.3, 513)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3650, 14.6, 70.2, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3598.7, 49.7, 51.3, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3701.3, 49.7, 51.3, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3628.4, 1.1, 35.1, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3677, 28.1, 32.4, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(2300, 140, 60, 420)
+    fillStyle=#5d4226
+    fillRect(2300, 140, 14, 420)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(2330, 110, 64, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2278, 140, 46, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2382, 140, 46, 0, 6.283)
+    fill()
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2310, 96, 34, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2356, 120, 30, 0, 6.283)
+    fill()
+    fillStyle=#241811
+    beginPath()
+    arc(2330, 280, 30, 0, 6.283)
+    fill()
+    fillStyle=#0d0805
+    beginPath()
+    arc(2330, 280, 24, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(36, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(34, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(68, 554, 2, 6)
+    fillRect(71, 551, 2, 9)
+    fillRect(74, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(120, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(118, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(152, 554, 2, 6)
+    fillRect(155, 551, 2, 9)
+    fillRect(158, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(204, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(202, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(256, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(254, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(312, 554, 2, 6)
+    fillRect(315, 551, 2, 9)
+    fillRect(318, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(340, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(338, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(396, 554, 2, 6)
+    fillRect(399, 551, 2, 9)
+    fillRect(402, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(448, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(446, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(476, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(474, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(532, 554, 2, 6)
+    fillRect(535, 551, 2, 9)
+    fillRect(538, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(584, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(582, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(616, 554, 2, 6)
+    fillRect(619, 551, 2, 9)
+    fillRect(622, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(668, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(666, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(724, 554, 2, 6)
+    fillRect(727, 551, 2, 9)
+    fillRect(730, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(752, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(750, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(804, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(802, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(860, 554, 2, 6)
+    fillRect(863, 551, 2, 9)
+    fillRect(866, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(888, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(886, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(944, 554, 2, 6)
+    fillRect(947, 551, 2, 9)
+    fillRect(950, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(996, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(994, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1028, 554, 2, 6)
+    fillRect(1031, 551, 2, 9)
+    fillRect(1034, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(1080, 554, 2, 6)
+    fillRect(1083, 551, 2, 9)
+    fillRect(1086, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1132, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1130, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1164, 554, 2, 6)
+    fillRect(1167, 551, 2, 9)
+    fillRect(1170, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1216, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1214, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1272, 554, 2, 6)
+    fillRect(1275, 551, 2, 9)
+    fillRect(1278, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1324, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1322, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1352, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1350, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1408, 554, 2, 6)
+    fillRect(1411, 551, 2, 9)
+    fillRect(1414, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1460, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1458, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1492, 554, 2, 6)
+    fillRect(1495, 551, 2, 9)
+    fillRect(1498, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1544, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1542, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1600, 554, 2, 6)
+    fillRect(1603, 551, 2, 9)
+    fillRect(1606, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1628, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1626, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1680, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1678, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1736, 554, 2, 6)
+    fillRect(1739, 551, 2, 9)
+    fillRect(1742, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1764, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1762, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1820, 554, 2, 6)
+    fillRect(1823, 551, 2, 9)
+    fillRect(1826, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1872, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1870, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1900, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1898, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1956, 554, 2, 6)
+    fillRect(1959, 551, 2, 9)
+    fillRect(1962, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2008, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2006, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2040, 554, 2, 6)
+    fillRect(2043, 551, 2, 9)
+    fillRect(2046, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2092, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2090, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2148, 554, 2, 6)
+    fillRect(2151, 551, 2, 9)
+    fillRect(2154, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2176, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2174, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2228, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2226, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2284, 554, 2, 6)
+    fillRect(2287, 551, 2, 9)
+    fillRect(2290, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2336, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2334, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2368, 554, 2, 6)
+    fillRect(2371, 551, 2, 9)
+    fillRect(2374, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2420, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2418, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2452, 554, 2, 6)
+    fillRect(2455, 551, 2, 9)
+    fillRect(2458, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2504, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2502, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2556, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2554, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2612, 554, 2, 6)
+    fillRect(2615, 551, 2, 9)
+    fillRect(2618, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3296, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3294, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3328, 554, 2, 6)
+    fillRect(3331, 551, 2, 9)
+    fillRect(3334, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(3380, 554, 2, 6)
+    fillRect(3383, 551, 2, 9)
+    fillRect(3386, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3432, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3430, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3464, 554, 2, 6)
+    fillRect(3467, 551, 2, 9)
+    fillRect(3470, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3516, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3514, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3572, 554, 2, 6)
+    fillRect(3575, 551, 2, 9)
+    fillRect(3578, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3624, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3622, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3652, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3650, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3708, 554, 2, 6)
+    fillRect(3711, 551, 2, 9)
+    fillRect(3714, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3760, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3758, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3792, 554, 2, 6)
+    fillRect(3795, 551, 2, 9)
+    fillRect(3798, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3844, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3842, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3900, 554, 2, 6)
+    fillRect(3903, 551, 2, 9)
+    fillRect(3906, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3928, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3926, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3980, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3978, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4036, 554, 2, 6)
+    fillRect(4039, 551, 2, 9)
+    fillRect(4042, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4064, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4062, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4120, 554, 2, 6)
+    fillRect(4123, 551, 2, 9)
+    fillRect(4126, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4172, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4170, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4340, 554, 2, 6)
+    fillRect(4343, 551, 2, 9)
+    fillRect(4346, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4392, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4390, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4448, 554, 2, 6)
+    fillRect(4451, 551, 2, 9)
+    fillRect(4454, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4476, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4474, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4528, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4526, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4584, 554, 2, 6)
+    fillRect(4587, 551, 2, 9)
+    fillRect(4590, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4636, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4634, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4668, 554, 2, 6)
+    fillRect(4671, 551, 2, 9)
+    fillRect(4674, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4720, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4718, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4752, 554, 2, 6)
+    fillRect(4755, 551, 2, 9)
+    fillRect(4758, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4804, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4802, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4856, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4854, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4912, 554, 2, 6)
+    fillRect(4915, 551, 2, 9)
+    fillRect(4918, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4940, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4938, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4996, 554, 2, 6)
+    fillRect(4999, 551, 2, 9)
+    fillRect(5002, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5048, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5046, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5076, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5074, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5132, 554, 2, 6)
+    fillRect(5135, 551, 2, 9)
+    fillRect(5138, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5184, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(5182, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5216, 554, 2, 6)
+    fillRect(5219, 551, 2, 9)
+    fillRect(5222, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5268, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(5266, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5324, 554, 2, 6)
+    fillRect(5327, 551, 2, 9)
+    fillRect(5330, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5352, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5350, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5404, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5402, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2450, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2451, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2451, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2750, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2751, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2751, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3100, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3101, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3101, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4400, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4401, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4401, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2656, 542, 2, 18)
+    fillRect(2662, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(2661, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(3236, 542, 2, 18)
+    fillRect(3242, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(3241, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4206, 542, 2, 18)
+    fillRect(4212, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4211, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4286, 542, 2, 18)
+    fillRect(4292, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4291, 529, 4, 7)
+    save()
+      translate(985, 560)
+      scale(1, 1)
+      fillStyle=#fff5fa
+      fillRect(-14, -39, 28, 39)
+    restore()
+    globalAlpha=1
+  restore()
+restore()
+fillStyle=rgba(20, 8, 40, 0.35)
+fillRect(0, 0, 800, 600)
+fillStyle=#000
+fillRect(0, 0, 800, 44)
+fillRect(0, 556, 800, 44)
+fillStyle=rgba(0, 0, 0, 1)
+fillRect(0, 0, 800, 600)
+globalAlpha=1
+textAlign=center
+textBaseline=middle
+font=28px monospace
+fillStyle=#ffd75e
+fillText(UNICORN QUEENS, 400, 290)
+font=12px monospace
+fillStyle=#cbb8ff
+fillText(the realm has a queen to keep it, 400, 322)
+globalAlpha=1
+textAlign=right
+textBaseline=alphabetic
+font=12px monospace
+fillStyle=#5d4a80
+fillText(any key skips, 788, 586)"
+`;
+
+exports[`intro: the grab (both of them rising, the Queen running after, the sorcerer's line) 1`] = `
+"fillStyle=#0d0815
+fillRect(0, 0, 800, 600)
+save()
+  translate(0, 0)
+  translate(0, -332)
+  scale(1.5, 1.5)
+  save()
+    beginPath()
+    rect(-653, 0, 5600, 560)
+    clip()
+    fillStyle=#7ec8f0
+    fillRect(-653, 0, 5600, 560)
+    save()
+      fillStyle=#ffe9a3
+      globalAlpha=0.18
+      beginPath()
+      arc(607.35, 88, 52, 0, 6.283)
+      fill()
+      globalAlpha=0.3
+      beginPath()
+      arc(607.35, 88, 40, 0, 6.283)
+      fill()
+      globalAlpha=1
+      beginPath()
+      arc(607.35, 88, 28, 0, 6.283)
+      fill()
+    restore()
+    fillStyle=#ffffff
+    globalAlpha=0.75
+    beginPath()
+    ellipse(650.4, 56, 34, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(674.4, 60, 24, 8, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(628.4, 61, 20, 7, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(52.217, 123, 38, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(79.217, 127, 27, 9, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(28.217, 128, 22, 8, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(247.367, 80, 42, 12, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(277.367, 84, 30, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(221.367, 85, 24, 9, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(442.517, 147, 46, 13, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(475.517, 151, 33, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(414.517, 152, 26, 10, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    save()
+      translate(-228.55, 0)
+      fillStyle=#79b86a
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-14.836, 418.73)
+      lineTo(70.329, 560)
+      lineTo(36.263, 560)
+      lineTo(187.873, 391.071)
+      lineTo(339.483, 560)
+      lineTo(278.839, 560)
+      lineTo(418.079, 390.476)
+      lineTo(557.32, 560)
+      lineTo(501.623, 560)
+      lineTo(593.072, 450.832)
+      lineTo(684.52, 560)
+      lineTo(647.941, 560)
+      lineTo(755.776, 430.073)
+      lineTo(863.611, 560)
+      lineTo(820.477, 560)
+      lineTo(904.503, 457.786)
+      lineTo(988.528, 560)
+      lineTo(954.918, 560)
+      lineTo(1105.091, 431.899)
+      lineTo(1255.263, 560)
+      lineTo(1195.194, 560)
+      lineTo(1319.076, 373.884)
+      lineTo(1442.957, 560)
+      lineTo(1393.405, 560)
+      lineTo(1511.999, 452.707)
+      lineTo(1630.594, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1160, 560)
+      lineTo(1260, 560)
+      lineTo(1345.164, 418.73)
+      lineTo(1430.329, 560)
+      lineTo(1396.263, 560)
+      lineTo(1547.873, 391.071)
+      lineTo(1699.483, 560)
+      lineTo(1638.839, 560)
+      lineTo(1778.079, 390.476)
+      lineTo(1917.32, 560)
+      lineTo(1861.623, 560)
+      lineTo(1953.072, 450.832)
+      lineTo(2044.52, 560)
+      lineTo(2007.941, 560)
+      lineTo(2115.776, 430.073)
+      lineTo(2223.611, 560)
+      lineTo(2180.477, 560)
+      lineTo(2264.503, 457.786)
+      lineTo(2348.528, 560)
+      lineTo(2314.918, 560)
+      lineTo(2465.091, 431.899)
+      lineTo(2615.263, 560)
+      lineTo(2555.194, 560)
+      lineTo(2679.076, 373.884)
+      lineTo(2802.957, 560)
+      lineTo(2753.405, 560)
+      lineTo(2871.999, 452.707)
+      lineTo(2990.594, 560)
+      lineTo(3360, 560)
+      closePath()
+      fill()
+    restore()
+    save()
+      translate(-391.8, 0)
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-10.004, 353.87)
+      lineTo(79.991, 560)
+      lineTo(43.993, 560)
+      lineTo(163.422, 305.448)
+      lineTo(282.851, 560)
+      lineTo(235.079, 560)
+      lineTo(360.954, 307.983)
+      lineTo(486.829, 560)
+      lineTo(436.479, 560)
+      lineTo(562.742, 314.442)
+      lineTo(689.004, 560)
+      lineTo(638.499, 560)
+      lineTo(748.332, 411.839)
+      lineTo(858.164, 560)
+      lineTo(814.231, 560)
+      lineTo(915.725, 331.122)
+      lineTo(1017.218, 560)
+      lineTo(976.621, 560)
+      lineTo(1084.506, 318.682)
+      lineTo(1192.392, 560)
+      lineTo(1149.237, 560)
+      lineTo(1242.011, 322.483)
+      lineTo(1334.784, 560)
+      lineTo(1297.675, 560)
+      lineTo(1414.84, 301.852)
+      lineTo(1532.005, 560)
+      lineTo(1485.139, 560)
+      lineTo(1566.512, 324.105)
+      lineTo(1647.886, 560)
+      lineTo(1615.337, 560)
+      lineTo(1702.135, 405.03)
+      lineTo(1788.934, 560)
+      lineTo(1754.214, 560)
+      lineTo(1838.061, 349.011)
+      lineTo(1921.908, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(-19.004, 353.87)
+      lineTo(-10.004, 327.87)
+      lineTo(-1.004, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(154.422, 305.448)
+      lineTo(163.422, 279.448)
+      lineTo(172.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(351.954, 307.983)
+      lineTo(360.954, 281.983)
+      lineTo(369.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(553.742, 314.442)
+      lineTo(562.742, 288.442)
+      lineTo(571.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(739.332, 411.839)
+      lineTo(748.332, 385.839)
+      lineTo(757.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(906.725, 331.122)
+      lineTo(915.725, 305.122)
+      lineTo(924.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1075.506, 318.682)
+      lineTo(1084.506, 292.682)
+      lineTo(1093.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1233.011, 322.483)
+      lineTo(1242.011, 296.483)
+      lineTo(1251.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1405.84, 301.852)
+      lineTo(1414.84, 275.852)
+      lineTo(1423.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1557.512, 324.105)
+      lineTo(1566.512, 298.105)
+      lineTo(1575.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1693.135, 405.03)
+      lineTo(1702.135, 379.03)
+      lineTo(1711.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1829.061, 349.011)
+      lineTo(1838.061, 323.011)
+      lineTo(1847.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(1560, 560)
+      lineTo(1660, 560)
+      lineTo(1749.996, 353.87)
+      lineTo(1839.991, 560)
+      lineTo(1803.993, 560)
+      lineTo(1923.422, 305.448)
+      lineTo(2042.851, 560)
+      lineTo(1995.079, 560)
+      lineTo(2120.954, 307.983)
+      lineTo(2246.829, 560)
+      lineTo(2196.479, 560)
+      lineTo(2322.742, 314.442)
+      lineTo(2449.004, 560)
+      lineTo(2398.499, 560)
+      lineTo(2508.332, 411.839)
+      lineTo(2618.164, 560)
+      lineTo(2574.231, 560)
+      lineTo(2675.725, 331.122)
+      lineTo(2777.218, 560)
+      lineTo(2736.621, 560)
+      lineTo(2844.506, 318.682)
+      lineTo(2952.392, 560)
+      lineTo(2909.237, 560)
+      lineTo(3002.011, 322.483)
+      lineTo(3094.784, 560)
+      lineTo(3057.675, 560)
+      lineTo(3174.84, 301.852)
+      lineTo(3292.005, 560)
+      lineTo(3245.139, 560)
+      lineTo(3326.512, 324.105)
+      lineTo(3407.886, 560)
+      lineTo(3375.337, 560)
+      lineTo(3462.135, 405.03)
+      lineTo(3548.934, 560)
+      lineTo(3514.214, 560)
+      lineTo(3598.061, 349.011)
+      lineTo(3681.908, 560)
+      lineTo(3760, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(1740.996, 353.87)
+      lineTo(1749.996, 327.87)
+      lineTo(1758.996, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1914.422, 305.448)
+      lineTo(1923.422, 279.448)
+      lineTo(1932.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2111.954, 307.983)
+      lineTo(2120.954, 281.983)
+      lineTo(2129.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2313.742, 314.442)
+      lineTo(2322.742, 288.442)
+      lineTo(2331.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2499.332, 411.839)
+      lineTo(2508.332, 385.839)
+      lineTo(2517.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2666.725, 331.122)
+      lineTo(2675.725, 305.122)
+      lineTo(2684.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2835.506, 318.682)
+      lineTo(2844.506, 292.682)
+      lineTo(2853.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2993.011, 322.483)
+      lineTo(3002.011, 296.483)
+      lineTo(3011.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3165.84, 301.852)
+      lineTo(3174.84, 275.852)
+      lineTo(3183.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3317.512, 324.105)
+      lineTo(3326.512, 298.105)
+      lineTo(3335.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3453.135, 405.03)
+      lineTo(3462.135, 379.03)
+      lineTo(3471.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3589.061, 349.011)
+      lineTo(3598.061, 323.011)
+      lineTo(3607.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+    restore()
+  restore()
+  fillStyle=rgba(8, 30, 16, 0.18)
+  fillRect(3047, 0, 1900, 560)
+  save()
+    translate(-653, 0)
+    fillStyle=#2d1b4e
+    fillRect(0, 560, 2650, 40)
+    fillStyle=#7b4fa6
+    fillRect(0, 560, 2650, 4)
+    fillStyle=#2d1b4e
+    fillRect(3250, 560, 950, 40)
+    fillStyle=#7b4fa6
+    fillRect(3250, 560, 950, 4)
+    fillStyle=#2d1b4e
+    fillRect(4300, 560, 1300, 40)
+    fillStyle=#7b4fa6
+    fillRect(4300, 560, 1300, 4)
+    fillStyle=#0d2b4e
+    fillRect(2650, 564, 600, 36)
+    fillStyle=#1d4e8e
+    fillRect(2650, 564, 600, 3)
+    fillStyle=#4e8ed4
+    fillRect(2928.8, 568.107, 10, 2)
+    fillRect(3078.8, 569.604, 10, 2)
+    fillRect(3228.8, 571.995, 10, 2)
+    fillRect(2778.8, 569.882, 10, 2)
+    fillStyle=#0d2b4e
+    fillRect(4200, 564, 100, 36)
+    fillStyle=#1d4e8e
+    fillRect(4200, 564, 100, 3)
+    fillStyle=#4e8ed4
+    fillRect(4278.8, 568.107, 10, 2)
+    fillRect(4203.8, 569.604, 10, 2)
+    fillRect(4228.8, 571.995, 10, 2)
+    fillRect(4253.8, 569.882, 10, 2)
+    fillStyle=#4a2d7a
+    fillStyle=#6b4a2a
+    fillRect(800, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(839, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(846, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(1010, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(1044, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(1051, 356, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2120, 454, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2149, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(2156, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2250, 344, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2279, 332, 32, 10)
+    fillStyle=#57a857
+    fillRect(2286, 326, 18, 8)
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2735, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2735, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2885, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2885, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3035, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3035, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3185, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3185, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2970, 396, 30, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2970, 394, 26, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#6b4a2a
+    fillRect(4195, 546, 110, 14)
+    fillStyle=#8a6a3e
+    fillRect(4195, 546, 110, 5)
+    fillStyle=#4a3418
+    beginPath()
+    arc(4297, 553, 6, 0, 6.283)
+    fill()
+    fillStyle=#8a6a3e
+    beginPath()
+    arc(4297, 553, 3, 0, 6.283)
+    fill()
+    fillStyle=#4a3418
+    fillRect(4209, 556, 10, 2)
+    fillRect(4239, 556, 12, 2)
+    fillStyle=#6b4a2a
+    fillRect(3800, 444, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(3834, 432, 32, 10)
+    fillStyle=#57a857
+    fillRect(3841, 426, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4650, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(4689, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(4696, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4900, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(4934, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(4941, 356, 18, 8)
+    fillStyle=#c98f3d
+    fillRect(540, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(541.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(901.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1700, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1701.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1718, 542, 8, 30.94, 35.14)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(2500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3901.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(4450, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(4451.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(4468, 542, 8, 58.44, 62.64)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(4650, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(4651.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5100, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5101.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5301.5, 525.5, 33, 33)
+    fillStyle=#5d4226
+    fillRect(111, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(120, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(82, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(158, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(104, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(140, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(331, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(340, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(302, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(378, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(324, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(360, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(551, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(560, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(522, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(598, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(544, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(580, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(904, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(913, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(875, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(951, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(897, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(933, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1257, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1266, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1228, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1304, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1250, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1286, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1480, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1489, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1451, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1527, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1473, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1509, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1833, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1842, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1804, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1880, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1826, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1862, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(2056, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2065, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2027, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2103, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(2049, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2085, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3338, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3347, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3309, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3385, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3331, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3367, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(3914, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(3923, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3885, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3961, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(3907, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3943, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4490, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4499, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4461, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4537, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4483, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4519, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4843, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4852, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4814, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4890, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4836, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4872, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(5066, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(5075, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5037, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5113, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(5059, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5095, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3637.85, 47, 24.3, 513)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3650, 14.6, 70.2, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3598.7, 49.7, 51.3, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3701.3, 49.7, 51.3, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3628.4, 1.1, 35.1, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3677, 28.1, 32.4, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(2300, 140, 60, 420)
+    fillStyle=#5d4226
+    fillRect(2300, 140, 14, 420)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(2330, 110, 64, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2278, 140, 46, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2382, 140, 46, 0, 6.283)
+    fill()
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2310, 96, 34, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2356, 120, 30, 0, 6.283)
+    fill()
+    fillStyle=#241811
+    beginPath()
+    arc(2330, 280, 30, 0, 6.283)
+    fill()
+    fillStyle=#0d0805
+    beginPath()
+    arc(2330, 280, 24, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(36, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(34, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(68, 554, 2, 6)
+    fillRect(71, 551, 2, 9)
+    fillRect(74, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(120, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(118, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(152, 554, 2, 6)
+    fillRect(155, 551, 2, 9)
+    fillRect(158, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(204, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(202, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(256, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(254, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(312, 554, 2, 6)
+    fillRect(315, 551, 2, 9)
+    fillRect(318, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(340, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(338, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(396, 554, 2, 6)
+    fillRect(399, 551, 2, 9)
+    fillRect(402, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(448, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(446, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(476, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(474, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(532, 554, 2, 6)
+    fillRect(535, 551, 2, 9)
+    fillRect(538, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(584, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(582, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(616, 554, 2, 6)
+    fillRect(619, 551, 2, 9)
+    fillRect(622, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(668, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(666, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(724, 554, 2, 6)
+    fillRect(727, 551, 2, 9)
+    fillRect(730, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(752, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(750, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(804, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(802, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(860, 554, 2, 6)
+    fillRect(863, 551, 2, 9)
+    fillRect(866, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(888, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(886, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(944, 554, 2, 6)
+    fillRect(947, 551, 2, 9)
+    fillRect(950, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(996, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(994, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1028, 554, 2, 6)
+    fillRect(1031, 551, 2, 9)
+    fillRect(1034, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(1080, 554, 2, 6)
+    fillRect(1083, 551, 2, 9)
+    fillRect(1086, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1132, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1130, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1164, 554, 2, 6)
+    fillRect(1167, 551, 2, 9)
+    fillRect(1170, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1216, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1214, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1272, 554, 2, 6)
+    fillRect(1275, 551, 2, 9)
+    fillRect(1278, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1324, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1322, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1352, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1350, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1408, 554, 2, 6)
+    fillRect(1411, 551, 2, 9)
+    fillRect(1414, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1460, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1458, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1492, 554, 2, 6)
+    fillRect(1495, 551, 2, 9)
+    fillRect(1498, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1544, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1542, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1600, 554, 2, 6)
+    fillRect(1603, 551, 2, 9)
+    fillRect(1606, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1628, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1626, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1680, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1678, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1736, 554, 2, 6)
+    fillRect(1739, 551, 2, 9)
+    fillRect(1742, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1764, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1762, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1820, 554, 2, 6)
+    fillRect(1823, 551, 2, 9)
+    fillRect(1826, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1872, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1870, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1900, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1898, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1956, 554, 2, 6)
+    fillRect(1959, 551, 2, 9)
+    fillRect(1962, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2008, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2006, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2040, 554, 2, 6)
+    fillRect(2043, 551, 2, 9)
+    fillRect(2046, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2092, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2090, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2148, 554, 2, 6)
+    fillRect(2151, 551, 2, 9)
+    fillRect(2154, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2176, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2174, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2228, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2226, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2284, 554, 2, 6)
+    fillRect(2287, 551, 2, 9)
+    fillRect(2290, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2336, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2334, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2368, 554, 2, 6)
+    fillRect(2371, 551, 2, 9)
+    fillRect(2374, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2420, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2418, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2452, 554, 2, 6)
+    fillRect(2455, 551, 2, 9)
+    fillRect(2458, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2504, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2502, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2556, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2554, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2612, 554, 2, 6)
+    fillRect(2615, 551, 2, 9)
+    fillRect(2618, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3296, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3294, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3328, 554, 2, 6)
+    fillRect(3331, 551, 2, 9)
+    fillRect(3334, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(3380, 554, 2, 6)
+    fillRect(3383, 551, 2, 9)
+    fillRect(3386, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3432, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3430, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3464, 554, 2, 6)
+    fillRect(3467, 551, 2, 9)
+    fillRect(3470, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3516, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3514, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3572, 554, 2, 6)
+    fillRect(3575, 551, 2, 9)
+    fillRect(3578, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3624, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3622, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3652, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3650, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3708, 554, 2, 6)
+    fillRect(3711, 551, 2, 9)
+    fillRect(3714, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3760, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3758, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3792, 554, 2, 6)
+    fillRect(3795, 551, 2, 9)
+    fillRect(3798, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3844, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3842, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3900, 554, 2, 6)
+    fillRect(3903, 551, 2, 9)
+    fillRect(3906, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3928, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3926, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3980, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3978, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4036, 554, 2, 6)
+    fillRect(4039, 551, 2, 9)
+    fillRect(4042, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4064, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4062, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4120, 554, 2, 6)
+    fillRect(4123, 551, 2, 9)
+    fillRect(4126, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4172, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4170, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4340, 554, 2, 6)
+    fillRect(4343, 551, 2, 9)
+    fillRect(4346, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4392, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4390, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4448, 554, 2, 6)
+    fillRect(4451, 551, 2, 9)
+    fillRect(4454, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4476, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4474, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4528, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4526, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4584, 554, 2, 6)
+    fillRect(4587, 551, 2, 9)
+    fillRect(4590, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4636, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4634, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4668, 554, 2, 6)
+    fillRect(4671, 551, 2, 9)
+    fillRect(4674, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4720, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4718, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4752, 554, 2, 6)
+    fillRect(4755, 551, 2, 9)
+    fillRect(4758, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4804, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4802, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4856, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4854, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4912, 554, 2, 6)
+    fillRect(4915, 551, 2, 9)
+    fillRect(4918, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4940, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4938, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4996, 554, 2, 6)
+    fillRect(4999, 551, 2, 9)
+    fillRect(5002, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5048, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5046, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5076, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5074, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5132, 554, 2, 6)
+    fillRect(5135, 551, 2, 9)
+    fillRect(5138, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5184, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(5182, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5216, 554, 2, 6)
+    fillRect(5219, 551, 2, 9)
+    fillRect(5222, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5268, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(5266, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5324, 554, 2, 6)
+    fillRect(5327, 551, 2, 9)
+    fillRect(5330, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5352, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5350, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5404, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5402, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2450, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2451, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2451, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2750, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2751, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2751, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3100, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3101, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3101, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4400, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4401, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4401, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2656, 542, 2, 18)
+    fillRect(2662, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(2661, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(3236, 542, 2, 18)
+    fillRect(3242, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(3241, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4206, 542, 2, 18)
+    fillRect(4212, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4211, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4286, 542, 2, 18)
+    fillRect(4292, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4291, 529, 4, 7)
+    globalAlpha=0.273
+    fillStyle=#b57edc
+    beginPath()
+    ellipse(1091.761, 386.396, 40, 8, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    save()
+      translate(1091.761, 424.396)
+      scale(-1, 1)
+      fillStyle=#8a6a34
+      fillRect(-14, -42, 28, 42)
+    restore()
+    save()
+      translate(961.227, 558.001)
+      scale(1, 1)
+      fillStyle=#fff5fa
+      fillRect(-14, -39, 28, 39)
+    restore()
+    save()
+      translate(1091.761, 378.396)
+      scale(-1, 1)
+      fillStyle=#5a2b6e
+      fillRect(-14, -45, 28, 45)
+    restore()
+    globalAlpha=1
+  restore()
+restore()
+fillStyle=rgba(20, 8, 40, 0.35)
+fillRect(0, 0, 800, 600)
+fillStyle=#000
+fillRect(0, 0, 800, 44)
+fillRect(0, 556, 800, 44)
+fillStyle=#2d1b4e
+fillRect(120, 468, 560, 76)
+strokeStyle=#cbb8ff
+lineWidth=1
+strokeRect(120.5, 468.5, 559, 75)
+textBaseline=top
+textAlign=left
+font=12px monospace
+fillStyle=#ffd75e
+fillText(The Sorcerer, 136, 480)
+font=16px monospace
+fillStyle=#fff5fa
+fillText(Come and fetch him, then — if you can climb that high., 136, 502)
+textAlign=right
+textBaseline=alphabetic
+font=12px monospace
+fillStyle=#5d4a80
+fillText(any key skips, 788, 586)"
+`;
+
+exports[`intro: the stroll (the two of them east, his line up, the fade lifted) 1`] = `
+"fillStyle=#0d0815
+fillRect(0, 0, 800, 600)
+save()
+  translate(0, 0)
+  translate(0, -332)
+  scale(1.5, 1.5)
+  save()
+    beginPath()
+    rect(-653, 0, 5600, 560)
+    clip()
+    fillStyle=#7ec8f0
+    fillRect(-653, 0, 5600, 560)
+    save()
+      fillStyle=#ffe9a3
+      globalAlpha=0.18
+      beginPath()
+      arc(607.35, 88, 52, 0, 6.283)
+      fill()
+      globalAlpha=0.3
+      beginPath()
+      arc(607.35, 88, 40, 0, 6.283)
+      fill()
+      globalAlpha=1
+      beginPath()
+      arc(607.35, 88, 28, 0, 6.283)
+      fill()
+    restore()
+    fillStyle=#ffffff
+    globalAlpha=0.75
+    beginPath()
+    ellipse(-62.133, 56, 34, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(-38.133, 60, 24, 8, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(-84.133, 61, 20, 7, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(163.317, 123, 38, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(190.317, 127, 27, 9, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(139.317, 128, 22, 8, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(388.767, 80, 42, 12, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(418.767, 84, 30, 10, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(362.767, 85, 24, 9, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    globalAlpha=0.75
+    beginPath()
+    ellipse(614.217, 147, 46, 13, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(647.217, 151, 33, 11, 0, 0, 6.283)
+    fill()
+    beginPath()
+    ellipse(586.217, 152, 26, 10, 0, 0, 6.283)
+    fill()
+    globalAlpha=1
+    save()
+      translate(-228.55, 0)
+      fillStyle=#79b86a
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-14.836, 418.73)
+      lineTo(70.329, 560)
+      lineTo(36.263, 560)
+      lineTo(187.873, 391.071)
+      lineTo(339.483, 560)
+      lineTo(278.839, 560)
+      lineTo(418.079, 390.476)
+      lineTo(557.32, 560)
+      lineTo(501.623, 560)
+      lineTo(593.072, 450.832)
+      lineTo(684.52, 560)
+      lineTo(647.941, 560)
+      lineTo(755.776, 430.073)
+      lineTo(863.611, 560)
+      lineTo(820.477, 560)
+      lineTo(904.503, 457.786)
+      lineTo(988.528, 560)
+      lineTo(954.918, 560)
+      lineTo(1105.091, 431.899)
+      lineTo(1255.263, 560)
+      lineTo(1195.194, 560)
+      lineTo(1319.076, 373.884)
+      lineTo(1442.957, 560)
+      lineTo(1393.405, 560)
+      lineTo(1511.999, 452.707)
+      lineTo(1630.594, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1160, 560)
+      lineTo(1260, 560)
+      lineTo(1345.164, 418.73)
+      lineTo(1430.329, 560)
+      lineTo(1396.263, 560)
+      lineTo(1547.873, 391.071)
+      lineTo(1699.483, 560)
+      lineTo(1638.839, 560)
+      lineTo(1778.079, 390.476)
+      lineTo(1917.32, 560)
+      lineTo(1861.623, 560)
+      lineTo(1953.072, 450.832)
+      lineTo(2044.52, 560)
+      lineTo(2007.941, 560)
+      lineTo(2115.776, 430.073)
+      lineTo(2223.611, 560)
+      lineTo(2180.477, 560)
+      lineTo(2264.503, 457.786)
+      lineTo(2348.528, 560)
+      lineTo(2314.918, 560)
+      lineTo(2465.091, 431.899)
+      lineTo(2615.263, 560)
+      lineTo(2555.194, 560)
+      lineTo(2679.076, 373.884)
+      lineTo(2802.957, 560)
+      lineTo(2753.405, 560)
+      lineTo(2871.999, 452.707)
+      lineTo(2990.594, 560)
+      lineTo(3360, 560)
+      closePath()
+      fill()
+    restore()
+    save()
+      translate(-391.8, 0)
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(-200, 560)
+      lineTo(-100, 560)
+      lineTo(-10.004, 353.87)
+      lineTo(79.991, 560)
+      lineTo(43.993, 560)
+      lineTo(163.422, 305.448)
+      lineTo(282.851, 560)
+      lineTo(235.079, 560)
+      lineTo(360.954, 307.983)
+      lineTo(486.829, 560)
+      lineTo(436.479, 560)
+      lineTo(562.742, 314.442)
+      lineTo(689.004, 560)
+      lineTo(638.499, 560)
+      lineTo(748.332, 411.839)
+      lineTo(858.164, 560)
+      lineTo(814.231, 560)
+      lineTo(915.725, 331.122)
+      lineTo(1017.218, 560)
+      lineTo(976.621, 560)
+      lineTo(1084.506, 318.682)
+      lineTo(1192.392, 560)
+      lineTo(1149.237, 560)
+      lineTo(1242.011, 322.483)
+      lineTo(1334.784, 560)
+      lineTo(1297.675, 560)
+      lineTo(1414.84, 301.852)
+      lineTo(1532.005, 560)
+      lineTo(1485.139, 560)
+      lineTo(1566.512, 324.105)
+      lineTo(1647.886, 560)
+      lineTo(1615.337, 560)
+      lineTo(1702.135, 405.03)
+      lineTo(1788.934, 560)
+      lineTo(1754.214, 560)
+      lineTo(1838.061, 349.011)
+      lineTo(1921.908, 560)
+      lineTo(2000, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(-19.004, 353.87)
+      lineTo(-10.004, 327.87)
+      lineTo(-1.004, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(154.422, 305.448)
+      lineTo(163.422, 279.448)
+      lineTo(172.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(351.954, 307.983)
+      lineTo(360.954, 281.983)
+      lineTo(369.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(553.742, 314.442)
+      lineTo(562.742, 288.442)
+      lineTo(571.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(739.332, 411.839)
+      lineTo(748.332, 385.839)
+      lineTo(757.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(906.725, 331.122)
+      lineTo(915.725, 305.122)
+      lineTo(924.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1075.506, 318.682)
+      lineTo(1084.506, 292.682)
+      lineTo(1093.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1233.011, 322.483)
+      lineTo(1242.011, 296.483)
+      lineTo(1251.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1405.84, 301.852)
+      lineTo(1414.84, 275.852)
+      lineTo(1423.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1557.512, 324.105)
+      lineTo(1566.512, 298.105)
+      lineTo(1575.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1693.135, 405.03)
+      lineTo(1702.135, 379.03)
+      lineTo(1711.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1829.061, 349.011)
+      lineTo(1838.061, 323.011)
+      lineTo(1847.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+      beginPath()
+      moveTo(1560, 560)
+      lineTo(1660, 560)
+      lineTo(1749.996, 353.87)
+      lineTo(1839.991, 560)
+      lineTo(1803.993, 560)
+      lineTo(1923.422, 305.448)
+      lineTo(2042.851, 560)
+      lineTo(1995.079, 560)
+      lineTo(2120.954, 307.983)
+      lineTo(2246.829, 560)
+      lineTo(2196.479, 560)
+      lineTo(2322.742, 314.442)
+      lineTo(2449.004, 560)
+      lineTo(2398.499, 560)
+      lineTo(2508.332, 411.839)
+      lineTo(2618.164, 560)
+      lineTo(2574.231, 560)
+      lineTo(2675.725, 331.122)
+      lineTo(2777.218, 560)
+      lineTo(2736.621, 560)
+      lineTo(2844.506, 318.682)
+      lineTo(2952.392, 560)
+      lineTo(2909.237, 560)
+      lineTo(3002.011, 322.483)
+      lineTo(3094.784, 560)
+      lineTo(3057.675, 560)
+      lineTo(3174.84, 301.852)
+      lineTo(3292.005, 560)
+      lineTo(3245.139, 560)
+      lineTo(3326.512, 324.105)
+      lineTo(3407.886, 560)
+      lineTo(3375.337, 560)
+      lineTo(3462.135, 405.03)
+      lineTo(3548.934, 560)
+      lineTo(3514.214, 560)
+      lineTo(3598.061, 349.011)
+      lineTo(3681.908, 560)
+      lineTo(3760, 560)
+      closePath()
+      fill()
+      fillStyle=#3a7d42
+      beginPath()
+      moveTo(1740.996, 353.87)
+      lineTo(1749.996, 327.87)
+      lineTo(1758.996, 353.87)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(1914.422, 305.448)
+      lineTo(1923.422, 279.448)
+      lineTo(1932.422, 305.448)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2111.954, 307.983)
+      lineTo(2120.954, 281.983)
+      lineTo(2129.954, 307.983)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2313.742, 314.442)
+      lineTo(2322.742, 288.442)
+      lineTo(2331.742, 314.442)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2499.332, 411.839)
+      lineTo(2508.332, 385.839)
+      lineTo(2517.332, 411.839)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2666.725, 331.122)
+      lineTo(2675.725, 305.122)
+      lineTo(2684.725, 331.122)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2835.506, 318.682)
+      lineTo(2844.506, 292.682)
+      lineTo(2853.506, 318.682)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(2993.011, 322.483)
+      lineTo(3002.011, 296.483)
+      lineTo(3011.011, 322.483)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3165.84, 301.852)
+      lineTo(3174.84, 275.852)
+      lineTo(3183.84, 301.852)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3317.512, 324.105)
+      lineTo(3326.512, 298.105)
+      lineTo(3335.512, 324.105)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3453.135, 405.03)
+      lineTo(3462.135, 379.03)
+      lineTo(3471.135, 405.03)
+      closePath()
+      fill()
+      beginPath()
+      moveTo(3589.061, 349.011)
+      lineTo(3598.061, 323.011)
+      lineTo(3607.061, 349.011)
+      closePath()
+      fill()
+      fillStyle=#4e9a4e
+    restore()
+  restore()
+  fillStyle=rgba(8, 30, 16, 0.18)
+  fillRect(3047, 0, 1900, 560)
+  save()
+    translate(-653, 0)
+    fillStyle=#2d1b4e
+    fillRect(0, 560, 2650, 40)
+    fillStyle=#7b4fa6
+    fillRect(0, 560, 2650, 4)
+    fillStyle=#2d1b4e
+    fillRect(3250, 560, 950, 40)
+    fillStyle=#7b4fa6
+    fillRect(3250, 560, 950, 4)
+    fillStyle=#2d1b4e
+    fillRect(4300, 560, 1300, 40)
+    fillStyle=#7b4fa6
+    fillRect(4300, 560, 1300, 4)
+    fillStyle=#0d2b4e
+    fillRect(2650, 564, 600, 36)
+    fillStyle=#1d4e8e
+    fillRect(2650, 564, 600, 3)
+    fillStyle=#4e8ed4
+    fillRect(2686.4, 570.216, 10, 2)
+    fillRect(2836.4, 568, 10, 2)
+    fillRect(2986.4, 570.299, 10, 2)
+    fillRect(3136.4, 571.922, 10, 2)
+    fillStyle=#0d2b4e
+    fillRect(4200, 564, 100, 36)
+    fillStyle=#1d4e8e
+    fillRect(4200, 564, 100, 3)
+    fillStyle=#4e8ed4
+    fillRect(4236.4, 570.216, 10, 2)
+    fillRect(4261.4, 568, 10, 2)
+    fillRect(4286.4, 570.299, 10, 2)
+    fillRect(4211.4, 571.922, 10, 2)
+    fillStyle=#4a2d7a
+    fillStyle=#6b4a2a
+    fillRect(800, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(839, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(846, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(1010, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(1044, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(1051, 356, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2120, 454, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2149, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(2156, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(2250, 344, 90, 8)
+    fillStyle=#3e8a44
+    fillRect(2279, 332, 32, 10)
+    fillStyle=#57a857
+    fillRect(2286, 326, 18, 8)
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2735, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2735, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2885, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2885, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3035, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3035, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(3185, 560, 35, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(3185, 558, 31, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    beginPath()
+    ellipse(2970, 396, 30, 6, 0, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    ellipse(2970, 394, 26, 3.5, 0, 0, 6.283)
+    fill()
+    fillStyle=#6b4a2a
+    fillRect(4195, 546, 110, 14)
+    fillStyle=#8a6a3e
+    fillRect(4195, 546, 110, 5)
+    fillStyle=#4a3418
+    beginPath()
+    arc(4297, 553, 6, 0, 6.283)
+    fill()
+    fillStyle=#8a6a3e
+    beginPath()
+    arc(4297, 553, 3, 0, 6.283)
+    fill()
+    fillStyle=#4a3418
+    fillRect(4209, 556, 10, 2)
+    fillRect(4239, 556, 12, 2)
+    fillStyle=#6b4a2a
+    fillRect(3800, 444, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(3834, 432, 32, 10)
+    fillStyle=#57a857
+    fillRect(3841, 426, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4650, 454, 110, 8)
+    fillStyle=#3e8a44
+    fillRect(4689, 442, 32, 10)
+    fillStyle=#57a857
+    fillRect(4696, 436, 18, 8)
+    fillStyle=#6b4a2a
+    fillRect(4900, 374, 100, 8)
+    fillStyle=#3e8a44
+    fillRect(4934, 362, 32, 10)
+    fillStyle=#57a857
+    fillRect(4941, 356, 18, 8)
+    fillStyle=#c98f3d
+    fillRect(540, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(541.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(901.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(1500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(1501.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(1700, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(1701.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(1718, 542, 8, 18.82, 23.02)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(2500, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(2501.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3600, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3601.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(3900, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(3901.5, 525.5, 33, 33)
+    fillStyle=#7a4fd0
+    fillRect(4450, 524, 36, 36)
+    strokeStyle=#4a2d7a
+    strokeRect(4451.5, 525.5, 33, 33)
+    strokeStyle=#d9c8ff
+    lineWidth=2
+    beginPath()
+    arc(4468, 542, 8, 46.32, 50.52)
+    stroke()
+    fillStyle=#c98f3d
+    fillRect(4650, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(4651.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5100, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5101.5, 525.5, 33, 33)
+    fillStyle=#c98f3d
+    fillRect(5300, 524, 36, 36)
+    strokeStyle=#8a5f22
+    strokeRect(5301.5, 525.5, 33, 33)
+    fillStyle=#5d4226
+    fillRect(111, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(120, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(82, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(158, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(104, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(140, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(331, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(340, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(302, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(378, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(324, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(360, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(551, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(560, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(522, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(598, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(544, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(580, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(904, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(913, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(875, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(951, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(897, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(933, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1257, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1266, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1228, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1304, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1250, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1286, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1480, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1489, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1451, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1527, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1473, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1509, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(1833, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(1842, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1804, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1880, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(1826, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(1862, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(2056, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2065, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2027, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2103, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(2049, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2085, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3338, 180, 18, 380)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3347, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3309, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3385, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3331, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3367, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(3914, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(3923, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3885, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3961, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(3907, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3943, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4490, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4499, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4461, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4537, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4483, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4519, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(4843, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(4852, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4814, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4890, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(4836, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(4872, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(5066, 180, 18, 380)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(5075, 156, 52, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5037, 182, 38, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5113, 182, 38, 0, 6.283)
+    fill()
+    fillStyle=#3a7d42
+    beginPath()
+    arc(5059, 146, 26, 0, 6.283)
+    fill()
+    beginPath()
+    arc(5095, 166, 24, 0, 6.283)
+    fill()
+    fillStyle=#5d4226
+    fillRect(3637.85, 47, 24.3, 513)
+    fillStyle=#3e8a44
+    beginPath()
+    arc(3650, 14.6, 70.2, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3598.7, 49.7, 51.3, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3701.3, 49.7, 51.3, 0, 6.283)
+    fill()
+    fillStyle=#57a857
+    beginPath()
+    arc(3628.4, 1.1, 35.1, 0, 6.283)
+    fill()
+    beginPath()
+    arc(3677, 28.1, 32.4, 0, 6.283)
+    fill()
+    fillStyle=#4a3620
+    fillRect(2300, 140, 60, 420)
+    fillStyle=#5d4226
+    fillRect(2300, 140, 14, 420)
+    fillStyle=#2e6a34
+    beginPath()
+    arc(2330, 110, 64, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2278, 140, 46, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2382, 140, 46, 0, 6.283)
+    fill()
+    fillStyle=#3e8a44
+    beginPath()
+    arc(2310, 96, 34, 0, 6.283)
+    fill()
+    beginPath()
+    arc(2356, 120, 30, 0, 6.283)
+    fill()
+    fillStyle=#241811
+    beginPath()
+    arc(2330, 280, 30, 0, 6.283)
+    fill()
+    fillStyle=#0d0805
+    beginPath()
+    arc(2330, 280, 24, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(36, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(34, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(68, 554, 2, 6)
+    fillRect(71, 551, 2, 9)
+    fillRect(74, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(120, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(118, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(152, 554, 2, 6)
+    fillRect(155, 551, 2, 9)
+    fillRect(158, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(204, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(202, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(256, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(254, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(312, 554, 2, 6)
+    fillRect(315, 551, 2, 9)
+    fillRect(318, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(340, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(338, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(396, 554, 2, 6)
+    fillRect(399, 551, 2, 9)
+    fillRect(402, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(448, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(446, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(476, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(474, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(532, 554, 2, 6)
+    fillRect(535, 551, 2, 9)
+    fillRect(538, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(584, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(582, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(616, 554, 2, 6)
+    fillRect(619, 551, 2, 9)
+    fillRect(622, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(668, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(666, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(724, 554, 2, 6)
+    fillRect(727, 551, 2, 9)
+    fillRect(730, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(752, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(750, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(804, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(802, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(860, 554, 2, 6)
+    fillRect(863, 551, 2, 9)
+    fillRect(866, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(888, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(886, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(944, 554, 2, 6)
+    fillRect(947, 551, 2, 9)
+    fillRect(950, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(996, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(994, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1028, 554, 2, 6)
+    fillRect(1031, 551, 2, 9)
+    fillRect(1034, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(1080, 554, 2, 6)
+    fillRect(1083, 551, 2, 9)
+    fillRect(1086, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1132, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1130, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1164, 554, 2, 6)
+    fillRect(1167, 551, 2, 9)
+    fillRect(1170, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1216, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1214, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1272, 554, 2, 6)
+    fillRect(1275, 551, 2, 9)
+    fillRect(1278, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1324, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1322, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1352, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1350, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1408, 554, 2, 6)
+    fillRect(1411, 551, 2, 9)
+    fillRect(1414, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1460, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1458, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1492, 554, 2, 6)
+    fillRect(1495, 551, 2, 9)
+    fillRect(1498, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1544, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1542, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1600, 554, 2, 6)
+    fillRect(1603, 551, 2, 9)
+    fillRect(1606, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1628, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1626, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1680, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(1678, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1736, 554, 2, 6)
+    fillRect(1739, 551, 2, 9)
+    fillRect(1742, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1764, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(1762, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1820, 554, 2, 6)
+    fillRect(1823, 551, 2, 9)
+    fillRect(1826, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(1872, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1870, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(1900, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(1898, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(1956, 554, 2, 6)
+    fillRect(1959, 551, 2, 9)
+    fillRect(1962, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2008, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2006, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2040, 554, 2, 6)
+    fillRect(2043, 551, 2, 9)
+    fillRect(2046, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2092, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2090, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2148, 554, 2, 6)
+    fillRect(2151, 551, 2, 9)
+    fillRect(2154, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2176, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2174, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2228, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2226, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2284, 554, 2, 6)
+    fillRect(2287, 551, 2, 9)
+    fillRect(2290, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2336, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(2334, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2368, 554, 2, 6)
+    fillRect(2371, 551, 2, 9)
+    fillRect(2374, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2420, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(2418, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2452, 554, 2, 6)
+    fillRect(2455, 551, 2, 9)
+    fillRect(2458, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(2504, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2502, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2556, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(2554, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(2612, 554, 2, 6)
+    fillRect(2615, 551, 2, 9)
+    fillRect(2618, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3296, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3294, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3328, 554, 2, 6)
+    fillRect(3331, 551, 2, 9)
+    fillRect(3334, 555, 2, 5)
+    fillStyle=#4e9a4e
+    fillRect(3380, 554, 2, 6)
+    fillRect(3383, 551, 2, 9)
+    fillRect(3386, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3432, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3430, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3464, 554, 2, 6)
+    fillRect(3467, 551, 2, 9)
+    fillRect(3470, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3516, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3514, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3572, 554, 2, 6)
+    fillRect(3575, 551, 2, 9)
+    fillRect(3578, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3624, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3622, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3652, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3650, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3708, 554, 2, 6)
+    fillRect(3711, 551, 2, 9)
+    fillRect(3714, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3760, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(3758, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3792, 554, 2, 6)
+    fillRect(3795, 551, 2, 9)
+    fillRect(3798, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3844, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(3842, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(3900, 554, 2, 6)
+    fillRect(3903, 551, 2, 9)
+    fillRect(3906, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(3928, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3926, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(3980, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(3978, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4036, 554, 2, 6)
+    fillRect(4039, 551, 2, 9)
+    fillRect(4042, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4064, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4062, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4120, 554, 2, 6)
+    fillRect(4123, 551, 2, 9)
+    fillRect(4126, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4172, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4170, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4340, 554, 2, 6)
+    fillRect(4343, 551, 2, 9)
+    fillRect(4346, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4392, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4390, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4448, 554, 2, 6)
+    fillRect(4451, 551, 2, 9)
+    fillRect(4454, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4476, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4474, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4528, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4526, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4584, 554, 2, 6)
+    fillRect(4587, 551, 2, 9)
+    fillRect(4590, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4636, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4634, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4668, 554, 2, 6)
+    fillRect(4671, 551, 2, 9)
+    fillRect(4674, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4720, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(4718, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4752, 554, 2, 6)
+    fillRect(4755, 551, 2, 9)
+    fillRect(4758, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4804, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4802, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(4856, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(4854, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4912, 554, 2, 6)
+    fillRect(4915, 551, 2, 9)
+    fillRect(4918, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(4940, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(4938, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(4996, 554, 2, 6)
+    fillRect(4999, 551, 2, 9)
+    fillRect(5002, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5048, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5046, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5076, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5074, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5132, 554, 2, 6)
+    fillRect(5135, 551, 2, 9)
+    fillRect(5138, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5184, 552, 2, 8)
+    fillStyle=#ff6f91
+    fillRect(5182, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5216, 554, 2, 6)
+    fillRect(5219, 551, 2, 9)
+    fillRect(5222, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5268, 552, 2, 8)
+    fillStyle=#fff5fa
+    fillRect(5266, 548, 6, 4)
+    fillStyle=#4e9a4e
+    fillRect(5324, 554, 2, 6)
+    fillRect(5327, 551, 2, 9)
+    fillRect(5330, 555, 2, 5)
+    fillStyle=#2e6a34
+    fillRect(5352, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5350, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(5404, 552, 2, 8)
+    fillStyle=#ffd75e
+    fillRect(5402, 548, 6, 4)
+    fillStyle=#2e6a34
+    fillRect(2450, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2451, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2451, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2750, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(2751, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(2751, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3100, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3101, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3101, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(3850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(3851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(3851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4400, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4401, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4401, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(4850, 508, 3, 52)
+    fillStyle=#ffd75e
+    beginPath()
+    arc(4851, 502, 8, 0, 6.283)
+    fill()
+    fillStyle=#8a5f22
+    beginPath()
+    arc(4851, 502, 3.5, 0, 6.283)
+    fill()
+    fillStyle=#2e6a34
+    fillRect(2656, 542, 2, 18)
+    fillRect(2662, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(2661, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(3236, 542, 2, 18)
+    fillRect(3242, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(3241, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4206, 542, 2, 18)
+    fillRect(4212, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4211, 529, 4, 7)
+    fillStyle=#2e6a34
+    fillRect(4286, 542, 2, 18)
+    fillRect(4292, 534, 2, 26)
+    fillStyle=#7a5a2e
+    fillRect(4291, 529, 4, 7)
+    save()
+      translate(878.258, 561.074)
+      scale(1, 1)
+      fillStyle=#8a6a34
+      fillRect(-14, -42, 28, 42)
+    restore()
+    save()
+      translate(808.258, 559.161)
+      scale(1, 1)
+      fillStyle=#fff5fa
+      fillRect(-14, -39, 28, 39)
+    restore()
+    globalAlpha=1
+  restore()
+restore()
+fillStyle=#000
+fillRect(0, 0, 800, 44)
+fillRect(0, 556, 800, 44)
+fillStyle=#2d1b4e
+fillRect(120, 468, 560, 76)
+strokeStyle=#cbb8ff
+lineWidth=1
+strokeRect(120.5, 468.5, 559, 75)
+textBaseline=top
+textAlign=left
+font=12px monospace
+fillStyle=#ffd75e
+fillText(The Unicorn King, 136, 480)
+font=16px monospace
+fillStyle=#fff5fa
+fillText(A fine morning for the wood, my queen., 136, 502)
+textAlign=right
+textBaseline=alphabetic
+font=12px monospace
+fillStyle=#5d4a80
+fillText(any key skips, 788, 586)"
+`;
+
 exports[`jumping 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)

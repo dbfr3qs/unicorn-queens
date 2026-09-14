@@ -29,8 +29,10 @@ import { game } from '../game.js';
 import { palette, fonts } from './theme.js';
 import { score } from '../loot.js';
 import { CARD_FADE } from '../ending9.js';
+import { drawIntro } from './intro.js';
 
 export function draw(ctx, viewW, viewH) {
+  if (game.intro) { drawIntro(ctx, viewW, viewH); return; }
   const { level, player, enemies, camera, gameTime } = game;
   ctx.fillStyle = palette.clear;
   ctx.fillRect(0, 0, viewW, viewH);

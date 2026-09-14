@@ -15,6 +15,13 @@ would have carried in at that point (bow from level 3, flight from the
 witch in level 3), so each level is testable as designed. Death and level
 advance still follow the normal carry rules.
 
+A plain start (no `?level=`) opens with the story: the Queen and the King
+out walking in the wood of level 5 when the sorcerer arrives, takes the
+realm in a sentence, and the King in a scuffle — nineteen seconds on the
+game's own sheets, any key to skip. The end card's Space starts over from
+it. `src/intro.js` is the scene as a pure function of its clock;
+`src/render/intro.js` draws it through the same passes the level uses.
+
 ## Levels
 
 1. **Meadow** — a flat night meadow. Slimes, loot boxes, and a goal

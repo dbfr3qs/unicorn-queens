@@ -7,7 +7,7 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, freshGame8, freshGame9, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, freshGame8, freshGame9, freshIntro, step } from './helpers/render-harness.js';
 import { draw } from '../src/render/index.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
 import { loot } from '../src/loot.js';
@@ -1110,5 +1110,25 @@ test('l9 the end card (fully faded in, the robin on the rim, the healed scene be
   for (const f of g.level.hallFigures) f.state = 'gone';
   for (const f of g.level.hallFountains) f.state = 'flowing';
   g.level.king.x = 5580; g.level.king.y = 520; g.level.king.state = 'beam';
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+// ---- the opening scene ----
+// Level 5's wood through the game's passes, the three of them from their
+// sheets (blocks, under Node), the letterbox, a caption. step() advances the
+// intro's own clock by one frame; the pose is read from it.
+
+test('intro: the stroll (the two of them east, his line up, the fade lifted)', () => {
+  freshIntro(1.5);
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('intro: the grab (both of them rising, the Queen running after, the sorcerer\'s line)', () => {
+  freshIntro(11.6);
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('intro: the card (black, the title at full)', () => {
+  freshIntro(17.2);
   expect(step({}, 1)).toMatchSnapshot();
 });

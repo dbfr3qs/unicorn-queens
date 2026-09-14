@@ -1,8 +1,10 @@
 // Entry point: canvas, render loop wiring, restart key.
 import { game, startGame, startLoop, update, restartTarget } from './game.js';
 import { draw } from './render/index.js';
-import { fx } from './audio.js';
+import { fx, initAudio } from './audio.js';
 import { onKeyDown, onKeyUp } from './input.js';
+import { pollGamepads } from './gamepad.js'; // a controller, read once a frame as keys
+import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
 import { cardReady } from './ending9.js'; // level 9: the end card
 import { spritesLoaded, loadProgress } from './sprites.js';
@@ -13,6 +15,10 @@ const ctx = canvas.getContext('2d');
 
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
+// A click unlocks audio too. Keys already do (input.js); this is for the
+// player on a controller, whose presses arrive as synthetic key events that
+// the browser does not count as a gesture — the HUD asks them to click.
+addEventListener('pointerdown', () => { initAudio(); initMusic(); });
 addEventListener('keydown', e => {
   if (e.repeat) return; // holding jump through the end screen must not auto-advance
   if (e.code === 'Space' && cardReady(game.level)) {
@@ -73,6 +79,7 @@ await spritesLoaded();
 if (loadingRaf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(loadingRaf);
 
 startLoop(dt => {
+  pollGamepads(); // before update, so a press this frame is this frame's input
   update(dt, canvas.width, fx);
   draw(ctx, canvas.width, canvas.height);
 });

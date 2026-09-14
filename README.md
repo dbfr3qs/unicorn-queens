@@ -240,6 +240,24 @@ the only exception. Score and the one-time bow reset each level.
 - Sound: M mutes everything; N mutes just the music
 - Next level / retry (after win/loss): Space
 
+### Controller
+
+Any pad the browser reports with the standard mapping works — a
+DualShock 4 over USB or Bluetooth, an Xbox pad, most others. Buttons are
+named for the PlayStation layout:
+
+- Move: left stick or d-pad
+- Jump: Cross (also advances dialogue and restarts, as Space does)
+- Shoot: Square, Circle, R1 or R2
+- Flight spell: Triangle, L1 or L2
+- Fly up / down: stick or d-pad up / down
+- Advance dialogue: Cross or Options
+
+The pad drives everything but cannot unlock the sound: browsers only
+open audio on a real key or click, and a pad's presses arrive as
+neither. The HUD says *click for sound* until you do; one click on the
+page and it stays open.
+
 ## Music
 
 The soundtrack is live-coded with [Strudel](https://strudel.cc): 8-bit

@@ -15,6 +15,15 @@ export function initAudio() {
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
 
+// True when the context exists but the browser is still holding it shut:
+// an unlock was attempted without a real gesture — a controller press is
+// the usual way, since the pad's synthetic key events are not "activation"
+// — so the HUD can ask for a click. False before any attempt and after one
+// that worked.
+export function audioSuspended() {
+  return !!audioCtx && audioCtx.state === 'suspended';
+}
+
 function beep(freq, endFreq, dur, type, vol, delay) {
   if (muted || !audioCtx) return;
   const t0 = audioCtx.currentTime + (delay || 0);

@@ -9,15 +9,21 @@
 <style>
   body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: #1a1025; }
   canvas { background: #0d0815; border: 2px solid #b57edc; border-radius: 4px; }
+  /* Fullscreen (F, or the footer link): the canvas stays 800x600 inside and
+     is scaled to the largest 4:3 box the display allows, letterboxed in the
+     game's own dark. Nearest-neighbour, so the pixels stay pixels. */
+  canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
+  canvas:-webkit-full-screen { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
+  canvas::backdrop { background: #0d0815; }
   /* the licence's one ask of a public copy: a way to the source */
   footer { position: fixed; bottom: 8px; right: 12px; font: 12px monospace; }
-  footer a { color: #8a7fa8; text-decoration: none; }
+  footer a { color: #8a7fa8; text-decoration: none; margin-left: 14px; }
   footer a:hover { color: #b57edc; }
 </style>
 </head>
 <body>
 <canvas id="game" width="800" height="600"></canvas>
 <script type="module" src="./src/main.js"></script>
-<footer><a href="https://github.com/dbfr3qs/unicorn-queens">source (AGPL-3.0)</a></footer>
+<footer><a href="#" id="fullscreen">fullscreen (F)</a><a href="https://github.com/dbfr3qs/unicorn-queens">source (AGPL-3.0)</a></footer>
 </body>
 </html>

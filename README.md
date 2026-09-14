@@ -239,6 +239,8 @@ the only exception. Score and the one-time bow reset each level.
   flying, up/down arrows rise and descend
 - Sound: M mutes everything; N mutes just the music
 - Next level / retry (after win/loss): Space
+- Fullscreen: F, or the link under the game (Esc leaves). The game stays
+  800x600 inside and is scaled to the biggest 4:3 box the screen allows.
 
 ### Controller
 

@@ -15,6 +15,19 @@ const ctx = canvas.getContext('2d');
 
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
+// Fullscreen: F, or the footer link. The canvas itself goes fullscreen and
+// index.html's canvas:fullscreen rule scales it to fit. This needs a real
+// gesture — the browser refuses it otherwise — which is why there is no pad
+// button for it: a pad's presses are synthetic and would be refused.
+function toggleFullscreen() {
+  const req = canvas.requestFullscreen || canvas.webkitRequestFullscreen;
+  const exit = document.exitFullscreen || document.webkitExitFullscreen;
+  const on = document.fullscreenElement || document.webkitFullscreenElement;
+  if (on) exit?.call(document); else req?.call(canvas);
+}
+addEventListener('keydown', e => { if (e.code === 'KeyF' && !e.repeat && e.isTrusted) toggleFullscreen(); });
+const fsLink = document.getElementById('fullscreen'); // absent under smoke.mjs's stub document
+if (typeof fsLink?.addEventListener === 'function') fsLink.addEventListener('click', e => { e.preventDefault(); toggleFullscreen(); });
 // A click unlocks audio too. Keys already do (input.js); this is for the
 // player on a controller, whose presses arrive as synthetic key events that
 // the browser does not count as a gesture — the HUD asks them to click.

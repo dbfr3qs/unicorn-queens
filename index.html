@@ -2,13 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1025">
 <title>Unicorn Queens</title>
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon-192.png">
 <link rel="apple-touch-icon" href="./assets/favicon-192.png">
 <style>
-  body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: #1a1025; }
-  canvas { background: #0d0815; border: 2px solid #b57edc; border-radius: 4px; }
+  body { margin: 0; height: 100vh; height: 100dvh; display: flex; justify-content: center; align-items: center; background: #1a1025; overflow: hidden; }
+  /* 800x600 at 1:1 where there is room; on anything smaller — a phone, a
+     tablet, a narrow window — shrunk to fit, keeping the 4:3. The canvas
+     never draws at any other size; this is only how big it is shown. */
+  canvas { background: #0d0815; border: 2px solid #b57edc; border-radius: 4px; box-sizing: border-box;
+    max-width: 100vw; max-height: 100vh; max-height: 100dvh; width: auto; height: auto; object-fit: contain; image-rendering: pixelated; }
+  @media (min-width: 804px) and (min-height: 604px) { canvas { image-rendering: auto; } } /* 1:1: nothing to smooth or to step */
   /* Fullscreen (F, or the footer link): the canvas stays 800x600 inside and
      is scaled to the largest 4:3 box the display allows, letterboxed in the
      game's own dark. Nearest-neighbour, so the pixels stay pixels. */

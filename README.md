@@ -256,9 +256,20 @@ named for the PlayStation layout:
 - Advance dialogue: Cross or Options
 
 The pad drives everything but cannot unlock the sound: browsers only
-open audio on a real key or click, and a pad's presses arrive as
-neither. The HUD says *click for sound* until you do; one click on the
-page and it stays open.
+open audio on a real key, tap or click, and a pad's presses arrive as
+none of those. The HUD says *tap or click for sound* until you do; one
+tap on the page and it stays open.
+
+### Phone or tablet
+
+On a touchscreen the page puts up its own buttons — ◀ ▶ and ▲ ▼ on the
+left, FLY / FIRE / JUMP on the right, ⛶ for fullscreen — and shrinks the
+game to fit the screen, keeping its 4:3. Landscape is the intended way
+round: the game fills the height and the buttons sit in the space either
+side. Each button is a key underneath (JUMP is Space, so it advances
+dialogue too), and two thumbs at once are two keys at once. Adding the
+page to the home screen gets rid of the browser bars; the manifest asks
+for fullscreen and landscape when launched that way.
 
 ## Music
 

@@ -4,6 +4,7 @@ import { draw } from './render/index.js';
 import { fx, initAudio } from './audio.js';
 import { onKeyDown, onKeyUp } from './input.js';
 import { pollGamepads } from './gamepad.js'; // a controller, read once a frame as keys
+import { initTouch, wantsTouch } from './touch.js'; // a phone or tablet: on-screen buttons, also as keys
 import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
 import { cardReady } from './ending9.js'; // level 9: the end card
@@ -28,10 +29,24 @@ function toggleFullscreen() {
 addEventListener('keydown', e => { if (e.code === 'KeyF' && !e.repeat && e.isTrusted) toggleFullscreen(); });
 const fsLink = document.getElementById('fullscreen'); // absent under smoke.mjs's stub document
 if (typeof fsLink?.addEventListener === 'function') fsLink.addEventListener('click', e => { e.preventDefault(); toggleFullscreen(); });
-// A click unlocks audio too. Keys already do (input.js); this is for the
-// player on a controller, whose presses arrive as synthetic key events that
-// the browser does not count as a gesture — the HUD asks them to click.
-addEventListener('pointerdown', () => { initAudio(); initMusic(); });
+// A coarse pointer means a thumb: put the buttons up. Going fullscreen from
+// the touch button also asks for landscape, where the phone allows it.
+if (wantsTouch()) {
+  initTouch(() => {
+    toggleFullscreen();
+    screen.orientation?.lock?.('landscape').catch(() => {});
+  });
+  if (fsLink) fsLink.hidden = true; // the ⛶ button does this job on touch
+}
+// A tap or click unlocks audio too. Keys already do (input.js); this is
+// for the player on a controller or a touchscreen, whose presses arrive as
+// synthetic key events that the browser does not count as a gesture — the
+// HUD asks them to tap. touchend as well as pointerdown: older iOS counts
+// only the former. Both may fire for one tap; the calls are idempotent.
+for (const ev of ['pointerdown', 'touchend']) addEventListener(ev, () => { initAudio(); initMusic(); }, { passive: true });
+// And the music bundle is fetched now, not on the first gesture, so that
+// first gesture can resume a context that already exists.
+if (typeof document !== 'undefined' && typeof document.createElement === 'function') initMusic();
 addEventListener('keydown', e => {
   if (e.repeat) return; // holding jump through the end screen must not auto-advance
   if (e.code === 'Space' && cardReady(game.level)) {

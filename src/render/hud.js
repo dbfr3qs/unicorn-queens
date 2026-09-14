@@ -3,6 +3,7 @@ import { game } from '../game.js';
 import { LEVELS } from '../levels/index.js';
 import { score } from '../loot.js';
 import { muted, audioSuspended } from '../audio.js';
+import { musicSuspended } from '../music.js';
 import { FLIGHT_TIME, FLIGHT_CD } from '../player.js';
 import { palette, fonts } from './theme.js';
 
@@ -106,7 +107,7 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.textBaseline = 'bottom';
   // a pad can drive the whole game but cannot unlock audio: only a real
   // click or key can, so say so rather than claim sound is on
-  ctx.fillText(muted ? 'sound off (M)' : audioSuspended() ? 'click for sound' : 'sound on (M)', 12, viewH - 8);
+  ctx.fillText(muted ? 'sound off (M)' : (audioSuspended() || musicSuspended()) ? 'tap or click for sound' : 'sound on (M)', 12, viewH - 8);
   if (player.hasFlight || player.hasBow) {
     ctx.fillStyle = palette.bowHint;
     ctx.textAlign = 'right';

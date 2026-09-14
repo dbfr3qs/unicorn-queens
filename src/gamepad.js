@@ -74,7 +74,10 @@ function defaultGetPads() {
   try { return Array.from(navigator.getGamepads()).filter(Boolean); } catch { return []; }
 }
 
-function defaultDispatch(type, code) {
+// The one way anything that is not a keyboard talks to the game: a synthetic
+// key event on the window. Shared with the touch controls.
+export function dispatchKey(type, code) {
   // `key` is filled in for completeness; everything here keys off `code`
   dispatchEvent(new KeyboardEvent(type, { code, key: code, bubbles: true, cancelable: true }));
 }
+const defaultDispatch = dispatchKey;

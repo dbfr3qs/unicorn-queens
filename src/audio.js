@@ -12,7 +12,17 @@ export function initAudio() {
   if (!audioCtx) {
     try { audioCtx = new (globalThis.AudioContext || globalThis.webkitAudioContext)(); } catch (e) { audioCtx = null; }
   }
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+    // iOS additionally wants a sound started inside the gesture before it
+    // will treat the context as unlocked: one silent sample does it.
+    try {
+      const src = audioCtx.createBufferSource();
+      src.buffer = audioCtx.createBuffer(1, 1, 22050);
+      src.connect(audioCtx.destination);
+      src.start(0);
+    } catch { /* not a browser that minds */ }
+  }
 }
 
 // True when the context exists but the browser is still holding it shut:

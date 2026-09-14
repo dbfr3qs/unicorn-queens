@@ -80,8 +80,15 @@ async function loadStrudel() {
 
 /**
  * Load Strudel and start any track already asked for. Safe to call more
- * than once; only the first call does work. Must be triggered by a user
- * gesture — the browser will not start audio otherwise.
+ * than once; only the first call does work.
+ *
+ * Called once at startup, ahead of any gesture, so the bundle and its
+ * context exist by the time the player first touches anything — and then
+ * again from every real gesture, for the resume. On a keyboard that
+ * distinction never mattered: every key press is a gesture, so a later
+ * one always came along. On a tablet with a controller there may be
+ * exactly one tap in the whole session, and if the bundle is still
+ * downloading when it lands, the music stays suspended for good.
  */
 export async function initMusic(load = loadStrudel) {
   // Every call, not just the first: browsers only honour a resume during
@@ -120,6 +127,12 @@ export async function initMusic(load = loadStrudel) {
  * Failures are swallowed: a browser refusing to resume outside a gesture
  * is expected, and the next keypress will try again.
  */
+// True when the music's context exists but the browser is holding it shut
+// — the HUD's cue to ask for a tap or a click.
+export function musicSuspended() {
+  try { return backend?.getAudioContext?.()?.state === 'suspended'; } catch { return false; }
+}
+
 export function resumeAudio() {
   try {
     backend?.initAudio?.();

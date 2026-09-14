@@ -10,14 +10,18 @@
 // each releases only its own key.
 import { dispatchKey } from './gamepad.js';
 
-// The layout: two clusters, each a list of rows. Codes are what the key
-// handlers already understand; the label is what the thumb sees.
+// The layout: two clusters, each a list of rows; null is an empty cell.
+// Codes are what the key handlers already understand; the label is what
+// the thumb sees. The left cluster is a d-pad — a cross, the way a pad's
+// is — so up (which also jumps, as the key does) and down sit where a thumb
+// expects them, not in a row above.
 export const LEFT = [
-  [{ code: 'ArrowUp', label: '▲', size: 's' }, { code: 'ArrowDown', label: '▼', size: 's' }], // flight: up also jumps, as the key does
-  [{ code: 'ArrowLeft', label: '◀' }, { code: 'ArrowRight', label: '▶' }],
+  [null, { code: 'ArrowUp', label: '▲', pad: true }, null],
+  [{ code: 'ArrowLeft', label: '◀', pad: true }, { hub: true }, { code: 'ArrowRight', label: '▶', pad: true }],
+  [null, { code: 'ArrowDown', label: '▼', pad: true }, null],
 ];
 export const RIGHT = [
-  [{ code: 'KeyS', label: 'FLY', size: 's' }, { code: 'KeyX', label: 'FIRE' }],
+  [{ code: 'KeyS', label: 'FLY' }, { code: 'KeyX', label: 'FIRE' }],
   [{ code: 'Space', label: 'JUMP', wide: true }], // and dialogue, and restart: it is Space
 ];
 
@@ -31,12 +35,21 @@ const CSS = `
 #touch .left { left: calc(14px + env(safe-area-inset-left)); }
 #touch .right { right: calc(14px + env(safe-area-inset-right)); align-items: flex-end; }
 #touch .row { display: flex; gap: 10px; justify-content: flex-end; }
+#touch .left { gap: 0; }
+#touch .left .row { gap: 0; justify-content: flex-start; }
+#touch .cell { width: 58px; height: 58px; }
 #touch button { pointer-events: auto; touch-action: none; width: 64px; height: 64px; border-radius: 50%;
   border: 2px solid rgba(181,126,220,0.75); background: rgba(26,16,37,0.55); color: #e8dcff;
   font: bold 15px monospace; padding: 0; -webkit-tap-highlight-color: transparent; }
-#touch button.s { width: 48px; height: 48px; font-size: 13px; }
+#touch button.pad { width: 58px; height: 58px; border-radius: 10px; font-size: 18px; } /* the cross: square keys, touching */
+#touch .hub { width: 58px; height: 58px; background: rgba(26,16,37,0.55); border: 2px solid rgba(181,126,220,0.35); box-sizing: border-box; }
 #touch button.wide { width: 138px; border-radius: 32px; }
 #touch button.down { background: rgba(181,126,220,0.6); }
+/* Make room: the game gives up its 1:1 before it lets the buttons sit on
+   it. Landscape keeps a cluster's width clear each side; portrait keeps
+   the bottom clear and lifts the game toward the top. */
+@media (orientation: landscape) { body.touch canvas { max-width: calc(100vw - 420px); } }
+@media (orientation: portrait) { body.touch { align-items: flex-start; padding-top: calc(12px + env(safe-area-inset-top)); box-sizing: border-box; } body.touch canvas { max-height: calc(100dvh - 240px); } }
 body.touch footer { top: calc(8px + env(safe-area-inset-top)); left: calc(12px + env(safe-area-inset-left)); right: auto; bottom: auto; } /* out from under JUMP */
 #touch .fs { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: calc(10px + env(safe-area-inset-right)); width: 44px; height: 44px; font-size: 20px; }
 `;
@@ -80,10 +93,16 @@ export function initTouch(onFullscreen, dispatch = dispatchKey) {
       const el = document.createElement('div');
       el.className = 'row';
       for (const b of row) {
+        if (!b || b.hub) { // an empty corner of the cross, or its centre
+          const cell = document.createElement('div');
+          cell.className = b ? 'cell hub' : 'cell';
+          el.appendChild(cell);
+          continue;
+        }
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = b.label;
-        btn.className = [b.size === 's' ? 's' : '', b.wide ? 'wide' : ''].join(' ').trim();
+        btn.className = [b.pad ? 'pad' : '', b.wide ? 'wide' : ''].join(' ').trim();
         btn.setAttribute('aria-label', b.code);
         wire(btn, b.code, dispatch);
         el.appendChild(btn);

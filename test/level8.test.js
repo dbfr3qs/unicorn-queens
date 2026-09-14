@@ -127,8 +127,8 @@ describe('pearl + exit', () => {
     expect(lvl.pearl.showWhen([{ kind: 'warden', dead: true, dyingT: 0 }])).toBe(true);
   });
 
-  it('exits through the cloud shaft under the trapdoor lid (flight-only, M7)', () => {
-    expect(lvl.exit).toEqual({ x: 5820, y: 560, w: 120, h: 100, locked: true, flightOnly: true });
+  it('exits through the cloud shaft under the trapdoor lid (M7; open to walkers and fliers alike)', () => {
+    expect(lvl.exit).toEqual({ x: 5820, y: 560, w: 120, h: 100, locked: true });
   });
 });
 

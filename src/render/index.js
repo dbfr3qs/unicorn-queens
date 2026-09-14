@@ -10,6 +10,7 @@ import { drawForest } from './forest.js';
 import { drawMireBack, drawMire } from './mire.js';
 import { drawPeak } from './peak.js';
 import { drawCitadel } from './citadel.js';
+import { drawFrostPalace } from './frostpalace.js';
 import { drawRelics, drawBushes } from './relics.js';
 import { drawPearl } from './pearl.js';
 import { drawKey, drawMarker, drawNook } from './key.js';
@@ -25,7 +26,9 @@ import { drawArrows } from './arrows.js';
 import { drawFireballs, drawBoulders, drawShockwaves, drawCones } from './projectiles.js';
 import { drawParticles } from './particles.js';
 import { game } from '../game.js';
-import { palette } from './theme.js';
+import { palette, fonts } from './theme.js';
+import { score } from '../loot.js';
+import { CARD_FADE } from '../ending9.js';
 
 export function draw(ctx, viewW, viewH) {
   const { level, player, enemies, camera, gameTime } = game;
@@ -36,7 +39,7 @@ export function draw(ctx, viewW, viewH) {
   ctx.save();
   ctx.translate(shx, shy); // screen shake wraps the world, not the HUD
   if (level.zones) drawZones(ctx, level, camera, gameTime, viewW);
-  else drawBackground(ctx, level, camera, gameTime);
+  else drawBackground(ctx, level, camera, gameTime, viewW);
   ctx.save();
   ctx.translate(-Math.round(camera.x), 0);
   drawNook(ctx, level, gameTime); // key nook: wall section / recess, behind platforms
@@ -46,6 +49,7 @@ export function draw(ctx, viewW, viewH) {
   drawMire(ctx, level, gameTime); // level 6: winch, nest web, vent, sac, bridge, exit arch
   drawPeak(ctx, level, gameTime); // level 7: stairs, vane, sigil, cage, rainbow
   drawCitadel(ctx, level, gameTime); // level 8: island, bookcase wall, gear door, pendulum, astrolabe
+  drawFrostPalace(ctx, level, gameTime); // level 9: fountain, hearths, seals, the hall, the throne, the King
   drawRelics(ctx, level, gameTime); // level 5: relics + the hiding bush
   drawBushes(ctx, level, gameTime);
   drawKey(ctx, level, gameTime);
@@ -77,5 +81,33 @@ export function draw(ctx, viewW, viewH) {
     ctx.globalAlpha = 1;
   }
   drawHud(ctx, viewW, viewH);
+  drawEndCard(ctx, viewW, viewH);
   drawDialogue(ctx, viewW, viewH);
+}
+
+// The end card. It fades in over the healed level rather than replacing it —
+// the last thing the game shows is the place it just took the winter out of,
+// with the fountains running and a bird on the throne.
+function drawEndCard(ctx, viewW, viewH) {
+  const e = game.level?.ending9;
+  if (!e?.card) return;
+  const a = Math.min(1, e.cardT / CARD_FADE);
+  ctx.save();
+  ctx.globalAlpha = a * 0.72;
+  ctx.fillStyle = '#140e26';
+  ctx.fillRect(0, 0, viewW, viewH);
+  ctx.globalAlpha = a;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = fonts.title;
+  ctx.fillStyle = palette.gold;
+  ctx.fillText('THE REALM THAWS', viewW / 2, viewH / 2 - 60);
+  ctx.font = fonts.hud;
+  ctx.fillStyle = palette.lavender;
+  ctx.fillText('The Unicorn Queens walk home.', viewW / 2, viewH / 2 - 10);
+  ctx.fillStyle = palette.gold;
+  ctx.fillText(`SCORE ${score}`, viewW / 2, viewH / 2 + 30);
+  ctx.fillStyle = palette.pink;
+  ctx.fillText('Press Space to play again.', viewW / 2, viewH / 2 + 70);
+  ctx.restore();
 }

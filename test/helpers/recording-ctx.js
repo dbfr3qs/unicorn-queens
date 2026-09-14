@@ -23,6 +23,18 @@ export function createRecordingCtx() {
       if (typeof prop === 'symbol') return undefined;
       if (prop in NO_RECORD) return NO_RECORD[prop];
       if (prop in t) return t[prop];
+      // gradients are the one call whose return value the game uses: it calls
+      // addColorStop on it and assigns it to fillStyle. Hand back a recording stub so
+      // effects like the lantern glow can be drawn (and snapshotted) at all.
+      if (prop === 'createRadialGradient' || prop === 'createLinearGradient') {
+        return (...args) => {
+          lines.push(`${prop}(${args.map(round).join(', ')})`);
+          return {
+            addColorStop: (...a) => { lines.push(`  addColorStop(${a.map(round).join(', ')})`); },
+            toString: () => '[Gradient]',
+          };
+        };
+      }
       // any other property is treated as a canvas method
       return (...args) => { lines.push(`${prop}(${args.map(round).join(', ')})`); };
     },

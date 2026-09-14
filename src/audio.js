@@ -94,6 +94,9 @@ export function sfx(name, arg) {
     case 'spring': beep(1200, 300, 0.25, 'square', 0.2); break; // a mainspring cut free
     case 'toll': beep(140, 70, 1.6, 'sine', 0.3); break; // the clock's last beat (the Warden's rest)
     case 'flap': beep(250, 800, 0.09, 'triangle', 0.12); break; // bat swoop start: quiet whoosh
+    case 'hum': beep(55 * mul, 55 * mul, 1.8, 'sine', 0.05); break; // level 9's drone: a quiet beat every 2 s, a step higher per thaw
+    case 'melt': beep(660, 220, 1.8, 'sine', 0.14); break; // the level's name, made audible
+    case 'splash': beep(180, 900, 0.18, 'sine', 0.14); beep(1200, 400, 0.12, 'triangle', 0.1, 0.06); break; // water again
     case 'dialog': beep(740, 980, 0.05, 'square', 0.06); break;
   }
 }

@@ -1,5 +1,5 @@
-// Level 5 — "The Enchanted Forest": out of the castle gate and into the
-// first daytime level. Find the three hidden relics of the realm and bring
+// Level 5 — "The Enchanted Forest": out of the dragon's lair and into the
+// first daytime level, open woodland from the first step. Find the three hidden relics of the realm and bring
 // them to the Unicorn Queen in the glade; her story unlocks the mist gate
 // at the wood's east edge. All relic/bush/queen/mistgate state lives in
 // this data; relics.js, the queen's dialogue beats, and mistgate.js read
@@ -13,16 +13,14 @@ export function createLevel5(viewH = 600) {
     groundY,
     // no startItems: the bow (and the flight spell) are carried from level 4
     zones: [
-      { x0: 0, x1: 500, kind: 'gate' },
-      { x0: 500, x1: 5600, kind: 'forest' },
+      { x0: 0, x1: 5600, kind: 'forest' }, // no gate: the level opens already outdoors
     ],
     lava: [ // water gaps (recolor of the lava render; falling in = respawn)
       { x: 2650, w: 600, water: true }, // the pond
       { x: 4200, w: 100, water: true }, // the stream
     ],
     ground: [
-      { x: 0, w: 500, kind: 'stone', y: groundY }, // the castle courtyard
-      { x: 500, w: 2150, kind: 'ground', y: groundY },
+      { x: 0, w: 2650, kind: 'ground', y: groundY },
       { x: 3250, w: 950, kind: 'ground', y: groundY },
       { x: 4300, w: 1300, kind: 'ground', y: groundY },
     ],

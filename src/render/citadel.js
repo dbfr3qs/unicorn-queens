@@ -8,6 +8,7 @@
 // stay text-stable.
 import { game } from '../game.js';
 import { panelFrac, pendulumPose } from '../clock.js'; // the same reads the M2 collision uses
+import { drawTileGrid } from './sprite.js';
 
 export function drawCitadel(c, lvl, t) {
   if (!lvl.zones?.some(z => z.kind === 'skybridge' || z.kind === 'citadel')) return; // the citadel only
@@ -45,6 +46,10 @@ function drawIslandEdge(c, lvl) {
 // books behind the floor. Bay index hashes the spine colors.
 function drawBookcaseForest(c, lvl) {
   const gy = lvl.groundY;
+  // One tiled strip across all nine bays. The texture carries the shelf boards and the
+  // spines, so the alternating bay shade that used to break up the repeat is not needed:
+  // the sheet's own left and right edges are blended from each other and do not seam.
+  if (drawTileGrid(c, 'tex_bookcase', 2350, 2890, 0, 140, gy, 442, 480)) return;
   const spines = ['#5a3a5e', '#3a4a6a', '#6a4a2e', '#3e5a4a'];
   for (let bay = 0; bay < 9; bay++) {
     const x = 2350 + bay * 60;
@@ -71,7 +76,10 @@ function drawBookcaseWall(c, lvl) {
   const clock = lvl.clock;
   const frac = panelFrac(clock, lvl.shelfPanel?.held ?? false);
   const spines = ['#5a3a5e', '#3a4a6a', '#6a4a2e', '#3e5a4a'];
-  const drawBay = (x, w0, yTop, yBot) => {
+  // returns true when the generated wall was used, so the caller knows whether the slab
+  // needs its own edges drawn — the vector bays already read as separate bays
+  const drawBay = (x, w0, yTop, yBot, gridY = 0) => {
+    if (drawTileGrid(c, 'tex_bookcase', x, x + w0, 0, yTop, yBot, 442, 480, gridY)) return true;
     c.fillStyle = '#2e2444';
     c.fillRect(x, yTop, w0, yBot - yTop);
     for (let y = yTop + 24; y + 38 < yBot; y += 48) {
@@ -82,13 +90,25 @@ function drawBookcaseWall(c, lvl) {
       c.fillStyle = '#241a38';
       c.fillRect(x + 4, y + 34, w0 - 8, 4);
     }
+    return false;
   };
   drawBay(2520, 80, 0, gy); // the static west bay
   drawBay(2720, 40, 0, gy); // the static east bay
   drawBay(2600, 120, 0, 240); // the header above the panel
   const top = Math.max(0, 240 - frac * 240); // the panel slab at its slide position
   const bot = Math.min(gy, top + 320);
-  if (bot > top) drawBay(2600, 120, top, bot);
+  if (bot > top) {
+    // The slab's grid tracks it: at rest (top === 240) that is the wall's own grid, so the
+    // panel sits flush; as it rises its books rise with it. The generated shelves are one
+    // continuous wall, so without this the slab is cut from what is behind it and the
+    // player has nothing to time the run against.
+    if (drawBay(2600, 120, top, bot, top - 240)) {
+      c.fillStyle = '#6a5a92'; // a lit top face and dark underside: on the generated wall
+      c.fillRect(2600, top, 120, 3); // the slab is one continuous field with what is
+      c.fillStyle = '#140e26'; // behind it, and has to be given an edge to read as an object
+      c.fillRect(2600, bot - 4, 120, 4);
+    }
+  }
 }
 
 // The gear door (4900–4940): a wall of five interlocking gears, the seal

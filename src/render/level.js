@@ -1,13 +1,33 @@
 // Level rendering: ground, platforms, boxes, goal flag.
 // Drawn inside the camera-translated world pass (see index.js).
 import { palette } from './theme.js';
+import { drawTileStrip, drawSpriteCentre, drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
+import { spriteReady } from '../sprites.js';
+
+// How deep the ground texture is drawn, in screen pixels; the 192px-tall source packs
+// two of its own pixels into each of these, which is what keeps it as crisp as the
+// character sprites standing on it.
+const GROUND_TEX_H = 96;
+
+// A textured slab: the generated grain where the sheet has decoded, the flat colour it
+// replaces otherwise. Every specialty ground and platform is a coloured bar with vector
+// dressing drawn over it, so only the bar changes hands here and the dressing — lit
+// edges, moss, rivets, gear teeth — stays exactly where it was.
+//
+// drawLevel runs inside the camera translate, so world x IS the current x and camX is 0.
+function slab(c, tex, x, y, w, h, fill, tileW = 96) {
+  if (h <= 0 || w <= 0) return;
+  if (!(drawTileStrip(c, tex, x, x + w, 0, y, h, tileW))) {
+    c.fillStyle = fill;
+    c.fillRect(x, y, w, h);
+  }
+}
 
 export function drawLevel(c, lvl, t = 0) {
   for (const seg of lvl.ground) {
     const top = seg.y ?? lvl.groundY;
     if (seg.kind === 'plank') { // wooden bridge deck
-      c.fillStyle = '#5d3a1e';
-      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      slab(c, 'tex_wood', seg.x, top, seg.w, Math.max(0, lvl.height - top), '#5d3a1e', 180);
       c.fillStyle = '#8a5a2b'; // plank surface
       c.fillRect(seg.x, top, seg.w, 6);
       c.fillStyle = '#3d2510'; // seams between planks
@@ -15,29 +35,40 @@ export function drawLevel(c, lvl, t = 0) {
       continue;
     }
     if (seg.kind === 'stone') { // level 5 courtyard: cobbled grey-blue blocks
-      c.fillStyle = '#343a52';
-      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
-      c.fillStyle = '#454c68';
-      for (let ry = top, row = 0; ry < lvl.height; ry += 12, row++) {
-        const off = row % 2 ? 12 : 0;
-        for (let rx = seg.x + off; rx < seg.x + seg.w; rx += 24) c.fillRect(rx + 1, ry + 1, 22, 10);
+      const sh = Math.max(0, lvl.height - top);
+      if (drawTileStrip(c, 'tex_stone_cold', seg.x, seg.x + seg.w, 0, top, sh, 200)) {
+        // the texture is the cobbling; the hand-drawn courses below would fight it
+      } else {
+        c.fillStyle = '#343a52';
+        c.fillRect(seg.x, top, seg.w, sh);
+        c.fillStyle = '#454c68';
+        for (let ry = top, row = 0; ry < lvl.height; ry += 12, row++) {
+          const off = row % 2 ? 12 : 0;
+          for (let rx = seg.x + off; rx < seg.x + seg.w; rx += 24) c.fillRect(rx + 1, ry + 1, 22, 10);
+        }
       }
       c.fillStyle = '#5a627e';
       c.fillRect(seg.x, top, seg.w, 4);
       continue;
     }
     if (seg.kind === 'snow') { // level 7 snowfield: deep blue base, white cap
-      c.fillStyle = '#26324e';
-      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      slab(c, 'tex_snow', seg.x, top, seg.w, Math.max(0, lvl.height - top), '#26324e', 200);
       c.fillStyle = '#e8f0f8'; // the cap
       c.fillRect(seg.x, top, seg.w, 10);
       c.fillStyle = '#b9c9e0'; // faint blue shadow line under the cap
       c.fillRect(seg.x, top + 10, seg.w, 3);
       continue;
     }
+    if (seg.kind === 'thaw') { // level 9: floor a hearth's ring has melted — wet stone
+      slab(c, 'tex_stone_cold', seg.x, top, seg.w, Math.max(0, lvl.height - top), '#3a4a5a', 200);
+      c.globalAlpha = 0.4; // the water sheen: the one thing that says melted, not just dark
+      c.fillStyle = '#8fb4cc';
+      c.fillRect(seg.x, top, seg.w, 2);
+      c.globalAlpha = 1;
+      continue;
+    }
     if (seg.kind === 'ice') { // level 7 ice span: glossy pale blue, glint, cracks
-      c.fillStyle = '#3a5a78';
-      c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
+      slab(c, 'tex_ice', seg.x, top, seg.w, Math.max(0, lvl.height - top), '#3a5a78', 200);
       c.fillStyle = '#bfe4f0'; // the glossy top
       c.fillRect(seg.x, top, seg.w, 8);
       c.fillStyle = '#e8f7fc'; // glint streaks
@@ -46,9 +77,19 @@ export function drawLevel(c, lvl, t = 0) {
       c.fillRect(seg.x + Math.max(8, seg.w / 2), top + 8, 3, 8);
       continue;
     }
+    const gh = Math.max(0, lvl.height - top);
     c.fillStyle = palette.night;
-    c.fillRect(seg.x, top, seg.w, Math.max(0, lvl.height - top));
-    c.fillStyle = '#7b4fa6';
+    c.fillRect(seg.x, top, seg.w, gh);
+    // Only the top of the ground is ever read as a surface, so the texture is a cap of
+    // fixed depth over the flat fill rather than a strip stretched to the band. The band
+    // is 60px deep on an open level and 250 inside a keep; stretching one image across
+    // both turned the keep's floor into a wall of giant bricks. The texture's own bottom
+    // rows fade out, so the cap melts into the fill instead of ending on a line.
+    // drawLevel runs inside the camera translate, so world x IS the current x and camX is 0
+    {
+      drawTileStrip(c, 'ground_dirt', seg.x, seg.x + seg.w, 0, top, Math.min(gh, GROUND_TEX_H), 260);
+    }
+    c.fillStyle = '#7b4fa6'; // the lit surface line stays vector: it reads as the edge
     c.fillRect(seg.x, top, seg.w, 4);
   }
   for (const m of lvl.moats ?? []) { // moat water below the bridge deck
@@ -121,6 +162,13 @@ export function drawLevel(c, lvl, t = 0) {
         c.fillStyle = fade[i];
         c.fillRect(m.x, top + i * step, m.w, step);
       }
+      if (spriteReady('shaft_mouth')) { // the broken lip it fell through
+        c.save();
+        c.translate(m.x + m.w / 2, top + 8);
+        c.scale(1, -1); // the sheet is a ceiling hole; this one is in the floor
+        drawSpriteCentre(c, 'shaft_mouth', 0, scaleToWidth('shaft_mouth', m.w + 40));
+        c.restore();
+      }
       c.globalAlpha = 0.3; // two drifting mist bands (a pure function of t)
       c.fillStyle = '#b8a8d8';
       const off = (t * 12) % 40;
@@ -158,7 +206,16 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillRect(lvl.gate.x - 8, lvl.groundY - 252, lvl.gate.w + 16, 34);
   }
   c.fillStyle = '#4a2d7a';
-  for (const p of lvl.platforms) if (!p.hidden && (!p.kind || p.kind === 'platform')) c.fillRect(p.x, p.y, p.w, 12); // hidden nook ledge: in the wall
+  for (const p of lvl.platforms) {
+    if (p.hidden || (p.kind && p.kind !== 'platform')) continue; // hidden nook ledge: in the wall
+    if (drawTileStrip(c, 'plat_ledge', p.x, p.x + p.w, 0, p.y, 12, 96)) {
+      c.fillStyle = '#8a5fc0'; // lit top edge: 12px of grain alone does not read as a ledge
+      c.fillRect(p.x, p.y, p.w, 2);
+      c.fillStyle = '#4a2d7a';
+    } else {
+      c.fillRect(p.x, p.y, p.w, 12);
+    }
+  }
   for (const p of lvl.platforms) { // kinds: branch, lily, log (L5); root, nest, altar (L6)
     // (the L6 bridge span is rendered by render/mire.js in all its states)
     // The trapdoor keeps rendering while hidden — hidden only removes its
@@ -180,26 +237,47 @@ export function drawLevel(c, lvl, t = 0) {
   }
   for (const b of lvl.boxes) {
     if (b.broken) continue;
-    if (b.mystery) { // wildcard: purple box with a slow swirl
-      c.fillStyle = '#7a4fd0';
-      c.fillRect(b.x, b.y, b.w, b.h);
-      c.strokeStyle = '#4a2d7a';
-      c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
+    // The sprite fills the collision box exactly: unlike a character, a box IS its box —
+    // the player lands on its top edge, so overhanging it would put the surface in the
+    // wrong place. Drawn from the box centre because that is how the cells are composed.
+    const sheet = b.mystery ? 'box_mystery' : 'box_crate';
+    let drew = false;
+    if (spriteReady(sheet)) {
+      c.save();
+      c.translate(b.x + b.w / 2, b.y + b.h / 2);
+      drew = drawSpriteCentre(c, sheet, 0, scaleToHeight(sheet, b.h));
+      c.restore();
+    }
+    if (b.mystery) { // wildcard: the swirl is animated, so it stays vector over either art
+      if (!drew) {
+        c.fillStyle = '#7a4fd0';
+        c.fillRect(b.x, b.y, b.w, b.h);
+        c.strokeStyle = '#4a2d7a';
+        c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
+      }
       const a = t * 1.2 + b.x * 0.01; // swirl angle: gameTime-driven, per-box phase
       c.strokeStyle = '#d9c8ff';
       c.lineWidth = 2;
       c.beginPath();
       c.arc(b.x + b.w / 2, b.y + b.h / 2, 8, a, a + 4.2);
       c.stroke();
-    } else {
+    } else if (!drew) {
       c.fillStyle = '#c98f3d';
       c.fillRect(b.x, b.y, b.w, b.h);
       c.strokeStyle = '#8a5f22';
       c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
     }
   }
+  drawStairDoor(c, lvl); // levels 2-3: the way down, which nothing marked before
   if (!lvl.goal) return; // level 2 exits via the staircase, no flag
   const g = lvl.goal; // goal flag
+  if (spriteReady('goal_flag')) {
+    c.save();
+    c.translate(g.x + 2, lvl.groundY);
+    const drew = drawSpriteFeet(c, 'goal_flag', 0, scaleToHeight('goal_flag', 118));
+    c.restore();
+    if (drew) return;
+  }
   c.fillStyle = palette.lavender;
   c.fillRect(g.x, lvl.groundY - 90, 4, 90);
   c.fillStyle = palette.gold;
@@ -215,11 +293,38 @@ export function drawLevel(c, lvl, t = 0) {
   c.fill();
 }
 
+// Levels 2 and 3 end down a staircase whose landing is below the viewport, so
+// until now the exit was literally invisible: the player walked right and the
+// level ended. The door stands at the head of the steps, on the floor line,
+// where it can actually be seen — the steps then run down through it.
+function drawStairDoor(c, lvl) {
+  const e = lvl.exit;
+  if (!e || e.kind || !lvl.stairDoor) return; // only the plain staircase exits
+  c.save();
+  if (e.locked) c.globalAlpha = 0.5; // dimmed while the pearl still seals it
+  // The sheet was cut out free-standing, so its opening is transparent — which
+  // is right for the zone arches (the sky shows through) and wrong here: a
+  // doorway wants a dark passage behind it, not the wall it is set into.
+  let drew = false;
+  if (spriteReady('exit_door')) {
+    c.fillStyle = '#0b0714';
+    c.fillRect(e.x - 78, lvl.groundY - 96, 64, 96);
+    c.translate(e.x - 46, lvl.groundY);
+    drew = drawSpriteFeet(c, 'exit_door', 0, scaleToHeight('exit_door', 116));
+  }
+  if (!drew) { // a plain lit opening, so the way down reads even with no sheet
+    c.fillStyle = '#1a1024';
+    c.fillRect(e.x - 92, lvl.groundY - 110, 92, 110);
+    c.fillStyle = '#3a2a5c';
+    c.fillRect(e.x - 98, lvl.groundY - 116, 104, 8);
+  }
+  c.restore();
+}
+
 // Level 5 platform kinds. The solid top edge stays at p.y (the collision
 // rect is the plain one-way platform); the dressing hangs off it.
 function drawBranch(c, p) {
-  c.fillStyle = '#6b4a2a'; // the limb
-  c.fillRect(p.x, p.y + 4, p.w, 8);
+  slab(c, 'tex_wood', p.x, p.y + 4, p.w, 8, '#6b4a2a', 120); // the limb
   c.fillStyle = '#3e8a44'; // a leaf tuft
   c.fillRect(p.x + p.w / 2 - 16, p.y - 8, 32, 10);
   c.fillStyle = '#57a857';
@@ -234,8 +339,7 @@ function drawLily(c, p) {
 }
 
 function drawLog(c, p) {
-  c.fillStyle = '#6b4a2a'; // the trunk
-  c.fillRect(p.x, p.y, p.w, 14);
+  slab(c, 'tex_wood', p.x, p.y, p.w, 14, '#6b4a2a', 120); // the trunk
   c.fillStyle = '#8a6a3e'; // lit top
   c.fillRect(p.x, p.y, p.w, 5);
   c.fillStyle = '#4a3418'; // rings on the cut end
@@ -250,8 +354,7 @@ function drawLog(c, p) {
 // Level 6 platform kinds. The solid top edge stays at p.y (the collision
 // rect is the plain one-way platform); the dressing hangs off it.
 function drawRoot(c, p) { // a gnarled brown limb, knobby
-  c.fillStyle = '#5a4326'; // the limb
-  c.fillRect(p.x, p.y + 2, p.w, 9);
+  slab(c, 'tex_wood', p.x, p.y + 2, p.w, 9, '#5a4326', 120); // the limb
   c.fillStyle = '#6b5232'; // lit top
   c.fillRect(p.x, p.y, p.w, 3);
   c.fillStyle = '#43311c'; // knobby growths
@@ -272,8 +375,7 @@ function drawNest(c, p) { // a stick nest
 }
 
 function drawAltar(c, p) { // a mossy stone dais, lit top
-  c.fillStyle = '#3a4152'; // the dais block
-  c.fillRect(p.x, p.y, p.w, 16);
+  slab(c, 'tex_stone_cold', p.x, p.y, p.w, 16, '#3a4152', 130); // the dais block
   c.fillStyle = '#4a5268'; // lit top
   c.fillRect(p.x, p.y, p.w, 5);
   c.fillStyle = '#2c3242'; // wider base
@@ -286,8 +388,7 @@ function drawAltar(c, p) { // a mossy stone dais, lit top
 // Level 7 platform kinds. The solid top edge stays at p.y (the collision
 // rect is the plain one-way platform); the dressing hangs off it.
 function drawIceBridge(c, p) { // the ice bridge over crevasse 2
-  c.fillStyle = '#bfe4f0'; // the glossy slab (6 px, at water level)
-  c.fillRect(p.x, p.y, p.w, 6);
+  slab(c, 'tex_ice', p.x, p.y, p.w, 6, '#bfe4f0', 130); // the glossy slab (at water level)
   c.fillStyle = '#e8f7fc'; // glint streaks
   for (let px = p.x + 8; px < p.x + p.w - 10; px += 30) c.fillRect(px, p.y + 1, 14, 2);
   c.fillStyle = '#7fb8d4'; // the underside shadow
@@ -295,8 +396,7 @@ function drawIceBridge(c, p) { // the ice bridge over crevasse 2
 }
 
 function drawDais(c, p, gy) { // a snow-capped stone dais on a pillar
-  c.fillStyle = '#3a4152'; // the slab
-  c.fillRect(p.x, p.y, p.w, 10);
+  slab(c, 'tex_stone_cold', p.x, p.y, p.w, 10, '#3a4152', 130); // the slab
   c.fillStyle = '#e8f0f8'; // the snow cap
   c.fillRect(p.x, p.y, p.w, 4);
   c.fillStyle = '#5a627e'; // the rim trim
@@ -314,8 +414,7 @@ function drawDais(c, p, gy) { // a snow-capped stone dais on a pillar
 function drawGearPlat(c, p, lvl) { // the clock's gear platform: brass plate, turning gear below
   const cx = p.x + p.w / 2;
   const rot = (lvl.clock ? lvl.clock.gearRot : 0) * Math.PI * 2;
-  c.fillStyle = '#b8860b'; // the plate
-  c.fillRect(p.x, p.y, p.w, 12);
+  slab(c, 'tex_brass', p.x, p.y, p.w, 12, '#b8860b', 120); // the plate
   c.fillStyle = '#8a6a1e'; // the plate's rim
   c.fillRect(p.x, p.y + 10, p.w, 2);
   const hy = p.y + 30; // the hub center, hanging below the plate
@@ -336,8 +435,7 @@ function drawGearPlat(c, p, lvl) { // the clock's gear platform: brass plate, tu
 }
 
 function drawShelfPlat(c, p) { // a bookcase shelf: wood top, book spines on it
-  c.fillStyle = '#4a3220';
-  c.fillRect(p.x, p.y, p.w, 12);
+  slab(c, 'tex_wood', p.x, p.y, p.w, 12, '#4a3220', 120);
   c.fillStyle = '#332414'; // the underside
   c.fillRect(p.x, p.y + 10, p.w, 2);
   const spines = ['#5a3a5e', '#3a4a6a', '#6a4a2e', '#3e5a4a'];
@@ -348,8 +446,7 @@ function drawShelfPlat(c, p) { // a bookcase shelf: wood top, book spines on it
 }
 
 function drawPendPlat(c, p) { // a brass bridge plate, rim rivets
-  c.fillStyle = '#8a6a2e';
-  c.fillRect(p.x, p.y, p.w, 12);
+  slab(c, 'tex_brass', p.x, p.y, p.w, 12, '#8a6a2e', 120);
   c.fillStyle = '#b8860b'; // the lit top
   c.fillRect(p.x, p.y, p.w, 4);
   c.fillStyle = '#5e4a1e'; // the three rivets
@@ -359,8 +456,7 @@ function drawPendPlat(c, p) { // a brass bridge plate, rim rivets
 }
 
 function drawPedestal(c, p, gy) { // the astrolabe plinth: stone base, brass ring, pillar
-  c.fillStyle = '#3a3358'; // the base
-  c.fillRect(p.x + 4, p.y, p.w - 8, 16);
+  slab(c, 'tex_stone_cold', p.x + 4, p.y, p.w - 8, 16, '#3a3358', 130); // the base
   c.fillStyle = '#b8860b'; // the brass ring on top
   c.fillRect(p.x, p.y, p.w, 4);
   c.fillStyle = '#2a2440'; // the base flare
@@ -379,8 +475,7 @@ function drawTrapdoor(c, p, lvl) { // the lid over the cloud shaft
     c.fillRect(p.x + 4, p.y + 20, p.w - 8, 3);
     return;
   }
-  c.fillStyle = '#8a6a2e'; // the flush lid
-  c.fillRect(p.x, p.y, p.w, 12);
+  slab(c, 'tex_brass', p.x, p.y, p.w, 12, '#8a6a2e', 120); // the flush lid
   c.fillStyle = '#b8860b'; // the lit top
   c.fillRect(p.x, p.y, p.w, 3);
   c.fillStyle = '#5e4a1e'; // the rim handle

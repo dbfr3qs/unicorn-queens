@@ -5,7 +5,7 @@ import { BIG_W, BIG_H, P_W, P_H } from '../src/player.js';
 
 describe('level registry', () => {
   it('starts with level 1', () => {
-    expect(LEVELS.length).toBe(8);
+    expect(LEVELS.length).toBe(9);
     const lvl = LEVELS[0].make(600);
     expect(lvl.width).toBe(2400);
     expect(lvl.groundY).toBe(560);
@@ -33,9 +33,11 @@ describe('startGame + restartTarget', () => {
     game.player.dead = false;
     game.player.won = true;
     expect(restartTarget()).toBe(1); // level 1 win: a next level exists
-    startGame(600, 7);
+    startGame(600, LEVELS.length - 1);
     game.player.won = true;
-    expect(restartTarget()).toBe(7); // final level win: restart itself
+    // the final level win restarts itself — level 9 can never set `won`
+    // (no exit, no goal), so this is now the shape of the rule, not a path
+    expect(restartTarget()).toBe(LEVELS.length - 1);
   });
 
   it('R advances on a win when a next level exists', () => {

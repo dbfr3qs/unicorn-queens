@@ -2,9 +2,9 @@
 // is taken by the standard path, and then: the King's silhouette steps
 // onto the rim ('grant', latched — same frame as the lid drops), the
 // shaft-lip beat fires on entry with the pearl taken (the King's two
-// lines), a flying player in the open shaft wins (the standard victory
-// path), a walker into the shaft takes the pit rule instead (the
-// flightOnly gate), and the Warden's statue remains (still in enemies,
+// lines), anyone who goes down the open shaft wins — flying or simply
+// stepping off the lip (the standard victory path either way) — and the
+// Warden's statue remains (still in enemies,
 // drawn by the world pass — the draw itself is an M8 scenario).
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { game, startGame, update } from '../src/game.js';
@@ -87,7 +87,7 @@ describe('the shaft-lip beat', () => {
     expect(isDialogueOpen()).toBe(true);
     expect(currentLine().speaker).toBe('The Unicorn King');
     advanceDialogue();
-    expect(currentLine().text).toContain('Fly true.');
+    expect(currentLine().text).toContain('The throne is waiting.');
     advanceDialogue();
     expect(isDialogueOpen()).toBe(false);
     expect(game.dialogsFired.has('l8-shaft')).toBe(true);
@@ -104,7 +104,7 @@ describe('the shaft-lip beat', () => {
   });
 });
 
-describe('the flight dive', () => {
+describe('the way down', () => {
   it('a flying player in the open shaft wins (the standard path: won + win sfx)', () => {
     restAndTake();
     dropLid();
@@ -123,7 +123,7 @@ describe('the flight dive', () => {
 });
 
 describe('the walker', () => {
-  it('into the open shaft: 1 dmg + respawn at the last safe spot, NOT won', () => {
+  it('who steps off the lip into the open shaft wins too: no flight needed', () => {
     restAndTake();
     dropLid();
     const p = game.player;
@@ -135,16 +135,13 @@ describe('the walker', () => {
     while (isDialogueOpen()) advanceDialogue();
     input.right = true; // openDialogue cleared the held keys
     let frames = 0;
-    while (!p.dead && p.invuln <= 0 && frames < 240) {
+    while (!p.dead && !p.won && p.invuln <= 0 && frames < 240) {
       update(DT, 800, fx([]));
       frames++;
     }
     input.right = false;
-    expect(p.won).toBe(false); // the flightOnly gate: the fall through the exit rect is no win
-    expect(p.hp).toBe(hp0 - 1); // the pit rule: 1 damage
-    update(DT, 800, fx([])); // settle: the respawn lands back on the deck
-    expect(p.onGround).toBe(true);
-    expect(p.x).toBeLessThan(5820); // back on the deck: safeX is west of the shaft edge
+    expect(p.won).toBe(true); // the fall through the exit rect is the win
+    expect(p.hp).toBe(hp0); // and never reaches the pit line: no damage
   });
 });
 

@@ -19,9 +19,9 @@ describe('registration', () => {
 });
 
 describe('zones', () => {
-  it('tile the level exactly (gate / snowfield / spire / throne)', () => {
+  it('tile the level exactly (snowfield / spire / throne)', () => {
     const zs = lvl.zones;
-    expect(zs.map(z => z.kind)).toEqual(['peakgate', 'snowfield', 'spire', 'throne']);
+    expect(zs.map(z => z.kind)).toEqual(['snowfield', 'spire', 'throne']); // no gate: outdoors from x 0
     expect(zs[0].x0).toBe(0);
     for (let i = 0; i < zs.length - 1; i++) expect(zs[i + 1].x0).toBe(zs[i].x1);
     expect(zs[zs.length - 1].x1).toBe(6300);
@@ -41,14 +41,14 @@ describe('ground + pits', () => {
     for (const m of lvl.lava) { for (let x = m.x; x < m.x + m.w; x += 50) { expect(seen.has(x)).toBe(false); seen.add(x); } }
   });
 
-  it('has the right kinds: stone at the gates, snow across the field, ice run-ups', () => {
+  it('has the right kinds: snow across the field from x 0, ice run-ups, stone in the spire', () => {
     expect(lvl.ground.map(g => g.kind)).toEqual([
-      'stone', 'snow', 'ice', 'snow', 'ice', 'snow', 'stone', 'stone', 'snow',
+      'snow', 'ice', 'snow', 'ice', 'snow', 'stone', 'stone', 'snow',
     ]);
-    expect(lvl.ground[0]).toMatchObject({ x: 0, w: 500 });
-    expect(lvl.ground[6]).toMatchObject({ x: 3600, w: 300 });
-    expect(lvl.ground[7]).toMatchObject({ x: 4050, w: 1350 });
-    expect(lvl.ground[8]).toMatchObject({ x: 5400, w: 900 });
+    expect(lvl.ground[0]).toMatchObject({ x: 0, w: 1250 });
+    expect(lvl.ground[5]).toMatchObject({ x: 3600, w: 300 });
+    expect(lvl.ground[6]).toMatchObject({ x: 4050, w: 1350 });
+    expect(lvl.ground[7]).toMatchObject({ x: 5400, w: 900 });
   });
 
   it('has two crevasses and the cauldron pit', () => {

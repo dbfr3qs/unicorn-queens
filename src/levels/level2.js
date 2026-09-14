@@ -64,6 +64,7 @@ export function createLevel2(viewH = 600) {
       showWhen: enemies => enemies.some(e => e.kind === 'mage' && e.dead),
     },
     exit: { x: 3500, y: groundY - 10, w: 100, h: 95, locked: true },
+    stairDoor: true, // the way down gets a lit doorway at the head of the steps (render/level.js)
     roster: [
       { kind: 'zombie', x: 1200, minX: 1100, maxX: 1400 },
       { kind: 'ghost', x: 1250, y: 240 },

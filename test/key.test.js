@@ -2,7 +2,7 @@
 // arrow hit (purely visual).
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { game, startGame, update } from '../src/game.js';
-import { updateKey, MARKER_GLINT, MARKER_HITS, CRUMBLE_T } from '../src/key.js';
+import { updateKey, MARKER_GLINT, MARKER_HITS, CRUMBLE_T, REVEAL_T } from '../src/key.js';
 import { arrows, updateArrows, resetArrows } from '../src/arrows.js';
 import { particles, resetParticles } from '../src/particles.js';
 import { createCamera } from '../src/camera.js';
@@ -131,9 +131,20 @@ describe('key nook crumble (level 3)', () => {
     shootMarker(g); shootMarker(g); shootMarker(g);
     for (let i = 0; i < 40; i++) updateKey(g.level, g.player, fx, DT); // 40/60 s > 0.5 s
     expect(g.level.keyNook.revealed).toBe(true);
-    expect(g.level.platforms.find(p => p.x === 1600 && p.w === 90).hidden).toBe(false);
+    expect(g.level.platforms.find(p => p.x === 1595 && p.w === 90).hidden).toBe(false);
     shootMarker(g); // a hit after the reveal does not re-trigger
     expect(g.level.keyNook.crumbleT).toBe(0);
+  });
+
+  it('runs the reveal down after the crumble, once, and stops at zero', () => {
+    const g = game;
+    shootMarker(g); shootMarker(g); shootMarker(g);
+    for (let i = 0; i < 40; i++) updateKey(g.level, g.player, fx, DT); // past the crumble
+    // 31 of the 40 frames went on the crumble (the 31st is where the float
+    // sum finally clamps to 0), so nine of them have come off the reveal
+    expect(g.level.keyNook.revealT).toBeCloseTo(REVEAL_T - 9 * DT, 5);
+    for (let i = 0; i < 120; i++) updateKey(g.level, g.player, fx, DT);
+    expect(g.level.keyNook.revealT).toBe(0); // clamped, not negative
   });
 
   it('hits chip the brick; the reveal bursts debris and rumbles', () => {

@@ -4,6 +4,7 @@ import { burst } from './particles.js';
 import { hurtPlayer, WEB_SLOW_TIME } from './player.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
+import { frostPatch } from './thaw.js'; // level 9: the golem's spit lands as ice
 
 export const FIREBALL_SIZE = 14, FIREBALL_SPEED = 240, FIREBALL_TTL = 3;
 export const fireballs = [];
@@ -12,8 +13,11 @@ export function resetFireballs() {
   fireballs.length = 0;
 }
 
-export function fireFireball(x, y, vx, vy, fx, cyan = false) {
-  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: false, cyan });
+// `pale` is level 9's frost bolt — the same projectile in cold colours, so
+// the frost sprite's dart and the Frost Queen's bolts read as hers rather
+// than as the mage's fire. `ttl` lets a short-range dart expire on its own.
+export function fireFireball(x, y, vx, vy, fx, cyan = false, pale = false, ttl = FIREBALL_TTL) {
+  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl, dead: false, cool: 0, reflected: false, web: false, cyan, pale });
   fx.play('fireball');
 }
 
@@ -99,7 +103,7 @@ export function resetShockwaves() { shockwaves.length = 0; }
 // (x, y) is the boulder's spawn top-left; (tx, ty) where it should arrive.
 // The arc is solved for a fixed flight time: vx = dx/T, vy from the
 // constant-gravity displacement equation.
-export function fireBoulder(x, y, tx, ty, fx, web = false) {
+export function fireBoulder(x, y, tx, ty, fx, web = false, frost = false) {
   const T = BOULDER_FLIGHT;
   boulders.push({
     x, y, w: BOULDER_SIZE, h: BOULDER_SIZE,
@@ -108,6 +112,7 @@ export function fireBoulder(x, y, tx, ty, fx, web = false) {
     ttl: BOULDER_TTL,
     dead: false,
     web, // the Weaver Queen's eggs render white
+    frost, // level 9: the glacier golem's spit — it lands as a sheet of new ice
   });
   fx.play('clatter'); // the throw
 }
@@ -123,15 +128,15 @@ export const cones = [];
 export function resetCones() { cones.length = 0; }
 
 // (x, y) = the mouth; angle in radians; ttl for phase 2's longer breath.
-export function fireCone(x, y, angle, fx, ttl = CONE_TTL, violet = false) {
-  cones.push({ x, y, angle, age: 0, ttl, dead: false, violet });
-  fx.play(violet ? 'snort' : 'breath');
+export function fireCone(x, y, angle, fx, ttl = CONE_TTL, violet = false, reach = CONE_LEN, frost = false) {
+  cones.push({ x, y, angle, age: 0, ttl, dead: false, violet, reach, frost });
+  fx.play(frost ? 'gust' : violet ? 'snort' : 'breath');
 }
 
 // Segment i of cone c as {x, y, r}: a circle whose radius widens with
 // distance along the beam (half-width = d * tan(15 deg)).
 export function coneSegment(c, i) {
-  const len = Math.min(c.age / CONE_GROW, 1) * CONE_LEN;
+  const len = Math.min(c.age / CONE_GROW, 1) * (c.reach ?? CONE_LEN);
   const d = ((i + 0.5) / CONE_SEGS) * len;
   return {
     x: c.x + Math.cos(c.angle) * d,
@@ -162,12 +167,14 @@ export function updateCones(p, lvl, cam, dt, fx) {
 }
 
 // Twin ground-bound wavefronts rolling away from (x, groundY).
-export function fireShockwaves(x, groundY, fx, ttl = SHOCK_TTL) {
-  // ttl optional: the level 8 Warden passes 2.5 — the wave expires at the
-  // arena ends (deviation 6). Default SHOCK_TTL: level 4 unchanged.
+// ttl / speed / bounds are all optional, so every level-4 and level-8 call
+// site is unchanged. `bounds` is level 9's arena: a wave that reaches either
+// end dies there rather than rolling on into the hall, which a ttl alone
+// cannot express — a slow wave outlives the arena it was made in.
+export function fireShockwaves(x, groundY, fx, ttl = SHOCK_TTL, speed = SHOCK_SPEED, bounds = null) {
   const y = groundY - SHOCK_H;
-  shockwaves.push({ x: x - 6, y, w: SHOCK_W, h: SHOCK_H, vx: -SHOCK_SPEED, ttl, hit: false, dead: false });
-  shockwaves.push({ x: x + 6, y, w: SHOCK_W, h: SHOCK_H, vx: SHOCK_SPEED, ttl, hit: false, dead: false });
+  shockwaves.push({ x: x - 6, y, w: SHOCK_W, h: SHOCK_H, vx: -speed, ttl, hit: false, dead: false, bounds });
+  shockwaves.push({ x: x + 6, y, w: SHOCK_W, h: SHOCK_H, vx: speed, ttl, hit: false, dead: false, bounds });
   fx.play('rumble');
 }
 
@@ -186,7 +193,12 @@ export function updateBoulders(p, lvl, cam, dt, fx) {
         b.y = s - b.h;
         b.dead = true;
         fx.play('thud');
-        burst(b.x + b.w / 2, b.y + b.h, FX.boulderLand); // dust puff
+        if (b.frost) { // level 9: the ice it was carrying spreads where it hits
+          burst(b.x + b.w / 2, b.y + b.h, FX.iceShard);
+          frostPatch(lvl, b.x + b.w / 2 - 40, 80);
+        } else {
+          burst(b.x + b.w / 2, b.y + b.h, FX.boulderLand); // dust puff
+        }
         continue;
       }
     }
@@ -205,6 +217,7 @@ export function updateShockwaves(p, cam, dt, fx) {
     s.x += s.vx * dt;
     s.ttl -= dt;
     if (s.ttl <= 0) { s.dead = true; shockFizzle(s, fx); continue; }
+    if (s.bounds && (s.x < s.bounds[0] || s.x + s.w > s.bounds[1])) { s.dead = true; shockFizzle(s, fx); continue; }
     if (!s.hit && !p.dead &&
         s.x < p.x + p.w && s.x + s.w > p.x && s.y < p.y + p.h && s.y + s.h > p.y) {
       if (p.invuln <= 0) { s.hit = true; hurtPlayer(p, cam, fx); } // one hit per wave

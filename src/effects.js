@@ -44,4 +44,6 @@ export const FX = {
   ashBurst: { count: 40, colors: ['#8a8a9a', '#6a6a7a', '#a0a0b0'], speed: 180, up: 120, size: 5, grav: -40, life: 1.4 }, // the wizard's death: ash
   springUnspool: { count: 10, colors: ['#ffd75e', '#6fe3e1', '#e8b86d'], speed: 90, up: 60, size: 3, grav: -120, life: 0.8 }, // a mainspring cuts loose and spirals up
   gearBurst: { count: 8, colors: ['#c98f3d', '#8a5f22', '#e8b86d'], speed: 150, up: 80, size: 5, grav: 600, life: 0.5 }, // a Sentinel's brass shards
+  iceShard: { count: 16, colors: ['#bfe4f0', '#e8f7fc', '#7ec8e8', '#fff'], speed: 200, up: 120, size: 4, grav: 480, life: 0.55 }, // level 9: a shell, a seal, a frozen thing giving way
+  iceMist: { count: 10, colors: ['#e8f7fc', '#c8e8f4', '#fff'], speed: 70, up: 50, size: 3, grav: -70, life: 0.5 }, // the Frost Queen, hit: a puff of her own weather
 };

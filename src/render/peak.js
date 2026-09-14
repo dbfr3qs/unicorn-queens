@@ -6,19 +6,9 @@
 // animation is a pure function of level time (or of the state the
 // M2–M7 subsystems write), so snapshots stay text-stable.
 import { game } from '../game.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteFeet, scaleToWidth } from './sprite.js';
 
-// The stairway from level 6, receding up and out of frame to the west
-// behind the spawn (the three-frame callback: you just came up it).
-function drawStairs(c, lvl) {
-  const gy = lvl.groundY;
-  const steps = [[0, gy - 36, 84], [0, gy - 72, 64], [0, gy - 108, 44]];
-  for (const [x, y, w] of steps) {
-    c.fillStyle = '#2c3450';
-    c.fillRect(x, y, w, 36);
-    c.fillStyle = '#e8f0f8'; // the snow cap
-    c.fillRect(x, y, w, 5);
-  }
-}
 
 // The wind vane on its post at 700 (top at groundY−120): the level's
 // tell, drawn from the phase the simulation stores (lvl.wind.phase):
@@ -201,6 +191,14 @@ function drawRainbow(c, lvl, t) {
     c.globalAlpha = 1;
     return;
   }
+  if (spriteReady('rainbow_arc')) { // the way home, once the storm breaks
+    c.save();
+    c.globalAlpha = 0.85 + 0.15 * Math.sin(t * 2.4); // it still shimmers
+    c.translate(cx, gy);
+    const drew = drawSpriteFeet(c, 'rainbow_arc', 0, scaleToWidth('rainbow_arc', 190));
+    c.restore();
+    if (drew) return;
+  }
   const colors = ['#e86a6a', '#f0a05e', '#f5e86a', '#6aa8e8'];
   for (let i = 0; i < radii.length; i++) {
     c.strokeStyle = colors[i];
@@ -246,7 +244,6 @@ function drawPig(c, lvl, t) {
 // The peak world pass.
 export function drawPeak(c, lvl, t) {
   if (!lvl.sigilBlock) return; // the peak only (level 7)
-  drawStairs(c, lvl);
   drawVane(c, lvl, t);
   drawSigilBlock(c, lvl, t);
   drawCauldronRim(c, lvl);

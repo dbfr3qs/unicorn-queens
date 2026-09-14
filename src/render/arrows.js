@@ -18,7 +18,7 @@ export function drawArrows(c) {
       c.fill();
     } else {
       c.scale(Math.sign(a.vx), 1);
-      c.fillStyle = palette.wood; // shaft
+      c.fillStyle = a.king ? palette.gold : palette.wood; // shaft (the King's are gold)
       c.fillRect(0, 1, 10, 2);
       c.fillStyle = '#e8e8f0'; // head
       c.beginPath();

@@ -14,8 +14,10 @@
 // Stays-open kinds: webwall (level 6 melt), irongate (level 7 — the sigil
 // opens it once and it never re-seals), thronegate (level 7 — the
 // trigger's flare dissolves it; the arena's west end stays an off-ramp).
+import { DOOR_CRACK, DOOR_MELT } from './thaw.js'; // level 9: the frost seal's two extra states
+
 export const DOOR_OPEN = 1.0, DOOR_CLOSE = 1.0, DOOR_PASS = 10;
-const STAYS_OPEN = new Set(['webwall', 'irongate', 'thronegate', 'geardoor', 'bookwall', 'shelfpanel']);
+const STAYS_OPEN = new Set(['webwall', 'irongate', 'thronegate', 'geardoor', 'bookwall', 'shelfpanel', 'frostseal']);
 
 function doorsOf(lvl) {
   return lvl.doors ?? (lvl.door ? [lvl.door] : []);
@@ -66,15 +68,24 @@ export function updateDoor(lvl, p, dt, fx) {
     } else if (door.state === 'closing') {
       door.closeT -= dt;
       if (door.closeT <= 0) door.state = 'shut';
+    } else if (door.state === 'cracking') { // level 9: a hearth's fire reached it
+      door.openT += dt;
+      if (door.openT >= DOOR_CRACK) { door.state = 'melting'; door.openT = 0; fx.play('melt', 0.5); }
+    } else if (door.state === 'melting') {
+      door.openT += dt;
+      if (door.openT >= DOOR_MELT) { door.state = 'open'; door.openT = 0; fx.play('puff'); }
     }
   }
 }
 
 // Locked or shut: solid side-collision wall. The player is pushed back to
-// the side of the door their centre is on.
+// the side of the door their centre is on. A frost seal is solid all the way
+// through its crack and its melt — it is only a way through once it is open.
+const SOLID = new Set(['locked', 'shut', 'cracking', 'melting']);
+
 export function resolveDoor(lvl, p) {
   for (const door of doorsOf(lvl)) {
-    if (door.state !== 'locked' && door.state !== 'shut') continue;
+    if (!SOLID.has(door.state)) continue;
     if (p.x < door.x + door.w && p.x + p.w > door.x && p.y < door.y + door.h && p.y + p.h > door.y) {
       p.x = p.x + p.w / 2 < door.x + door.w / 2 ? door.x - p.w : door.x + door.w;
     }

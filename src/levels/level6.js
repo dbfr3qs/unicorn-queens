@@ -15,11 +15,8 @@ export function createLevel6(viewH = 600) {
     // no startItems: bow + flight are carried from level 5 (the test jump
     // grants them via LEVELS[5].carry)
     zones: [
-      // miregate extends to 500: the wall's east stone (420–500) must sit
-      // inside a zone, and a zone's sky is painted clipped to the zone's
-      // own span — stone past the edge would be overpainted by the mire sky
-      { x0: 0, x1: 500, kind: 'miregate' },
-      { x0: 500, x1: 3800, kind: 'mire' },
+      { x0: 0, x1: 3800, kind: 'mire' }, // no gate: the swamp from the first step
+
       { x0: 3800, x1: 6800, kind: 'mire-deep' },
     ],
     lava: [ // water gaps (falling in = respawn, the L5 pond rule)
@@ -28,8 +25,7 @@ export function createLevel6(viewH = 600) {
       { x: 5500, w: 300, water: true }, // the bridge pit
     ],
     ground: [
-      { x: 0, w: 500, kind: 'stone', y: groundY }, // the gate passage (under the wall, to the east stone)
-      { x: 500, w: 600, kind: 'ground', y: groundY }, // heron grove
+      { x: 0, w: 1100, kind: 'ground', y: groundY }, // heron grove
       { x: 1450, w: 450, kind: 'ground', y: groundY }, // the lily bank
       { x: 2300, w: 3200, kind: 'ground', y: groundY }, // marsh east + winch temple
       { x: 5800, w: 1000, kind: 'ground', y: groundY }, // the spider hollow

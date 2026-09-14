@@ -16,8 +16,7 @@ export function createLevel7(viewH = 600) {
     // no startItems: bow + flight are carried (LEVELS[6].carry for a
     // fresh ?level=7 boot)
     zones: [
-      { x0: 0, x1: 500, kind: 'peakgate' },
-      { x0: 500, x1: 3600, kind: 'snowfield' },
+      { x0: 0, x1: 3600, kind: 'snowfield' }, // no gate: the snowfield from the first step
       { x0: 3600, x1: 5400, kind: 'spire' },
       { x0: 5400, x1: 6300, kind: 'throne' },
     ],
@@ -27,8 +26,7 @@ export function createLevel7(viewH = 600) {
       { x: 3900, w: 150, cauldron: true }, // the cauldron pit (dais mid-pit)
     ],
     ground: [
-      { x: 0, w: 500, kind: 'stone', y: groundY }, // the gate passage
-      { x: 500, w: 750, kind: 'snow', y: groundY }, // snowfield west
+      { x: 0, w: 1250, kind: 'snow', y: groundY }, // snowfield west
       { x: 1250, w: 150, kind: 'ice', y: groundY }, // crevasse-1 run-up (the teach)
       { x: 1550, w: 700, kind: 'snow', y: groundY }, // snowfield mid
       { x: 2250, w: 150, kind: 'ice', y: groundY }, // bridge run-up

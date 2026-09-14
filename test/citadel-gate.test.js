@@ -2,8 +2,8 @@
 // mainspring cut grinds the gear door open (and it stays open — the retreat
 // pocket); the arena beat (cuts === 3) wakes the Warden (M6) and the 5050
 // Sentinel; the pearl's showWhen is live (the Warden fully rested); the
-// pearl-taken drops the trapdoor lid over the shaft, leaving a flight-only
-// exit (a flier in the exit rect wins; a walker in the shaft takes the pit).
+// pearl-taken drops the trapdoor lid over the shaft, leaving an open
+// exit (anyone in the exit rect wins, flying or falling).
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { game, startGame, update, reachedExit } from '../src/game.js';
 import { isDialogueOpen, currentLine, advanceDialogue, resetDialogue } from '../src/dialogue.js';
@@ -120,7 +120,7 @@ describe('the pearl', () => {
 });
 
 describe('the trapdoor', () => {
-  it('drops when the pearl is taken; the shaft left behind is flight-only', () => {
+  it('drops when the pearl is taken; the shaft left behind is the way out', () => {
     closeIntro();
     const lvl = game.level;
     const lid = lvl.platforms.find(pl => pl.kind === 'trapdoor');
@@ -138,16 +138,13 @@ describe('the trapdoor', () => {
     expect(lvl.trapdoor.open).toBe(true);
     expect(lid.hidden).toBe(true);
     expect(calls).toContain('seal');
-    // flight-only: a flier in the exit rect wins; a walker who drops into
-    // the shaft takes the pit rule (1 dmg + respawn). The floor-hole exit
-    // rect is gated by flightOnly (a falling walker overlaps it before the
-    // pit line, so geometry alone can't keep them out).
+    // anyone in the exit rect wins, flying or falling: the floor-hole rect
+    // (560-660) sits above the pit line, so a walker who drops in overlaps
+    // it first and never takes the fall rule
     const flyer = { x: 5850, y: 570, w: 28, h: 36, flying: true };
     expect(reachedExit(flyer, lvl)).toBe(true);
-    expect(flyer.y > lvl.height).toBe(false); // above the pit line: no fall damage
     const walker = { x: 5850, y: 570, w: 28, h: 36 }; // same spot, not flying
-    expect(reachedExit(walker, lvl)).toBe(false); // the flightOnly gate
-    const fallen = { x: 5850, y: 620, w: 28, h: 36 };
-    expect(fallen.y > lvl.height).toBe(true); // below the pit line: the fall rule
+    expect(reachedExit(walker, lvl)).toBe(true);
+    expect(walker.y > lvl.height).toBe(false); // above the pit line: the win comes first
   });
 });

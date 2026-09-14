@@ -9,6 +9,7 @@ import { FX } from './effects.js';
 export const MARKER_GLINT = 0.6; // how long an arrow-hit glint lingers (s)
 export const MARKER_HITS = 3; // arrow hits to crumble the wall over the nook
 export const CRUMBLE_T = 0.5; // how long the crumble takes (s)
+export const REVEAL_T = 0.9; // and how long the recess takes to open out of the dust (s)
 
 export function updateKey(lvl, p, fx, dt = 0) {
   const nook = lvl.keyNook;
@@ -16,6 +17,10 @@ export function updateKey(lvl, p, fx, dt = 0) {
     nook.crumbleT = Math.max(0, nook.crumbleT - dt);
     if (nook.crumbleT === 0) { // the wall section falls in: the nook is open
       nook.revealed = true;
+      // The recess is open in the model from this instant — the ledge is
+      // solid, the key is pickable — but it takes REVEAL_T to become visible.
+      // The render reads this down-counter; nothing else does.
+      nook.revealT = REVEAL_T;
       for (const s of lvl.platforms) if (s.hidden) s.hidden = false;
       const m = lvl.marker; // debris out of the wall, key light leaking through
       if (m) {
@@ -23,6 +28,8 @@ export function updateKey(lvl, p, fx, dt = 0) {
         burst(m.x + m.w / 2, m.y - 40, FX.nookCrumble);
       }
     }
+  } else if (nook && nook.revealT > 0) {
+    nook.revealT = Math.max(0, nook.revealT - dt);
   }
   const key = lvl.key;
   if (!key || key.taken) return;

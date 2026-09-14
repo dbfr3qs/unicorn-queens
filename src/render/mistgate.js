@@ -6,6 +6,8 @@
 // snapshot friendly), and stays open.
 import { MIST_OPEN } from '../mistgate.js';
 import { palette } from './theme.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteFeet, scaleToHeight } from './sprite.js';
 
 export function drawMistgate(c, lvl, t) {
   const m = lvl.mistgate;
@@ -42,6 +44,14 @@ export function drawMistgate(c, lvl, t) {
       c.fillRect(mx, gy - ph * (gy - m.y - 8) - 4, 3, 3);
     }
     c.globalAlpha = 1;
+  }
+  // The frame goes over the field, so the light still comes from behind it.
+  if (spriteReady('mist_gate')) {
+    c.save();
+    c.translate(m.x + m.w / 2, gy);
+    drawSpriteFeet(c, 'mist_gate', 0, scaleToHeight('mist_gate', gy - m.y + 30));
+    c.restore();
+    return;
   }
   c.fillStyle = '#211537'; // the stone arch: pillars + lintel
   c.fillRect(m.x, m.y, 20, gy - m.y);

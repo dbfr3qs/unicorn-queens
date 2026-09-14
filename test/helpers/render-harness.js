@@ -78,6 +78,14 @@ export function freshGame8(viewH = VIEW_H) {
   return game;
 }
 
+// Level 9 (the frozen throne) entry: same seeding, level index 8.
+export function freshGame9(viewH = VIEW_H) {
+  reseed();
+  startGame(viewH, 8);
+  game.gameTime = 0;
+  return game;
+}
+
 // Simulate `frames` updates with the given keys held, then draw one
 // frame to a fresh recording context. Returns the draw-call log.
 // Input is reset afterwards so scenarios don't leak keys.

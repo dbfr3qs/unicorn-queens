@@ -10,6 +10,7 @@ export function drawDoor(c, lvl, gameTime) {
     else if (door.kind === 'irongate') drawIronGate(c, door, gameTime);
     else if (door.kind === 'thronegate') drawThroneGate(c, door, gameTime);
     else if (door.kind === 'geardoor' || door.kind === 'bookwall' || door.kind === 'shelfpanel') continue; // level 8: collision-only; citadel.js owns the visual
+    else if (door.kind === 'frostseal') continue; // level 9: collision-only; frostpalace.js owns the visual
     else drawTrollDoor(c, door, gameTime);
   }
 }

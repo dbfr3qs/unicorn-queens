@@ -19,17 +19,14 @@ describe('level 5 data', () => {
   it('width, zones, ground segments & water', () => {
     expect(lvl.width).toBe(5600);
     expect(lvl.groundY).toBe(gy);
-    expect(lvl.zones).toEqual([
-      { x0: 0, x1: 500, kind: 'gate' },
-      { x0: 500, x1: 5600, kind: 'forest' },
-    ]);
+    expect(lvl.zones).toEqual([{ x0: 0, x1: 5600, kind: 'forest' }]); // outdoors from x 0
     expect(lvl.ground.map(s => [s.x, s.x + s.w])).toEqual(
-      [[0, 500], [500, 2650], [3250, 4200], [4300, 5600]]);
+      [[0, 2650], [3250, 4200], [4300, 5600]]);
     expect(lvl.lava).toEqual([
       { x: 2650, w: 600, water: true }, // the pond
       { x: 4200, w: 100, water: true }, // the stream
     ]);
-    expect(lvl.ground[0].kind).toBe('stone'); // the castle courtyard
+    expect(lvl.ground[0].kind).toBe('ground'); // grass, not a courtyard
   });
 
   it('ground + water cover the whole width exactly once', () => {

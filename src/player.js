@@ -1,5 +1,5 @@
 // Player: state and physics (jump buffering, coyote time, squash & stretch).
-import { resolveGroundCollision, standingKind } from './levels/level.js';
+import { resolveGroundCollision, effectiveKind } from './levels/level.js';
 import { inWindZone } from './wind.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
@@ -86,7 +86,7 @@ function endFlight(p, fx) {
 export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   if (player.dead || player.won) { inp.cast = false; return; } // never let a stale cast survive
   const wasOnGround = player.onGround; // landing-cancel compares against this
-  const wasOnIce = player.onGround && standingKind(player, lvl) === 'ice'; // the ice carry
+  const wasOnIce = player.onGround && effectiveKind(player, lvl) === 'ice'; // the ice carry
   player.invuln = Math.max(0, player.invuln - dt);
   player.coyote = player.onGround ? COYOTE : Math.max(0, player.coyote - dt);
   if (inp.jump && !player.jumpHeld) player.jbuf = JBUF; // buffer the press
@@ -94,7 +94,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   player.jbuf = Math.max(0, player.jbuf - dt);
   // the web-slow (Weaver Queen) drags the legs — flight is unaffected
   const slow = player.webT > 0 && !player.flying ? WEB_SLOW : 1;
-  const iceGround = !player.flying && player.onGround && standingKind(player, lvl) === 'ice';
+  const iceGround = !player.flying && player.onGround && effectiveKind(player, lvl) === 'ice';
   const target = ((inp.right ? P_SPEED : 0) - (inp.left ? P_SPEED : 0)) * slow;
   if (iceGround || (player.iceAir && !player.flying)) {
     // level 7 ice: momentum. Steer at ICE_ACCEL toward the held direction's

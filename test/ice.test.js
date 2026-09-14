@@ -118,7 +118,7 @@ describe('the ice model', () => {
     expect(p.vx).toBe(P_SPEED); // 260, not 338
   });
 
-  it('boots do not grip ice in L7 (the grip is L9’s teach)', () => {
+  it('boots do not grip ice in L7: the grip is level 9\u2019s answer, gated on its thaw', () => {
     const { lvl, p, cam } = rig();
     p.boots = 10;
     p.vx = 0;

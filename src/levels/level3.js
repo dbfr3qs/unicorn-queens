@@ -34,7 +34,7 @@ export function createLevel3(viewH = 600) {
     platforms: [
       { x: 480, y: groundY - 140, w: 110, kind: 'platform' }, // over fissure 1
       { x: 1460, y: groundY - 120, w: 100, kind: 'platform' }, // west lip, key chain hop 1
-      { x: 1600, y: groundY - 240, w: 90, hidden: true, kind: 'platform' }, // nook ledge, hop 2 — inside the wall until the crumble
+      { x: 1595, y: groundY - 240, w: 90, hidden: true, kind: 'platform' }, // nook ledge, hop 2 — inside the wall until the crumble; centred on the nook's 1640
       { x: 2800, y: groundY - 110, w: 110, kind: 'platform' }, // over fissure 3
       { x: 3100, y: groundY - 140, w: 120, kind: 'platform' }, // staggered
       { x: 3300, y: groundY - 110, w: 110, kind: 'platform' }, // over fissure 4
@@ -64,8 +64,8 @@ export function createLevel3(viewH = 600) {
     // (arrow y = p.y + 12) crosses the brick band — the puzzle is finding
     // the brick, not timing the shot.
     marker: { x: 1590, y: groundY - 150, w: 20, h: 20, glintT: 0, hits: 0 },
-    key: { x: 1620, y: groundY - 256, w: 16, h: 16, taken: false }, // rests on the nook ledge (hidden until revealed)
-    keyNook: { revealed: false, crumbleT: 0 }, // crumbleT > 0: wall crumbling; at 0 the nook opens
+    key: { x: 1632, y: groundY - 256, w: 16, h: 16, taken: false }, // rests on the nook ledge, on its centre line (hidden until revealed)
+    keyNook: { revealed: false, crumbleT: 0, revealT: 0 }, // crumbleT > 0: wall crumbling; at 0 the nook opens, then revealT runs the reveal
     cell: {
       x: 2100, y: groundY - 100, w: 70, h: 100,
       open: false, opening: false, unlockT: 0,
@@ -79,6 +79,7 @@ export function createLevel3(viewH = 600) {
       showWhen: enemies => enemies.some(e => e.kind === 'troll' && e.dead),
     },
     exit: { x: 4300, y: groundY - 10, w: 100, h: 95, locked: true },
+    stairDoor: true, // the way down gets a lit doorway at the head of the steps (render/level.js)
     dialogs: [
       {
         id: 'cell-hint',

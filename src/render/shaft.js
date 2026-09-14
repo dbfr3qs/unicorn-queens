@@ -5,6 +5,8 @@
 // ceiling and the flight clamp already bounds the player; the exit rect is
 // gated by the pearl-locked flag, not by the gate.
 import { SHAFT_OPEN } from '../shaft.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteCentre, scaleToWidth } from './sprite.js';
 
 export function drawShaft(c, lvl, t) {
   const s = lvl.shaft;
@@ -13,10 +15,17 @@ export function drawShaft(c, lvl, t) {
   const open = s.state === 'open';
   c.fillStyle = open ? '#d9a94a' : '#040704'; // mouth: dark until the light comes
   c.fillRect(s.x, 0, s.w, s.h);
-  c.fillStyle = '#2a3a2a'; // stone rim
-  c.fillRect(s.x - 8, 0, 8, s.h + 10);
-  c.fillRect(s.x + s.w, 0, 8, s.h + 10);
-  c.fillRect(s.x - 8, s.h + 2, s.w + 16, 8); // sill
+  if (spriteReady('shaft_mouth')) { // broken masonry around the hole it made
+    c.save();
+    c.translate(s.x + s.w / 2, s.h / 2);
+    drawSpriteCentre(c, 'shaft_mouth', 0, scaleToWidth('shaft_mouth', s.w + 34));
+    c.restore();
+  } else {
+    c.fillStyle = '#2a3a2a'; // stone rim
+    c.fillRect(s.x - 8, 0, 8, s.h + 10);
+    c.fillRect(s.x + s.w, 0, 8, s.h + 10);
+    c.fillRect(s.x - 8, s.h + 2, s.w + 16, 8); // sill
+  }
   if (!open) {
     const frac = s.state === 'opening' ? Math.max(0, s.openT / SHAFT_OPEN) : 1; // 1 -> 0
     const latticeH = (s.h + 4) * frac;

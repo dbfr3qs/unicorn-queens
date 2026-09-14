@@ -64,7 +64,7 @@ describe('level 3 key chain, first pass (no witch hint)', () => {
 
     frames(35); // 35/60 s > 0.5 s crumble
     expect(lvl.keyNook.revealed).toBe(true);
-    expect(lvl.platforms.find(s => s.x === 1600 && s.w === 90).hidden).toBe(false);
+    expect(lvl.platforms.find(s => s.x === 1595 && s.w === 90).hidden).toBe(false);
 
     // hop 2: jump from the lip's right edge, drift right until over the
     // key, then stop (vx is instant) and drop onto the ledge

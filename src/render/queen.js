@@ -5,6 +5,8 @@
 // The head, mane and tail bob gently (sin, 0.5 Hz); she faces the player.
 import { game } from '../game.js';
 import { palette } from './theme.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteFeet, scaleToHeight } from './sprite.js';
 
 export function drawQueen(c, lvl, t) {
   const q = lvl.queen;
@@ -13,6 +15,14 @@ export function drawQueen(c, lvl, t) {
   const facing = (p.x + p.w / 2) >= (q.x + q.w / 2) ? 1 : -1;
   const bob = Math.sin(t * Math.PI) * 2; // 0.5 Hz
   const { x, y } = q; // w 48, h 72; y + 72 sits on the ground
+  if (spriteReady('queen')) {
+    c.save();
+    c.translate(x + q.w / 2, y + q.h + bob); // feet on the ground, the whole figure bobs
+    c.scale(facing, 1);
+    const drew = drawSpriteFeet(c, 'queen', 0, scaleToHeight('queen', q.h * 1.1));
+    c.restore();
+    if (drew) return;
+  }
   c.fillStyle = palette.unicornWhite;
   c.fillRect(x + 5, y + 56, 6, 16); // four legs
   c.fillRect(x + 15, y + 58, 6, 14);

@@ -13,7 +13,9 @@ export function windPhase(t) {
   return n % 4 === 3 ? 'updraft' : 'gust';
 }
 
-// The wind zone: the snowfield, gate to spire.
+// The wind zone: the open snowfield east of the calm start, up to the spire.
+// (The start used to be a gate passage; the wall is gone but the shelter it
+// gave the spawn band is kept — the wind still begins at 500.)
 export const WIND_X0 = 500, WIND_X1 = 3600;
 
 export function inWindZone(x) {

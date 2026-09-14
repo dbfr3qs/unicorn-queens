@@ -26,6 +26,20 @@ export function fireArrow(p) {
   });
 }
 
+// The King's arrow (level 9): loosed east from his shoulder at the height of
+// whatever he is shooting at — his arrows fly flat like everyone's, so the
+// aim is the launch height. Same flight, same hits, same enemy damage as the
+// player's; `king` only picks the fletching colour in the draw.
+export function fireKingArrow(k, targetY) {
+  arrows.push({
+    x: k.x + k.w,
+    y: targetY - 2,
+    vx: ARROW_SPEED,
+    dead: false,
+    king: true,
+  });
+}
+
 // Star arrow: pierces up to 2 enemies (never re-hitting one), shatters
 // boxes in its path and keeps flying, no gravity (like every arrow here).
 export function fireStarArrow(p) {
@@ -152,6 +166,37 @@ export function updateArrows(enemies, lvl, cam, dt, fx, viewW = 800) {
       lvl.sigil.visible = true;
       fx.play('crack');
       burst(iceBlock.x + iceBlock.w / 2, iceBlock.y + iceBlock.h / 2, FX.iceShatter);
+      if (!a.star) a.dead = true;
+    }
+    if (a.dead) continue;
+    // Level 9's two shells. Both hold a sun seed, and both open only to an
+    // arrow: the level's first seed teaches that the bow is the key here, and
+    // the bird's block repeats the lesson at the far end of the palace. The
+    // seed's fall onto the surface below is the world pass's read of the
+    // shell's `t`, so nothing has to be spawned. Box rule as always: a plain
+    // arrow is spent, a star shatters and flies on.
+    const fount = lvl.fountain;
+    if (fount && !fount.shattered &&
+        a.x < fount.x + fount.w && a.x + 14 > fount.x &&
+        a.y < fount.y + fount.h && a.y + 4 > fount.y) {
+      fount.shattered = true;
+      fount.t = 0;
+      lvl.relics[0].visible = true;
+      fx.play('crack');
+      fx.play('crumble');
+      burst(fount.x + fount.w / 2, fount.y + fount.h / 2, FX.iceShard);
+      if (!a.star) a.dead = true;
+    }
+    if (a.dead) continue;
+    const bird = lvl.frozenBird;
+    if (bird && bird.state === 'frozen' &&
+        a.x < bird.x + bird.w && a.x + 14 > bird.x &&
+        a.y < bird.y + bird.h && a.y + 4 > bird.y) {
+      bird.state = 'shattered'; // the block is gone; the robin is still frozen in place
+      bird.t = 0;
+      lvl.relics[2].visible = true;
+      fx.play('crack');
+      burst(bird.x + bird.w / 2, bird.y + bird.h / 2, FX.iceShard);
       if (!a.star) a.dead = true;
     }
     if (a.dead) continue;

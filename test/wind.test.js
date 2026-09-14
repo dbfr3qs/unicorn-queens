@@ -67,7 +67,7 @@ describe('updateWind (the one howl per cycle)', () => {
   });
 
   it('the howl is zone-gated: no sfx with the player in the gate or the spire', () => {
-    const { lvl, p } = unitRig(300); // the peakgate, outside [500, 3600)
+    const { lvl, p } = unitRig(300); // the calm start, west of WIND_X0 (there is no gate there any more, but the wind still begins at 500)
     updateWind(lvl, p, DT, fx, 5.99);
     updateWind(lvl, p, DT, fx, 6.01); // the edge: no howl
     expect(calls).not.toContain('gust');

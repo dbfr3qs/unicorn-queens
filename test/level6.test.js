@@ -22,18 +22,17 @@ describe('level 6 data', () => {
     expect(lvl.width).toBe(6800);
     expect(lvl.groundY).toBe(gy);
     expect(lvl.zones).toEqual([
-      { x0: 0, x1: 500, kind: 'miregate' }, // extends past the arch: the wall's east stone (420–500) must sit inside the gate zone
-      { x0: 500, x1: 3800, kind: 'mire' },
+      { x0: 0, x1: 3800, kind: 'mire' }, // the swamp from x 0: no gate
       { x0: 3800, x1: 6800, kind: 'mire-deep' },
     ]);
     expect(lvl.ground.map(s => [s.x, s.x + s.w])).toEqual(
-      [[0, 500], [500, 1100], [1450, 1900], [2300, 5500], [5800, 6800]]);
+      [[0, 1100], [1450, 1900], [2300, 5500], [5800, 6800]]);
     expect(lvl.lava).toEqual([
       { x: 1100, w: 350, water: true },
       { x: 1900, w: 400, water: true },
       { x: 5500, w: 300, water: true },
     ]);
-    expect(lvl.ground[0].kind).toBe('stone'); // the gate passage
+    expect(lvl.ground[0].kind).toBe('ground'); // the heron grove, from the first step
   });
 
   it('ground + water cover the whole width exactly once', () => {

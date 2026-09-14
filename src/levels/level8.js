@@ -5,7 +5,7 @@
 // stretches, the gears slow, the light dims. The Warden (M6) is wound to
 // keep the queen out; his death is a rest, not a kill (M7): the pearl
 // falls from the astrolabe, the trapdoor over the cloud shaft drops, and
-// the level ends in a flight dive. All clock/spring/ending state lives in
+// the level ends by dropping down it. All clock/spring/ending state lives in
 // this data; the M2–M7 subsystems read and mutate it.
 import { clockCuts } from '../clock.js'; // the beat `when` gates read the live cut count
 
@@ -28,7 +28,7 @@ export function createLevel8(viewH = 600) {
       { x: 2200, w: 150, kind: 'grate' }, // before the library
       { x: 2900, w: 150, kind: 'grate' }, // before the hub
       { x: 3800, w: 400, kind: 'grate' }, // the pendulum bridge crossing
-      { x: 5820, w: 120, kind: 'shaft' }, // the cloud shaft (the flight-only exit)
+      { x: 5820, w: 120, kind: 'shaft' }, // the cloud shaft (the exit)
     ],
     ground: [
       { x: 0, w: 1700, kind: 'stone', y: groundY }, // island + gate hall
@@ -99,12 +99,13 @@ export function createLevel8(viewH = 600) {
       showWhen: enemies => enemies.some(
         e => e.kind === 'warden' && e.dead && (e.dyingT ?? 0) <= 0),
     },
-    // Under the trapdoor lid: a flier through the shaft wins (reachedExit);
-    // a walker takes the pit rule. The flight-only exit: the exit rect is a
-    // floor hole, so a falling walker overlaps it before the pit line —
-    // flightOnly is the gate (design §10; deviation 1 as written is
-    // geometrically unsound for a floor hole, corrected in M7).
-    exit: { x: 5820, y: groundY, w: 120, h: 100, locked: true, flightOnly: true },
+    // Under the trapdoor lid: anyone who goes down the shaft wins. The exit
+    // rect is a floor hole, and a falling player overlaps it before the pit
+    // line — so a walker who steps off the lip drops through and wins, and
+    // a flier who dives does too. (It was flight-only until the design was
+    // changed: the dive was a nice echo of level 4, but it was an obstacle
+    // in front of an ending.)
+    exit: { x: 5820, y: groundY, w: 120, h: 100, locked: true },
     // M3: intro (spawn, the Warden's omen) + the Great Clock's hub beats
     // (c0 repeats at 0 cuts, c1/c2 voice the winding-down, each once).
     dialogs: [
@@ -167,7 +168,7 @@ export function createLevel8(viewH = 600) {
           when: g => g.level.pearl && g.level.pearl.taken, // fires on entry, pearl taken
           lines: [
             { speaker: 'The Unicorn King', text: 'So the last spring is still. The Warden rests. And the citadel, at last, stands still.' },
-            { speaker: 'The Unicorn King', text: 'The way down is open, queen — through the clouds, to the ice. The throne is waiting. Fly true.' },
+            { speaker: 'The Unicorn King', text: 'The way down is open, queen — through the clouds, to the ice. The throne is waiting. Go.' },
           ],
         }],
       },

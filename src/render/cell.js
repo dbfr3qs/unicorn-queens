@@ -2,6 +2,8 @@
 // rise and fade out over the unlock (unlockT); the witch is drawn between
 // the dark interior and the bars, and fades out over her FADE_T seconds.
 import { FADE_T } from '../cell.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteFeet, scaleToHeight } from './sprite.js';
 
 export function drawCell(c, lvl) {
   const cell = lvl.cell;
@@ -17,19 +19,31 @@ export function drawCell(c, lvl) {
     c.save();
     c.translate(cell.wx, cell.wy);
     if (cell.witch === 'fading') c.globalAlpha = Math.max(0, cell.fadeT / FADE_T);
-    c.fillStyle = '#3d2a66'; // cowl
-    c.fillRect(3, 0, 14, 13);
-    c.fillStyle = '#f0d8c0'; // face
-    c.fillRect(6, 5, 8, 6);
-    c.fillStyle = '#fff'; // hopeful eyes
-    c.fillRect(8, 7, 2, 2);
-    c.fillRect(11, 7, 2, 2);
-    c.fillStyle = '#5a3d9a'; // robe
-    c.fillRect(4, 12, 12, 18);
-    c.fillStyle = '#8a5f22'; // staff
-    c.fillRect(17, 5, 2, 25);
-    c.fillStyle = '#b57edc'; // orb
-    c.fillRect(16, 1, 4, 4);
+    // cell.wx/wy is her top-left; she stands 20 wide by 30 tall, so her feet are at
+    // (10, 30) in this space. The translate is scoped to its own save/restore: a sprite
+    // that has not decoded must leave the vector fallback's coordinates untouched.
+    let drewWitch = false;
+    if (spriteReady('witch')) {
+      c.save();
+      c.translate(10, 30);
+      drewWitch = drawSpriteFeet(c, 'witch', 0, scaleToHeight('witch', 32));
+      c.restore();
+    }
+    if (!drewWitch) {
+      c.fillStyle = '#3d2a66'; // cowl
+      c.fillRect(3, 0, 14, 13);
+      c.fillStyle = '#f0d8c0'; // face
+      c.fillRect(6, 5, 8, 6);
+      c.fillStyle = '#fff'; // hopeful eyes
+      c.fillRect(8, 7, 2, 2);
+      c.fillRect(11, 7, 2, 2);
+      c.fillStyle = '#5a3d9a'; // robe
+      c.fillRect(4, 12, 12, 18);
+      c.fillStyle = '#8a5f22'; // staff
+      c.fillRect(17, 5, 2, 25);
+      c.fillStyle = '#b57edc'; // orb
+      c.fillRect(16, 1, 4, 4);
+    }
     c.restore();
   }
   const openFrac = cell.open ? 1 : cell.opening ? (0.8 - cell.unlockT) / 0.8 : 0;

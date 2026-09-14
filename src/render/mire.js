@@ -6,6 +6,8 @@
 // Winch, the bridge (all three states), and the exit arch with the
 // stairway to the peak. Pure functions of world x and time (state read
 // from lvl), no RNG — snapshots stay text-stable.
+import { spriteReady } from '../sprites.js';
+import { drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
 const BRIDGE_LOWER = 1.2; // must match src/bridge.js (M4)
 
 function drawDeadCypress(c, x, gy, topY, w) {
@@ -24,7 +26,7 @@ function drawDeadCypress(c, x, gy, topY, w) {
 }
 
 export function drawMireBack(c, lvl, t = 0) {
-  if (!lvl.zones?.some(z => z.kind === 'miregate' || z.kind === 'mire' || z.kind === 'mire-deep')) return;
+  if (!lvl.zones?.some(z => z.kind === 'mire' || z.kind === 'mire-deep')) return;
   const gy = lvl.groundY;
   drawDeadCypress(c, 950, gy, 150, 26); // the great cypress (heron grove)
   for (const [x, top, w] of [
@@ -259,35 +261,36 @@ function drawBridge(c, lvl) {
   c.fillRect(br.x - 20, br.y - 96, 40, 8);
 }
 
-// The exit arch at the hollow's east end: the stone arch, and beyond it
-// the stairway up to the peak (snow band on the steps). Sealed: dimmed
-// + a pulsing seal glow; unlocked: bright + rising sparkle motes (pure t).
+// The exit at the hollow's east end: a gatehouse — a tower either side of
+// the arch — with the dark of the way through behind its opening. Sealed:
+// dimmed + a pulsing seal glow; unlocked: bright + rising sparkle motes
+// (pure t). It used to stand in front of a vector stairway and a wedge of
+// peak face; the sheet paints the dark of its own archway, so nothing is
+// drawn behind it now.
+const GATEHOUSE_W = 190; // drawn width: the sheet's opening then covers the 60 px exit box
 function drawExitArch(c, lvl, t) {
   const ex = lvl.exit;
   if (!ex) return;
   const gy = lvl.groundY;
   const { x, w } = ex;
-  c.save();
-  if (ex.locked) c.globalAlpha = 0.55; // dimmed while sealed
-  c.fillStyle = '#232c38'; // the peak face beyond
-  c.beginPath();
-  c.moveTo(x, 470);
-  c.lineTo(x + 120, 380);
-  c.lineTo(x + 120, gy);
-  c.lineTo(x, gy);
-  c.closePath();
-  c.fill();
-  for (let i = 0; i < 4; i++) { // the stairway, rising to the peak
-    c.fillStyle = '#39445c';
-    c.fillRect(x + 8 + i * 24, gy - 16 - i * 14, 26, 16);
-    c.fillStyle = '#e8f0f4'; // snow band on each step top
-    c.fillRect(x + 8 + i * 24, gy - 18 - i * 14, 26, 4);
+  if (spriteReady('gatehouse')) {
+    // no dimming of the stone while sealed: the seal glow in the opening is
+    // the locked tell, and a see-through gatehouse read as a ghost of one
+    c.save();
+    c.translate(x + w / 2, gy);
+    drawSpriteFeet(c, 'gatehouse', 0, scaleToWidth('gatehouse', GATEHOUSE_W));
+    c.restore();
+  } else {
+    c.save();
+    if (ex.locked) c.globalAlpha = 0.55;
+    c.fillStyle = '#0e1216';
+    c.fillRect(x - 6, 420, w + 12, gy - 420);
+    c.restore();
+    c.fillStyle = '#2c3438'; // the stone arch frame
+    c.fillRect(x - 14, 430, 14, gy - 430);
+    c.fillRect(x + w, 430, 14, gy - 430);
+    c.fillRect(x - 14, 418, w + 28, 16);
   }
-  c.restore();
-  c.fillStyle = '#2c3438'; // the stone arch frame
-  c.fillRect(x - 14, 430, 14, gy - 430);
-  c.fillRect(x + w, 430, 14, gy - 430);
-  c.fillRect(x - 14, 418, w + 28, 16);
   if (ex.locked) { // the seal glow
     c.globalAlpha = 0.3 + 0.15 * Math.sin(t * 2);
     c.fillStyle = '#9fd0ff';
@@ -305,9 +308,9 @@ function drawExitArch(c, lvl, t) {
 }
 
 export function drawMire(c, lvl, t = 0) {
-  if (!lvl.zones?.some(z => z.kind === 'miregate' || z.kind === 'mire' || z.kind === 'mire-deep')) return;
+  if (!lvl.zones?.some(z => z.kind === 'mire' || z.kind === 'mire-deep')) return;
   const gy = lvl.groundY;
-  for (const x of [820, 2500, 3200, 3950, 4600, 5300, 6050, 6560]) drawFern(c, x, gy);
+  for (const x of [180, 820, 2500, 3200, 3950, 4600, 5300, 6050, 6560]) drawFern(c, x, gy); // 180: where the gate passage was
   drawTemple(c, 4700, gy);
   drawTemple(c, 5400, gy);
   drawVentRim(c, lvl.vent?.x ?? 2100, gy);

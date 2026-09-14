@@ -1,0 +1,619 @@
+{
+ "sprites": {
+  "bat": {
+   "anchor": "feet",
+   "file": "bat.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 18,
+    "w": 24
+   },
+   "w": 48
+  },
+  "bee": {
+   "anchor": "feet",
+   "file": "bee.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 14,
+    "w": 18
+   },
+   "w": 48
+  },
+  "bg_citadel_clouds": {
+   "anchor": "tile",
+   "file": "bg_citadel_clouds.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 300,
+   "hitbox": null,
+   "w": 926
+  },
+  "bg_citadel_sky": {
+   "anchor": "tile",
+   "file": "bg_citadel_sky.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "bg_forest_hills": {
+   "anchor": "tile",
+   "file": "bg_forest_hills.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 300,
+   "hitbox": null,
+   "w": 1075
+  },
+  "bg_forest_sky": {
+   "anchor": "tile",
+   "file": "bg_forest_sky.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "bg_mire_sky": {
+   "anchor": "tile",
+   "file": "bg_mire_sky.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "bg_mire_trees": {
+   "anchor": "tile",
+   "file": "bg_mire_trees.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 330,
+   "hitbox": null,
+   "w": 1035
+  },
+  "bg_night_far": {
+   "anchor": "tile",
+   "file": "bg_night_far.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 280,
+   "hitbox": null,
+   "w": 911
+  },
+  "bg_night_near": {
+   "anchor": "tile",
+   "file": "bg_night_near.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 360,
+   "hitbox": null,
+   "w": 1132
+  },
+  "bg_night_sky": {
+   "anchor": "tile",
+   "file": "bg_night_sky.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "bg_peak_sky": {
+   "anchor": "tile",
+   "file": "bg_peak_sky.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "bg_peak_snow": {
+   "anchor": "tile",
+   "file": "bg_peak_snow.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 360,
+   "hitbox": null,
+   "w": 1111
+  },
+  "boots": {
+   "anchor": "centre",
+   "file": "boots.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "boulder": {
+   "anchor": "centre",
+   "file": "boulder.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 20,
+    "w": 20
+   },
+   "w": 32
+  },
+  "bow": {
+   "anchor": "centre",
+   "file": "bow.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "dragon": {
+   "anchor": "feet",
+   "file": "dragon.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 44,
+    "w": 60
+   },
+   "w": 96
+  },
+  "gem": {
+   "anchor": "centre",
+   "file": "gem.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "ghost": {
+   "anchor": "feet",
+   "file": "ghost.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 26,
+    "w": 28
+   },
+   "w": 64
+  },
+  "ground_dirt": {
+   "anchor": "tile",
+   "file": "ground_dirt.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 200,
+   "hitbox": null,
+   "w": 540
+  },
+  "grow": {
+   "anchor": "centre",
+   "file": "grow.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "hare": {
+   "anchor": "feet",
+   "file": "hare.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 20,
+    "w": 24
+   },
+   "w": 48
+  },
+  "heart": {
+   "anchor": "centre",
+   "file": "heart.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "heartcap": {
+   "anchor": "centre",
+   "file": "heartcap.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "hops": {
+   "anchor": "centre",
+   "file": "hops.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "key": {
+   "anchor": "centre",
+   "file": "key.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "lantern": {
+   "anchor": "centre",
+   "file": "lantern.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 20,
+    "w": 18
+   },
+   "w": 32
+  },
+  "mage": {
+   "anchor": "feet",
+   "file": "mage.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 54,
+    "w": 42
+   },
+   "w": 96
+  },
+  "magnet": {
+   "anchor": "centre",
+   "file": "magnet.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "moth": {
+   "anchor": "feet",
+   "file": "moth.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 16,
+    "w": 20
+   },
+   "w": 48
+  },
+  "pearl": {
+   "anchor": "centre",
+   "file": "pearl.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 18,
+    "w": 18
+   },
+   "w": 32
+  },
+  "plat_ledge": {
+   "anchor": "tile",
+   "file": "plat_ledge.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": null,
+   "w": 230
+  },
+  "player": {
+   "anchor": "feet",
+   "file": "player.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 36,
+    "w": 28
+   },
+   "w": 96
+  },
+  "player_jump": {
+   "anchor": "feet",
+   "file": "player_jump.png",
+   "fps": 0,
+   "frames": 2,
+   "h": 96,
+   "hitbox": {
+    "h": 36,
+    "w": 28
+   },
+   "w": 96
+  },
+  "player_run": {
+   "anchor": "feet",
+   "file": "player_run.png",
+   "fps": 12,
+   "frames": 8,
+   "h": 96,
+   "hitbox": {
+    "h": 36,
+    "w": 28
+   },
+   "w": 96
+  },
+  "queen": {
+   "anchor": "feet",
+   "file": "queen.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 72,
+    "w": 48
+   },
+   "w": 96
+  },
+  "sentinel": {
+   "anchor": "feet",
+   "file": "sentinel.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 28,
+    "w": 30
+   },
+   "w": 64
+  },
+  "shield": {
+   "anchor": "centre",
+   "file": "shield.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "slime": {
+   "anchor": "feet",
+   "file": "slime.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 28,
+    "w": 30
+   },
+   "w": 48
+  },
+  "snake": {
+   "anchor": "feet",
+   "file": "snake.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 24,
+    "w": 26
+   },
+   "w": 64
+  },
+  "spider": {
+   "anchor": "feet",
+   "file": "spider.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 48,
+   "hitbox": {
+    "h": 22,
+    "w": 20
+   },
+   "w": 48
+  },
+  "spiderboss": {
+   "anchor": "feet",
+   "file": "spiderboss.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 56,
+    "w": 72
+   },
+   "w": 96
+  },
+  "star": {
+   "anchor": "centre",
+   "file": "star.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "sunbeam": {
+   "anchor": "centre",
+   "file": "sunbeam.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 32,
+   "hitbox": {
+    "h": 16,
+    "w": 16
+   },
+   "w": 32
+  },
+  "troll": {
+   "anchor": "feet",
+   "file": "troll.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 64,
+    "w": 52
+   },
+   "w": 96
+  },
+  "wall_citadel": {
+   "anchor": "tile",
+   "file": "wall_citadel.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "wall_deep": {
+   "anchor": "tile",
+   "file": "wall_deep.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 940,
+   "hitbox": null,
+   "w": 771
+  },
+  "wall_dungeon": {
+   "anchor": "tile",
+   "file": "wall_dungeon.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 940,
+   "hitbox": null,
+   "w": 771
+  },
+  "wall_gate": {
+   "anchor": "tile",
+   "file": "wall_gate.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "wall_spire": {
+   "anchor": "tile",
+   "file": "wall_spire.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 640,
+   "hitbox": null,
+   "w": 1383
+  },
+  "wall_stone": {
+   "anchor": "tile",
+   "file": "wall_stone.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 940,
+   "hitbox": null,
+   "w": 771
+  },
+  "warden": {
+   "anchor": "feet",
+   "file": "warden.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 96,
+   "hitbox": {
+    "h": 64,
+    "w": 60
+   },
+   "w": 96
+  },
+  "witch": {
+   "anchor": "feet",
+   "file": "witch.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 20,
+    "w": 20
+   },
+   "w": 64
+  },
+  "wizardboss": {
+   "anchor": "feet",
+   "file": "wizardboss.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 24,
+    "w": 24
+   },
+   "w": 64
+  },
+  "wraith": {
+   "anchor": "feet",
+   "file": "wraith.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 30,
+    "w": 26
+   },
+   "w": 64
+  },
+  "zombie": {
+   "anchor": "feet",
+   "file": "zombie.png",
+   "fps": 0,
+   "frames": 1,
+   "h": 64,
+   "hitbox": {
+    "h": 40,
+    "w": 34
+   },
+   "w": 64
+  }
+ }
+}

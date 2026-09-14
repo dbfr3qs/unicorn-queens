@@ -1,5 +1,6 @@
 // Level layout and shared collision resolution.
 // Pure module: no DOM/canvas globals (view height is passed in).
+import { RING_RADIUS } from '../thaw.js'; // level 9: how far a lit hearth melts
 
 export const WORLD_W = 2400;
 export const GROUND_H = 40;
@@ -60,6 +61,36 @@ export function standingKind(p, lvl) {
     if (cx >= s.x && cx < s.x + s.w && Math.abs(s.y - feet) <= 8) return s.kind;
   }
   return null;
+}
+
+// What the ground UNDER the player actually behaves like, which on level 9 is
+// not always what it is made of. Four rules, outermost first:
+//
+//   1. a live frost patch beats everything — it is NEW ice, laid on top of
+//      whatever is underneath, so it slides on stone and slides in boots
+//   2. a hearth ring that has finished melting has turned its ice into 'thaw'
+//      — wet floor, which falls into the normal friction branch on its own
+//   3. the bounce boots grip what ice is left: the peak's slide, answered ten
+//      seconds at a time
+//   4. otherwise the surface is what it is made of (standingKind)
+//
+// The ring is checked before the boots because it changes what the ground IS,
+// while the boots only change how ice behaves — grip on floor that has
+// already melted is a question that does not arise.
+//
+// All three extra rules are gated on the thaw clock, so every other level's
+// answer is rule 4 exactly as before: level 7's ice still slides in boots,
+// which is what makes it level 7's problem and this level's answer.
+export function effectiveKind(p, lvl) {
+  const k = standingKind(p, lvl);
+  if (!lvl.thaw) return k;
+  const cx = p.x + p.w / 2;
+  if (lvl.frostPatches?.some(pc => cx > pc.x && cx < pc.x + pc.w)) return 'ice';
+  if (k !== 'ice') return k;
+  if (lvl.thaw.rings.some(r => r.lit && r.t >= 1 && Math.abs(cx - (r.x + 24)) < RING_RADIUS)) {
+    return 'thaw';
+  }
+  return p.boots > 0 ? 'stone' : k;
 }
 
 // Land a falling entity on the first surface it crossed this frame.

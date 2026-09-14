@@ -7,12 +7,13 @@
 // Math.random before src/background.js generates its stars at import
 // time.
 import { test, expect } from 'vitest';
-import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, freshGame8, step } from './helpers/render-harness.js';
+import { freshGame, freshGame2, freshGame3, freshGame4, freshGame5, freshGame6, freshGame7, freshGame8, freshGame9, step } from './helpers/render-harness.js';
 import { draw } from '../src/render/index.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
 import { loot } from '../src/loot.js';
 import { BIG_W, BIG_H } from '../src/player.js';
-import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone, fireballs } from '../src/projectiles.js';
+import { fireFireball, FIREBALL_SPEED, fireBoulder, fireCone, fireShockwaves, fireballs } from '../src/projectiles.js';
+import { igniteBrazier } from '../src/thaw.js';
 
 test('initial frame', () => {
   freshGame();
@@ -253,10 +254,20 @@ test('l3 nook mid-crumble (shards falling, glint widening)', () => {
   expect(step({}, 1)).toMatchSnapshot(); // section darkened, shards partway down
 });
 
+test('l3 nook mid-reveal (the dust cloud, the recess only part open)', () => {
+  const g = freshGame3();
+  g.level.keyNook.revealed = true;
+  g.level.keyNook.revealT = 0.5; // 0.4 s into the 0.9 s reveal
+  g.level.platforms.find(p => p.x === 1595 && p.w === 90).hidden = false;
+  g.player.x = 1470;
+  g.camera.x = 1084; // 1470 + 14 - 400
+  expect(step({}, 1)).toMatchSnapshot(); // haze over a half-grown opening
+});
+
 test('l3 nook revealed (framed recess, ledge, key)', () => {
   const g = freshGame3();
   g.level.keyNook.revealed = true;
-  g.level.platforms.find(p => p.x === 1600 && p.w === 90).hidden = false;
+  g.level.platforms.find(p => p.x === 1595 && p.w === 90).hidden = false;
   g.player.x = 1470;
   g.camera.x = 1084; // 1470 + 14 - 400
   expect(step({}, 1)).toMatchSnapshot(); // dark recess, ledge + twinkling key inside
@@ -407,7 +418,7 @@ test('l4 dragon (dive: wings spread flat, low over the ground)', () => {
 // brightening) are set via gameTime / direct state so each snapshot shows
 // the marker mid-pulse.
 
-test('l5 gate (spawn: day sky + sun through the arch, intro beat open)', () => {
+test('l5 spawn (open woodland from x 0, day sky, intro beat open)', () => {
   freshGame5();
   // the player spawns inside the intro band, so frame 1 opens the beat
   // and freezes the world: the first thing the realm's champion sees.
@@ -490,38 +501,15 @@ test('l5 bee (mid-sting dash, home flower behind it)', () => {
 // Camera values are player.x + 14 - 400 (or the max-scroll clamp,
 // 6800 - 800 = 6000), so updateCamera holds them still. The intro beat
 // only opens inside its 40-240 spawn band, so every scenario but the
-// gate places the player outside it.
+// spawn places the player outside it.
 
-test('l6 gate (spawn: gloom sky, moon, fog band through the arch, intro beat open)', () => {
+test('l6 spawn (open swamp from x 0, gloom sky, moon, fog band, intro beat open)', () => {
   freshGame6();
   // the player spawns inside the intro band, so frame 1 opens the beat
   // and freezes the world: the mire's first words.
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-// Regression: the gate arch was once drawn at raw SCREEN x 256–400 while
-// the west wall scrolled from sx0 — the arch followed the player until the
-// zone culled — and its opening (260–400) had no stone on the right, so it
-// read as a floating shelf. The wall is now one world-anchored structure
-// 0–500: stone either side of the 240–420 opening, lintel arc centred on
-// world (330, 390) r 90, and 10 px jambs centred on each edge.
-test('l6 gate arch is world-anchored, with stone on both sides', () => {
-  for (const camX of [0, 200]) {
-    const g = freshGame6();
-    g.player.x = camX + 386; // outside the 40–240 intro band; no update, pure draw
-    g.camera.x = camX;
-    const { ctx, lines } = createRecordingCtx();
-    draw(ctx, 800, 600);
-    expect(lines, `lintel arc not at screen x ${330 - camX} (cam.x=${camX})`)
-      .toContain(`arc(${330 - camX}, 390, 90, 0, 3.142, true)`);
-    expect(lines, `east stone missing (cam.x=${camX})`)
-      .toContain(`fillRect(${420 - camX}, 0, 80, 560)`);
-    expect(lines, `west jamb missing (cam.x=${camX})`)
-      .toContain(`fillRect(${235 - camX}, 390, 10, 170)`);
-    expect(lines, `east jamb missing (cam.x=${camX})`)
-      .toContain(`fillRect(${415 - camX}, 390, 10, 170)`);
-  }
-});
 
 test('l6 nest (webbed, glint mid-pulse)', () => {
   const g = freshGame6();
@@ -605,7 +593,7 @@ test('l6 exit arch (sealed: dim, seal glow pulsing)', () => {
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l6 exit arch (unlocked: bright stairway, rising motes)', () => {
+test('l6 exit arch (unlocked: bright, rising motes)', () => {
   const g = freshGame6();
   g.level.exit.locked = false;
   g.gameTime = 1.2; // motes at distinct heights
@@ -622,7 +610,7 @@ test('l6 exit arch (unlocked: bright stairway, rising motes)', () => {
 // scenarios there stand just outside the king band or keep the wizard
 // alive so the when-gate holds.
 
-test('l7 gate (spawn: starfield through the arch, the moon, the stairs, the calm vane, intro beat open)', () => {
+test('l7 spawn (open snowfield from x 0, the moon, the calm vane, intro beat open)', () => {
   freshGame7();
   // the player spawns inside the 40-240 intro band: frame 1 opens the
   // beat and the world freezes behind the dialogue.
@@ -901,4 +889,226 @@ test('l8 the open shaft (the lid down, the shaft glow, the King on the rim, the 
   g.player.x = 5586; g.player.y = g.level.groundY - 36;
   g.camera.x = 5200; // max scroll
   expect(step({}, 0)).toMatchSnapshot();
+});
+
+// A level 9 arena with the puzzle already done: three hearths lit, three
+// seals open, the sky at dawn, the King on his pad, the camera on the throne
+// room. Every arena scenario starts from here.
+function stageArena(g) {
+  const lvl = g.level;
+  g.dialogsFired.add('l9-intro');
+  g.dialogsFired.add('l9-gate');
+  for (let k = 0; k < 3; k++) {
+    lvl.thaw.rings[k].lit = true;
+    lvl.thaw.rings[k].igniteT = 1;
+    lvl.thaw.rings[k].t = 1;
+    lvl.doors[k].state = 'open';
+  }
+  lvl.thaw.thaws = 3;
+  lvl.thaw.skyT = 3;
+  lvl.king.x = 5300;
+  lvl.king.state = 'stand';
+  g.player.x = 5400;
+  g.player.y = lvl.groundY - 36;
+  g.player.onGround = true;
+  g.camera.x = 5014;
+  return lvl;
+}
+
+// The same, with her awake and wounded to `hp` — which is what picks the
+// phase, so a scenario names a health rather than a phase number.
+function stageFight(g, hp) {
+  stageArena(g);
+  const q = g.enemies.find(e => e.kind === 'queenboss');
+  q.sleeping = false;
+  q.x = 5600;
+  q.y = 500;
+  q.hp = hp;
+  q.spikes = [];
+  q.idle = 5; // hold her still: the scenario is the picture, not her brain
+  q.phase = hp > 16 ? 1 : hp > 8 ? 2 : 3;
+  q.phaseT = 0;
+  q.staggerT = 0;
+  q.staggerCd = 0;
+  q.blizzCd = 99;
+  g.level.queenUnfreeze = { t: 2, done: true };
+  return q;
+}
+
+// ---------------------------------------------------------------------------
+// Level 9 — The Frozen Throne. The level's whole shape is a thaw, so these
+// walk it from the frozen pre-dawn at the spawn to the end card over a healed
+// palace: every state the player passes through, and the ones they only see
+// once.
+test('l9 spawn at the frozen pre-dawn (the glacier rim, the King, the caught fountain, the intro beat open)', () => {
+  freshGame9();
+  expect(step({}, 1)).toMatchSnapshot(); // frame 1: the player spawns inside the l9-intro band
+});
+
+test('l9 hearth A mid-ignition (the flame rising, the ring melting, the seal cracking)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  g.level.relics[0].taken = true;
+  igniteBrazier(g.level, 0, { play: () => {} });
+  g.level.thaw.rings[0].igniteT = 0.5;
+  g.level.thaw.rings[0].t = 0.4;
+  g.level.thaw.skyT = 0.3;
+  g.player.x = 980; g.player.y = g.level.groundY - 36;
+  g.camera.x = 594;
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l9 the courtyard (the golem, a sprite hovering, a patch on the floor, the hare running home)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  g.level.frozenHare.state = 'running';
+  g.level.frozenHare.x = 1180;
+  g.level.frostPatches.push({ x: 2020, w: 80, t: 1.5 });
+  g.player.x = 2050; g.player.y = g.level.groundY - 36;
+  g.camera.x = 1664;
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 the frozen wave at three thaws (the crest, the shelves, the dawn sky)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  for (let k = 0; k < 3; k++) {
+    g.level.thaw.rings[k].lit = true;
+    g.level.thaw.rings[k].igniteT = 1;
+    g.level.thaw.rings[k].t = 1;
+    g.level.doors[k].state = 'open';
+  }
+  g.level.thaw.thaws = 3;
+  g.level.thaw.skyT = 3;
+  g.player.x = 2400; g.player.y = 400 - 36; g.player.onGround = true;
+  g.camera.x = 2014;
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l9 the hall, film still on (the frozen people, a frozen fountain, the high windows)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  g.player.x = 4200; g.player.y = g.level.groundY - 36;
+  g.camera.x = 3814;
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l9 the antechamber (the bird block shattered, the robin still frozen, the scholar dripping)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  g.level.frozenBird.state = 'shattered';
+  g.level.frozenBird.t = 0.2;
+  g.level.relics[2].visible = true;
+  const scholar = g.level.hallFigures.find(f => f.kind === 'scholar');
+  scholar.state = 'drip';
+  scholar.t = 0.5;
+  g.level.thaw.skyT = 2;
+  g.player.x = 4260; g.player.y = g.level.groundY - 36;
+  g.camera.x = 3874;
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l9 the gate beat (the box open, the Queen frozen on her throne, the King at the door)', () => {
+  const g = freshGame9();
+  g.dialogsFired.add('l9-intro');
+  for (let k = 0; k < 3; k++) {
+    g.level.thaw.rings[k].lit = true;
+    g.level.thaw.rings[k].igniteT = 1;
+    g.level.thaw.rings[k].t = 1;
+    g.level.doors[k].state = 'open';
+  }
+  g.level.thaw.thaws = 3;
+  g.level.thaw.skyT = 3;
+  g.level.king.x = 5300; g.level.king.state = 'stand';
+  g.player.x = 5300; g.player.y = g.level.groundY - 36;
+  g.camera.x = 4914;
+  expect(step({}, 1)).toMatchSnapshot(); // the l9-gate band fires on entry
+});
+
+test('l9 the unfreezing, mid-shell (the shards, the Queen still on the throne)', () => {
+  const g = freshGame9();
+  stageArena(g);
+  g.level.queenUnfreeze = { t: 0.5, boss: false };
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 the Queen at attention (on the arena ice, all 24 pips, the throne empty)', () => {
+  const g = freshGame9();
+  stageArena(g);
+  const q = g.enemies.find(e => e.kind === 'queenboss');
+  q.sleeping = false; q.x = 5560; q.y = 500;
+  g.level.queenUnfreeze = { t: 2, done: true };
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 phase 1, the bolt (a pale bolt in flight, row 1 of the pips draining)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 20);
+  fireFireball(q.x, q.y + 20, -240, 30, { play: () => {} }, false, true);
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 phase 1, the slam (twin waves running the arena floor)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 20);
+  fireShockwaves(q.x + 28, g.level.groundY, { play: () => {} }, 2.5, 180, [5200, 5950]);
+  expect(step({}, 4)).toMatchSnapshot();
+});
+
+test('l9 phase 1, the spike (the glint and a risen column)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 20);
+  q.spikes = [{ x: 5380, t: 1.1, cracked: true }, { x: 5300, t: 0.4, cracked: false }];
+  expect(step({}, 0)).toMatchSnapshot();
+});
+
+test('l9 phase 2, the breath (the pale cone, a fresh patch, row 1 of the pips empty)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 14);
+  fireCone(q.x, q.y + 20, Math.PI * 0.85, { play: () => {} }, 1.2, false, 160, true);
+  g.level.frostPatches.push({ x: 5400, w: 80, t: 0.2 });
+  expect(step({}, 2)).toMatchSnapshot();
+});
+
+test('l9 phase 3, the blizzard (dense flakes, a slow wave, the last row of pips)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 5);
+  g.level.blizzard = { t: 2.0, next: 3 };
+  fireShockwaves(q.x + 28, g.level.groundY, { play: () => {} }, 3.0, 140, [5200, 5950]);
+  expect(step({}, 3)).toMatchSnapshot();
+});
+
+test('l9 the release, mid-dissolve (her light rising, the throne empty behind her)', () => {
+  const g = freshGame9();
+  const q = stageFight(g, 1);
+  q.dying = true;
+  q.dyingT = 2.0; // past the knees: she is light going up
+  q.dead = true;
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 the ending, beam mid-sweep (the level thawing behind it, the King with the horn)', () => {
+  const g = freshGame9();
+  stageArena(g);
+  const q = g.enemies.find(e => e.kind === 'queenboss');
+  g.enemies.splice(g.enemies.indexOf(q), 1); // she is gone by now
+  g.level.ending9.started = true;
+  g.level.ending9.t = 3.7; // 1.5 s into the beam
+  g.level.ending9.phase = 'beam';
+  g.level.king.x = 5580; g.level.king.y = 520; g.level.king.state = 'beam';
+  expect(step({}, 1)).toMatchSnapshot();
+});
+
+test('l9 the end card (fully faded in, the robin on the rim, the healed scene behind it)', () => {
+  const g = freshGame9();
+  stageArena(g);
+  const q = g.enemies.find(e => e.kind === 'queenboss');
+  g.enemies.splice(g.enemies.indexOf(q), 1);
+  const e = g.level.ending9;
+  e.started = true; e.t = 12; e.phase = 'card'; e.card = true; e.cardT = 1.5;
+  e.robin = { t: 2.0 };
+  for (const f of g.level.hallFigures) f.state = 'gone';
+  for (const f of g.level.hallFountains) f.state = 'flowing';
+  g.level.king.x = 5580; g.level.king.y = 520; g.level.king.state = 'beam';
+  expect(step({}, 1)).toMatchSnapshot();
 });

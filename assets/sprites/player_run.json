@@ -1,0 +1,11 @@
+{
+ "file": "player_run.png",
+ "frames": 8,
+ "w": 96,
+ "h": 96,
+ "fps": 12,
+ "hitbox": {
+  "w": 28,
+  "h": 36
+ }
+}

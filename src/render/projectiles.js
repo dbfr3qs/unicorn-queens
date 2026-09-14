@@ -1,6 +1,7 @@
 // Enemy projectiles: fireballs (hot core in an orange glow), troll
 // boulders (rock with speckles), shockwave fronts (dust + rock shard).
 import { fireballs, boulders, shockwaves, cones, coneSegment, CONE_SEGS } from '../projectiles.js';
+import { drawSpriteCentre, scaleToHeight } from './sprite.js';
 
 export function drawFireballs(c) {
   for (const f of fireballs) {
@@ -51,7 +52,7 @@ export function drawBoulders(c) {
       c.lineWidth = 1;
       c.beginPath(); c.moveTo(-8, 0); c.quadraticCurveTo(0, 4, 8, 0); c.stroke();
       c.beginPath(); c.moveTo(0, -9); c.quadraticCurveTo(4, 0, 0, 9); c.stroke();
-    } else {
+    } else if (!drawSpriteCentre(c, 'boulder', 0, scaleToHeight('boulder', 20))) {
       c.fillStyle = '#6b4a32'; // rock
       c.fillRect(-9, -9, 18, 18);
       c.fillStyle = '#4a2d1c'; // speckles

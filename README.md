@@ -252,16 +252,9 @@ house/trance, synthesised on the fly rather than streamed, so it costs
   layers, each with a 32-bar mask of ones and zeros, so the form reads
   as text.
 - `src/music.js` — the director: which track plays, and how loud.
-- `music-lab.html` — the composition bench. `npm run serve`, then
-  <http://localhost:9000/music-lab.html>: preset picker, editable
-  pattern, Ctrl+Enter to re-evaluate while it plays. Patterns are
-  Strudel source strings, so anything tuned here pastes straight into
-  strudel.cc and back.
 
-`music-lab.html?selftest=1` runs the whole audio chain without a click
-and reports what came up — bundle, worklets, clock, and whether every
-preset still evaluates. Useful after touching the palette, since code
-kept in strings has no linter.
+Patterns are Strudel source strings, so anything here pastes straight
+into strudel.cc and back.
 
 All nine levels have a track, each in its own mode; a level whose
 name has no entry plays silence rather than failing.

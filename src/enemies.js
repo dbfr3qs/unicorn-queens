@@ -26,6 +26,9 @@ import './enemies/wizardboss.js';
 import './enemies/sentinel.js'; // level 8: the citadel's clockwork guardians
 import './enemies/moth.js'; // level 8: the clockwork moths
 import './enemies/warden.js'; // level 8 boss: the citadel's keeper
+import './enemies/sprite.js'; // level 9: the frost sprites
+import './enemies/golem.js'; // level 9: the glacier golems
+import './enemies/queenboss.js'; // level 9 boss: the Frost Queen
 
 export { E_W, E_H } from './enemies/slime.js'; // owned by slime; re-exported for tests
 export const E_STOMP_V = -400;

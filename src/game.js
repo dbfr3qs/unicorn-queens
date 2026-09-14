@@ -140,7 +140,7 @@ export function update(dt, viewW, fx) {
   updateRelics(game.level, game.player, dt, fx); // level 5: the three relics
   updateCogs(game.level, game.player, dt, fx); // level 6: the three cogs
   if (game.level.thaw) updateThaw(game.level, game.player, dt, fx); // level 9: after the pickup, so a seed planted the frame it is taken still counts
-  if (game.level.king) updateKing(game.level, game.player, dt, fx); // level 9: after the seals, so he steps through the frame one opens
+  if (game.level.king) updateKing(game.level, game.player, dt, fx, game.enemies); // level 9: after the seals, so he steps through the frame one opens
   if (game.level.queenUnfreeze) updateQueenWake(game.level, game.enemies, dt, fx, game.camera); // level 9: the level moves her, not her own brain
   if (game.level.sigilBlock) updateSigil(game.level, game.player, dt, fx); // level 7: the sigil + iron gate
   if (game.level.ending7) updatePeakEnding(game.level, game.enemies, dt, fx); // level 7: the release sequence
@@ -228,7 +228,6 @@ export function restartTarget() {
 export function reachedExit(p, lvl) {
   if (lvl.exit) {
     return !lvl.exit.locked &&
-      (!lvl.exit.flightOnly || !!p.flying) && // L8: the shaft is a flight dive
       p.x < lvl.exit.x + lvl.exit.w && p.x + p.w > lvl.exit.x &&
       p.y < lvl.exit.y + lvl.exit.h && p.y + p.h > lvl.exit.y;
   }

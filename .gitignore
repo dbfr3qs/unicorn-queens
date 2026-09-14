@@ -1,4 +1,19 @@
+# dependencies
 node_modules/
+
+# build output
 dist/
+
+# OS / editor
 .DS_Store
 *.log
+
+# Planning documents and development scratch. The game is src/, assets/,
+# index.html and vendor/; the tests, smoke check and static server are its
+# tooling. None of the below is any of that.
+LEVEL*-DESIGN.md
+LEVEL*-PLAN.md
+MUSIC-PLAN.md
+AGENTS.md
+music-lab.html
+_*-check.html

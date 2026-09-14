@@ -1,6 +1,7 @@
 // The pearl on its pedestal. The exit itself is invisible: the level
 // ends by walking down the staircase into the (unlocked) exit rect.
 import { palette } from './theme.js';
+import { drawSpriteCentre, scaleToHeight } from './sprite.js';
 
 export function drawPearl(c, lvl, gameTime) {
   const pearl = lvl.pearl;
@@ -21,9 +22,12 @@ export function drawPearl(c, lvl, gameTime) {
   const bob = Math.sin(gameTime * 3) * 3;
   c.save();
   c.translate(pearl.x + pearl.w / 2, pearl.y + pearl.h / 2 + bob);
-  c.fillStyle = '#fff5fa'; // pearl
-  c.fillRect(-9, -9, 18, 18);
-  c.fillStyle = palette.white; // shine
-  c.fillRect(-5, -6, 5, 4);
+  // the pedestal above is level structure and stays vector; only the pearl is swapped
+  if (!(drawSpriteCentre(c, 'pearl', 0, scaleToHeight('pearl', 20)))) {
+    c.fillStyle = '#fff5fa'; // pearl
+    c.fillRect(-9, -9, 18, 18);
+    c.fillStyle = palette.white; // shine
+    c.fillRect(-5, -6, 5, 4);
+  }
   c.restore();
 }

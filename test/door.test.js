@@ -112,6 +112,52 @@ describe('drop-shut', () => {
     expect(game.player.x).toBeGreaterThanOrEqual(DOOR_X + DOOR_W);
   });
 
+  it('is a wall from its first frame of closing: no doubling back through the drop', () => {
+    rig({ state: 'open' });
+    game.player.x = DOOR_X + DOOR_W + 20;
+    game.player.y = game.level.groundY - 44;
+    update(DT, 800, fx);
+    expect(game.level.door.state).toBe('closing');
+    input.left = true; // straight back west, while it is still coming down
+    for (let i = 0; i < 30; i++) update(DT, 800, fx);
+    expect(game.player.x).toBeGreaterThanOrEqual(DOOR_X + DOOR_W);
+    for (let i = 0; i < 40; i++) update(DT, 800, fx);
+    expect(game.level.door.state).toBe('shut');
+    expect(game.player.x).toBeGreaterThanOrEqual(DOOR_X + DOOR_W);
+  });
+
+  it('lifts again for a player shut out on the west side (a respawn put them there)', () => {
+    rig({ state: 'shut', noKey: true });
+    atDoor(30); // west of a door that only ever shuts behind you
+    update(DT, 800, fx);
+    expect(game.level.door.state).toBe('opening');
+    expect(calls).toContain('rumble');
+    for (let i = 0; i < 62; i++) update(DT, 800, fx);
+    expect(game.level.door.state).toBe('open');
+  });
+
+  it('lifts again for a spent key too, and not for one never spent', () => {
+    rig({ state: 'shut' });
+    game.level.key.consumed = true;
+    atDoor(30);
+    update(DT, 800, fx);
+    expect(game.level.door.state).toBe('opening');
+    rig({ state: 'shut' }); // rig resets the key: unspent
+    atDoor(30);
+    update(DT, 800, fx);
+    expect(game.level.door.state).toBe('shut');
+  });
+
+  it('stays a wall from the hall side: the re-lock still holds the fight in', () => {
+    rig({ state: 'shut', noKey: true });
+    game.player.x = DOOR_X + DOOR_W + 20;
+    game.player.y = game.level.groundY - 44;
+    input.left = true;
+    for (let i = 0; i < 30; i++) update(DT, 800, fx);
+    expect(game.level.door.state).toBe('shut');
+    expect(game.player.x).toBeGreaterThanOrEqual(DOOR_X + DOOR_W);
+  });
+
   it('does not close if the player never crosses', () => {
     rig({ state: 'open' });
     atDoor(30); // still on the west side

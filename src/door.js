@@ -68,6 +68,19 @@ export function updateDoor(lvl, p, dt, fx) {
     } else if (door.state === 'closing') {
       door.closeT -= dt;
       if (door.closeT <= 0) door.state = 'shut';
+    } else if (door.state === 'shut') {
+      // The re-lock keeps the hall's fight in; it is never meant to keep the
+      // player out. Someone standing WEST of a shut door has already been
+      // through it — it only shuts behind them — and got back here by the
+      // one second the drop took, or by a respawn. Without this they are
+      // stuck for good, so it lifts again for them; from the hall side it
+      // stays a wall. (Key doors: the key was spent on the way in.)
+      const west = !p.dead && p.x + p.w / 2 < door.x && p.x + p.w > door.x - 60;
+      if (west && (door.noKey || lvl.key?.consumed)) {
+        door.state = 'opening';
+        door.openT = DOOR_OPEN;
+        fx.play('rumble');
+      }
     } else if (door.state === 'cracking') { // level 9: a hearth's fire reached it
       door.openT += dt;
       if (door.openT >= DOOR_CRACK) { door.state = 'melting'; door.openT = 0; fx.play('melt', 0.5); }
@@ -78,10 +91,13 @@ export function updateDoor(lvl, p, dt, fx) {
   }
 }
 
-// Locked or shut: solid side-collision wall. The player is pushed back to
-// the side of the door their centre is on. A frost seal is solid all the way
-// through its crack and its melt — it is only a way through once it is open.
-const SOLID = new Set(['locked', 'shut', 'cracking', 'melting']);
+// Locked, shut or on its way down: solid side-collision wall. The player is
+// pushed back to the side of the door their centre is on. Closing counts
+// from its first frame: it starts only once the player is wholly past, and a
+// passable closing door let them double back through it and be shut out. A
+// frost seal is solid all the way through its crack and its melt — it is
+// only a way through once it is open.
+const SOLID = new Set(['locked', 'shut', 'closing', 'cracking', 'melting']);
 
 export function resolveDoor(lvl, p) {
   for (const door of doorsOf(lvl)) {

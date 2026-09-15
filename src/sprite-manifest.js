@@ -335,15 +335,6 @@ export const SPRITES = {
     "hitbox": null,
     "w": 64
   },
-  "frozen_wave": {
-    "anchor": "feet",
-    "file": "frozen_wave.png",
-    "fps": 0,
-    "frames": 1,
-    "h": 128,
-    "hitbox": null,
-    "w": 256
-  },
   "gatehouse": {
     "anchor": "feet",
     "file": "gatehouse.png",

@@ -969,7 +969,7 @@ test('l9 the courtyard (the golem, a sprite hovering, a patch on the floor, the 
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l9 the frozen wave at three thaws (the crest, the shelves, the dawn sky)', () => {
+test('l9 the wave shelves at three thaws (the shelves, the dawn sky)', () => {
   const g = freshGame9();
   g.dialogsFired.add('l9-intro');
   for (let k = 0; k < 3; k++) {

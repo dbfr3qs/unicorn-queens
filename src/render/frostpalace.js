@@ -398,35 +398,15 @@ function drawHallFountain(c, f, t, gy) {
   }
 }
 
-// ---- the frozen wave -----------------------------------------------------
-// The set piece: a wave at its crest, stopped. The three shelves cut into its
-// face ARE the platform collision (level9.js's platform rects) — the draw
-// matches them so the climb reads as climbing the wave.
+// ---- the wave shelves ------------------------------------------------------
+// There was a frozen wave here — a crest stopped mid-break, the level's set
+// piece, with the three shelves cut into its face — and drawn from its sheet
+// it read as some strange frozen tree rather than as water, so it is gone.
+// The shelves stay: they are the platform rects (level9.js), the way up and
+// seed 2's seat, and their lips are drawn to match them.
 function drawFrozenWave(c, lvl, t, gy) {
-  // The shelves are the platform rects and stay drawn either way: they are
-  // collision, and the player reads them as the way up the wave.
-  if (prop(c, 'frozen_wave', 2450, gy + waveDrop(lvl), 230)) { drawWaveShelves(c, gy); return; }
-  c.fillStyle = '#4f8ea0'; // the water body, rising to the curl
-  c.beginPath();
-  c.moveTo(2200, gy);
-  c.lineTo(2260, gy - 120);
-  c.lineTo(2420, gy - 200 + waveDrop(lvl));
-  c.lineTo(2560, gy - 170 + waveDrop(lvl));
-  c.lineTo(2620, gy - 60);
-  c.lineTo(2700, gy);
-  c.closePath();
-  c.fill();
-  c.fillStyle = '#7ec8b8'; // the clear blue-green of the face
-  c.fillRect(2280, gy - 130, 300, 100);
-  c.fillStyle = '#e8f7fc'; // the foam, frozen white
-  c.beginPath();
-  c.moveTo(2420, gy - 200 + waveDrop(lvl));
-  c.lineTo(2500, gy - 230 + waveDrop(lvl));
-  c.lineTo(2570, gy - 186 + waveDrop(lvl));
-  c.closePath();
-  c.fill();
   drawWaveShelves(c, gy);
-  void t;
+  void lvl; void t;
 }
 
 function drawWaveShelves(c, gy) {
@@ -434,13 +414,6 @@ function drawWaveShelves(c, gy) {
   for (const [x, y, w] of [[2250, gy - 50, 80], [2330, gy - 105, 80], [2420, gy - 160, 70]]) {
     c.fillRect(x, y - 3, w, 3);
   }
-}
-
-// The ending drops the crest 40 px as the wave finally breaks (M7).
-function waveDrop(lvl) {
-  const e = lvl.ending9;
-  if (!e || !e.started) return 0;
-  return 40 * Math.min(1, Math.max(0, (e.t - 2.6) / 1.2));
 }
 
 // ---- the frost patches (M3 creates them, M4 makes them slide) ------------

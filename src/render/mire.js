@@ -7,7 +7,7 @@
 // stairway to the peak. Pure functions of world x and time (state read
 // from lvl), no RNG — snapshots stay text-stable.
 import { spriteReady } from '../sprites.js';
-import { drawSpriteFeet, drawSpriteCentre, scaleToHeight, scaleToWidth } from './sprite.js';
+import { drawSpriteFeet, drawSpriteCentre, scaleToHeight, scaleToWidth, drawTileGrid } from './sprite.js';
 import { nestFeet } from './level.js'; // the nest platform's sheet placement, so the web lands on it
 const BRIDGE_LOWER = 1.2; // must match src/bridge.js (M4)
 
@@ -274,29 +274,50 @@ function drawWinch(c, lvl, t) {
   if (!winch) return;
   const gy = lvl.groundY;
   const cx = winch.x, cy = gy - 92, r = 42;
-  c.fillStyle = '#39442f'; // beam + crossbeam
-  c.fillRect(cx - 6, cy, 12, gy - cy);
-  c.fillRect(cx - 40, cy - 8, 80, 10);
-  c.fillStyle = '#2c3438'; // the wheel
-  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.fill();
-  c.fillStyle = '#3a4448';
-  c.beginPath(); c.arc(cx, cy, r - 8, 0, Math.PI * 2); c.fill();
   const ang = winch.turning ? t * 0.5 : 0;
+  // The post and crossbeam in the wood texture, and the wheel from its sheet
+  // — a spoked cartwheel, turned by the same angle the notches turn through
+  // — with the old flat disc and drawn spokes as the fallback.
+  const wood = spriteReady('tex_wood') && drawTileGrid(c, 'tex_wood', cx - 6, cx + 6, 0, cy, gy, 96, 96, 0)
+    && drawTileGrid(c, 'tex_wood', cx - 40, cx + 40, 0, cy - 8, cy + 2, 96, 96, cy - 8);
+  if (!wood) {
+    c.fillStyle = '#39442f'; // beam + crossbeam
+    c.fillRect(cx - 6, cy, 12, gy - cy);
+    c.fillRect(cx - 40, cy - 8, 80, 10);
+  }
+  let wheel = false;
+  if (spriteReady('winch_wheel')) {
+    c.save();
+    c.translate(cx, cy);
+    c.rotate(ang);
+    wheel = drawSpriteCentre(c, 'winch_wheel', 0, scaleToHeight('winch_wheel', r * 2));
+    c.restore();
+  }
+  if (!wheel) {
+    c.fillStyle = '#2c3438'; // the wheel
+    c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#3a4448';
+    c.beginPath(); c.arc(cx, cy, r - 8, 0, Math.PI * 2); c.fill();
+  }
   for (let i = 0; i < 3; i++) {
     const a = ang + (i * Math.PI * 2) / 3;
-    c.fillStyle = '#232a2e'; // spoke with a hub notch
-    c.beginPath();
-    c.moveTo(cx + Math.cos(a) * 8, cy + Math.sin(a) * 8);
-    c.lineTo(cx + Math.cos(a) * (r - 10), cy + Math.sin(a) * (r - 10));
-    c.lineTo(cx + Math.cos(a + 0.12) * (r - 4), cy + Math.sin(a + 0.12) * (r - 4));
-    c.lineTo(cx + Math.cos(a - 0.12) * (r - 4), cy + Math.sin(a - 0.12) * (r - 4));
-    c.closePath();
-    c.fill();
+    if (!wheel) { // the drawn spoke with its hub notch
+      c.fillStyle = '#232a2e';
+      c.beginPath();
+      c.moveTo(cx + Math.cos(a) * 8, cy + Math.sin(a) * 8);
+      c.lineTo(cx + Math.cos(a) * (r - 10), cy + Math.sin(a) * (r - 10));
+      c.lineTo(cx + Math.cos(a + 0.12) * (r - 4), cy + Math.sin(a + 0.12) * (r - 4));
+      c.lineTo(cx + Math.cos(a - 0.12) * (r - 4), cy + Math.sin(a - 0.12) * (r - 4));
+      c.closePath();
+      c.fill();
+    }
     if (winch.sockets[i]) { // the installed cog in its notch: its own gear, turning with the wheel
       const nx = cx + Math.cos(a) * (r - 14), ny = cy + Math.sin(a) * (r - 14);
       const sheet = 'cog_' + lvl.cogs[i].id;
       let drew = false;
       if (spriteReady(sheet)) {
+        c.fillStyle = '#1a1410'; // the notch it sits in: brass on the wheel's wood was invisible
+        c.beginPath(); c.arc(nx, ny, 10, 0, Math.PI * 2); c.fill();
         c.save();
         c.translate(nx, ny);
         c.rotate(a);

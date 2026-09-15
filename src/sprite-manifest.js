@@ -1058,6 +1058,15 @@ export const SPRITES = {
     "hitbox": null,
     "w": 64
   },
+  "winch_wheel": {
+    "anchor": "centre",
+    "file": "winch_wheel.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 94,
+    "hitbox": null,
+    "w": 96
+  },
   "witch": {
     "anchor": "feet",
     "file": "witch.png",

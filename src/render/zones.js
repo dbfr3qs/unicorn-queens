@@ -50,6 +50,23 @@ export function drawZones(c, lvl, cam, t, viewW) {
 // seeded per-torch flicker + warm concentric glow (no gradients, so the
 // snapshot stays text), and a dark alcove between torches. The hall
 // variant: darker brick, denser torches, big pillars.
+// A hall's pillar from a sheet — one per hall stone, each in its wall's own
+// palette — with the old two-rectangle column as the fallback. `h` is the
+// column's height without its capital, as the vector one was sized.
+function drawPillar(c, sheet, x, gy, h, shaft, cap, w = 28) {
+  if (spriteReady(sheet)) {
+    c.save();
+    c.translate(x, gy);
+    const drew = drawSpriteFeet(c, sheet, 0, scaleToHeight(sheet, h + 14));
+    c.restore();
+    if (drew) return;
+  }
+  c.fillStyle = shaft;
+  c.fillRect(x - w / 2, gy - h, w, h);
+  c.fillStyle = cap;
+  c.fillRect(x - w / 2 - 4, gy - h - 14, w + 8, 14); // capital
+}
+
 function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   const gy = lvl.groundY;
   if (!(drawWall(c, 'wall_dungeon', zx0, zx1, cam.x, gy))) {
@@ -96,13 +113,7 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     }
   }
   if (isHall) {
-    for (let wx = zx0 + 120; wx < zx1; wx += 240) { // big pillars
-      const x = wx - cam.x;
-      c.fillStyle = '#31200f';
-      c.fillRect(x - 14, gy - 260, 28, 260);
-      c.fillStyle = '#41290f';
-      c.fillRect(x - 18, gy - 274, 36, 14); // capital
-    }
+    for (let wx = zx0 + 120; wx < zx1; wx += 240) drawPillar(c, 'pillar_dungeon', wx - cam.x, gy, 260, '#31200f', '#41290f'); // big pillars
   }
 }
 
@@ -169,13 +180,7 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     c.fillRect(x - 2, 296 + fl * 0.3, 4, 8);
   }
   if (isHall) {
-    for (const px of [3680, 3940, 4420, 4700]) { // dark-green pillars, clear of the shaft
-      const x = px - cam.x;
-      c.fillStyle = '#1a241a';
-      c.fillRect(x - 14, gy - 260, 28, 260);
-      c.fillStyle = '#243324';
-      c.fillRect(x - 18, gy - 274, 36, 14); // capital
-    }
+    for (const px of [3680, 3940, 4420, 4700]) drawPillar(c, 'pillar_deep', px - cam.x, gy, 260, '#1a241a', '#243324'); // dark-green pillars, clear of the shaft
     for (const px of [3820, 4300, 4600]) drawBones(c, px - cam.x, gy);
   } else {
     for (const px of [2750, 3350]) drawBones(c, px - cam.x, gy); // vault dressing
@@ -636,13 +641,7 @@ function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     c.fillRect(sx0, 0, sx1 - sx0, lvl.groundY);
   }
   if (isHall) {
-    for (let wx = zx0 + 90; wx < zx1; wx += 180) { // columns
-      const x = wx - cam.x;
-      c.fillStyle = '#2c1c4a';
-      c.fillRect(x - 12, lvl.groundY - 250, 24, 250);
-      c.fillStyle = '#3a2760';
-      c.fillRect(x - 16, lvl.groundY - 262, 32, 14); // capital
-    }
+    for (let wx = zx0 + 90; wx < zx1; wx += 180) drawPillar(c, 'pillar', wx - cam.x, lvl.groundY, 250, '#2c1c4a', '#3a2760', 24); // columns
     for (let wx = zx0 + 180; wx < zx1; wx += 360) { // banners
       const x = wx - cam.x;
       c.fillStyle = '#5a2b6e';

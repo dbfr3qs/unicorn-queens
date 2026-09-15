@@ -10704,23 +10704,23 @@ save()
   fillStyle=#2c1c4a
   fillRect(164, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(160, 298, 32, 14)
+  fillRect(160, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(344, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(340, 298, 32, 14)
+  fillRect(340, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(524, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(520, 298, 32, 14)
+  fillRect(520, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(704, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(700, 298, 32, 14)
+  fillRect(700, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(884, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(880, 298, 32, 14)
+  fillRect(880, 296, 32, 14)
   fillStyle=#5a2b6e
   beginPath()
   moveTo(250, 90)
@@ -10821,10 +10821,6 @@ save()
     fillRect(640, 566, 80, 34)
     fillStyle=#1d4e8e
     fillRect(640, 566, 80, 3)
-    fillStyle=#3a2a5c
-    fillRect(880, 340, 26, 220)
-    fillRect(934, 340, 26, 220)
-    fillRect(872, 308, 96, 34)
     fillStyle=#4a2d7a
     fillRect(1150, 360, 140, 12)
     fillRect(1350, 280, 120, 12)
@@ -11237,23 +11233,23 @@ save()
   fillStyle=#2c1c4a
   fillRect(164, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(160, 298, 32, 14)
+  fillRect(160, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(344, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(340, 298, 32, 14)
+  fillRect(340, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(524, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(520, 298, 32, 14)
+  fillRect(520, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(704, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(700, 298, 32, 14)
+  fillRect(700, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(884, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(880, 298, 32, 14)
+  fillRect(880, 296, 32, 14)
   fillStyle=#5a2b6e
   beginPath()
   moveTo(250, 90)
@@ -11354,10 +11350,6 @@ save()
     fillRect(640, 566, 80, 34)
     fillStyle=#1d4e8e
     fillRect(640, 566, 80, 3)
-    fillStyle=#3a2a5c
-    fillRect(880, 340, 26, 220)
-    fillRect(934, 340, 26, 220)
-    fillRect(872, 308, 96, 34)
     fillStyle=#4a2d7a
     fillRect(1150, 360, 140, 12)
     fillRect(1350, 280, 120, 12)
@@ -12162,10 +12154,6 @@ save()
     fillRect(640, 566, 80, 34)
     fillStyle=#1d4e8e
     fillRect(640, 566, 80, 3)
-    fillStyle=#3a2a5c
-    fillRect(880, 340, 26, 220)
-    fillRect(934, 340, 26, 220)
-    fillRect(872, 308, 96, 34)
     fillStyle=#4a2d7a
     fillRect(1150, 360, 140, 12)
     fillRect(1350, 280, 120, 12)
@@ -12956,10 +12944,6 @@ save()
     fillRect(640, 566, 80, 34)
     fillStyle=#1d4e8e
     fillRect(640, 566, 80, 3)
-    fillStyle=#3a2a5c
-    fillRect(880, 340, 26, 220)
-    fillRect(934, 340, 26, 220)
-    fillRect(872, 308, 96, 34)
     fillStyle=#4a2d7a
     fillRect(1150, 360, 140, 12)
     fillRect(1350, 280, 120, 12)
@@ -13363,23 +13347,23 @@ save()
   fillStyle=#2c1c4a
   fillRect(-22, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(-26, 298, 32, 14)
+  fillRect(-26, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(158, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(154, 298, 32, 14)
+  fillRect(154, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(338, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(334, 298, 32, 14)
+  fillRect(334, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(518, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(514, 298, 32, 14)
+  fillRect(514, 296, 32, 14)
   fillStyle=#2c1c4a
   fillRect(698, 310, 24, 250)
   fillStyle=#3a2760
-  fillRect(694, 298, 32, 14)
+  fillRect(694, 296, 32, 14)
   fillStyle=#5a2b6e
   beginPath()
   moveTo(64, 90)
@@ -13480,10 +13464,6 @@ save()
     fillRect(640, 566, 80, 34)
     fillStyle=#1d4e8e
     fillRect(640, 566, 80, 3)
-    fillStyle=#3a2a5c
-    fillRect(880, 340, 26, 220)
-    fillRect(934, 340, 26, 220)
-    fillRect(872, 308, 96, 34)
     fillStyle=#4a2d7a
     fillRect(1150, 360, 140, 12)
     fillRect(1350, 280, 120, 12)

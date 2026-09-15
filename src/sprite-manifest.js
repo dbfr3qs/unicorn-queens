@@ -530,6 +530,33 @@ export const SPRITES = {
     },
     "w": 32
   },
+  "pillar": {
+    "anchor": "feet",
+    "file": "pillar.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 202,
+    "hitbox": null,
+    "w": 64
+  },
+  "pillar_deep": {
+    "anchor": "feet",
+    "file": "pillar_deep.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 135,
+    "hitbox": null,
+    "w": 64
+  },
+  "pillar_dungeon": {
+    "anchor": "feet",
+    "file": "pillar_dungeon.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 212,
+    "hitbox": null,
+    "w": 64
+  },
   "pine_snow": {
     "anchor": "feet",
     "file": "pine_snow.png",

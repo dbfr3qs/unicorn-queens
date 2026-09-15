@@ -199,12 +199,9 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillRect(m.x - 8, lvl.groundY - 26, m.w + 16, 30);
     c.globalAlpha = 1;
   }
-  if (lvl.gate) { // stone arch at the castle gate
-    c.fillStyle = '#3a2a5c';
-    c.fillRect(lvl.gate.x, lvl.groundY - 220, 26, 220);
-    c.fillRect(lvl.gate.x + lvl.gate.w - 26, lvl.groundY - 220, 26, 220);
-    c.fillRect(lvl.gate.x - 8, lvl.groundY - 252, lvl.gate.w + 16, 34);
-  }
+  // lvl.gate (level 2) is the line the entry chime plays on; it used to be
+  // drawn too, as a vector arch over the join between the sky zone and the
+  // stone one, and the wall sheet's own edge makes a better threshold.
   c.fillStyle = '#4a2d7a';
   for (const p of lvl.platforms) {
     if (p.hidden || (p.kind && p.kind !== 'platform')) continue; // hidden nook ledge: in the wall

@@ -121,6 +121,18 @@ function drawVentRim(c, x, gy) {
 function drawVentBubble(c, vent, t) {
   if (!vent || !vent.active || vent.popped || vent.bubbleY >= 554) return;
   const x = vent.x, y = vent.bubbleY + 18;
+  if (spriteReady('bubble') && spriteReady('cog_adder')) {
+    // the cog, and the bubble's sheet over it at half strength: a skin of
+    // swamp gas the cog shows through, rather than a green ball with a cog on it
+    c.save();
+    c.translate(x, y);
+    c.globalAlpha = 0.85;
+    drawSpriteCentre(c, 'cog_adder', 0, scaleToHeight('cog_adder', 18));
+    c.globalAlpha = 0.5;
+    drawSpriteCentre(c, 'bubble', 0, scaleToHeight('bubble', 40));
+    c.restore();
+    return;
+  }
   c.save();
   c.globalAlpha = 0.25;
   c.fillStyle = '#9acd92';

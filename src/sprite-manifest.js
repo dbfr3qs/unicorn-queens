@@ -236,6 +236,15 @@ export const SPRITES = {
     "hitbox": null,
     "w": 96
   },
+  "bubble": {
+    "anchor": "centre",
+    "file": "bubble.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 42,
+    "hitbox": null,
+    "w": 40
+  },
   "cog_adder": {
     "anchor": "centre",
     "file": "cog_adder.png",

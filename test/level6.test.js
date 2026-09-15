@@ -125,7 +125,7 @@ describe('level 6 data', () => {
   });
 
   it('the web wall: locked, full height, at the hollow mouth', () => {
-    expect(lvl.door).toEqual({ x: 5800, y: 0, w: 40, h: gy, state: 'locked', openT: 0, kind: 'webwall' });
+    expect(lvl.door).toEqual({ x: 5800, y: 0, w: 40, h: gy, state: 'locked', openT: 0, kind: 'webwall', wall: 'wall_deep' });
   });
 
   it('the pearl is sealed until a spiderboss is dead; the exit is locked', () => {

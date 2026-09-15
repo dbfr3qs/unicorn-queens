@@ -144,7 +144,7 @@ function drawNestWeb(c, nest, t) {
       if (nest.state === 'webbed') {
         c.globalAlpha = 0.35 + 0.35 * Math.sin(t * 1.57);
         c.fillStyle = '#ffffff';
-        c.fillRect(nest.x + nest.w / 2 - 1, nest.y + 4, 2, 2);
+        c.fillRect(nest.x + nest.w / 2 - 1, nest.y + 14, 2, 2); // on the silk over the bowl
         c.globalAlpha = 1;
       }
       return;

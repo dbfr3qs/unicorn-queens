@@ -113,7 +113,10 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     }
   }
   if (isHall) {
-    for (let wx = zx0 + 120; wx < zx1; wx += 240) drawPillar(c, 'pillar_dungeon', wx - cam.x, gy, 260, '#31200f', '#41290f'); // big pillars
+    // big pillars: on the torches' 200 px beat, 50 px east of each torch, which
+    // is the gap between a torch and the alcove that follows it — the 240 px
+    // beat they had put one across an alcove every so often
+    for (let wx = Math.ceil(zx0 / every) * every + 60 + 50; wx < zx1 - 20; wx += every) drawPillar(c, 'pillar_dungeon', wx - cam.x, gy, 260, '#31200f', '#41290f');
   }
 }
 
@@ -273,12 +276,18 @@ function drawForestZone(c, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
     drawHillRidge(c, background.near, 1760, cam.x * 0.6, '#4e9a4e', lvl.groundY, '#3a7d42');
   }
   c.restore();
-  if (zx1 > DEEP_X) { // the deep woods: one shade darker
-    const dx0 = Math.max(zx0, DEEP_X) - cam.x;
-    const dw = Math.min(zx1, lvl.width) - Math.max(zx0, DEEP_X);
-    if (dw > 0) {
-      c.fillStyle = 'rgba(8, 30, 16, 0.18)';
-      c.fillRect(dx0, 0, dw, lvl.groundY);
+  // The deep woods: one shade darker, coming on over DEEP_RAMP px rather than
+  // at a line — a hard edge in the light read as a bug, not as a wood
+  // deepening. Stepped in bands (no gradients: the snapshots are text).
+  const DEEP_RAMP = 480, BANDS = 12;
+  if (zx1 > DEEP_X - DEEP_RAMP) {
+    for (let b = 0; b < BANDS; b++) {
+      const bx0 = DEEP_X - DEEP_RAMP + (DEEP_RAMP / BANDS) * b;
+      const bx1 = b === BANDS - 1 ? Math.min(zx1, lvl.width) : bx0 + DEEP_RAMP / BANDS;
+      const x0 = Math.max(zx0, bx0), x1 = Math.min(zx1, lvl.width, bx1);
+      if (x1 <= x0) continue;
+      c.fillStyle = `rgba(8, 30, 16, ${(0.18 * (b + 1)) / BANDS})`;
+      c.fillRect(x0 - cam.x, 0, x1 - x0, lvl.groundY);
     }
   }
 }
@@ -653,9 +662,19 @@ function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     c.fillRect(sx0, 0, sx1 - sx0, lvl.groundY);
   }
   if (isHall) {
-    for (let wx = zx0 + 90; wx < zx1; wx += 180) drawPillar(c, 'pillar', wx - cam.x, lvl.groundY, 250, '#2c1c4a', '#3a2760', 24); // columns
+    for (let wx = zx0 + 90; wx < zx1; wx += 180) { // columns — none in the exit doorway
+      if (lvl.exit && wx > lvl.exit.x - 40 && wx < lvl.exit.x + lvl.exit.w + 40) continue;
+      drawPillar(c, 'pillar', wx - cam.x, lvl.groundY, 250, '#2c1c4a', '#3a2760', 24);
+    }
     for (let wx = zx0 + 180; wx < zx1; wx += 360) { // banners
       const x = wx - cam.x;
+      if (spriteReady('banner')) { // the hanging, rod to hem, top at 84
+        c.save();
+        c.translate(x, 84 + 112);
+        const drew = drawSpriteFeet(c, 'banner', 0, scaleToHeight('banner', 112));
+        c.restore();
+        if (drew) continue;
+      }
       c.fillStyle = '#5a2b6e';
       c.beginPath();
       c.moveTo(x - 16, 90);

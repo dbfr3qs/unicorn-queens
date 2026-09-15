@@ -8,6 +8,15 @@
 // to stay crisp, while keeping the drawn tile about a screen wide so the repeat
 // is not obvious. The draw height lives at the call site, not here.
 export const SPRITES = {
+  "banner": {
+    "anchor": "top",
+    "file": "banner.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 93,
+    "hitbox": null,
+    "w": 63
+  },
   "bat": {
     "anchor": "feet",
     "file": "bat.png",
@@ -616,7 +625,7 @@ export const SPRITES = {
     "file": "pillar_dungeon.png",
     "fps": 0,
     "frames": 1,
-    "h": 212,
+    "h": 202,
     "hitbox": null,
     "w": 64
   },
@@ -1039,6 +1048,15 @@ export const SPRITES = {
       "w": 60
     },
     "w": 96
+  },
+  "web_tile": {
+    "anchor": "tile",
+    "file": "web_tile.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 64,
+    "hitbox": null,
+    "w": 64
   },
   "witch": {
     "anchor": "feet",

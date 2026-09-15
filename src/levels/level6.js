@@ -90,7 +90,7 @@ export function createLevel6(viewH = 600) {
     bridge: { x: 5500, y: groundY - 6, w: 300, state: 'raised', lowerT: 0 },
     // The web wall at the hollow's mouth: solid while locked, melts (never
     // re-seals) when the winch opens it.
-    door: { x: 5800, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'webwall' },
+    door: { x: 5800, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'webwall', wall: 'wall_deep' }, // wall: its jambs' sheet
     // The pearl on the boss altar: appears when the Weaver Queen dies.
     pearl: {
       x: 6440, y: 504, w: 16, h: 16, visible: false, taken: false,

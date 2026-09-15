@@ -362,8 +362,11 @@ function drawRoot(c, p) { // a gnarled brown limb, knobby
 }
 
 // Where the nest's sheets sit on the nest platform: shared with the web
-// (render/mire.js draws nest_webbed over this), so the two line up.
-export function nestFeet(p) { return { x: p.x + p.w / 2, y: p.y + 18, w: p.w + 12 }; }
+// (render/mire.js draws nest_webbed over this), so the two line up. The
+// platform is the nest's RIM — the player stands in the bowl, as on the old
+// drawn one — so the bowl hangs below the platform line, its bottom 44 px
+// under it, and the rim (12 sheet px of twig stand above it) lands on it.
+export function nestFeet(p) { return { x: p.x + p.w / 2, y: p.y + 44, w: p.w + 6 }; }
 
 function drawNest(c, p) { // a stick nest
   if (spriteReady('nest')) {

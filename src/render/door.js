@@ -22,7 +22,24 @@ function drawJambs(c, door) {
 function drawBars(c, door, top, bottom) {
   if (!spriteReady('iron_bars')) return false;
   const { x, w } = door;
+  // the opening behind the bars is in shadow: dark iron on a dark wall (the
+  // lair's) was a gate nobody could see, and a doorway is darker than a wall
+  c.fillStyle = 'rgba(0, 0, 0, 0.45)';
+  c.fillRect(x, top, w, bottom - top);
   return drawTileGrid(c, 'iron_bars', x, x + w, 0, top, bottom, w, w, top); // a square tile, bar over bar
+}
+// The web wall's lattice: the web tile, threads only, over a shadowed
+// opening, at whatever alpha the melt has left it.
+function drawWeb(c, door, alpha) {
+  if (!spriteReady('web_tile')) return false;
+  const { x, w, h } = door;
+  c.save();
+  c.globalAlpha = alpha;
+  c.fillStyle = 'rgba(0, 0, 0, 0.35)';
+  c.fillRect(x, HEADER, w, h - HEADER);
+  const drew = drawTileGrid(c, 'web_tile', x, x + w, 0, HEADER, h, w, w, HEADER);
+  c.restore();
+  return drew;
 }
 
 
@@ -77,13 +94,23 @@ function drawTrollDoor(c, door, gameTime) {
 const WEB_DOOR_OPEN = 1.5; // must match the openT set by the winch's w5 beat
 function drawWebWall(c, door, t) {
   const { x, w, h } = door;
-  c.fillStyle = '#2c3438'; // stone jambs + header
-  c.fillRect(x - 10, 0, 10, h);
-  c.fillRect(x + w, 0, 10, h);
-  c.fillRect(x - 10, 0, w + 20, 12);
+  if (!drawJambs(c, door)) {
+    c.fillStyle = '#2c3438'; // stone jambs + header
+    c.fillRect(x - 10, 0, 10, h);
+    c.fillRect(x + w, 0, 10, h);
+    c.fillRect(x - 10, 0, w + 20, 12);
+  }
   const frac = door.state === 'open' ? 1
     : door.state === 'opening' ? 1 - door.openT / WEB_DOOR_OPEN : 0;
   if (frac >= 1) return;
+  if (drawWeb(c, door, 1 - frac)) {
+    const sy = 12 + ((t * 30) % Math.max(1, h - 26)); // the slow shimmer, kept
+    c.globalAlpha = (1 - frac) * 0.25;
+    c.fillStyle = '#ffffff';
+    c.fillRect(x, sy, w, 6);
+    c.globalAlpha = 1;
+    return;
+  }
   c.save();
   c.globalAlpha = 1 - frac; // the melt: the wall fades out
   c.fillStyle = 'rgba(232, 232, 220, 0.35)'; // the web field

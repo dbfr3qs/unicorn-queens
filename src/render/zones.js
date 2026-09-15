@@ -5,6 +5,7 @@
 import { background, drawRidge, drawStars, drawParallax, drawZoneParallax, drawThawParallax } from './background.js';
 import { spriteReady } from '../sprites.js';
 import { NOOK_COVER } from './key.js'; // level 3: the wall the key nook owns
+import { DEAD_SINK } from './mire.js'; // level 6: how far a dead tree's roots go under the line
 import { drawWall, drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
 import { lightLevel, clockCuts } from '../clock.js'; // level 8: the spring dim (M3 shared read)
 
@@ -435,11 +436,15 @@ function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs
     const x = k + jx - shift;
     const h = hMin + ((i * 37) % hVar);
     if (sheet) {
+      // the root splay meets the line, not the stub under it (DEAD_SINK, as
+      // in mire.js); this pass runs before the ground, which then covers
+      // what goes under
+      const th = (h + 20) / (1 - DEAD_SINK);
       c.save();
       if (haze < 1) c.globalAlpha = haze;
-      c.translate(x, gy);
+      c.translate(x, gy + th * DEAD_SINK);
       if (i % 2) c.scale(-1, 1);
-      drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', h + 20));
+      drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', th));
       c.restore();
     } else {
       c.fillStyle = color;

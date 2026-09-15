@@ -11,14 +11,27 @@ import { drawSpriteFeet, drawSpriteCentre, scaleToHeight, scaleToWidth } from '.
 import { nestFeet } from './level.js'; // the nest platform's sheet placement, so the web lands on it
 const BRIDGE_LOWER = 1.2; // must match src/bridge.js (M4)
 
+// The dead tree sheet ends in a wide root splay with a thin stub of root
+// under it: stood on the stub, the splay floats a hand above the ground. So
+// the splay is what meets the line — the bottom DEAD_SINK of the drawn
+// height goes under it, clipped away (the ground is painted by now), with a
+// pool of shade where the roots go in. The same fraction serves the
+// parallax lines in zones.js.
+export const DEAD_SINK = 0.09;
 function drawDeadCypress(c, x, gy, topY, w) {
   if (spriteReady('tree_dead')) {
+    const h = (gy - topY) / (1 - DEAD_SINK);
     c.save();
-    c.translate(x, gy + 10); // the roots a little under the line, like the forest's trees
+    c.beginPath(); c.rect(x - 200, gy - 600, 400, 600); c.clip();
+    c.translate(x, gy + h * DEAD_SINK);
     if (w % 4 === 2) c.scale(-1, 1); // half of them the other way round
-    const drew = drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', gy - topY + 10));
+    const drew = drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', h));
     c.restore();
-    if (drew) return;
+    if (drew) {
+      c.fillStyle = 'rgba(6, 14, 8, 0.45)';
+      c.beginPath(); c.ellipse(x, gy, h * 0.16, 5, 0, 0, Math.PI * 2); c.fill();
+      return;
+    }
   }
   c.fillStyle = '#1a231a'; // trunk
   c.fillRect(x - w / 2, topY, w, gy - topY);

@@ -7,10 +7,19 @@
 // stairway to the peak. Pure functions of world x and time (state read
 // from lvl), no RNG — snapshots stay text-stable.
 import { spriteReady } from '../sprites.js';
-import { drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
+import { drawSpriteFeet, drawSpriteCentre, scaleToHeight, scaleToWidth } from './sprite.js';
+import { nestFeet } from './level.js'; // the nest platform's sheet placement, so the web lands on it
 const BRIDGE_LOWER = 1.2; // must match src/bridge.js (M4)
 
 function drawDeadCypress(c, x, gy, topY, w) {
+  if (spriteReady('tree_dead')) {
+    c.save();
+    c.translate(x, gy + 10); // the roots a little under the line, like the forest's trees
+    if (w % 4 === 2) c.scale(-1, 1); // half of them the other way round
+    const drew = drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', gy - topY + 10));
+    c.restore();
+    if (drew) return;
+  }
   c.fillStyle = '#1a231a'; // trunk
   c.fillRect(x - w / 2, topY, w, gy - topY);
   c.fillStyle = '#232e22'; // bark highlight
@@ -109,8 +118,11 @@ function drawVentBubble(c, vent, t) {
   c.beginPath(); c.arc(x, y, 18, 0, Math.PI * 2); c.stroke();
   c.beginPath(); c.arc(x, y, 12, -2.4, -1.2); c.stroke(); // highlight
   c.globalAlpha = 0.7; // the cog, still sealed inside
-  c.fillStyle = '#c98f3d';
-  c.fillRect(x - 8, y - 8, 16, 16);
+  c.translate(x, y);
+  if (!drawSpriteCentre(c, 'cog_adder', 0, scaleToHeight('cog_adder', 16))) {
+    c.fillStyle = '#c98f3d';
+    c.fillRect(-8, -8, 16, 16);
+  }
   c.restore();
 }
 
@@ -119,6 +131,25 @@ function drawVentBubble(c, vent, t) {
 // unravelT > 0.
 function drawNestWeb(c, nest, t) {
   if (!nest || (nest.state !== 'webbed' && nest.unravelT <= 0)) return;
+  if (spriteReady('nest_webbed')) {
+    // the silk-wrapped nest drawn over the bare one (level.js), fading as
+    // it unravels, with the glint kept as the "shoot this" tell
+    const f = nestFeet(nest);
+    c.save();
+    c.globalAlpha = nest.state === 'webbed' ? 1 : nest.unravelT / 0.5;
+    c.translate(f.x, f.y);
+    const drew = drawSpriteFeet(c, 'nest_webbed', 0, scaleToWidth('nest_webbed', f.w));
+    c.restore();
+    if (drew) {
+      if (nest.state === 'webbed') {
+        c.globalAlpha = 0.35 + 0.35 * Math.sin(t * 1.57);
+        c.fillStyle = '#ffffff';
+        c.fillRect(nest.x + nest.w / 2 - 1, nest.y + 4, 2, 2);
+        c.globalAlpha = 1;
+      }
+      return;
+    }
+  }
   const a = nest.state === 'webbed' ? 0.5 : (nest.unravelT / 0.5) * 0.5;
   c.save();
   c.globalAlpha = a;
@@ -149,10 +180,20 @@ function drawCogs(c, lvl, t) {
     if (!cog.visible || cog.taken || cog.installed) continue;
     const bob = Math.sin(t * 2 + i * 1.7) * 3;
     const x = cog.x, y = cog.y + bob;
-    c.fillStyle = COG_COLS[i];
-    c.beginPath(); c.arc(x + 8, y + 8, 8, 0, Math.PI * 2); c.fill();
-    c.fillStyle = 'rgba(0,0,0,0.25)'; // the inner ring
-    c.beginPath(); c.arc(x + 8, y + 8, 4, 0, Math.PI * 2); c.fill();
+    const sheet = 'cog_' + cog.id; // heron / adder / weaver: each its own metal
+    let drew = false;
+    if (spriteReady(sheet)) {
+      c.save();
+      c.translate(x + 8, y + 8);
+      drew = drawSpriteCentre(c, sheet, 0, scaleToHeight(sheet, 22));
+      c.restore();
+    }
+    if (!drew) {
+      c.fillStyle = COG_COLS[i];
+      c.beginPath(); c.arc(x + 8, y + 8, 8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(0,0,0,0.25)'; // the inner ring
+      c.beginPath(); c.arc(x + 8, y + 8, 4, 0, Math.PI * 2); c.fill();
+    }
     c.globalAlpha = 0.4 + 0.4 * Math.sin(t * 1.57 + i * 2); // the glint
     c.fillStyle = '#ffffff';
     c.fillRect(x + 4, y + 2, 2, 2);
@@ -170,6 +211,19 @@ function drawSac(c, sac, t) {
     c.beginPath(); c.moveTo(x, y + h); c.lineTo(x + 8, y + 4); c.lineTo(x + 12, y + h); c.closePath(); c.fill();
     c.beginPath(); c.moveTo(x + w, y + h); c.lineTo(x + w - 8, y + 6); c.lineTo(x + w - 14, y + h); c.closePath(); c.fill();
     return;
+  }
+  if (spriteReady('egg_sac')) {
+    c.save();
+    c.translate(x + w / 2, y + h);
+    const drew = drawSpriteFeet(c, 'egg_sac', 0, scaleToHeight('egg_sac', h + 8));
+    c.restore();
+    if (drew) {
+      c.globalAlpha = Math.max(0.15, 0.3 + 0.35 * Math.sin(t * 1.57)); // the glint
+      c.fillStyle = '#ffffff';
+      c.fillRect(x + w / 2 - 1, y + 8, 2, 2);
+      c.globalAlpha = 1;
+      return;
+    }
   }
   c.fillStyle = '#d8d4c8';
   c.beginPath(); c.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2); c.fill();

@@ -59,8 +59,8 @@ export function createLevel7(viewH = 600) {
     // trigger band's flare dissolves it when the player first approaches
     // (M5).
     doors: [
-      { x: 3600, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'irongate' },
-      { x: 5400, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'thronegate' },
+      { x: 3600, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'irongate', wall: 'wall_spire' }, // wall: the sheet its jambs are drawn from
+      { x: 5400, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, kind: 'thronegate', wall: 'wall_spire' },
     ],
     // The throne gate's trigger band (M5 consumes): first entry flares +
     // dissolves the gate and wakes the wizard.

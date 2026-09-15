@@ -2,6 +2,29 @@
 // (level 6), and the peak's two gates (level 7 — the first multi-door
 // level, iterated from lvl.doors; single-door levels keep lvl.door).
 import { DOOR_OPEN, DOOR_CLOSE } from '../door.js';
+import { spriteReady } from '../sprites.js';
+import { drawWall, drawTileGrid } from './sprite.js';
+
+// The portcullis doors' two parts, from sheets where they have decoded.
+// The jambs are the wall the door is set in — the level names the sheet on
+// the door (`wall`) — so a gate in the spire is framed in spire stone and
+// one in the undercroft in brick. The lattice is a tile of iron bars,
+// world-anchored, clipped to the part still hanging in the opening. Each
+// returns false where its sheet is not ready, and the caller draws the old
+// rectangles instead.
+const JAMB = 10, HEADER = 12;
+function drawJambs(c, door) {
+  const { x, w, h } = door;
+  if (!door.wall || !spriteReady(door.wall)) return false;
+  return drawWall(c, door.wall, x - JAMB, x, 0, h) && drawWall(c, door.wall, x + w, x + w + JAMB, 0, h)
+    && drawWall(c, door.wall, x - JAMB, x + w + JAMB, 0, HEADER);
+}
+function drawBars(c, door, top, bottom) {
+  if (!spriteReady('iron_bars')) return false;
+  const { x, w } = door;
+  return drawTileGrid(c, 'iron_bars', x, x + w, 0, top, bottom, w, w, top); // a square tile, bar over bar
+}
+
 
 export function drawDoor(c, lvl, gameTime) {
   const doors = lvl.doors ?? (lvl.door ? [lvl.door] : []);
@@ -24,17 +47,21 @@ function drawTrollDoor(c, door, gameTime) {
     : door.state === 'opening' ? 1 - door.openT / DOOR_OPEN
     : door.state === 'closing' ? door.closeT / DOOR_CLOSE
     : 0;
-  c.fillStyle = '#5a4a3a'; // stone jambs + header
-  c.fillRect(x - 10, 0, 10, h);
-  c.fillRect(x + w, 0, 10, h);
-  c.fillRect(x - 10, 0, w + 20, 12);
+  if (!drawJambs(c, door)) {
+    c.fillStyle = '#5a4a3a'; // stone jambs + header
+    c.fillRect(x - 10, 0, 10, h);
+    c.fillRect(x + w, 0, 10, h);
+    c.fillRect(x - 10, 0, w + 20, 12);
+  }
   const latticeH = 30 + (h - 30) * (1 - frac); // top stays in the header
-  c.fillStyle = '#8a8f98'; // iron lattice
-  c.fillRect(x, 12, w, latticeH);
-  c.fillStyle = '#3a3f48'; // vertical bars
-  c.fillRect(x + 7, 12, 4, latticeH);
-  c.fillRect(x + 18, 12, 4, latticeH);
-  c.fillRect(x + 29, 12, 4, latticeH);
+  if (!drawBars(c, door, 12, 12 + latticeH)) {
+    c.fillStyle = '#8a8f98'; // iron lattice
+    c.fillRect(x, 12, w, latticeH);
+    c.fillStyle = '#3a3f48'; // vertical bars
+    c.fillRect(x + 7, 12, 4, latticeH);
+    c.fillRect(x + 18, 12, 4, latticeH);
+    c.fillRect(x + 29, 12, 4, latticeH);
+  }
   if (door.state === 'locked') { // glowing lock at the lattice bottom
     c.globalAlpha = 0.6 + 0.3 * Math.sin(gameTime * 3);
     c.fillStyle = '#ffd75e';
@@ -83,20 +110,24 @@ function drawIronGate(c, door, t) {
     : door.state === 'opening' ? 1 - door.openT / DOOR_OPEN
     : door.state === 'closing' ? door.closeT / DOOR_CLOSE
     : 0;
-  c.fillStyle = '#2c3450'; // stone jambs + header
-  c.fillRect(x - 10, 0, 10, h);
-  c.fillRect(x + w, 0, 10, h);
-  c.fillRect(x - 10, 0, w + 20, 12);
-  c.fillStyle = '#e8f0f8'; // snow caps on the jambs
-  c.fillRect(x - 10, 0, 10, 4);
-  c.fillRect(x + w, 0, 10, 4);
+  if (!drawJambs(c, door)) {
+    c.fillStyle = '#2c3450'; // stone jambs + header
+    c.fillRect(x - 10, 0, 10, h);
+    c.fillRect(x + w, 0, 10, h);
+    c.fillRect(x - 10, 0, w + 20, 12);
+    c.fillStyle = '#e8f0f8'; // snow caps on the jambs
+    c.fillRect(x - 10, 0, 10, 4);
+    c.fillRect(x + w, 0, 10, 4);
+  }
   const latticeH = 30 + (h - 30) * (1 - frac); // top stays in the header
-  c.fillStyle = '#23283c'; // the dark iron lattice
-  c.fillRect(x, 12, w, latticeH);
-  c.fillStyle = '#3a4258'; // vertical bars
-  c.fillRect(x + 5, 12, 4, latticeH);
-  c.fillRect(x + 16, 12, 4, latticeH);
-  c.fillRect(x + 27, 12, 4, latticeH);
+  if (!drawBars(c, door, 12, 12 + latticeH)) {
+    c.fillStyle = '#23283c'; // the dark iron lattice
+    c.fillRect(x, 12, w, latticeH);
+    c.fillStyle = '#3a4258'; // vertical bars
+    c.fillRect(x + 5, 12, 4, latticeH);
+    c.fillRect(x + 16, 12, 4, latticeH);
+    c.fillRect(x + 27, 12, 4, latticeH);
+  }
   if (door.state === 'locked') { // the seal's dim glow at the hub
     c.globalAlpha = 0.5 + 0.25 * Math.sin(t * 2);
     c.fillStyle = '#6a3a9a';
@@ -117,13 +148,17 @@ function drawThroneGate(c, door, t) {
   const frac = door.state === 'opening' ? 1 - door.openT / DOOR_OPEN : 0;
   c.save();
   c.globalAlpha = 1 - frac; // the dissolve: overall alpha = openT/DOOR_OPEN
-  c.fillStyle = '#2c3450'; // stone jambs, dying with the wall
-  c.fillRect(x - 10, 0, 10, h);
-  c.fillRect(x + w, 0, 10, h);
-  c.fillStyle = '#23283c'; // the dark iron lattice
-  c.fillRect(x, 0, w, h);
-  c.fillStyle = '#3a4258'; // vertical bars
-  for (const bx of [x + 5, x + 16, x + 27]) c.fillRect(bx, 0, 4, h);
+  if (!drawJambs(c, door)) {
+    c.fillStyle = '#2c3450'; // stone jambs, dying with the wall
+    c.fillRect(x - 10, 0, 10, h);
+    c.fillRect(x + w, 0, 10, h);
+  }
+  if (!drawBars(c, door, 0, h)) {
+    c.fillStyle = '#23283c'; // the dark iron lattice
+    c.fillRect(x, 0, w, h);
+    c.fillStyle = '#3a4258'; // vertical bars
+    for (const bx of [x + 5, x + 16, x + 27]) c.fillRect(bx, 0, 4, h);
+  }
   // the seal: a slow ~3 s pulse while sealed, blazing through the flare
   let glow = 0.5 + 0.25 * Math.sin(t * 2);
   let r = 14;

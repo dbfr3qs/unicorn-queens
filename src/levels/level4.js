@@ -58,7 +58,7 @@ export function createLevel4(viewH = 600) {
     ],
     // Keyless full-height portcullis: auto-opens on approach and drops shut
     // behind the player — commit to the dragon.
-    door: { x: 3550, y: 0, w: 40, h: groundY, state: 'locked', noKey: true, openT: 0, closeT: 0 },
+    door: { x: 3550, y: 0, w: 40, h: groundY, state: 'locked', noKey: true, openT: 0, closeT: 0, wall: 'wall_deep' },
     // The shaft: a hole in the ceiling. Sealed until the pearl beat:
     // dragon dies -> pearl here -> pickup -> gate retracts -> fly up.
     shaft: { x: 4150, y: 0, w: 100, h: 70, state: 'sealed', openT: 0 },

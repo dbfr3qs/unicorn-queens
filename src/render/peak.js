@@ -7,7 +7,7 @@
 // M2–M7 subsystems write), so snapshots stay text-stable.
 import { game } from '../game.js';
 import { spriteReady } from '../sprites.js';
-import { drawSpriteFeet, scaleToWidth } from './sprite.js';
+import { drawSpriteFeet, scaleToWidth, drawWall } from './sprite.js';
 
 
 // The wind vane on its post at 700 (top at groundY−120): the level's
@@ -108,12 +108,16 @@ function drawCauldronRim(c, lvl) {
 // behind the dissolved gate) + the porthole in the interior wall.
 function drawSpireWallAndPorthole(c, lvl, t) {
   const gy = lvl.groundY;
-  c.fillStyle = '#2c3450'; // the outer wall, 5400–5500
-  c.fillRect(5400, 0, 100, gy);
-  c.fillStyle = '#454c68';
-  for (let wy = 40; wy < gy; wy += 28) c.fillRect(5400, wy, 100, 3);
-  c.fillStyle = '#e8f0f8'; // the snow cap
-  c.fillRect(5400, 0, 100, 5);
+  // the outer wall, 5400–5500: the spire's own stone, run on past the
+  // interior's edge (drawWall takes world x; this pass is camera-translated)
+  if (!drawWall(c, 'wall_spire', 5400, 5500, 0, gy)) {
+    c.fillStyle = '#2c3450';
+    c.fillRect(5400, 0, 100, gy);
+    c.fillStyle = '#454c68';
+    for (let wy = 40; wy < gy; wy += 28) c.fillRect(5400, wy, 100, 3);
+    c.fillStyle = '#e8f0f8'; // the snow cap
+    c.fillRect(5400, 0, 100, 5);
+  }
   // the porthole at 4500: r 40, iron rim, the starlit sky through it,
   // the King's cage far above in the glass (the visual goal, made
   // visible before it's reachable)

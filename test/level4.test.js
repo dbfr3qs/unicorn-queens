@@ -67,7 +67,7 @@ describe('level 4 data', () => {
 
   it('keyless full-height portcullis at the hall mouth', () => {
     expect(lvl.door).toEqual(
-      { x: 3550, y: 0, w: 40, h: 560, state: 'locked', noKey: true, openT: 0, closeT: 0 });
+      { x: 3550, y: 0, w: 40, h: 560, state: 'locked', noKey: true, openT: 0, closeT: 0, wall: 'wall_deep' });
   });
 
   it('shaft + exit: ceiling hole at 4150, sealed and locked until the pearl beat', () => {

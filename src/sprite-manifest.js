@@ -227,6 +227,33 @@ export const SPRITES = {
     "hitbox": null,
     "w": 96
   },
+  "cog_adder": {
+    "anchor": "centre",
+    "file": "cog_adder.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 32,
+    "hitbox": null,
+    "w": 30
+  },
+  "cog_heron": {
+    "anchor": "centre",
+    "file": "cog_heron.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 30,
+    "hitbox": null,
+    "w": 32
+  },
+  "cog_weaver": {
+    "anchor": "centre",
+    "file": "cog_weaver.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 32,
+    "hitbox": null,
+    "w": 28
+  },
   "dragon": {
     "anchor": "feet",
     "file": "dragon.png",
@@ -238,6 +265,15 @@ export const SPRITES = {
       "w": 60
     },
     "w": 96
+  },
+  "egg_sac": {
+    "anchor": "feet",
+    "file": "egg_sac.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 40,
+    "hitbox": null,
+    "w": 28
   },
   "exit_door": {
     "anchor": "feet",
@@ -431,6 +467,15 @@ export const SPRITES = {
     },
     "w": 96
   },
+  "iron_bars": {
+    "anchor": "tile",
+    "file": "iron_bars.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 64,
+    "hitbox": null,
+    "w": 64
+  },
   "key": {
     "anchor": "centre",
     "file": "key.png",
@@ -517,6 +562,24 @@ export const SPRITES = {
       "w": 20
     },
     "w": 48
+  },
+  "nest": {
+    "anchor": "feet",
+    "file": "nest.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 48,
+    "hitbox": null,
+    "w": 48
+  },
+  "nest_webbed": {
+    "anchor": "feet",
+    "file": "nest_webbed.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 48,
+    "hitbox": null,
+    "w": 46
   },
   "pearl": {
     "anchor": "centre",
@@ -817,6 +880,15 @@ export const SPRITES = {
     "h": 448,
     "hitbox": null,
     "w": 256
+  },
+  "tree_dead": {
+    "anchor": "feet",
+    "file": "tree_dead.png",
+    "fps": 0,
+    "frames": 1,
+    "h": 227,
+    "hitbox": null,
+    "w": 192
   },
   "tree_deep": {
     "anchor": "feet",

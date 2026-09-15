@@ -361,7 +361,19 @@ function drawRoot(c, p) { // a gnarled brown limb, knobby
   c.fillRect(p.x + p.w - 8, p.y + 10, 4, 12);
 }
 
+// Where the nest's sheets sit on the nest platform: shared with the web
+// (render/mire.js draws nest_webbed over this), so the two line up.
+export function nestFeet(p) { return { x: p.x + p.w / 2, y: p.y + 18, w: p.w + 12 }; }
+
 function drawNest(c, p) { // a stick nest
+  if (spriteReady('nest')) {
+    const f = nestFeet(p);
+    c.save();
+    c.translate(f.x, f.y);
+    const drew = drawSpriteFeet(c, 'nest', 0, scaleToWidth('nest', f.w));
+    c.restore();
+    if (drew) return;
+  }
   c.fillStyle = '#4a3620'; // the bowl
   c.beginPath(); c.ellipse(p.x + p.w / 2, p.y + 8, p.w / 2, 10, 0, 0, Math.PI * 2); c.fill();
   c.fillStyle = '#5d4226'; // sticks

@@ -413,22 +413,34 @@ function drawMireFireflies(c, zx0, zx1, cam, t) {
 // A bare cypress line tiled in parallax space: trunks with drooping
 // branch nubs. `webs` adds overhead web threads between trunks
 // (the mire-deep only).
-function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs) {
+// `haze` fades the far line toward the sky, the pine line's trick: one
+// sheet for both lines, told apart by distance rather than by colour.
+function drawCypressLine(c, cam, viewW, gy, par, period, hMin, hVar, color, webs, haze = 1) {
   const shift = cam.x * par;
   const start = Math.floor((shift - 120) / period) * period;
+  const sheet = spriteReady('tree_dead');
   let prev = null;
   for (let k = start; k < shift + viewW + 120; k += period) {
     const i = ((k / period) % 97 + 97) % 97; // seeded index
     const jx = (i * 71) % 80;
     const x = k + jx - shift;
     const h = hMin + ((i * 37) % hVar);
-    c.fillStyle = color;
-    c.fillRect(x - 2, gy - h, 4, h); // trunk
-    for (let b = 1; b <= 4; b++) { // drooping nubs
-      const by = gy - h + (h * b) / 5;
-      const len = 9 + ((i * 13 + b * 7) % 8);
-      c.fillRect(x - 2 - len, by, len, 2);
-      c.fillRect(x + 2, by + 4, len, 2);
+    if (sheet) {
+      c.save();
+      if (haze < 1) c.globalAlpha = haze;
+      c.translate(x, gy);
+      if (i % 2) c.scale(-1, 1);
+      drawSpriteFeet(c, 'tree_dead', 0, scaleToHeight('tree_dead', h + 20));
+      c.restore();
+    } else {
+      c.fillStyle = color;
+      c.fillRect(x - 2, gy - h, 4, h); // trunk
+      for (let b = 1; b <= 4; b++) { // drooping nubs
+        const by = gy - h + (h * b) / 5;
+        const len = 9 + ((i * 13 + b * 7) % 8);
+        c.fillRect(x - 2 - len, by, len, 2);
+        c.fillRect(x + 2, by + 4, len, 2);
+      }
     }
     if (webs) {
       const ty = gy - h + 6;
@@ -456,7 +468,7 @@ function drawMireZone(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
   }
   drawMireWizard(c, t, viewW);
   drawMireFog(c, t, viewW, deep);
-  drawCypressLine(c, cam, viewW, lvl.groundY, 0.5, 170, 70, 50, deep ? '#141d14' : '#16201a', false);
+  drawCypressLine(c, cam, viewW, lvl.groundY, 0.5, 170, 70, 50, deep ? '#141d14' : '#16201a', false, 0.55);
   drawCypressLine(c, cam, viewW, lvl.groundY, 0.7, 230, 100, 70, deep ? '#101810' : '#121c12', deep);
   drawMireFireflies(c, zx0, zx1, cam, t);
   c.restore();

@@ -72,7 +72,7 @@ export function createLevel3(viewH = 600) {
       witch: 'inside', wx: 2115, wy: groundY - 32, wvy: 0,
       wanderT: 0, fadeT: 0, puffT: 0,
     },
-    door: { x: 3550, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, closeT: 0 }, // full height
+    door: { x: 3550, y: 0, w: 40, h: groundY, state: 'locked', openT: 0, closeT: 0, wall: 'wall_dungeon' }, // full height; wall: its jambs' sheet
     pearl: {
       x: 4210, y: groundY - 60, w: 20, h: 20,
       visible: false, taken: false,

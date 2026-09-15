@@ -292,9 +292,21 @@ function drawWinch(c, lvl, t) {
     c.lineTo(cx + Math.cos(a - 0.12) * (r - 4), cy + Math.sin(a - 0.12) * (r - 4));
     c.closePath();
     c.fill();
-    if (winch.sockets[i]) { // the installed cog in its notch
-      c.fillStyle = COG_COLS[i];
-      c.beginPath(); c.arc(cx + Math.cos(a) * (r - 14), cy + Math.sin(a) * (r - 14), 6, 0, Math.PI * 2); c.fill();
+    if (winch.sockets[i]) { // the installed cog in its notch: its own gear, turning with the wheel
+      const nx = cx + Math.cos(a) * (r - 14), ny = cy + Math.sin(a) * (r - 14);
+      const sheet = 'cog_' + lvl.cogs[i].id;
+      let drew = false;
+      if (spriteReady(sheet)) {
+        c.save();
+        c.translate(nx, ny);
+        c.rotate(a);
+        drew = drawSpriteCentre(c, sheet, 0, scaleToHeight(sheet, 16));
+        c.restore();
+      }
+      if (!drew) {
+        c.fillStyle = COG_COLS[i];
+        c.beginPath(); c.arc(nx, ny, 6, 0, Math.PI * 2); c.fill();
+      }
     }
   }
   for (let i = 0; i < 3; i++) { // the runes, one above each socket

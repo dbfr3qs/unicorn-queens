@@ -3,6 +3,8 @@ import { game } from '../game.js';
 import { LEVELS } from '../levels/index.js';
 import { score } from '../loot.js';
 import { muted, audioSuspended } from '../audio.js';
+import { spriteReady } from '../sprites.js';
+import { drawSpriteCentre, scaleToHeight } from './sprite.js';
 import { musicSuspended } from '../music.js';
 import { FLIGHT_TIME, FLIGHT_CD } from '../player.js';
 import { palette, fonts } from './theme.js';
@@ -57,6 +59,15 @@ export function drawHud(ctx, viewW, viewH) {
     for (let i = 0; i < game.level.cogs.length; i++) {
       const ix = viewW / 2 - 84 + i * 22, iy = 11;
       const lit = game.level.winch.sockets[i]; // dim until installed in a socket
+      const sheet = 'cog_' + game.level.cogs[i].id; // the cog's own gear, small; ghosted until it is in
+      if (spriteReady(sheet)) {
+        ctx.save();
+        ctx.translate(ix + 5, iy + 6);
+        ctx.globalAlpha = lit ? 1 : 0.3;
+        const drew = drawSpriteCentre(ctx, sheet, 0, scaleToHeight(sheet, 14));
+        ctx.restore();
+        if (drew) continue;
+      }
       ctx.strokeStyle = lit ? cols[i] : palette.hint;
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(ix + 5, iy + 6, 5, 0, Math.PI * 2); ctx.stroke(); // the ring

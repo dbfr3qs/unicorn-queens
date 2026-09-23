@@ -15,6 +15,10 @@ would have carried in at that point (bow from level 3, flight from the
 witch in level 3), so each level is testable as designed. Death and level
 advance still follow the normal carry rules.
 
+`?difficulty=easy|medium|hard` picks the difficulty for that session
+(combine with `?level=`); without it the game uses the last choice
+remembered, else hard. See DIFFICULTY-PLAN.md.
+
 A plain start (no `?level=`) opens with the story: the Queen and the King
 out walking in the wood of level 5 when the sorcerer arrives, takes the
 realm in a sentence, and the King in a scuffle — nineteen seconds on the

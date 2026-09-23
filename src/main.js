@@ -7,6 +7,7 @@ import { pollGamepads } from './gamepad.js'; // a controller, read once a frame 
 import { initTouch, wantsTouch } from './touch.js'; // a phone or tablet: on-screen buttons, also as keys
 import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
+import { initDifficulty } from './difficulty.js'; // ?difficulty=, else the remembered choice
 import { cardReady } from './ending9.js'; // level 9: the end card
 import { startIntro, endIntro } from './intro.js'; // the opening scene
 import { spritesLoaded, loadProgress } from './sprites.js';
@@ -98,6 +99,7 @@ addEventListener('keydown', e => {
 // location is absent — it gets the intro, and runs it.
 {
   const search = typeof location !== 'undefined' ? location.search : '';
+  initDifficulty(search);
   if (/[?&]level=/.test(search)) startGame(canvas.height, levelIndexFromSearch(search));
   else startIntro(canvas.height);
 }

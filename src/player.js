@@ -20,6 +20,23 @@ export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
 export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
 export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow
 export const ICE_ACCEL = 900, ICE_DRAG = 0.02, ICE_MAX = 1.3 * P_SPEED; // level 7 ice: steer 900 px/s², ~no friction, 1.3× run cap (338)
+export const RESPAWN_MARGIN = 64; // a pit respawn lands at least this far back from the edge
+const UNSAFE_FOOTING = new Set(['box', 'gear', 'trapdoor']); // breaks, slides, or opens: never a respawn point
+
+// Where a pit fall puts the player back: the last safe spot, pulled in
+// RESPAWN_MARGIN from any open edge of the surface it was on (an edge
+// flush with a neighbouring ground segment at the same height is not a
+// drop). A surface too narrow for the margin centres the player on it.
+export function respawnX(p, lvl) {
+  const s = p.safeSurf;
+  if (!s) return p.safeX;
+  const top = s.y ?? lvl.groundY;
+  const flush = x => lvl.ground.some(g => g !== s && (g.y ?? lvl.groundY) === top && (g.x === x || g.x + g.w === x));
+  const lo = s.x + (flush(s.x) ? 0 : RESPAWN_MARGIN);
+  const hi = s.x + s.w - p.w - (flush(s.x + s.w) ? 0 : RESPAWN_MARGIN);
+  if (lo > hi) return s.x + (s.w - p.w) / 2;
+  return Math.max(lo, Math.min(p.safeX, hi));
+}
 
 // carry: permanent acquisitions from the previous level (big, bow),
 // passed when advancing; a fresh start or death-restart carries nothing.
@@ -29,6 +46,7 @@ export function createPlayer(lvl, carry = {}) {
   return {
     x: 60, y: lvl.groundY - h, w, h,
     safeX: 60, safeY: lvl.groundY - h, // respawn point: last spot stood on
+    safeSurf: null, // the surface safeX/safeY was taken on (respawnX pulls back from its edges)
     vx: 0, vy: 0,
     onGround: false,
     facing: 1,
@@ -184,7 +202,9 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   const surface = resolveGroundCollision(player, lvl, dt);
   if (player.flying && player.onGround && !wasOnGround) endFlight(player, fx); // landing ends flight
-  if (player.onGround) { player.safeX = player.x; player.safeY = player.y; } // respawn point
+  if (player.onGround && surface && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
+    player.safeX = player.x; player.safeY = player.y; player.safeSurf = surface;
+  }
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust
     player.sy = 0.7; player.sx = 1.3;
     burst(player.x + player.w / 2, player.y + player.h, FX.landing);
@@ -209,7 +229,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
       fx.play('hurt');
       if (player.flying) endFlight(player, fx); // the spell was used up
       player.invuln = HURT_INVULN;
-      player.x = player.safeX;
+      player.x = respawnX(player, lvl);
       player.y = player.safeY;
       player.vx = 0;
       player.vy = 0;

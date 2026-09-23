@@ -37,7 +37,7 @@ render snapshots unchanged unless the phase says otherwise.
 
 - [x] **D1** — `src/difficulty.js`: presets, current setting, `?difficulty=`,
   remembered choice (storage guarded). Nothing reads it yet.
-- [ ] **D2** — player survival: `hearts`, `invuln`, `pitDamage`.
+- [x] **D2** — player survival: `hearts`, `invuln`, `pitDamage`.
 - [ ] **D3** — Easy revive: one death path for hits and pits; revive beat,
   respawn, hazard clear (fireballs, boulders, shockwaves, cones, seal columns,
   ice spikes); death counter.
@@ -48,6 +48,8 @@ render snapshots unchanged unless the phase says otherwise.
 - [ ] **D6** — hazards and regular enemies: `hazard` (wind gust, web slow,
   bookcase window, flight recharge); Hard-only roster tags.
 - [ ] **D7** — picker on the title card; HUD label; change it from the end card.
+  A change must start a fresh run (no `prev`): a carried `maxHp` is sized to
+  the old preset's hearts.
 - [ ] **D8** — playtest tuning pass.
 
 Afterwards: boss-vs-boss balance, as a per-boss adjustment table in

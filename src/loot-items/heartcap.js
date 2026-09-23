@@ -1,14 +1,17 @@
-// Heartcap: permanent maxHp 4 for the run (gem payout if already capped),
+// Heartcap: one more heart than the difficulty starts with, permanent for
+// the run (gem payout if already capped),
 // crowned heart sprite.
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { palette } from '../render/theme.js';
+import { difficulty } from '../difficulty.js';
 
 function onPickup(it, p, lvl, fx, hooks) {
   let gained = 0;
-  if (p.maxHp < 4) {
-    p.maxHp = 4; // permanent for the run
+  const capped = difficulty().hearts + 1;
+  if (p.maxHp < capped) {
+    p.maxHp = capped; // permanent for the run
     fx.play('heartcap');
   } else {
     gained = 1; // already capped: pays out like a gem

@@ -63,7 +63,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
     big: advancing ? !!prev.big : !!testCarry.big,
     hasBow: advancing ? !!prev.hasBow : !!testCarry.hasBow,
     hasFlight: !!prev?.hasFlight || !!testCarry.hasFlight, // flight spell: permanent for the run, like the heart cap
-    maxHp: prev?.maxHp ?? testCarry.maxHp ?? 3,
+    maxHp: prev?.maxHp ?? testCarry.maxHp, // else the difficulty's hearts (createPlayer)
   });
   game.enemies = createEnemies(game.level);
   resetLoot();

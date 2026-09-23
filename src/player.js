@@ -6,13 +6,14 @@ import { shake } from './camera.js';
 import { spawnLoot } from './loot.js';
 import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
+import { difficulty } from './difficulty.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
 export const HOP_V = P_JUMP_V * 0.85; // levitation hop: shorter than a ground jump
 export const BOOTS_TIME = 10, BOOT_JUMP_MULT = 1.6; // bounce boots: 10 s, 1.6× jump
 export const MAGNET_TIME = 8; // magnet: 8 s of gem attraction
 export const LANTERN_TIME = 8; // lantern: 8 s of ghost-repelling light
-export const HURT_INVULN = 1.5; // invulnerability window after any hit
+export const HURT_INVULN = 1.5; // invulnerability window after any hit, at hard (the preset's `invuln` is live)
 export const P_W = 28, P_H = 36, BIG_W = 40, BIG_H = 50, BIG_JUMP_V = P_JUMP_V * 1.35;
 export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 export const FLIGHT_TIME = 10, FLIGHT_CD = 15; // witch's spell: 10 s flight, 15 s recharge
@@ -51,14 +52,14 @@ export function createPlayer(lvl, carry = {}) {
     onGround: false,
     facing: 1,
     solidToBoxes: true,
-    hp: 3,
+    hp: difficulty().hearts,
     invuln: 0,
     dead: false,
     sx: 1, sy: 1, // squash & stretch
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
     hasBow: !!lvl.startItems?.includes('bow') || !!carry.hasBow, fireCd: 0, // level 2 starts with the bow
     big,
-    maxHp: carry.maxHp ?? 3, // heart cap: permanent for the run
+    maxHp: carry.maxHp ?? difficulty().hearts, // heart cap: permanent for the run
     boots: 0, // bounce boots timer (s); never carried across levels
     magnet: 0, // gem attraction timer (s); never carried across levels
     stars: 0, // star arrows in reserve; never carried across levels
@@ -83,7 +84,7 @@ export function createPlayer(lvl, carry = {}) {
 export function hurtPlayer(p, cam, fx) {
   if (p.dead || p.invuln > 0) return false;
   p.hp -= 1;
-  p.invuln = HURT_INVULN;
+  p.invuln = difficulty().invuln;
   p.vy = -250;
   p.cuttable = false;
   fx.play('hurt');
@@ -221,14 +222,14 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   player.sx += (1 - player.sx) * Math.min(1, dt * 14); // ease back to rest
   player.sy += (1 - player.sy) * Math.min(1, dt * 14);
-  if (player.y > lvl.height) { // fell in a pit: 1 damage, respawn at last safe spot
-    player.hp -= 1;
+  if (player.y > lvl.height) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
+    player.hp -= difficulty().pitDamage;
     player.cuttable = false;
     if (player.hp <= 0) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); }
     else {
       fx.play('hurt');
       if (player.flying) endFlight(player, fx); // the spell was used up
-      player.invuln = HURT_INVULN;
+      player.invuln = difficulty().invuln;
       player.x = respawnX(player, lvl);
       player.y = player.safeY;
       player.vx = 0;

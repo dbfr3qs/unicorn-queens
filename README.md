@@ -26,8 +26,7 @@ as designed); ←/→ and Space. The choice is remembered, and the end card's
 Space comes back to it. Then the story: the Queen and the King
 out walking in the wood of level 5 when the sorcerer arrives, takes the
 realm in a sentence, and the King in a scuffle — nineteen seconds on the
-game's own sheets, any key to skip. The end card's Space starts over from
-it. `src/intro.js` is the scene as a pure function of its clock;
+game's own sheets, any key to skip. `src/intro.js` is the scene as a pure function of its clock;
 `src/render/intro.js` draws it through the same passes the level uses.
 
 ## Levels

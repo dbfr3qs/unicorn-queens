@@ -150,9 +150,9 @@ export function fightOnce(b, n) {
   return { t, hits, stag, won: boss.dead || !!boss.dying };
 }
 
-export function fights(b) {
+export function fights(b, count = FIGHTS) {
   setDifficulty('hard');
-  const rs = Array.from({ length: FIGHTS }, (_, n) => fightOnce(b, n));
+  const rs = Array.from({ length: count }, (_, n) => fightOnce(b, n));
   const won = rs.filter(r => r.won);
   const ts = won.map(r => r.t).sort((x, y) => x - y);
   const median = ts.length ? ts[Math.floor(ts.length / 2)] : NaN;

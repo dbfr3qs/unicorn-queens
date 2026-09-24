@@ -1,6 +1,6 @@
 # Boss ladder — Phased Build Plan
 
-**Status: IN PROGRESS (B1–B8).** One phase = one commit.
+**Status: DONE (B1–B8).** One phase = one commit.
 
 House gate after every phase: `npm test` green, `npm run smoke` green, and
 `npm run bosslab fight` re-run with the table pasted into the commit message.
@@ -195,4 +195,28 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   and a shorter P1 hover (0.8 → 0.9 hits: nothing). Neither boss was
   flagged in the playtest; the mage's rhythm (dodges, one shot at a time,
   a stagger on every hit) is also where the bot is the weakest ruler.
-- [ ] **B8** — a ladder test: a short bot run in `npm test` that pins the order.
+- [x] **B8** — `test/boss-ladder.test.js`: 10 seeded bot fights per boss
+  and the reach map, ~2 s in `npm test`. It pins what the work fixed, not
+  the exact order (some neighbours are within the bot's noise): every boss
+  dies in every fight; none is staggered 20% of its fight (no stun-lock);
+  the troll, the Weaver and the Warden live 8 s or more; the wizard's kill
+  is under 40 s; the Warden and the Queen out-hit the wizard; the Queen is
+  the hardest; no arena has a never-hit stretch. Checked: with POISE = 0 it
+  fails four ways.
+
+## Where it ended (hard, 30 fights)
+
+```
+boss          kills  median kill  hits taken  3-heart wins  staggered
+Mage   (L2)   30/30      8 s          2.7          63%           7%
+Troll  (L3)   30/30      9 s          1.6         100%           7%
+Dragon (L4)   30/30     28 s          0.8          97%           8%
+Weaver (L6)   30/30     19 s          3.1          33%          10%
+Wizard (L7)   30/30     22 s          2.3          60%           4%
+Warden (L8)   30/30     25 s          3.3           0%           4%
+Queen  (L9)   30/30     21 s          6.9          13%           0%
+```
+
+Open for playtest: the Weaver and the wizard read as a tie to the bot; the
+mage out-hits the troll and the dragon (neither flagged; the bot is a poor
+ruler of the mage); the Queen's two heart boxes are both still there.

@@ -8,6 +8,9 @@ step. Serve over http — the modules won't load from `file://`.
     npm run serve     # http://localhost:9000/
     npm test          # unit tests (vitest)
     npm run smoke     # 300-frame headless wiring check
+    npm run bosslab   # boss reach map: where each boss can't touch you
+    npm run bosslab fight [boss]   # a bot fights each boss 30 times on hard
+    npm run bosslab why <boss>     # one boss's fights, explained
 
 Booting with `?level=N` (1-based) jumps straight to that level — e.g.
 `http://localhost:9000/?level=5`. The player arrives with the gear a run

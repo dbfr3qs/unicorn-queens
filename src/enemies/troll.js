@@ -14,6 +14,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { shake } from '../camera.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 import { palette } from '../render/theme.js';
 
 const A_W = 14, A_H = 4; // arrow body size (kept in sync with the arrows.js hit test)
@@ -62,7 +63,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
   if (e.state === undefined) { e.state = 'idle'; e.t = 1.5; e.flash = 0; }
   e.flash = Math.max(0, e.flash - dt);
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
-  e.phase2 = e.hp <= this.phase2Hp;
+  e.phase2 = e.hp <= phaseEdge(e, this.phase2Hp, this.hp);
   const ws = e.phase2 ? this.windupScale2 : 1; // windups -30 % phase 2
   e.shield = e.state === 'shield';
   e.shieldCd = Math.max(0, (e.shieldCd ?? 0) - dt);
@@ -201,9 +202,10 @@ function draw(c, e) {
   }
   c.restore();
   if (!e.dead) { // 8 hp pips, world space above the boss (mage pattern)
-    for (let i = 0; i < 8; i++) {
+    const n = pipMax(e, 8);
+    for (let i = 0; i < n; i++) {
       c.fillStyle = i < e.hp ? '#a3d977' : '#3a4034';
-      c.fillRect(e.x + e.w / 2 - 32 + i * 8, e.y - 14, 7, 4);
+      c.fillRect(e.x + e.w / 2 - n * 4 + i * 8, e.y - 14, 7, 4);
     }
   }
 }

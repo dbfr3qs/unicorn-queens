@@ -22,6 +22,7 @@ import { shake } from '../camera.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 
 export const PILLAR_TOTAL = 1.55; // rise 0.25 + stand 0.8 + decay 0.5
 const PILLAR_SOLID = 1.05; // solid through rise + stand
@@ -38,13 +39,13 @@ function onDeath(e, fx, cam) {
 }
 
 function nextIdle(e) {
-  return e.hp <= this.phase2At ? 0.7 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
+  return e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.7 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
 }
 
 // Attack pick: phase 1 lunge 40 / spit 35 / pillar 25;
 // phase 2 lunge 30 / spit (double) 30 / pillar 25 / volley 15.
 function pickAttack(e, p, lvl, fx) {
-  const p2 = e.hp <= this.phase2At;
+  const p2 = e.hp <= phaseEdge(e, this.phase2At, this.hp);
   const r = Math.random() * 100;
   if (p2 ? r < 30 : r < 40) {
     e.state = 'lungeTele';
@@ -263,10 +264,11 @@ function draw(c, e) {
     c.fill();
   }
   if (!e.dead) { // hp pips: two rows of eight, world space above the Queen
-    for (let i = 0; i < 16; i++) {
-      const row = i < 8 ? 0 : 1, col = i % 8;
+    const n = pipMax(e, 16), per = Math.ceil(n / 2); // two rows
+    for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - 48 + col * 12, e.y - 22 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 22 + row * 7, 10, 4);
     }
   }
 }

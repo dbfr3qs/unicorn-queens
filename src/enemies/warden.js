@@ -34,11 +34,13 @@
 // as he unwinds (two rows of 8, spiderboss pattern).
 
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 import { fireFireball, fireShockwaves } from '../projectiles.js';
 import { hurtPlayer } from '../player.js';
 import { shake } from '../camera.js';
 
-export const P2_AT = 8;
+export const P2_AT = 8, WARDEN_HP = 16;
+const inP2 = e => e.hp <= phaseEdge(e, P2_AT, WARDEN_HP); // the edge scales with his spawn hp
 const RESET_WINDOW = 0.6;
 const BOLT_FAN = [-15, 0, 15]; // degrees
 const BOLT_SPEED = 240;
@@ -66,11 +68,11 @@ export function wardenRand(e) {
 
 // The pips are his winding: a pure function of hp (16 at spawn).
 export function pipCount(e) {
-  return Math.max(0, Math.min(16, e.hp));
+  return Math.max(0, Math.min(pipMax(e, WARDEN_HP), e.hp));
 }
 
 function nextIdle(e) {
-  return e.hp <= P2_AT ? 0.6 + wardenRand(e) * 0.4 : 1.0 + wardenRand(e) * 0.5;
+  return inP2(e) ? 0.6 + wardenRand(e) * 0.4 : 1.0 + wardenRand(e) * 0.5;
 }
 
 function startSlam(e, fx) {
@@ -93,7 +95,7 @@ function startSweep(e, p, fx) {
 
 function pickAttack(e, p, fx) {
   const r = wardenRand(e);
-  if (e.hp <= P2_AT) { // P2: slam 30 / bolt 30 / sweep 40 (plan M6)
+  if (inP2(e)) { // P2: slam 30 / bolt 30 / sweep 40 (plan M6)
     if (r < 0.3) return startSlam(e, fx);
     if (r < 0.6) { e.pendingBolt = true; return; }
     return startSweep(e, p, fx);
@@ -214,15 +216,15 @@ function update(e, { p, lvl, cam, dt, fx }) {
       e.t = nextIdle(e);
       e.pendingBolt = false;
     } else {
-      const step = e.hp <= P2_AT ? ADVANCE_P2 : ADVANCE_P1;
+      const step = inP2(e) ? ADVANCE_P2 : ADVANCE_P1;
       const dx = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
       e.x = Math.max(e.minX, Math.min(e.maxX - e.w, e.x + dx * step));
       e.dir = dx;
-      if (e.hp > P2_AT) pickAttack(e, p, fx); // P1: attack on the beat
+      if (!inP2(e)) pickAttack(e, p, fx); // P1: attack on the beat
     }
   }
   // The off-beat (P2 only): t = period/4 and t = 3·period/4 crossings.
-  if (e.hp <= P2_AT && e.state === 'idle' && !c.stopped &&
+  if (inP2(e) && e.state === 'idle' && !c.stopped &&
       ((prevT < c.period / 4 && c.t >= c.period / 4) ||
        (prevT < 3 * c.period / 4 && c.t >= 3 * c.period / 4))) {
     if (e.t <= 0) pickAttack(e, p, fx);
@@ -240,7 +242,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
 function draw(c, e) {
   const ph = e.phase ?? 0;
   const sleeping = !!e.sleeping;
-  const p2 = e.hp <= P2_AT;
+  const p2 = inP2(e);
   const bob = sleeping ? Math.sin(ph * Math.PI) * 1.5 : 0; // the 2 s breath
 
   // The sweep band (telegraph) + blade: world space, floor level.
@@ -326,10 +328,11 @@ function draw(c, e) {
   // The 16 pips: two rows of 8, his winding (spiderboss pattern).
   if (!e.dead) {
     const n = pipCount(e);
-    for (let i = 0; i < 16; i++) {
-      const row = i < 8 ? 0 : 1, col = i % 8;
+    const max = pipMax(e, WARDEN_HP), per = Math.ceil(max / 2); // two rows
+    for (let i = 0; i < max; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < n ? '#ffd75e' : '#5e4a1e';
-      c.fillRect(e.x + e.w / 2 - 48 + col * 12, e.y - 20 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 20 + row * 7, 10, 4);
     }
   }
 }
@@ -337,7 +340,7 @@ function draw(c, e) {
 register({
   kind: 'warden',
   w: 60, h: 64,
-  hp: 16,
+  hp: WARDEN_HP,
   stompable: false, // arrow-only (the dragon rule)
   hitSound: 'bossHit', // standard boss-hit path (spiderboss's name)
   // The reset window: arrows are worth 3 while the core is cyan (stars stay

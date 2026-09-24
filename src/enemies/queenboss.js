@@ -15,6 +15,7 @@ import { hurtPlayer } from '../player.js';
 import { fireFireball, fireShockwaves, fireCone } from '../projectiles.js';
 import { frostPatch } from '../thaw.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 import { drawFrozenQueen } from '../render/frostpalace.js';
 
 export const E_W = 56, E_H = 60, QUEEN_HP = 24;
@@ -69,8 +70,14 @@ export function queenRand(e) {
 // Her health, as 24 pips in three rows of eight — the first three-row display
 // in the game, because this is the last fight. Row-major from the top.
 export function pipRows(e) {
-  const hp = Math.max(0, Math.min(QUEEN_HP, e.hp));
-  return [0, 1, 2].map(row => Math.max(0, Math.min(8, hp - (2 - row) * 8)));
+  const per = pipsPerRow(e);
+  const hp = Math.max(0, Math.min(per * 3, e.hp));
+  return [0, 1, 2].map(row => Math.max(0, Math.min(per, hp - (2 - row) * per)));
+}
+
+// A row per winter: a third of what she spawned with (8 at hard).
+export function pipsPerRow(e) {
+  return Math.ceil(pipMax(e, QUEEN_HP) / 3);
 }
 
 // The entrance, driven by the level rather than by her: the roster entity is
@@ -130,7 +137,7 @@ export const SPIKE_LIFE = SPIKE_GLINT + SPIKE_RISE + SPIKE_STAND + SPIKE_FALL;
 // Which winter she is fighting. Read from hp, so it can never disagree with
 // the pips the player is reading off the wall.
 export function phaseOf(e) {
-  return e.hp > P2_AT ? 1 : e.hp > P3_AT ? 2 : 3;
+  return e.hp > phaseEdge(e, P2_AT, QUEEN_HP) ? 1 : e.hp > phaseEdge(e, P3_AT, QUEEN_HP) ? 2 : 3;
 }
 
 // Her four stages, run by the level rather than by her (she is dead as far as
@@ -428,9 +435,10 @@ function drawPips(c, e) {
   const cx = 5650;
   for (let row = 0; row < 3; row++) {
     const n = rows[row];
-    for (let i = 0; i < 8; i++) {
+    const per = pipsPerRow(e);
+    for (let i = 0; i < per; i++) {
       c.fillStyle = i < n ? '#bfe4f0' : '#2a3a52';
-      c.fillRect(cx - 79 + i * 20, 240 + row * 18, 14, 6);
+      c.fillRect(cx - per * 10 + 1 + i * 20, 240 + row * 18, 14, 6);
     }
   }
 }

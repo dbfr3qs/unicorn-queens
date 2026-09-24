@@ -11,6 +11,7 @@ import { shake } from '../camera.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 
 function onHit(e) {
   e.flash = this.flashT;
@@ -25,7 +26,7 @@ function onDeath(e, fx, cam) {
 
 function nextIdle(e) {
   // phase 2 runs on a faster tempo
-  return e.hp <= this.phase2At ? 0.8 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
+  return e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.8 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
 }
 
 // Move e.y toward target at speed px/s; true when it arrives.
@@ -39,7 +40,7 @@ function easeY(e, target, speed, dt) {
 // Attack pick: phase 1 perch 40 / fireball 35 / dive 25;
 // phase 2 perch 30 / fireball (double) 30 / dive 40.
 function pickAttack(e, p, lvl, fx) {
-  const p2 = e.hp <= this.phase2At;
+  const p2 = e.hp <= phaseEdge(e, this.phase2At, this.hp);
   const inAir = fireballs.filter(f => !f.reflected).length;
   const maxAir = p2 ? 2 : 1;
   const r = Math.random();
@@ -68,7 +69,7 @@ function updatePerch(e, p, lvl, dt, fx) {
   if (e.perch === 'descend') {
     if (easeY(e, perchY, this.perchSpeed, dt)) {
       e.perch = 'inhale';
-      e.t = e.hp <= this.phase2At ? this.inhaleT2 : this.inhaleT;
+      e.t = e.hp <= phaseEdge(e, this.phase2At, this.hp) ? this.inhaleT2 : this.inhaleT;
       fx.play('roar');
     }
     return;
@@ -87,7 +88,7 @@ function updatePerch(e, p, lvl, dt, fx) {
     // don't outlast it
     const ox = e.x + this.w / 2 + e.dir * 30, oy = e.y + this.h / 2 - 4; // mouth
     const angle = Math.atan2(p.y + p.h / 2 - oy, p.x + p.w / 2 - ox);
-    const ttl = e.hp <= this.phase2At ? this.breathT2 : this.breathT;
+    const ttl = e.hp <= phaseEdge(e, this.phase2At, this.hp) ? this.breathT2 : this.breathT;
     fireCone(ox, oy, angle, fx, ttl);
     e.perch = 'breath';
     e.t = ttl;
@@ -106,7 +107,7 @@ function updatePerch(e, p, lvl, dt, fx) {
 // ground window; the arc is a contact threat on the way down.
 function updateDive(e, p, lvl, dt) {
   const diveY = lvl.groundY - 55;
-  const speed = this.diveSpeed * (e.hp <= this.phase2At ? 1.25 : 1);
+  const speed = this.diveSpeed * (e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 1.25 : 1);
   if (e.dive === 'descend') {
     if (easeY(e, diveY, speed, dt)) { e.dive = 'low'; e.t = this.diveLowT; }
     return;
@@ -238,10 +239,11 @@ function draw(c, e) {
   }
   c.restore();
   if (!e.dead) { // hp pips: two rows of seven, world space above the dragon
-    for (let i = 0; i < 14; i++) {
-      const row = i < 7 ? 0 : 1, col = i % 7;
+    const n = pipMax(e, 14), per = Math.ceil(n / 2); // two rows
+    for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - 42 + col * 12, e.y - 24 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 24 + row * 7, 10, 4);
     }
   }
 }

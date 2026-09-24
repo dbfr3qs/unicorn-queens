@@ -9,6 +9,7 @@ import { arrows } from '../arrows.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 import { palette } from '../render/theme.js';
 
 function onHit(e) {
@@ -146,7 +147,7 @@ function update(e, { p, lvl, dt, fx }) {
   e.t = this.nextIdle();
   // Proactive hover: leave the ground after a shot so the player can't
   // camp (more often at low hp); a dodging mage keeps the dodge target.
-  if (!e.dodging && Math.random() < (e.hp <= 2 ? this.hoverLowHpChance : this.hoverChance)) {
+  if (!e.dodging && Math.random() < (e.hp <= phaseEdge(e, 2, this.hp) ? this.hoverLowHpChance : this.hoverChance)) {
     e.floatY = top + Math.random() * (bottom - top);
     e.hover = this.hoverMin + Math.random() * (this.hoverMax - this.hoverMin);
     fx.play('hop'); // levitation whoosh, same as dodges
@@ -193,9 +194,10 @@ function draw(c, e) {
   }
   c.restore();
   if (!e.dead) { // hp pips, world space above the boss
-    for (let i = 0; i < 5; i++) {
+    const n = pipMax(e, 5);
+    for (let i = 0; i < n; i++) {
       c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - 29 + i * 12, e.y - 14, 10, 4);
+      c.fillRect(e.x + e.w / 2 - n * 6 + 1 + i * 12, e.y - 14, 10, 4);
     }
   }
 }

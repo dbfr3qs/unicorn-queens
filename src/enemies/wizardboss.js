@@ -12,6 +12,7 @@ import { burst } from '../particles.js';
 import { hurtPlayer } from '../player.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { phaseEdge, pipMax } from './phase.js';
 
 const ENTER_T = 1.0, SHATTER_T = 0.4, CRASH_T = 0.4, STUN_T = 2.0;
 const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.5;
@@ -35,7 +36,7 @@ function hoverX(e) { return 5850 + 350 * Math.cos(2 * Math.PI * e.age / 8); }
 function hoverY(e, lvl) { return lvl.groundY - 160 + 50 * Math.sin(e.age / 2); }
 
 function nextIdle(e) {
-  if (e.stage === 2) return e.hp <= 4 ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
+  if (e.stage === 2) return e.hp <= phaseEdge(e, 4, 16) ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
   return 1.0 + Math.random() * 0.5;
 }
 
@@ -81,7 +82,7 @@ function pickAttack(e, p, lvl, fx) {
 // the rolls at <=4 hp.
 function pickAttack2(e, p, lvl, fx) {
   const r = Math.random();
-  if (e.hp <= 4 && r < 0.3) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
+  if (e.hp <= phaseEdge(e, 4, 16) && r < 0.3) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.5) { e.fan = false; e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.75) {
     e.state = 'slamTele'; e.t = 0.5;
@@ -123,7 +124,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
   e.weakSide = p.x + p.w / 2 < e.x + e.w / 2 ? -1 : 1; // the rune's flank
 
   // --- the rune shatter (the hp 8 edge, once): crack -> crash -> stun ---
-  if (e.stage === 1 && e.hp <= 8 && !e.shattered) {
+  if (e.stage === 1 && e.hp <= phaseEdge(e, 8, 16) && !e.shattered) {
     e.shattered = true;
     e.state = 'shatter'; e.t = SHATTER_T;
     fx.play('crack');
@@ -309,10 +310,11 @@ function draw(c, e) {
     c.globalAlpha = 1;
   }
   if (!e.dead) { // hp pips: two rows of eight, world space above the boss
-    for (let i = 0; i < 16; i++) {
-      const row = i < 8 ? 0 : 1, col = i % 8;
+    const n = pipMax(e, 16), per = Math.ceil(n / 2); // two rows
+    for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? pipFull : pipEmpty;
-      c.fillRect(e.x + e.w / 2 - 48 + col * 12, e.y - 24 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 24 + row * 7, 10, 4);
     }
   }
 }
@@ -408,7 +410,7 @@ function drawSorcerer(c, e) {
   c.scale(e.dir, 1);
   const tele = e.state === 'slamTele';
   const casting = e.state === 'sealTele' || e.state === 'windup';
-  const low = e.hp <= 4;
+  const low = e.hp <= phaseEdge(e, 4, 16);
   c.fillStyle = '#2c2c48'; // the robe
   c.beginPath();
   c.moveTo(-20, 28);

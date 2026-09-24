@@ -41,7 +41,7 @@ render snapshots unchanged unless the phase says otherwise.
 - [x] **D3** — Easy revive: one death path for hits and pits; revive beat,
   respawn, hazard clear (fireballs, boulders, shockwaves, cones, seal columns,
   ice spikes); death counter.
-- [ ] **D4** — boss phase thresholds as fractions of max hp (all seven bosses).
+- [x] **D4** — boss phase thresholds as fractions of max hp (all seven bosses).
   No behaviour change at Hard.
 - [ ] **D5** — boss scaling: `bossHp`, `bossCd`, `bossTell`, `projSpeed`
   (may take two turns).

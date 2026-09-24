@@ -48,6 +48,7 @@ export function spawnEnemy(spec, lvl) {
     maxX: spec.maxX ?? spec.band?.[1] ?? lvl.width,
     dir: spec.dir ?? -1,
     hp: k.hp ?? 1,
+    maxHp: k.hp ?? 1, // what it spawned with: the boss phase edges and pips scale from it
     dead: false,
     sleeping: spec.sleeping ?? false, // the elder adder's coil (enemies.js guard)
     bound: spec.bound ?? false, // the level 7 arena wraiths (always solid)

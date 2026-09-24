@@ -104,11 +104,12 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.fillText(player.won ? 'LEVEL CLEAR!' : 'GAME OVER', viewW / 2, viewH / 2 - 24);
     ctx.font = fonts.sub;
     ctx.fillStyle = palette.lavender;
+    const tally = 'score ' + score + (player.deaths ? ' · revived ' + player.deaths + '×' : ''); // revives: easy only
     const sub = !player.won
       ? 'press Space to try again'
       : game.levelIndex + 1 < LEVELS.length
-        ? 'score ' + score + ' - press Space for next level'
-        : 'score ' + score + ' - press Space to play again';
+        ? tally + ' - press Space for next level'
+        : tally + ' - press Space to play again';
     ctx.fillText(sub, viewW / 2, viewH / 2 + 12);
     ctx.restore();
   }

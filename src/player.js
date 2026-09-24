@@ -21,6 +21,7 @@ export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
 export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
 export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow
 export const ICE_ACCEL = 900, ICE_DRAG = 0.02, ICE_MAX = 1.3 * P_SPEED; // level 7 ice: steer 900 px/s², ~no friction, 1.3× run cap (338)
+export const REVIVE_TIME = 1, REVIVE_INVULN = 3; // easy: the beat before the revive, and the grace after it
 export const RESPAWN_MARGIN = 64; // a pit respawn lands at least this far back from the edge
 const UNSAFE_FOOTING = new Set(['box', 'gear', 'trapdoor']); // breaks, slides, or opens: never a respawn point
 
@@ -55,6 +56,8 @@ export function createPlayer(lvl, carry = {}) {
     hp: difficulty().hearts,
     invuln: 0,
     dead: false,
+    reviving: 0, // easy: the revive beat's remaining time (s); the world waits on it
+    deaths: carry.deaths ?? 0, // easy's revives this run (shown on the clear card)
     sx: 1, sy: 1, // squash & stretch
     coyote: 0, jbuf: 0, jumpHeld: false, cuttable: false,
     hasBow: !!lvl.startItems?.includes('bow') || !!carry.hasBow, fireCd: 0, // level 2 starts with the bow
@@ -90,8 +93,36 @@ export function hurtPlayer(p, cam, fx) {
   fx.play('hurt');
   burst(p.x + p.w / 2, p.y + p.h / 2, FX.hurt);
   shake(cam, 8, 0.3);
-  if (p.hp <= 0) { p.dead = true; fx.play('die'); }
+  if (p.hp <= 0) downPlayer(p, cam, fx);
   return true;
+}
+
+// Out of hearts (a hit or a pit). Hard and medium: dead, and Space
+// restarts the level. Easy: the revive beat starts instead — the world
+// holds still for REVIVE_TIME, then revivePlayer puts her back.
+function downPlayer(p, cam, fx) {
+  fx.play('die');
+  if (difficulty().revive) { p.reviving = REVIVE_TIME; p.deaths++; }
+  else p.dead = true;
+}
+
+// Easy's revive: back at the last safe spot (pulled in from the edge),
+// full hearts, a long grace, legs and wings reset. Everything carried —
+// bow, flight, heart cap, size, the timed pickups — stays as it was.
+// Clearing the air of shots is the caller's (game.js owns those lists).
+export function revivePlayer(p, lvl, fx) {
+  p.reviving = 0;
+  p.hp = p.maxHp;
+  p.invuln = REVIVE_INVULN;
+  if (p.flying) endFlight(p, fx);
+  p.webT = 0;
+  p.iceAir = false;
+  p.x = respawnX(p, lvl);
+  p.y = p.safeY;
+  p.vx = 0; p.vy = 0;
+  p.cuttable = false;
+  fx.play('heart');
+  burst(p.x + p.w / 2, p.y + p.h / 2, FX.heart);
 }
 
 // End flight (expiry, landing, pit fall): start the recharge.
@@ -103,7 +134,7 @@ function endFlight(p, fx) {
 }
 
 export function updatePlayer(player, inp, lvl, cam, dt, fx) {
-  if (player.dead || player.won) { inp.cast = false; return; } // never let a stale cast survive
+  if (player.dead || player.won || player.reviving > 0) { inp.cast = false; return; } // never let a stale cast survive
   const wasOnGround = player.onGround; // landing-cancel compares against this
   const wasOnIce = player.onGround && effectiveKind(player, lvl) === 'ice'; // the ice carry
   player.invuln = Math.max(0, player.invuln - dt);
@@ -225,7 +256,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   if (player.y > lvl.height) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
     player.hp -= difficulty().pitDamage;
     player.cuttable = false;
-    if (player.hp <= 0) { player.dead = true; shake(cam, 10, 0.4); fx.play('die'); }
+    if (player.hp <= 0) { shake(cam, 10, 0.4); downPlayer(player, cam, fx); }
     else {
       fx.play('hurt');
       if (player.flying) endFlight(player, fx); // the spell was used up

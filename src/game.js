@@ -2,7 +2,7 @@
 import { LEVELS } from './levels/index.js';
 import { burst, updateParticles, resetParticles } from './particles.js';
 import { createCamera, updateCamera, shake } from './camera.js';
-import { createPlayer, updatePlayer } from './player.js';
+import { createPlayer, updatePlayer, revivePlayer } from './player.js';
 import { input } from './input.js';
 import { isDialogueOpen, openDialogue, resetDialogue } from './dialogue.js';
 import { createEnemies, updateEnemies, damageEnemy } from './enemies.js';
@@ -64,6 +64,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
     hasBow: advancing ? !!prev.hasBow : !!testCarry.hasBow,
     hasFlight: !!prev?.hasFlight || !!testCarry.hasFlight, // flight spell: permanent for the run, like the heart cap
     maxHp: prev?.maxHp ?? testCarry.maxHp, // else the difficulty's hearts (createPlayer)
+    deaths: prev?.deaths, // easy's revive count runs the whole run
   });
   game.enemies = createEnemies(game.level);
   resetLoot();
@@ -100,6 +101,7 @@ export function update(dt, viewW, fx) {
   if (game.intro) { updateIntro(dt, fx); return; } // the opening: level 1 waits underneath, untouched
   if (isDialogueOpen()) { duck(true); return; } // dialogue: the whole world is frozen, clock included
   duck(false);
+  if (game.player.reviving > 0) { updateRevive(dt, fx); return; } // easy: the world holds its breath
   game.gameTime += dt;
   // Level 9's ending owns the world once it starts: no input, no camera move,
   // no pit rule, no damage. The scene keeps rendering and animating, and the
@@ -109,10 +111,7 @@ export function update(dt, viewW, fx) {
     const q = game.enemies.find(e => e.kind === 'queenboss' && e.dying);
     if (q) updateQueenDying(q, game.level, game.enemies, dt, fx);
     updateParticles(dt);
-    if (game.camera.shake > 0) {
-      game.camera.shake = Math.max(0, game.camera.shake - dt);
-      game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
-    }
+    decayShake(dt);
     return;
   }
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
@@ -170,11 +169,36 @@ export function update(dt, viewW, fx) {
     burst(game.player.x + game.player.w / 2, game.player.y, FX.win);
     shake(game.camera, 3, 0.25);
   }
-  if (game.camera.shake > 0) {
-    game.camera.shake = Math.max(0, game.camera.shake - dt);
-    game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
-  }
+  decayShake(dt);
   if (!game.player.dead && !game.player.won) updateCamera(game.camera, game.player, game.level, viewW, dt);
+}
+
+function decayShake(dt) {
+  if (game.camera.shake <= 0) return;
+  game.camera.shake = Math.max(0, game.camera.shake - dt);
+  game.camera.mag = game.camera.shake > 0 ? game.camera.mag * Math.exp(-dt * 8) : 0;
+}
+
+// Easy's revive beat: everything but the particles and the shake waits.
+// When it ends she is put back (player.js), and the air is cleared of
+// anything already on its way — shots, waves, cones, and the bosses'
+// floor hazards — so the grace isn't spent dodging the last attack.
+function updateRevive(dt, fx) {
+  const p = game.player;
+  p.reviving = Math.max(0, p.reviving - dt);
+  updateParticles(dt);
+  decayShake(dt);
+  if (p.reviving > 0) return;
+  revivePlayer(p, game.level, fx);
+  resetFireballs();
+  resetBoulders();
+  resetCones();
+  resetShockwaves();
+  for (const e of game.enemies) {
+    if (e.pillars) e.pillars = []; // the Weaver Queen's web pillars
+    if (e.columns) e.columns = []; // the wizard's seal columns
+    if (e.spikes) e.spikes = []; // the Frost Queen's ice spikes
+  }
 }
 
 // Proximity dialogue: each lvl.dialogs entry is a trigger rect with

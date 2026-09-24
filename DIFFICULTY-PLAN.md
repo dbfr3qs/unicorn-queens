@@ -38,7 +38,7 @@ render snapshots unchanged unless the phase says otherwise.
 - [x] **D1** — `src/difficulty.js`: presets, current setting, `?difficulty=`,
   remembered choice (storage guarded). Nothing reads it yet.
 - [x] **D2** — player survival: `hearts`, `invuln`, `pitDamage`.
-- [ ] **D3** — Easy revive: one death path for hits and pits; revive beat,
+- [x] **D3** — Easy revive: one death path for hits and pits; revive beat,
   respawn, hazard clear (fireballs, boulders, shockwaves, cones, seal columns,
   ice spikes); death counter.
 - [ ] **D4** — boss phase thresholds as fractions of max hp (all seven bosses).

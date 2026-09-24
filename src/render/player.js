@@ -39,6 +39,7 @@ function playerFrame(player, t) {
 }
 
 export function drawPlayer(c, player, t) {
+  if (player.reviving > 0) return; // easy's revive beat: gone for a moment
   c.save();
   c.translate(player.x + player.w / 2, player.y + player.h); // anchor at feet so squash compresses down
   const bs = player.big ? BIG_H / P_H : 1; // grown unicorn draws bigger

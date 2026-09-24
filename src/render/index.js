@@ -109,6 +109,10 @@ function drawEndCard(ctx, viewW, viewH) {
   ctx.fillText('The Unicorn Queens walk home.', viewW / 2, viewH / 2 - 10);
   ctx.fillStyle = palette.gold;
   ctx.fillText(`SCORE ${score}`, viewW / 2, viewH / 2 + 30);
+  if (game.player.deaths) { // easy's revives, the run's other tally
+    ctx.fillStyle = palette.lavender;
+    ctx.fillText(`REVIVED ${game.player.deaths}×`, viewW / 2, viewH / 2 + 50);
+  }
   ctx.fillStyle = palette.pink;
   ctx.fillText('Press Space to play again.', viewW / 2, viewH / 2 + 70);
   ctx.restore();

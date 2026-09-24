@@ -16,7 +16,7 @@ import { getKind } from '../src/enemies/index.js';
 import { createCamera } from '../src/camera.js';
 import { resetArrows, fireArrow, fireStarArrow, updateArrows, arrows } from '../src/arrows.js';
 import { fireFireball, fireballs, resetFireballs, updateFireballs, resetCones, updateCones, cones, resetShockwaves, shockwaves } from '../src/projectiles.js';
-import { updateColumns, WIZ_HP, CRASH_AT, FAN_AT } from '../src/enemies/wizardboss.js';
+import { updateColumns, warded, WIZ_HP, CRASH_AT, FAN_AT } from '../src/enemies/wizardboss.js';
 import { game, startGame, fireSunbeam } from '../src/game.js';
 
 const DT = 1 / 60;
@@ -516,5 +516,67 @@ describe('death', () => {
     damageEnemy(e, fx(calls), c);
     expect(e.dead).toBe(true);
     expect(calls).toContain('growl');
+  });
+});
+
+// BOSS-PLAN B5: the sorcerer's ward and blink; the rune's break runs its
+// course; the stun is a reward, not the kill.
+describe('B5: the ward, the blink, the fall', () => {
+  const k = () => getKind('wizardboss');
+
+  it('the sorcerer is warded except while he casts or reels', () => {
+    const e = s2();
+    expect(warded(e)).toBe(true);
+    expect(k().arrowBlocked(e)).toBe(true);
+    for (const state of ['windup', 'slamTele', 'sealTele', 'stagger']) {
+      e.state = state;
+      expect(k().arrowBlocked(e), state).toBe(false);
+    }
+  });
+
+  it('stage 1 has no ward (the rune is its rule); the tumbling pig turns arrows', () => {
+    const e = frozen(6000, 400);
+    e.state = 'idle';
+    expect(k().arrowBlocked(e)).toBe(false);
+    for (const state of ['shatter', 'crash']) {
+      e.state = state;
+      expect(k().arrowBlocked(e), state).toBe(true);
+    }
+  });
+
+  it('a hit during the fall does not stagger him out of it', () => {
+    const e = spawn();
+    e.stage = 1; e.state = 'crash'; e.t = 0.3;
+    damageEnemy(e, fx([]), cam());
+    expect(e.state).toBe('crash');
+  });
+
+  it('the first hit on the floor jolts him up as the sorcerer', () => {
+    const e = spawn();
+    const l = lvl();
+    const p = groundPlayer(l, 5000);
+    e.stage = 1; e.shattered = true; e.hp = CRASH_AT; e.state = 'stunned'; e.t = 2; e.stunHp = CRASH_AT;
+    damageEnemy(e, fx([]), cam());
+    expect(e.state).toBe('stunned');
+    updateEnemies([e], p, l, cam(), DT, fx([]));
+    expect(e.stage).toBe(2);
+    expect(e.hp).toBe(CRASH_AT - 1);
+  });
+
+  it('two hits in one opening and he blinks to the far end, fan at the ready', () => {
+    const e = s2(5700);
+    const l = lvl();
+    const p = groundPlayer(l, 5600); // west of him: the far end is east
+    e.state = 'windup'; e.t = 5; // casting: open
+    updateEnemies([e], p, l, cam(), DT, fx([]));
+    const calls = [];
+    damageEnemy(e, fx(calls), cam());
+    e.poiseT = 1; // poised: the second hit skips onHit, and still counts
+    damageEnemy(e, fx(calls), cam());
+    updateEnemies([e], p, l, cam(), DT, fx(calls));
+    expect(e.x).toBe(6160);
+    expect(e.state).toBe('windup');
+    expect(e.fan).toBe(true);
+    expect(calls).toContain('whoosh');
   });
 });

@@ -88,12 +88,12 @@ describe('the reset window', () => {
     expect(e.inWindow).toBe(false);
   });
 
-  it('an arrow in the window is worth 3; out of it, 1', () => {
+  it('an arrow in the window is worth 2; out of it, the brass turns it (BOSS-PLAN B5)', () => {
     const { e, l, p } = inWindow();
     const c = arenaCam();
     arrowAt();
     updateArrows([e], l, c, DT, fx([]));
-    expect(e.hp).toBe(13); // 16 − 3
+    expect(e.hp).toBe(14); // 16 − 2
     expect(e.state).toBe('stagger'); // the house stagger rule
 
     const { e: e2, l: l2, p: p2 } = inWindow();
@@ -101,15 +101,17 @@ describe('the reset window', () => {
     e2.lastT = 1.0;
     updateEnemies([e2], p2, l2, arenaCam(), DT, fx([])); // out of the window
     arrowAt();
-    updateArrows([e2], l2, arenaCam(), DT, fx([]));
-    expect(e2.hp).toBe(15); // 16 − 1
+    const calls = [];
+    updateArrows([e2], l2, arenaCam(), DT, fx(calls));
+    expect(e2.hp).toBe(16); // rang off the brass
+    expect(calls).toContain('deflect');
   });
 
-  it('a star in the window is worth 3, not 6', () => {
+  it('a star in the window is worth 2, like an arrow', () => {
     const { e, l } = inWindow();
     arrows.push({ x: 5556, y: 520, vx: 520, dead: false, star: true, pierces: 2, hit: new Set() });
     updateArrows([e], l, arenaCam(), DT, fx([]));
-    expect(e.hp).toBe(13);
+    expect(e.hp).toBe(14);
   });
 
   it('a reflected bolt is always 1, even in the window', () => {
@@ -350,5 +352,20 @@ describe('death is a rest, not a kill', () => {
     expect(e.x).toBe(x0);
     expect(e.hp).toBe(16);
     expect(p.hp).toBe(3);
+  });
+});
+
+// BOSS-PLAN B5: P1 attacks on the half-beat too (it was the chime only —
+// one attack per 8.4 s at three cuts).
+describe('B5: the half-beat', () => {
+  it('P1 picks an attack as the clock crosses half its period', () => {
+    const e = spawn();
+    const l = lvl();
+    const p = groundPlayer(l, 5400);
+    e.sleeping = false; e.state = 'idle'; e.t = 0;
+    const half = l.clock.period / 2;
+    e.lastT = half - 0.01; l.clock.t = half + 0.01; // the frame the clock crosses the half
+    updateEnemies([e], p, l, arenaCam(), DT, fx([]));
+    expect(e.state === 'slamWind' || e.pendingBolt).toBe(true);
   });
 });

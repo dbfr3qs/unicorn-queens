@@ -343,7 +343,7 @@ describe('B4: the carapace and her openings', () => {
     expect(e.state).not.toBe('recover');
   });
 
-  it('phase 1: the glob flies at 190 px/s straight at where you stand', () => {
+  it('phase 1: the glob flies at globSpeed1 straight at where you stand', () => {
     placeBoss(6100);
     place(6400, groundY() - 36);
     p().vx = 260; // running: no lead in phase 1
@@ -351,7 +351,7 @@ describe('B4: the carapace and her openings', () => {
     e.state = 'spitWind'; e.t = 0; e.spitCount = 1;
     updateEnemies([e], p(), lvl(), cam, DT, fx);
     const g = fireballs.find(f => f.web);
-    expect(Math.hypot(g.vx, g.vy)).toBeCloseTo(190);
+    expect(Math.hypot(g.vx, g.vy)).toBeCloseTo(getKind('spiderboss').globSpeed1);
     const ox = e.x + e.w / 2 + e.dir * 30, oy = e.y + e.h / 2;
     const aim = Math.atan2(p().y + p().h / 2 - oy, p().x + p().w / 2 - ox);
     expect(Math.atan2(g.vy, g.vx)).toBeCloseTo(aim, 2);

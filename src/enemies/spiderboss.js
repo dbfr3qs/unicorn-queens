@@ -69,7 +69,7 @@ function pickAttack(e, p, lvl, fx) {
   } else if (p2 ? r < 60 : r < 75) {
     e.state = 'spitWind';
     e.t = this.spitWind;
-    e.spitCount = p2 ? 2 : 1;
+    e.spitCount = 1; // one glob (phase 2 spat two before BOSS-PLAN B4; its glob now leads you)
   } else if (p2 ? r < 85 : r < 100) {
     e.state = 'pillarTele';
     e.t = this.pillarTele;
@@ -146,7 +146,7 @@ function update(e, { p, lvl, dt, fx }) {
       const ox = e.x + e.w / 2 + e.dir * 30, oy = e.y + e.h / 2; // the fangs
       const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
       const p2 = e.hp <= phaseEdge(e, this.phase2At, this.hp);
-      const speed = p2 ? FIREBALL_SPEED : this.globSpeed1; // phase 1's web is heavier (BOSS-PLAN B4)
+      const speed = p2 ? this.globSpeed2 : this.globSpeed1; // web is heavier than fire (BOSS-PLAN B4)
       const tFlight = Math.hypot(cx - ox, cy - oy) / speed || 1;
       const lead = p2 ? p.vx * tFlight : 0; // phase 2 leads you; phase 1 aims where you are
       const tx = Math.max(0, Math.min(lvl.width, cx + lead));
@@ -296,7 +296,7 @@ register({
   phase2At: 8,
   idleSpeed: 60, idleSpeed2: 100, // phase 2 crawls at you (60 before BOSS-PLAN B4)
   openT: 0.9, // the opening after a spit, a pillar or the volley
-  globSpeed1: 190, // phase 1's web globs (phase 2: FIREBALL_SPEED)
+  globSpeed1: 170, globSpeed2: 210, // her web globs, px/s (240 — a fireball's — before BOSS-PLAN B4)
   lungeTele: 0.5, lungeSpeed: 380, lungeDist: 260, lungeRec: 1.0, // rec 0.6 before B4: it is an opening now
   spitWind: 0.4,
   pillarTele: 0.6,

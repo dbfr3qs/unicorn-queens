@@ -125,16 +125,18 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    puffs them to fluff); frost wraiths drift the air and pass under
    arrows aimed at the ground (one arrow to the chest). The throne gate
    dissolves when you first approach it — and that is what wakes the
-   wizard. He rides a war-pig with 10 hp, in two stages of 5. Stage one
+   wizard. He rides a war-pig with 10 hp: four on the pig, six on foot. Stage one
    the pig hovers out of ground-arrow reach: only the rune on the flank
    facing you takes hits (arrows to the body deflect), he lofts lead-aimed
    dark bolts, swoops at you and sits on the ground for most of a second
    after (the designed arrow window), and snorts a violet cone from the
-   bottom of his arc. At 5 hp the rune shatters and the pig crashes; the
-   wizard is stunned on the floor for 2 s, full body. Then he rises as
-   the sorcerer: he drifts, fires bolts, slams the floor into shockwaves,
-   and raises seal columns where the circle glints — walk off it. At 3
-   hp his bolts spread into a fan. This one is not killed. When the
+   bottom of his arc. At 6 hp the rune shatters and the pig crashes; the
+   wizard is stunned on the floor — one arrow there and he's up. Then he
+   rises as the sorcerer behind a violet ward that turns arrows: it drops
+   only while he casts — a fan of bolts, a floor slam into shockwaves,
+   or seal columns where the circle glints (walk off it). Land two
+   arrows in one opening and he blinks to the far end of the room and
+   throws a fan as he arrives. At 3 hp he quickens. This one is not killed. When the
    wizard is done, the bound spirits are freed, the cage door swings
    open, the war-pig stands up and walks back down the mountain, and the
    King's word lights the rainbow — the game's first good chord. Walk
@@ -165,11 +167,12 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    starlight bound to the machine — the game's third bound creature.
    Sixteen hits, not stompable. In his first phase he attacks on the
    beat — a floor slam into shockwaves, or a bolt of starlight — and
-   steps forward with every chime; but 0.6 s after each chime his core
-   glows as he resets, and arrows in that window do triple damage. At
-   8 he also attacks off the beat and sweeps a floor band with a long
-   telegraph: camp the west edge of his reach, fire the windows, jump
-   the shockwaves. He is not destroyed — the core dims to ember, he
+   steps forward with every chime, and strikes again on the half-beat.
+   His brass turns arrows — except for the 0.6 s after each chime, when
+   his core glows as he resets and arrows do double damage: that window
+   is the only way in. At 8 he attacks on every quarter of the beat and
+   sweeps a floor band with a long telegraph: jump the shockwaves, walk
+   out of the sweep, and be ready for the chime. He is not destroyed — the core dims to ember, he
    bows, and the clock tolls its last beat. The gears stop, the lights
    dim one final shade, and a pearl appears on the astrolabe. Take it
    and the King's silhouette steps onto the rim, the shaft trapdoor

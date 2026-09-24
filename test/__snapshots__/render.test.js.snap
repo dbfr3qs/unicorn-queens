@@ -117586,6 +117586,14 @@ save()
       fillRect(4, -9, 4, 5)
     restore()
     save()
+      globalAlpha=0.293
+      strokeStyle=#b06aff
+      lineWidth=3
+      beginPath()
+      ellipse(5827, 532, 42, 39.2, 0, 0, 6.283)
+      stroke()
+    restore()
+    save()
       translate(5827, 532)
       scale(-1, 1)
       fillStyle=#2c2c48

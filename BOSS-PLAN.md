@@ -126,8 +126,37 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   After: **19 s, 3.3 hits taken, 37% 3-heart wins** (was 4 s, 0.3). A shade
   above the wizard (21 s, 2.7) — his stage 2 is still free; its defence
   (with B5) should lift him past her.
-- [ ] **B5** — Warden: brass that deflects outside the reset window (the
-  window is the only opening), the window worth less; more pressure.
+- [x] **B5** — Warden and the wizard's stage 2.
+  **Warden:** his brass turns arrows (and stars) outside the 0.6 s reset
+  window, which is worth ×2 (was ×3 on an always-open target). P1 attacked
+  only on the chime — one attack per 8.4 s at three cuts; now also on the
+  half-beat, and P2 on every quarter. After: **25 s, 4.0 hits, 0% 3-heart
+  wins** (was 5 s, 0.0).
+  **Wizard, stage 2:** the fall (shatter, crash) turns arrows and a hit no
+  longer staggers him out of it (that dropped him back into stage-1 logic);
+  one hit on the floor wakes him (the stun used to take all of stage 2);
+  the sorcerer has a violet ward that drops only while he casts or reels;
+  two hits in one opening and he **blinks** to the far end and throws a fan
+  (both counts read hp: a poised boss's hits skip onHit). His bolt is the
+  fan all stage (280 px/s), his waves 260 px/s; CRASH_AT 5 → 6 (four rune
+  hits, six on foot); stage-1 pick bolt 40 / swoop 40 / cone 20.
+  **Weaver:** globs 170 / 210 px/s, one glob per spit in phase 2.
+  After:
+
+  ```
+  boss          kills  median kill  hits taken  3-heart wins  staggered
+  Mage   (L2)   30/30      7 s          2.2          70%           8%
+  Troll  (L3)   30/30      9 s          1.8         100%           6%
+  Dragon (L4)   30/30     28 s          0.9          93%           8%
+  Weaver (L6)   30/30     19 s          2.8          37%          10%
+  Wizard (L7)   30/30     20 s          2.5          57%           4%
+  Warden (L8)   30/30     25 s          4.0           0%           3%
+  Queen  (L9)   30/30     15 s          5.0           0%           0%
+  ```
+
+  The Weaver and the wizard read as a tie to the bot (2.8 vs 2.5 at 30
+  fights); the bot is strong against the sorcerer (it lands ~0.15 hits in
+  stage 2). A playtest call between those two.
 - [ ] **B6** — Frost Queen: the last phase escalates; fewer heart boxes.
 - [ ] **B7** — mage's west-end safe zone; mage and dragon touch-ups.
 - [ ] **B8** — a ladder test: a short bot run in `npm test` that pins the order.

@@ -43,6 +43,7 @@ import { shake } from '../camera.js';
 export const P2_AT = 8, WARDEN_HP = 16;
 const inP2 = e => e.hp <= phaseEdge(e, P2_AT, WARDEN_HP); // the edge scales with his spawn hp
 const RESET_WINDOW = 0.6;
+const WINDOW_VALUE = 2; // an arrow in the window (3 before BOSS-PLAN B5, when the brass let every arrow in)
 const BOLT_FAN = [-15, 0, 15]; // degrees
 const BOLT_SPEED = 240;
 const SWEEP_TRAVEL = 240;
@@ -224,11 +225,13 @@ function update(e, { p, lvl, cam, dt, fx }) {
       if (!inP2(e)) pickAttack(e, p, fx); // P1: attack on the beat
     }
   }
-  // The off-beat (P2 only): t = period/4 and t = 3·period/4 crossings.
-  if (inP2(e) && e.state === 'idle' && !c.stopped &&
-      ((prevT < c.period / 4 && c.t >= c.period / 4) ||
-       (prevT < 3 * c.period / 4 && c.t >= 3 * c.period / 4))) {
-    if (e.t <= 0) pickAttack(e, p, fx);
+  // The off-beats: P1 the half (t = period/2); P2 the quarters (1/4, 1/2,
+  // 3/4). BOSS-PLAN B5: P1 used to attack only on the chime — one attack
+  // per 8.4 s at three cuts — and P2 only on 1/4 and 3/4.
+  const crossed = f => prevT < c.period * f && c.t >= c.period * f;
+  if (e.state === 'idle' && !c.stopped && e.t <= 0 &&
+      (inP2(e) ? (crossed(0.25) || crossed(0.5) || crossed(0.75)) : crossed(0.5))) {
+    pickAttack(e, p, fx);
   }
   // The chime-bolt charge begins 0.8 s before the next tick (both phases).
   if (e.state === 'idle' && e.pendingBolt && !c.stopped &&
@@ -345,9 +348,13 @@ register({
   boss: true, isTell: e => e.state === 'slamWind' || e.state === 'sweepTele' || e.state === 'charge', // difficulty: scaled hp, slowed telegraphs
   stompable: false, // arrow-only (the dragon rule)
   hitSound: 'bossHit', // standard boss-hit path (spiderboss's name)
-  // The reset window: arrows are worth 3 while the core is cyan (stars stay
-  // 3 — never 6; bolts are handled in projectiles with a fixed mult of 1).
-  hitValue: (e, star) => (star ? 3 : (e.inWindow ? 3 : 1)),
+  // The reset window: arrows (and stars) are worth WINDOW_VALUE while the
+  // core is cyan; reflected bolts are handled in projectiles (mult 1).
+  hitValue: () => WINDOW_VALUE,
+  // The brass (BOSS-PLAN B5): outside the reset window arrows (stars too)
+  // ring off him — the window is the only way in. It used to be a triple
+  // bonus on an always-open target: held fire took him in ~5 s.
+  arrowBlocked: e => !e.inWindow,
   onHit: e => { // the house stagger rule; cancels a charge (the bolt is lost)
     e.flash = 0.15;
     e.state = 'stagger';

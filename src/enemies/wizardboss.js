@@ -1,11 +1,14 @@
-// The Wizard: level 7 mid-boss (the Frost Queen's warder). 10 hp, two
-// stages of 5, arrow-only, stomp bounces (the dragon rule). Stage 1 the
-// entity is the flying war-pig (64x48) with the mounted wizard: only the
-// rune on the pig's near flank takes hits (weakPoint hook); the swoop's
-// 0.8 s recovery is the designed ground-arrow window. At hp 5 the rune
-// shatters, the pig crashes, the wizard is stunned 2 s on the floor
-// (full body), then rises as the sorcerer (56x56): drift, bolt, slam
-// shockwaves, the seal circle (columns), the <=3 hp fan. Death is ash.
+// The Wizard: level 7 mid-boss (the Frost Queen's warder). 10 hp — four
+// on the pig, six on foot — arrow-only, stomp bounces (the dragon rule).
+// Stage 1 the entity is the flying war-pig (64x48) with the mounted
+// wizard: only the rune on the pig's near flank takes hits (weakPoint
+// hook); the swoop's 0.8 s recovery is the designed ground-arrow window.
+// At hp 6 the rune shatters, the pig crashes (arrows ring off the fall),
+// the wizard is stunned on the floor until a hit or 2 s, then rises as
+// the sorcerer (56x56) behind a ward that drops only while he casts:
+// drift, the bolt fan, slam shockwaves, the seal circle (columns); two
+// hits in one opening and he blinks away. <=3 hp: the quick tempo.
+// Death is ash.
 import { fireFireball, fireCone, fireShockwaves, FIREBALL_SPEED } from '../projectiles.js';
 import { shake } from '../camera.js';
 import { burst } from '../particles.js';
@@ -20,9 +23,17 @@ const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.8
 // His hp, the rune's break (stage 2) and the last stand (the fan, the ember
 // eyes, the quick tempo). 16 / 8 / 4 before BOSS-PLAN B2: he was the
 // hardest fight in the game by a distance, harder than the finale.
-export const WIZ_HP = 10, CRASH_AT = 5, FAN_AT = 3;
+export const WIZ_HP = 10, CRASH_AT = 6, FAN_AT = 3;
 const BAND_MIN = 5500, BAND_MAX = 6200; // the pig's band (e.x)
 const TELLS = new Set(['windup', 'swoopTele', 'slamTele', 'sealTele']); // his wind-ups (the difficulty slows them)
+// The sorcerer's ward (BOSS-PLAN B5): in stage 2 arrows ring off a violet
+// ward except while he casts (a wind-up) or reels (a stagger) — his stage-1
+// lesson, carried over: find the opening. Before it, stage 2 was always
+// open and melted in ~1 s of held fire. The stunned wizard stays open.
+const WARD_DOWN = new Set(['windup', 'slamTele', 'sealTele', 'stagger', 'stunned']);
+export const warded = e => e.stage === 2 && !WARD_DOWN.has(e.state);
+// The rune's break: the tumbling pig turns arrows until he lies stunned.
+const FALLING = new Set(['shatter', 'crash']);
 const S2_MIN = 5500, S2_MAX = 6160; // the sorcerer's drift clamp
 
 // The rune: drawn 24x24, 8 px in from the flank facing the player (the
@@ -56,25 +67,26 @@ function nextIdle(e) {
 function fireBolt(e, p, lvl, fx, fan) {
   const ox = e.x + e.w / 2 + e.dir * 26, oy = e.y + e.h / 2 - 4; // the staff tip
   const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
-  const tFlight = Math.hypot(cx - ox, cy - oy) / FIREBALL_SPEED || 1;
+  const speed = e.stage === 2 ? S2_BOLT_SPEED : FIREBALL_SPEED; // the sorcerer's bolts are quicker (BOSS-PLAN B5)
+  const tFlight = Math.hypot(cx - ox, cy - oy) / speed || 1;
   const tx = Math.max(0, Math.min(lvl.width, cx + p.vx * tFlight)); // lead the player
   const ang = Math.atan2(cy - oy, tx - ox);
   const offs = fan ? [-20, 0, 20] : [0];
   for (const off of offs) {
     const a = ang + (off * Math.PI) / 180;
-    fireFireball(ox - 7, oy - 7, Math.cos(a) * FIREBALL_SPEED, Math.sin(a) * FIREBALL_SPEED, fx);
+    fireFireball(ox - 7, oy - 7, Math.cos(a) * speed, Math.sin(a) * speed, fx);
   }
   e.state = 'idle';
   e.t = nextIdle(e);
 }
 
-// Stage 1 pick: dark bolt 35 / swoop 45 / snort cone 20 (50 / 30 / 20
+// Stage 1 pick: dark bolt 40 / swoop 40 / snort cone 20 (50 / 30 / 20
 // before BOSS-PLAN B2: the swoop is the window, and it came too rarely). The cone is a
 // ground-level breath: it only goes off from the bottom of the hover
 // arc (or it waits a beat for the arc to dip).
 function pickAttack(e, p, lvl, fx) {
   const r = Math.random();
-  if (r < 0.35) { e.state = 'windup'; e.t = 0.4; return; }
+  if (r < 0.4) { e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.8) {
     e.state = 'swoopTele'; e.t = SWOOP_TELE_T;
     fx.play('snort'); fx.play('puff'); // the tell
@@ -94,8 +106,9 @@ function pickAttack(e, p, lvl, fx) {
 // the rolls at <=3 hp.
 function pickAttack2(e, p, lvl, fx) {
   const r = Math.random();
-  if (e.hp <= phaseEdge(e, FAN_AT, WIZ_HP) && r < 0.3) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
-  if (r < 0.5) { e.fan = false; e.state = 'windup'; e.t = 0.4; return; }
+  // The sorcerer's bolt is the fan (BOSS-PLAN B5: before it, a single bolt
+  // until the last stand — stage 2 landed nothing on the lab's bot).
+  if (r < 0.5) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.75) {
     e.state = 'slamTele'; e.t = 0.5;
     fx.play('creak');
@@ -108,9 +121,21 @@ function pickAttack2(e, p, lvl, fx) {
 
 function onHit(e) {
   e.flash = 0.15;
+  // The rune's break runs its course: a hit flashes, it doesn't stagger
+  // him out of the fall (that dropped him back into stage-1 logic). On
+  // the floor, the second hit jolts him up (BOSS-PLAN B5): the stun is a
+  // reward, not the kill — at 10 hp it used to take all of stage 2.
+  if (e.state === 'shatter' || e.state === 'crash') return;
+  if (e.state === 'stunned') return; // he stays down (update counts the hp he loses there)
   e.state = 'stagger';
   e.t = 0.3;
 }
+const STUN_HITS = 1;
+// The sorcerer's blink (BOSS-PLAN B5): the second arrow into one opening
+// and he is gone — to the far end of his floor, the ward back up. Both
+// counts read hp, not onHit: a poised boss's hits skip onHit.
+const S2_BOLT_SPEED = 280, S2_SHOCK_SPEED = 260; // the sorcerer's (240 / 180 before BOSS-PLAN B5)
+const BLINK_HITS = 2, BLINK_IDLE = 0.5; // BLINK_IDLE: the wind-up of the fan he throws on arrival
 
 function onDeath(e, fx, cam) {
   shake(cam, 9, 0.6);
@@ -135,7 +160,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
   e.weakSide = p.x + p.w / 2 < e.x + e.w / 2 ? -1 : 1; // the rune's flank
 
-  // --- the rune shatter (the hp 5 edge, once): crack -> crash -> stun ---
+  // --- the rune shatter (the CRASH_AT edge, once): crack -> crash -> stun ---
   if (e.stage === 1 && e.hp <= phaseEdge(e, CRASH_AT, WIZ_HP) && !e.shattered) {
     e.shattered = true;
     e.state = 'shatter'; e.t = SHATTER_T;
@@ -159,18 +184,34 @@ function update(e, { p, lvl, cam, dt, fx }) {
       fx.play('thud');
       burst(e.x + e.w / 2, lvl.groundY, FX.snowPuff);
       e.state = 'stunned'; e.t = STUN_T; // the wizard, dazed on the floor
+      e.stunHp = e.hp;
     }
     return;
   }
   if (e.state === 'stunned') {
     e.t -= dt;
-    if (e.t <= 0) { // stage 2: the sorcerer rises
+    if (e.t <= 0 || e.stunHp - e.hp >= STUN_HITS) { // stage 2: the sorcerer rises (a second hit jolts him up)
       e.stage = 2;
       e.w = 56; e.h = 56;
       e.y = lvl.groundY - 56;
       e.state = 'idle'; e.t = 1.0;
     }
     return;
+  }
+  // The sorcerer's blink — ahead of the stagger, which returns early.
+  if (e.stage === 2) {
+    if (warded(e) || e.openHp === undefined) e.openHp = e.hp; // each opening counts afresh
+    if (e.openHp - e.hp >= BLINK_HITS) {
+      e.openHp = e.hp;
+      burst(e.x + e.w / 2, e.y + e.h / 2, FX.runeShatter); // where he was
+      const pc = p.x + p.w / 2;
+      e.x = Math.abs(pc - S2_MIN) > Math.abs(pc - S2_MAX) ? S2_MIN : S2_MAX; // the far end from you
+      e.columns = e.columns ?? [];
+      e.state = 'windup'; e.t = BLINK_IDLE; e.fan = true; // blink, then strike
+      fx.play('whoosh');
+      burst(e.x + e.w / 2, e.y + e.h / 2, FX.runeShatter); // where he is
+      return;
+    }
   }
   if (e.state === 'stagger') {
     e.t -= dt;
@@ -254,7 +295,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
     if (e.t > 0) { e.t -= dt; return; }
     fx.play('thud');
     shake(cam, 4, 0.2);
-    fireShockwaves(e.x + e.w / 2, lvl.groundY, fx); // the twin ground waves
+    fireShockwaves(e.x + e.w / 2, lvl.groundY, fx, undefined, S2_SHOCK_SPEED); // the twin ground waves
     e.state = 'idle'; e.t = nextIdle(e);
     return;
   }
@@ -417,6 +458,14 @@ function drawDowned(c, e) {
 // The sorcerer: a tall hooded robe, the staff planted or raised by state;
 // the staff-tip glow intensifies at <=3 hp (the phase cue).
 function drawSorcerer(c, e) {
+  if (warded(e)) { // the ward: a violet shell that drops while he casts
+    c.save();
+    c.globalAlpha = 0.28 + 0.1 * Math.sin((e.phase ?? 0) * 2);
+    c.strokeStyle = '#b06aff';
+    c.lineWidth = 3;
+    c.beginPath(); c.ellipse(e.x + e.w / 2, e.y + e.h / 2, e.w * 0.75, e.h * 0.7, 0, 0, Math.PI * 2); c.stroke();
+    c.restore();
+  }
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
@@ -477,6 +526,7 @@ register({
   boss: true, hpStep: 2, isTell: e => TELLS.has(e.state), // difficulty: scaled hp (even: two stages), slowed wind-ups
   hitSound: 'bossHit', deathSound: 'growl',
   weakPoint,
+  arrowBlocked: e => warded(e) || FALLING.has(e.state),
   onHit, onDeath,
   update, draw,
 });

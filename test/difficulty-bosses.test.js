@@ -72,6 +72,10 @@ describe('wind-ups', () => {
     expect(tick('hard', 'windup')).toBe(0.1);
   });
 
+  it('the wizard names all four of his', () => {
+    for (const state of ['windup', 'swoopTele', 'slamTele', 'sealTele']) expect(getKind('wizardboss').isTell({ state })).toBe(true);
+  });
+
   it('everything else runs at full speed', () => {
     expect(tick('easy', 'idle')).toBe(0.1);
   });

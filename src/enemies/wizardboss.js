@@ -18,6 +18,7 @@ import { difficulty } from '../difficulty.js'; // bossCd stretches the idle betw
 const ENTER_T = 1.0, SHATTER_T = 0.4, CRASH_T = 0.4, STUN_T = 2.0;
 const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.5;
 const BAND_MIN = 5500, BAND_MAX = 6200; // the pig's band (e.x)
+const TELLS = new Set(['windup', 'swoopTele', 'slamTele', 'sealTele']); // his wind-ups (the difficulty slows them)
 const S2_MIN = 5500, S2_MAX = 6160; // the sorcerer's drift clamp
 
 // The rune: 24x24 on the flank facing the player (the side e.weakSide
@@ -464,7 +465,7 @@ register({
   kind: 'wizardboss',
   w: 64, h: 48,
   hp: 16, stompable: false,
-  boss: true, hpStep: 2, isTell: e => e.state === 'windup', // difficulty: scaled hp (even: two stages), slowed wind-up
+  boss: true, hpStep: 2, isTell: e => TELLS.has(e.state), // difficulty: scaled hp (even: two stages), slowed wind-ups
   hitSound: 'bossHit', deathSound: 'growl',
   weakPoint,
   onHit, onDeath,

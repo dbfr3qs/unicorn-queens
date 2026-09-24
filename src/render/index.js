@@ -30,8 +30,10 @@ import { palette, fonts } from './theme.js';
 import { score } from '../loot.js';
 import { CARD_FADE } from '../ending9.js';
 import { drawIntro } from './intro.js';
+import { drawPicker } from './picker.js';
 
 export function draw(ctx, viewW, viewH) {
+  if (game.picker) { drawPicker(ctx, viewW, viewH); return; }
   if (game.intro) { drawIntro(ctx, viewW, viewH); return; }
   const { level, player, enemies, camera, gameTime } = game;
   ctx.fillStyle = palette.clear;

@@ -54,7 +54,8 @@ render snapshots unchanged unless the phase says otherwise.
   timing is the clock's beat). Roster entries take `only: ['hard']` or
   `['medium', 'hard']` — the mechanism is in; which enemies to tag is a D8
   playtest call.
-- [ ] **D7** — picker on the title card; HUD label; change it from the end card.
+- [x] **D7** — picker on the title card; HUD label (easy/medium only, so hard's
+  HUD and snapshots are untouched); change it from the end card.
   A change must start a fresh run (no `prev`): a carried `maxHp` is sized to
   the old preset's hearts.
 - [ ] **D8** — playtest tuning pass.

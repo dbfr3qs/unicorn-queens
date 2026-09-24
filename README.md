@@ -19,7 +19,11 @@ advance still follow the normal carry rules.
 (combine with `?level=`); without it the game uses the last choice
 remembered, else hard. See DIFFICULTY-PLAN.md.
 
-A plain start (no `?level=`) opens with the story: the Queen and the King
+A plain start (no `?level=`) opens on the difficulty card — **Easy**
+(five hearts, no pit damage, revive where you fall, gentler bosses),
+**Medium** (four hearts, gentler bosses) or **Hard** (three hearts, the game
+as designed); ←/→ and Space. The choice is remembered, and the end card's
+Space comes back to it. Then the story: the Queen and the King
 out walking in the wood of level 5 when the sorcerer arrives, takes the
 realm in a sentence, and the King in a scuffle — nineteen seconds on the
 game's own sheets, any key to skip. The end card's Space starts over from

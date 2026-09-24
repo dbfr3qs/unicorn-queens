@@ -8,6 +8,7 @@ import { drawSpriteCentre, scaleToHeight } from './sprite.js';
 import { musicSuspended } from '../music.js';
 import { FLIGHT_TIME, flightRecharge } from '../player.js';
 import { palette, fonts } from './theme.js';
+import { difficultyName } from '../difficulty.js';
 
 export function drawHud(ctx, viewW, viewH) {
   const { player } = game;
@@ -31,6 +32,12 @@ export function drawHud(ctx, viewW, viewH) {
   ctx.fillStyle = palette.teal;
   ctx.textAlign = 'right';
   ctx.fillText('SCORE ' + score, viewW - 12, 10);
+  if (difficultyName() !== 'hard') { // the easier presets say so; hard is the game as designed
+    ctx.font = fonts.hint;
+    ctx.fillStyle = palette.lavender;
+    ctx.fillText(difficultyName().toUpperCase(), viewW - 12, 32);
+    ctx.font = fonts.hud;
+  }
   ctx.textAlign = 'center';
   ctx.fillStyle = palette.lavender;
   ctx.fillText('LEVEL ' + (game.levelIndex + 1), viewW / 2, 10);

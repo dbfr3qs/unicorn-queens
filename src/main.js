@@ -8,8 +8,9 @@ import { initTouch, wantsTouch } from './touch.js'; // a phone or tablet: on-scr
 import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
 import { initDifficulty } from './difficulty.js'; // ?difficulty=, else the remembered choice
+import { openPicker, pickerKey } from './picker.js'; // the difficulty card
 import { cardReady } from './ending9.js'; // level 9: the end card
-import { startIntro, endIntro } from './intro.js'; // the opening scene
+import { endIntro } from './intro.js'; // the opening scene (the card's Space starts it)
 import { spritesLoaded, loadProgress } from './sprites.js';
 import { palette, fonts } from './render/theme.js';
 
@@ -76,11 +77,13 @@ for (const ev of ['pointerdown', 'touchend']) addEventListener(ev, () => { initA
 if (typeof document !== 'undefined' && typeof document.createElement === 'function') initMusic();
 addEventListener('keydown', e => {
   if (e.repeat) return; // holding jump through the end screen must not auto-advance
+  if (pickerKey(e.code, canvas.height)) return; // the difficulty card takes every key while it is up
   if (game.intro) { endIntro(); return; } // any key: straight to level 1 (a pad's or a thumb's key too)
   if (e.code === 'Space' && cardReady(game.level)) {
-    // The end card: a true new game, from the opening. No prev player, so no
-    // carry at all — back to level 1 small, bowless and unable to fly.
-    startIntro(canvas.height);
+    // The end card: a true new game, by way of the difficulty card and the
+    // opening. No prev player, so no carry at all — back to level 1 small,
+    // bowless and unable to fly.
+    openPicker();
     return;
   }
   if (e.code === 'Space' && (game.player.dead || game.player.won)) {
@@ -94,14 +97,15 @@ addEventListener('keydown', e => {
   }
 });
 // ?level=N (1-based) boots straight into that level for testing, with the
-// gear a run would have carried in (LEVELS[].carry). A plain start opens
-// with the story. typeof guard: smoke.mjs boots main.js under Node, where
-// location is absent — it gets the intro, and runs it.
+// gear a run would have carried in (LEVELS[].carry), and no card: the
+// URL's ?difficulty= (or the remembered one) stands. A plain start opens
+// on the difficulty card, then the story. typeof guard: smoke.mjs boots
+// main.js under Node, where location is absent — it gets the card.
 {
   const search = typeof location !== 'undefined' ? location.search : '';
   initDifficulty(search);
   if (/[?&]level=/.test(search)) startGame(canvas.height, levelIndexFromSearch(search));
-  else startIntro(canvas.height);
+  else { startGame(canvas.height, 0); openPicker(); } // level 1 waits under the card; its Space runs the intro
 }
 
 // A bar and a word while the sheets come down. Drawn on its own rAF rather

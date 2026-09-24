@@ -38,6 +38,7 @@ import { difficulty } from './difficulty.js'; // the blizzard's drift is a hazar
 export const game = {
   level: null, player: null, enemies: null,
   intro: null, // the opening scene while it plays (intro.js); null in play
+  picker: null, // the difficulty card while it is up (picker.js); a level waits underneath
   camera: createCamera(),
   levelIndex: 0,
   gateChimed: false, // one-shot gate chime per level entry
@@ -83,6 +84,7 @@ export function startGame(viewH, levelIndex = 0, prev = null) {
   game.dialogsIn = new Set(); // dialog rects the player is standing in
   resetDialogue(); // a restart never leaves a box half-open
   game.lastTs = 0;
+  game.picker = null; // a level starting is the card's answer
 }
 
 export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
@@ -99,6 +101,7 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 }
 
 export function update(dt, viewW, fx) {
+  if (game.picker) return; // the difficulty card: nothing moves until a choice
   if (game.intro) { updateIntro(dt, fx); return; } // the opening: level 1 waits underneath, untouched
   if (isDialogueOpen()) { duck(true); return; } // dialogue: the whole world is frozen, clock included
   duck(false);

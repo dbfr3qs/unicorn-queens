@@ -204,16 +204,26 @@ describe('the ice spike', () => {
 });
 
 describe('the stagger', () => {
-  it('stops her for a beat on a clean hit and cancels what she was winding', () => {
+  it('a hit mid-cast lands but does not break the cast (BOSS-PLAN B6)', () => {
     const p = player(5500);
     let armed = false;
     for (let i = 0; i < 2000 && !armed; i++) {
       getKind('queenboss').update(e, { p, lvl, cam: cam(), dt: DT, fx });
       armed = !!e.wind;
     }
+    const wind = e.wind, hp = e.hp;
+    damageEnemy(e, fx, cam(), 1, lvl);
+    expect(e.hp).toBe(hp - 1);
+    expect(e.wind).toBe(wind);
+    expect(e.staggerT ?? 0).toBe(0);
+  });
+
+  it('stops her for a beat on a clean hit outside a cast', () => {
+    const p = player(5500);
+    getKind('queenboss').update(e, { p, lvl, cam: cam(), dt: DT, fx }); // her first frame sets her state up
+    e.wind = null; e.staggerCd = 0; e.openT = 1; // the opening after an attack
     damageEnemy(e, fx, cam(), 1, lvl);
     expect(e.staggerT).toBeCloseTo(STAGGER, 5);
-    expect(e.wind).toBeNull(); // whatever she was gathering is dropped
     const x0 = e.x;
     tick(p, STAGGER - 0.05);
     expect(e.x).toBe(x0); // no drift while staggered
@@ -309,17 +319,17 @@ describe('the phase gates', () => {
     const p = player(5500);
     toHp(P2_AT);
     tick(p, 4);
-    e.hp = 15;
+    e.hp = P2_AT - 1;
     tick(p, 4);
     expect(lvl.thaw.bossThaws).toBe(1); // still inside phase 2: no second step
   });
 
   it('reads the phase off hp, so it always matches the pips', () => {
-    expect(phaseOf({ hp: 24 })).toBe(1);
-    expect(phaseOf({ hp: 17 })).toBe(1);
-    expect(phaseOf({ hp: 16 })).toBe(2);
-    expect(phaseOf({ hp: 9 })).toBe(2);
-    expect(phaseOf({ hp: 8 })).toBe(3);
+    expect(phaseOf({ hp: 21 })).toBe(1);
+    expect(phaseOf({ hp: 15 })).toBe(1);
+    expect(phaseOf({ hp: 14 })).toBe(2);
+    expect(phaseOf({ hp: 8 })).toBe(2);
+    expect(phaseOf({ hp: 7 })).toBe(3);
     expect(phaseOf({ hp: 1 })).toBe(3);
   });
 });

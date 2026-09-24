@@ -19,7 +19,7 @@ import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { drawFrozenQueen } from '../render/frostpalace.js';
 
-export const E_W = 56, E_H = 60, QUEEN_HP = 24;
+export const E_W = 56, E_H = 60, QUEEN_HP = 21; // 24 before BOSS-PLAN B6
 // The entrance: a beat of shattering, then she steps west off the dais and
 // drops the 40 px onto the arena floor.
 export const WAKE_SHELL = 1.0, WAKE_STEP = 1.5;
@@ -37,7 +37,13 @@ export const SPIKE_W = 20, SPIKE_H = 140,
 // because the sky and the hall film are already at their maximum by the time
 // anyone reaches this room. The level's answer to a wound is a frozen person
 // in the hall cracking and dripping: a pre-taste of the ending, not a release.
-export const P2_AT = 16, P3_AT = 8, PHASE_PAUSE = 1.2;
+export const P2_AT = 14, P3_AT = 7, PHASE_PAUSE = 1.2; // thirds of QUEEN_HP (16 / 8 of 24 before BOSS-PLAN B6)
+// Her frost mail (BOSS-PLAN B6): arrows ring off her except in an opening —
+// an attack's wind-up, OPEN_AFTER s after it lands, a stagger, a phase
+// gate. She was open at every moment, and held fire ended the finale in
+// ~15 s, before her quicker winters could close in.
+export const OPEN_AFTER = 0.8;
+export const isOpen = e => !!e.wind || e.openT > 0 || e.staggerT > 0 || e.phaseT > 0;
 // The release. Not a death: four stages of ice coming off, and then she is
 // gone. The bound-creature motif closes here — the pig walked, the wraiths
 // sparkled, the Warden bowed, and the Queen melts.
@@ -58,7 +64,7 @@ export const DRIFT_P1 = 60, BOLT_SPEED = 240,
   // holding fire would keep her staggered forever and she would never attack
   // at all. One stagger per STAGGER_CD keeps it as the reward for a clean hit
   // without turning the last fight in the game into a firing range.
-  STAGGER_CD = 0.9;
+  STAGGER_CD = 2; // the house poise (0.9 before BOSS-PLAN B6)
 
 // A per-Queen LCG seeded from the spawn x (the house deterministic pattern),
 // so the whole fight replays identically from the same spawn.
@@ -110,8 +116,12 @@ export function updateQueenWake(lvl, enemies, dt, fx, cam) {
 }
 
 // The idle between attacks, seeded so a spawn replays identically.
+// Each winter quicker than the last (BOSS-PLAN B6: it was 0.8–1.2 s in
+// all three, so the last phase eased off rather than closing in).
+const IDLE = { 1: [1.1, 0.4], 2: [0.75, 0.3], 3: [0.5, 0.3] }; // [min, spread]
 function nextIdle(e) {
-  return (0.8 + (e.x % 5) * 0.1) * difficulty().bossCd;
+  const [min, spread] = IDLE[e.phase] ?? IDLE[1];
+  return (min + (e.x % 5) / 5 * spread) * difficulty().bossCd;
 }
 
 // One spike: a glint on the floor where it is coming, then a column. The x is
@@ -195,8 +205,10 @@ function update(e, { p, lvl, cam, dt, fx }) {
     e.wind = null;
     fireAttack(e, kind, p, lvl, cam, fx);
     e.idle = nextIdle(e);
+    e.openT = OPEN_AFTER; // the frost mail thins as she spends herself
     return;
   }
+  if (e.openT > 0) e.openT -= dt;
   drift(e, p, dt);
   e.idle -= dt;
   if (e.idle > 0 || p.dead) return;
@@ -454,15 +466,15 @@ register({
   hitSound: 'bossHit',
   // asleep she is still the frozen statue she has been for a century: an
   // arrow rings off her and nothing else happens
-  arrowBlocked: e => !!e.sleeping,
   // A clean hit stops her: 0.3 s with no drift and no attack, and a puff of
   // her own weather. The micro-window inside the duel.
+  arrowBlocked: e => !!e.sleeping || !isOpen(e), // a statue, then the frost mail
   onHit: e => {
     burst(e.x + e.w / 2, e.y + e.h / 2, FX.iceMist);
     if (e.staggerCd > 0) return; // she shrugs this one off
+    if (e.wind) return; // mid-cast she doesn't break (BOSS-PLAN B6: a hit used to cancel the attack — held fire unmade her whole second half)
     e.staggerT = STAGGER;
     e.staggerCd = STAGGER_CD;
-    e.wind = null;
   },
   // The last arrow releases her; it does not kill her. onZero replaces the
   // usual burst-and-sound with the six-second unmaking, and updateQueenDying

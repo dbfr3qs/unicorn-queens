@@ -93,6 +93,7 @@ describe('the Queen, before she wakes', () => {
     const e = spawnQueen();
     expect(getKind('queenboss').arrowBlocked(e, {})).toBe(true);
     e.sleeping = false;
+    e.wind = 'bolt'; // awake and casting: open (the frost mail, BOSS-PLAN B6)
     expect(getKind('queenboss').arrowBlocked(e, {})).toBe(false);
   });
 
@@ -158,11 +159,11 @@ describe('the entrance', () => {
 });
 
 describe('her pips', () => {
-  it('read as three rows of eight, draining from the top', () => {
-    expect(pipRows({ hp: 24 })).toEqual([8, 8, 8]);
-    expect(pipRows({ hp: 20 })).toEqual([4, 8, 8]);
-    expect(pipRows({ hp: 16 })).toEqual([0, 8, 8]); // the phase-2 gate
-    expect(pipRows({ hp: 8 })).toEqual([0, 0, 8]); // the phase-3 gate
+  it('read as three rows of seven, draining from the top', () => {
+    expect(pipRows({ hp: 21 })).toEqual([7, 7, 7]); // 24 in rows of 8 before BOSS-PLAN B6
+    expect(pipRows({ hp: 18 })).toEqual([4, 7, 7]);
+    expect(pipRows({ hp: 14 })).toEqual([0, 7, 7]); // the phase-2 gate
+    expect(pipRows({ hp: 7 })).toEqual([0, 0, 7]); // the phase-3 gate
     expect(pipRows({ hp: 1 })).toEqual([0, 0, 1]);
     expect(pipRows({ hp: 0 })).toEqual([0, 0, 0]);
   });

@@ -199,17 +199,19 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    mid-step.
 
    Past the last seal the **Frost Queen** sits on her throne with a
-   century of winter in her. Speak to her and the shell comes off: 24
-   hits, arrow-only, three rows of pips over the arena. She keeps
-   spacing rather than chasing — a frost bolt, a floor slam into two
-   waves that die at the arena walls, an ice spike that glints for a
-   beat before it rises (too tall to jump: walk out of the glint). At
-   16 she stops for a second, her staff flares, and a frozen guard in
-   the hall cracks and drips; then she breathes a short cone that
-   leaves a patch where it lands, and doubles the spikes. At 8 the same
-   again with the child, and the last winter lunges in bursts and calls
-   a three-second blizzard — dense snow, a gentle drift on your footing,
-   three slow waves. The King's pad is the only floor in the room that
+   century of winter in her. Speak to her and the shell comes off: 21
+   hits, arrow-only, three rows of pips over the arena. Her frost mail
+   turns arrows except while she casts, for a moment after, and while a
+   clean hit has her reeling — and a hit mid-cast won't stop the cast.
+   She keeps spacing rather than chasing — a frost bolt, a floor slam
+   into two waves that die at the arena walls, an ice spike that glints
+   for a beat before it rises (too tall to jump: walk out of the glint).
+   At 14 she stops for a second, her staff flares, and a frozen guard in
+   the hall cracks and drips; then she casts quicker, breathes a short
+   cone that leaves a patch where it lands, and doubles the spikes. At 7
+   the same again with the child, and the last winter — quickest of all —
+   lunges in bursts and calls a three-second blizzard: dense snow, a
+   gentle drift on your footing, three slow waves. The King's pad is the only floor in the room that
    does not slide; the arena's two heart boxes are worth leaving on the
    floor until you need them.
 

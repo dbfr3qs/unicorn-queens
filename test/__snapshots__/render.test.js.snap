@@ -187454,53 +187454,47 @@ save()
     fillRect(5645, 472, 12, 12)
     globalAlpha=1
     fillStyle=#bfe4f0
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5661, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5681, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5671, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5691, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 258, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 258, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 258, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5691, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     save()
       translate(5603, 527.5)
       fillStyle=#c1440e
@@ -188902,53 +188896,47 @@ save()
     fillRect(5642, 472, 12, 12)
     globalAlpha=1
     fillStyle=#bfe4f0
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5661, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5681, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5671, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5691, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 258, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 258, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 258, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5691, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     save()
       translate(5616, 551)
       fillStyle=#8d76b8
@@ -190366,53 +190354,47 @@ save()
     fillRect(5646, 472, 12, 12)
     globalAlpha=1
     fillStyle=#bfe4f0
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5661, 240, 14, 6)
+    fillStyle=#bfe4f0
+    fillRect(5681, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5671, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5691, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 258, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 258, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 258, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5691, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     globalAlpha=1
   restore()
 restore()
@@ -191811,53 +191793,47 @@ save()
     fillRect(5643, 472, 12, 12)
     globalAlpha=1
     fillStyle=#2a3a52
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 240, 14, 6)
+    fillRect(5661, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5671, 240, 14, 6)
+    fillRect(5681, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5691, 240, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 258, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 258, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5691, 258, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     fillStyle=#e85d2a
     beginPath()
     arc(5598.02, 521.009, 4.595, 0, 6.283)
@@ -193395,53 +193371,47 @@ save()
     fillRect(5642, 472, 12, 12)
     globalAlpha=1
     fillStyle=#2a3a52
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 240, 14, 6)
+    fillRect(5661, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5671, 240, 14, 6)
+    fillRect(5681, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5691, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5711, 240, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5571, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5591, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5611, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5631, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5651, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5671, 258, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5691, 258, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 258, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5671, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#2a3a52
-    fillRect(5691, 276, 14, 6)
-    fillStyle=#2a3a52
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     save()
       translate(5621, 551)
       fillStyle=#8d76b8
@@ -194900,7 +194870,7 @@ save()
 restore()"
 `;
 
-exports[`l9 the Queen at attention (on the arena ice, all 24 pips, the throne empty) 1`] = `
+exports[`l9 the Queen at attention (on the arena ice, all 21 pips, the throne empty) 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
@@ -196234,53 +196204,47 @@ save()
     fillRect(5605, 472, 12, 12)
     globalAlpha=1
     fillStyle=#bfe4f0
-    fillRect(5571, 240, 14, 6)
+    fillRect(5581, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 240, 14, 6)
+    fillRect(5601, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 240, 14, 6)
+    fillRect(5621, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 240, 14, 6)
+    fillRect(5641, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 240, 14, 6)
+    fillRect(5661, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 240, 14, 6)
+    fillRect(5681, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 240, 14, 6)
+    fillRect(5701, 240, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 240, 14, 6)
+    fillRect(5581, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 258, 14, 6)
+    fillRect(5601, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 258, 14, 6)
+    fillRect(5621, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 258, 14, 6)
+    fillRect(5641, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 258, 14, 6)
+    fillRect(5661, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 258, 14, 6)
+    fillRect(5681, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5671, 258, 14, 6)
+    fillRect(5701, 258, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5691, 258, 14, 6)
+    fillRect(5581, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5711, 258, 14, 6)
+    fillRect(5601, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5571, 276, 14, 6)
+    fillRect(5621, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5591, 276, 14, 6)
+    fillRect(5641, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5611, 276, 14, 6)
+    fillRect(5661, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5631, 276, 14, 6)
+    fillRect(5681, 276, 14, 6)
     fillStyle=#bfe4f0
-    fillRect(5651, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5671, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5691, 276, 14, 6)
-    fillStyle=#bfe4f0
-    fillRect(5711, 276, 14, 6)
+    fillRect(5701, 276, 14, 6)
     globalAlpha=1
   restore()
 restore()

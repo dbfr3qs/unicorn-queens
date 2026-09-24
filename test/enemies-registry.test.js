@@ -39,7 +39,7 @@ const EXPECTED = {
   warden: { w: 60, h: 64, stompable: false, hp: 16 },
   sprite: { w: 16, h: 16, stompable: false, hp: 1 },
   golem: { w: 48, h: 56, stompable: false, hp: 3 },
-  queenboss: { w: 56, h: 60, stompable: false, hp: 24 },
+  queenboss: { w: 56, h: 60, stompable: false, hp: 21 },
 };
 
 describe('registry shape', () => {

@@ -3,6 +3,9 @@
 //   npm run bosslab                  the reach map, every boss
 //   npm run bosslab troll            one (mage, troll, dragon, weaver, wizard, warden, queen)
 //   npm run bosslab fight [boss]     the bot fights (tools/bot.mjs)
+//   npm run bosslab why <boss>       one boss's fights, explained: where its
+//                                    time goes, how often it is open to
+//                                    arrows, and what lands on the bot
 //
 // The reach map: a dummy player stands at each spot across the arena
 // (pinned there, 99 hp, the usual hit invulnerability) while the boss
@@ -25,6 +28,8 @@ import { setDifficulty } from '../src/difficulty.js';
 import { P_W } from '../src/player.js';
 import { periodFor } from '../src/clock.js';
 import { createBot, botStep, releaseAll } from './bot.mjs';
+import { fireballs, boulders, shockwaves, cones } from '../src/projectiles.js';
+import { getKind } from '../src/enemies/index.js';
 
 const DT = 1 / 60, VIEW_W = 800;
 const WARMUP = 4, WINDOW = 40, STEP = 50; // s before counting, s counted, px between spots
@@ -92,6 +97,10 @@ export function arena(b, x, share = 1) {
   p.x = x; p.y = (seg.y ?? g.level.groundY) - p.h; p.vy = 0;
   p.hp = p.maxHp = 99; // maxHp too: a heart box's pickup clamps hp to it
   boss.hp = Math.max(1, Math.round(boss.maxHp * share));
+  // The Warden and the Frost Queen roll their own LCG (e.seed, from their
+  // spawn x) for a replayable fight: give each run its own, off the seeded
+  // Math.random — or every one of a boss's fights is the same fight.
+  boss.seed = Math.floor(Math.random() * 0x7fffffff);
   return boss;
 }
 
@@ -156,6 +165,59 @@ export function fights(b) {
   };
 }
 
+// One boss's fights, explained. State shares (time), the share of the
+// fight its arrowBlocked hook lets arrows in (if it has one), and each hit
+// on the bot put down to what was touching her when it landed — by the
+// boss's phase (P1 above half hp, P2 at or below).
+export function explain(b, n = 15) {
+  setDifficulty('hard');
+  const k = getKind(b.kind);
+  const time = {}, causes = {};
+  let total = 0, open = 0;
+  const near = (r, o) => r.x < o.x + o.w && r.x + r.w > o.x && r.y < o.y + o.h && r.y + r.h > o.y;
+  for (let i = 0; i < n; i++) {
+    seed(1000 + i * 7919);
+    const boss = arena(b, b.arena[0] + 40);
+    releaseAll();
+    const bot = createBot(boss, b.arena, b.keep);
+    const p = game.player;
+    let last = p.hp, t = 0;
+    while (t < FIGHT_MAX && !boss.dead && !boss.dying) {
+      const was = {
+        fb: fireballs.filter(f => !f.dead).map(f => ({ x: f.x, y: f.y, w: f.w, h: f.h, web: f.web })),
+        bo: boulders.filter(o => !o.dead).map(o => ({ ...o })), sh: shockwaves.filter(o => !o.dead).map(o => ({ ...o })),
+        cone: cones.some(c => !c.dead), body: { x: boss.x, y: boss.y, w: boss.w, h: boss.h },
+        floor: (boss.pillars?.length ?? 0) + (boss.columns?.length ?? 0) + (boss.spikes?.length ?? 0) > 0 || boss.state === 'sweep',
+        state: boss.state ?? (boss.wind ? 'wind:' + boss.wind : 'idle'), ph: boss.hp > boss.maxHp / 2 ? 'P1' : 'P2',
+      };
+      botStep(bot, DT);
+      update(DT, VIEW_W, fx);
+      t += DT; total += DT;
+      time[was.state] = (time[was.state] ?? 0) + DT;
+      if (k.arrowBlocked && !k.arrowBlocked(boss, { vx: boss.x > p.x ? 1 : -1 })) open += DT;
+      if (p.hp < last) {
+        const r = { x: p.x - 10, y: p.y - 10, w: p.w + 20, h: p.h + 20 };
+        const f = was.fb.find(o => near(r, o));
+        const what = f ? (f.web ? 'web glob' : 'bolt') : was.bo.some(o => near(r, o)) ? 'boulder/egg'
+          : was.sh.some(o => near(r, o)) ? 'shockwave' : near(r, was.body) ? `body (${was.state})`
+            : was.floor ? 'floor hazard' : was.cone ? 'cone' : `other (${was.state})`;
+        const key = `${was.ph} ${what}`;
+        causes[key] = (causes[key] ?? 0) + (last - p.hp);
+      }
+      if (p.hp < 50) p.hp = 99;
+      last = p.hp;
+    }
+    releaseAll();
+  }
+  const pct = v => `${Math.round(100 * v / total)}%`;
+  return {
+    fight: total / n,
+    time: Object.entries(time).sort((x, y) => y[1] - x[1]).map(([s, v]) => `${s} ${pct(v)}`),
+    open: k.arrowBlocked ? pct(open) : 'always',
+    causes: Object.entries(causes).sort((x, y) => y[1] - x[1]).map(([c, v]) => `${c} ${(v / n).toFixed(2)}`),
+  };
+}
+
 // One column per spot: · never hit, else hits/min in fives (1 = up to 5,
 // 8 = 35–40: a hit every time the invulnerability runs out).
 function glyph(v) {
@@ -210,6 +272,15 @@ function report(key) {
 if (import.meta.url === `file://${process.argv[1]}`) main();
 
 function main() {
+if (process.argv[2] === 'why') {
+  const b = BOSSES[process.argv[3]];
+  if (!b) { console.error(`npm run bosslab why <boss> (${Object.keys(BOSSES).join(', ')})`); process.exit(1); }
+  const r = explain(b);
+  console.log(`${b.name}: mean fight ${r.fight.toFixed(1)} s; open to arrows ${r.open} of it`);
+  console.log(`  time:  ${r.time.join(', ')}`);
+  console.log(`  hits per fight:  ${r.causes.join(' | ') || 'none'}`);
+  return;
+}
 const fight = process.argv[2] === 'fight';
 const only = process.argv[fight ? 3 : 2];
 const keys = only ? [only] : Object.keys(BOSSES);

@@ -1032,7 +1032,7 @@ test('l9 the unfreezing, mid-shell (the shards, the Queen still on the throne)',
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l9 the Queen at attention (on the arena ice, all 24 pips, the throne empty)', () => {
+test('l9 the Queen at attention (on the arena ice, all 21 pips, the throne empty)', () => {
   const g = freshGame9();
   stageArena(g);
   const q = g.enemies.find(e => e.kind === 'queenboss');

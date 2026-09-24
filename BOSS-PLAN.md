@@ -157,6 +157,34 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   The Weaver and the wizard read as a tie to the bot (2.8 vs 2.5 at 30
   fights); the bot is strong against the sorcerer (it lands ~0.15 hits in
   stage 2). A playtest call between those two.
-- [ ] **B6** — Frost Queen: the last phase escalates; fewer heart boxes.
+- [x] **B6** — Frost Queen. Her idle was 0.8–1.2 s in all three winters;
+  now 1.1–1.5 / 0.75–1.05 / 0.5–0.8 s. **Frost mail:** arrows ring off
+  except while she winds up, 0.8 s after an attack, while staggered, and
+  at a phase gate (her statue rule merged into the same hook). **She
+  commits:** a hit mid-cast no longer cancels it (held fire used to cancel
+  most of her attacks — her whole second half landed nothing), and her
+  stagger cooldown is the house 2 s (0.9). 24 → 21 hp, winters at 14 / 7,
+  pips in rows of 7. **Heart boxes: both kept** — she is now clearly the
+  hardest fight; cutting a box as well would stack a second rise on top.
+  A playtest call. **Lab fix:** the Warden and the Queen roll their own
+  LCG (e.seed from spawn x), so all 30 of their fights were one fight
+  replayed (hence the Warden's exact 4.0 and the Queen's 5.0); each run now
+  gets its own seed. After:
+
+  ```
+  boss          kills  median kill  hits taken  3-heart wins  staggered
+  Mage   (L2)   30/30      8 s          2.7          63%           7%
+  Troll  (L3)   30/30      9 s          1.6         100%           7%
+  Dragon (L4)   30/30     28 s          0.8          97%           8%
+  Weaver (L6)   30/30     19 s          3.1          33%          10%
+  Wizard (L7)   30/30     22 s          2.3          60%           4%
+  Warden (L8)   30/30     25 s          3.3           0%           4%
+  Queen  (L9)   30/30     21 s          6.9          13%           0%
+  ```
+
+  (The Mage and the Troll moved a shade: setting the boss seed draws one
+  number from the lab's stream, so every fight after it rolls differently.)
+  Also new: `npm run bosslab why <boss>` — where a boss's time goes, how
+  often it is open to arrows, and what lands on the bot.
 - [ ] **B7** — mage's west-end safe zone; mage and dragon touch-ups.
 - [ ] **B8** — a ladder test: a short bot run in `npm test` that pins the order.

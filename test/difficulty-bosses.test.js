@@ -22,7 +22,7 @@ describe('boss hp', () => {
     ['spiderboss', 10, 13, 16],
     ['wizardboss', 6, 8, 10], // even: two stages
     ['warden', 10, 13, 16],
-    ['queenboss', 15, 18, 24], // a multiple of 3: a row per winter
+    ['queenboss', 12, 18, 21], // a multiple of 3: a row per winter
   ])('%s: %i / %i / %i', (kind, e, m, h) => {
     const got = ['easy', 'medium', 'hard'].map(d => { setDifficulty(d); return spawnHp(kind); });
     expect(got).toEqual([e, m, h]);

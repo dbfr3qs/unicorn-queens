@@ -33,9 +33,9 @@ describe('spawn', () => {
 });
 
 describe('the Frost Queen at a scaled hp', () => {
-  it('hard: three winters at 16 and 8, rows of eight', () => {
+  it('hard: three winters at P2_AT and P3_AT, rows of a third', () => {
     const e = { hp: QUEEN_HP, maxHp: QUEEN_HP };
-    expect(pipsPerRow(e)).toBe(8);
+    expect(pipsPerRow(e)).toBe(QUEEN_HP / 3);
     expect([P2_AT + 1, P2_AT, P3_AT].map(hp => phaseOf({ ...e, hp }))).toEqual([1, 2, 3]);
   });
 

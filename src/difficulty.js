@@ -13,13 +13,22 @@ export const DEFAULT_DIFFICULTY = 'hard';
 const STORAGE_KEY = 'unicorn-queens.difficulty';
 
 let current = DEFAULT_DIFFICULTY;
+let chosen = false; // has a choice been made: a ?difficulty= link, a remembered one, or one set this session
+
+// Whether the player has a choice yet. The card opens on it if so, and on
+// easy (FIRST_PICK) for a first-time player — the game's own default stays
+// hard, for ?level= links and for the tests.
+export function difficultyChosen() { return chosen; }
+export const FIRST_PICK = 'easy';
 
 export function difficultyName() { return current; }
 export function difficulty() { return PRESETS[current]; }
 
 // Unknown names are ignored; returns whether the setting changed.
 export function setDifficulty(name) {
-  if (!PRESETS[name] || name === current) return false;
+  if (!PRESETS[name]) return false;
+  chosen = true;
+  if (name === current) return false;
   current = name;
   return true;
 }
@@ -41,7 +50,7 @@ export function difficultyFromSearch(search = '') {
 export function loadDifficulty(storage = globalThis.localStorage) {
   try {
     const name = storage?.getItem(STORAGE_KEY);
-    if (PRESETS[name]) current = name;
+    if (PRESETS[name]) { current = name; chosen = true; }
   } catch { /* storage unavailable: keep the default */ }
   return current;
 }
@@ -54,7 +63,8 @@ export function saveDifficulty(storage = globalThis.localStorage) {
 // saved choice, so it isn't saved), else the remembered choice.
 export function initDifficulty(search = '', storage = globalThis.localStorage) {
   const fromUrl = difficultyFromSearch(search);
-  if (fromUrl) current = fromUrl;
+  chosen = false;
+  if (fromUrl) { current = fromUrl; chosen = true; }
   else loadDifficulty(storage);
   return current;
 }

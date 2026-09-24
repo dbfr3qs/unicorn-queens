@@ -3,7 +3,7 @@
 // the run from the opening. Choosing always starts a fresh run — the
 // carried heart cap is sized to the preset it was earned under.
 import { game } from './game.js';
-import { DIFFICULTIES, difficultyName, setDifficulty, saveDifficulty } from './difficulty.js';
+import { DIFFICULTIES, FIRST_PICK, difficultyChosen, difficultyName, setDifficulty, saveDifficulty } from './difficulty.js';
 import { startIntro } from './intro.js';
 
 export const PICKER_BLURB = {
@@ -13,9 +13,9 @@ export const PICKER_BLURB = {
 };
 
 // Open over whatever is loaded (level 1 at boot, the healed throne room at
-// the end), with the current choice picked.
+// the end), with the player's choice picked — or easy, the first time.
 export function openPicker() {
-  game.picker = { i: DIFFICULTIES.indexOf(difficultyName()) };
+  game.picker = { i: DIFFICULTIES.indexOf(difficultyChosen() ? difficultyName() : FIRST_PICK) };
 }
 
 // A key while the card is up. Returns true when it was the card's key.

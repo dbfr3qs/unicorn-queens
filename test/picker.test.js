@@ -5,7 +5,7 @@ import { openPicker, pickerKey } from '../src/picker.js';
 import { drawPicker } from '../src/render/picker.js';
 import { drawHud } from '../src/render/hud.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
-import { difficultyName, setDifficulty, DEFAULT_DIFFICULTY } from '../src/difficulty.js';
+import { difficultyName, setDifficulty, initDifficulty, DEFAULT_DIFFICULTY } from '../src/difficulty.js';
 
 const fx = { play() {} };
 
@@ -72,5 +72,34 @@ describe('the HUD label', () => {
     const rec = createRecordingCtx();
     drawHud(rec.ctx, 800, 600);
     expect(rec.text().includes(`fillText(${d.toUpperCase()},`)).toBe(shown);
+  });
+});
+
+describe('the first time', () => {
+  const store = (init = {}) => ({ m: { ...init }, getItem(k) { return this.m[k] ?? null; }, setItem(k, v) { this.m[k] = v; } });
+
+  it('a first-time player sees easy picked (the game default stays hard)', () => {
+    initDifficulty('', store());
+    expect(difficultyName()).toBe('hard');
+    expect(card().i).toBe(0);
+  });
+
+  it('a remembered choice is picked instead', () => {
+    initDifficulty('', store({ 'unicorn-queens.difficulty': 'hard' }));
+    expect(card().i).toBe(2);
+  });
+
+  it('so is a ?difficulty= link', () => {
+    initDifficulty('?difficulty=medium', store());
+    expect(card().i).toBe(1);
+  });
+
+  it('after a run, the card comes back on what they chose', () => {
+    initDifficulty('', store());
+    card();
+    pickerKey('ArrowRight', 600); // easy -> medium
+    pickerKey('Space', 600);
+    game.intro = null;
+    expect(card().i).toBe(1);
   });
 });

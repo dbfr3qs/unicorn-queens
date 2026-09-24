@@ -186,5 +186,13 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   number from the lab's stream, so every fight after it rolls differently.)
   Also new: `npm run bosslab why <boss>` — where a boss's time goes, how
   often it is open to arrows, and what lands on the bot.
-- [ ] **B7** — mage's west-end safe zone; mage and dragon touch-ups.
+- [x] **B7** — the mage's safe zone: aggroRange 500 → 700. At 500, the
+  hall's west end (2600–2728) was out of his reach but not your arrows';
+  the reach map now has no never-hit spot in his hall. **Tried and
+  reverted:** slower mage fireballs (190 px/s: 8 s → 102 s, 2.7 → 12 hits
+  — a slow shot lingers, and he only fires with none in the air) and a
+  longer windup (0.9 s: 23 s, 4.8 hits); more dragon fireballs in the air
+  and a shorter P1 hover (0.8 → 0.9 hits: nothing). Neither boss was
+  flagged in the playtest; the mage's rhythm (dodges, one shot at a time,
+  a stagger on every hit) is also where the bot is the weakest ruler.
 - [ ] **B8** — a ladder test: a short bot run in `npm test` that pins the order.

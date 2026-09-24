@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createLevel } from '../src/levels/level.js';
+import { createLevel2 } from '../src/levels/level2.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemies.js';
 import { resetFireballs, fireballs, FIREBALL_SPEED } from '../src/projectiles.js';
@@ -369,5 +370,24 @@ describe('taking damage', () => {
     expect(p.hp).toBe(3);
     expect(p.vy).toBe(E_STOMP_V);
     expect(calls).not.toContain('hurt');
+  });
+});
+
+// BOSS-PLAN B7: the hall's west end was out of his reach (aggroRange 500)
+// but not out of your arrows' — a place to stand and win.
+describe('B7: his reach covers the hall', () => {
+  it('winds up at a player at the hall\'s west end (level 2)', () => {
+    resetFireballs();
+    const l = createLevel2(600);
+    const e = spawnEnemy(l.roster.find(r => r.kind === 'mage'), l);
+    const p = createPlayer(l);
+    p.x = 2650; p.y = l.groundY - p.h;
+    let wound = false;
+    for (let i = 0; i < 600 && !wound; i++) {
+      updateEnemies([e], p, l, createCamera(), DT, fx([]));
+      p.x = 2650; // she stands there
+      wound = e.state === 'windup';
+    }
+    expect(wound).toBe(true);
   });
 });

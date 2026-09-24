@@ -209,7 +209,8 @@ register({
   hp: 5, stompable: false,
   boss: true, isTell: e => e.state === 'windup', // difficulty: scaled hp, slowed wind-up
   poise: 0, // the first boss staggers every time: his dodge is his defence (BOSS-PLAN B1)
-  idleMin: 1.2, idleMax: 1.9, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
+  idleMin: 1.2, idleMax: 1.9, windupT: 0.7, staggerT: 0.25, flashT: 0.15,
+  aggroRange: 700, // at 500 the hall's west end was out of his reach but not your arrows' (BOSS-PLAN B7)
   floatSpeed: 150,
   dodgeLook: 280, dodgeCooldown: 0.6, dodgeHeight: 64, threatMargin: 8,
   hoverChance: 0.35, hoverLowHpChance: 0.7, hoverMin: 0.8, hoverMax: 1.4,

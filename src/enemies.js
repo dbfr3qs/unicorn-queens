@@ -56,6 +56,13 @@ export function spawnEnemy(spec, lvl) {
   };
 }
 
+// A boss's poise: after a stagger, POISE s in which hits still land (and
+// flash) but don't stagger it again. Without it the bow (FIRE_CD 0.22 s)
+// out-paces the 0.3 s stagger, and held fire locks a boss out of ever
+// attacking. The Frost Queen has her own (staggerCd) and no stagger state;
+// a kind's `poise` overrides the 2 s (the mage: 0 — he dodges instead).
+export const POISE = 2;
+
 // Shared one-point damage (arrows and friends): -1 hp, per-kind hit
 // reaction (onHit), death at 0 with per-kind sound, burst and optional
 // onDeath hook (the troll uses it for the death shake).
@@ -73,7 +80,11 @@ export function damageEnemy(e, fx, cam, mult = 1, lvl) {
     }
   } else {
     fx.play(k.hitSound ?? 'thwack');
-    if (k.onHit) k.onHit(e);
+    if (k.boss && e.poiseT > 0) e.flash = Math.max(e.flash ?? 0, 0.15); // poised: it hurts, it doesn't stop him
+    else if (k.onHit) {
+      k.onHit(e);
+      if (k.boss && e.state === 'stagger') e.poiseT = k.poise ?? POISE;
+    }
   }
 }
 
@@ -89,6 +100,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
     if (e.dead) continue;
     // method call so `this` is the kind entry (brains read tuning off it)
     const k = getKind(e.kind);
+    if (e.poiseT > 0) e.poiseT -= dt;
     const tell = k.isTell?.(e) ? difficulty().bossTell : 1; // a boss's wind-up runs slow on the easier presets
     k.update(e, tell === 1 ? env : { ...env, dt: dt / tell });
     if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit

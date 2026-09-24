@@ -208,6 +208,7 @@ register({
   w: 42, h: 54,
   hp: 5, stompable: false,
   boss: true, isTell: e => e.state === 'windup', // difficulty: scaled hp, slowed wind-up
+  poise: 0, // the first boss staggers every time: his dodge is his defence (BOSS-PLAN B1)
   idleMin: 1.2, idleMax: 1.9, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
   floatSpeed: 150,
   dodgeLook: 280, dodgeCooldown: 0.6, dodgeHeight: 64, threatMargin: 8,

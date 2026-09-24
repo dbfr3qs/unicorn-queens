@@ -33,7 +33,7 @@ const EXPECTED = {
   spiderboss: { w: 72, h: 56, stompable: false, hp: 16 },
   hare: { w: 24, h: 20, stompable: true, hp: 1 },
   wraith: { w: 26, h: 30, stompable: false, hp: 1 },
-  wizardboss: { w: 64, h: 48, stompable: false, hp: 16 },
+  wizardboss: { w: 64, h: 48, stompable: false, hp: 10 }, // 16 before BOSS-PLAN B2
   sentinel: { w: 40, h: 44, stompable: true, hp: 2 },
   moth: { w: 20, h: 16, stompable: true, hp: 1 },
   warden: { w: 60, h: 64, stompable: false, hp: 16 },

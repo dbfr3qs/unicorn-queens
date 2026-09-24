@@ -1,11 +1,11 @@
-// The Wizard: level 7 mid-boss (the Frost Queen's warder). 16 hp, two
-// stages of 8, arrow-only, stomp bounces (the dragon rule). Stage 1 the
+// The Wizard: level 7 mid-boss (the Frost Queen's warder). 10 hp, two
+// stages of 5, arrow-only, stomp bounces (the dragon rule). Stage 1 the
 // entity is the flying war-pig (64x48) with the mounted wizard: only the
 // rune on the pig's near flank takes hits (weakPoint hook); the swoop's
-// 0.5 s recovery is the designed ground-arrow window. At hp 8 the rune
+// 0.8 s recovery is the designed ground-arrow window. At hp 5 the rune
 // shatters, the pig crashes, the wizard is stunned 2 s on the floor
 // (full body), then rises as the sorcerer (56x56): drift, bolt, slam
-// shockwaves, the seal circle (columns), the <=4 hp fan. Death is ash.
+// shockwaves, the seal circle (columns), the <=3 hp fan. Death is ash.
 import { fireFireball, fireCone, fireShockwaves, FIREBALL_SPEED } from '../projectiles.js';
 import { shake } from '../camera.js';
 import { burst } from '../particles.js';
@@ -16,20 +16,28 @@ import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
 const ENTER_T = 1.0, SHATTER_T = 0.4, CRASH_T = 0.4, STUN_T = 2.0;
-const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.5;
+const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.8; // the recovery: the ground window (0.5 before BOSS-PLAN B2)
+// His hp, the rune's break (stage 2) and the last stand (the fan, the ember
+// eyes, the quick tempo). 16 / 8 / 4 before BOSS-PLAN B2: he was the
+// hardest fight in the game by a distance, harder than the finale.
+export const WIZ_HP = 10, CRASH_AT = 5, FAN_AT = 3;
 const BAND_MIN = 5500, BAND_MAX = 6200; // the pig's band (e.x)
 const TELLS = new Set(['windup', 'swoopTele', 'slamTele', 'sealTele']); // his wind-ups (the difficulty slows them)
 const S2_MIN = 5500, S2_MAX = 6160; // the sorcerer's drift clamp
 
-// The rune: 24x24 on the flank facing the player (the side e.weakSide
-// tracks each update). Stage 1 flight only — the crash, the stunned
-// wizard and the sorcerer take full-body hits (null).
+// The rune: drawn 24x24, 8 px in from the flank facing the player (the
+// side e.weakSide tracks each update). Its hit rect runs out to that
+// flank's edge (32 wide): an arrow moves 8.7 px a frame, so it meets the
+// body inside the edge's 8 px on its first frame of contact, and a rect
+// that started at the drawing sparked ~11 in 12 true shots off the body
+// (BOSS-PLAN B2). Stage 1 flight only — the crash, the stunned wizard and
+// the sorcerer take full-body hits (null).
 function weakPoint(e) {
   if (e.stage !== 1) return null;
   const s = e.state;
   if (s === 'shatter' || s === 'crash' || s === 'stunned' || s === 'entering') return null;
-  const fx = e.weakSide === -1 ? 8 : e.w - 32;
-  return { x: e.x + fx, y: e.y + 12, w: 24, h: 24 };
+  const fx = e.weakSide === -1 ? 0 : e.w - 32;
+  return { x: e.x + fx, y: e.y + 12, w: 32, h: 24 };
 }
 
 // The hover: a pure function of e.age (accumulated in update). Starts at
@@ -39,12 +47,12 @@ function hoverY(e, lvl) { return lvl.groundY - 160 + 50 * Math.sin(e.age / 2); }
 
 function nextIdle(e) {
   const t = e.stage !== 2 ? 1.0 + Math.random() * 0.5
-    : e.hp <= phaseEdge(e, 4, 16) ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
+    : e.hp <= phaseEdge(e, FAN_AT, WIZ_HP) ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
   return t * difficulty().bossCd;
 }
 
 // Lead-aimed bolt(s) from the staff tip (the dragon's tFlight pattern).
-// fan: the <=4 hp spread — three bolts at -20/0/+20 degrees.
+// fan: the <=3 hp spread — three bolts at -20/0/+20 degrees.
 function fireBolt(e, p, lvl, fx, fan) {
   const ox = e.x + e.w / 2 + e.dir * 26, oy = e.y + e.h / 2 - 4; // the staff tip
   const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
@@ -60,12 +68,13 @@ function fireBolt(e, p, lvl, fx, fan) {
   e.t = nextIdle(e);
 }
 
-// Stage 1 pick: dark bolt 50 / swoop 30 / snort cone 20. The cone is a
+// Stage 1 pick: dark bolt 35 / swoop 45 / snort cone 20 (50 / 30 / 20
+// before BOSS-PLAN B2: the swoop is the window, and it came too rarely). The cone is a
 // ground-level breath: it only goes off from the bottom of the hover
 // arc (or it waits a beat for the arc to dip).
 function pickAttack(e, p, lvl, fx) {
   const r = Math.random();
-  if (r < 0.5) { e.state = 'windup'; e.t = 0.4; return; }
+  if (r < 0.35) { e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.8) {
     e.state = 'swoopTele'; e.t = SWOOP_TELE_T;
     fx.play('snort'); fx.play('puff'); // the tell
@@ -82,10 +91,10 @@ function pickAttack(e, p, lvl, fx) {
 }
 
 // Stage 2 pick: bolt / slam / seal circle; the fan replaces a third of
-// the rolls at <=4 hp.
+// the rolls at <=3 hp.
 function pickAttack2(e, p, lvl, fx) {
   const r = Math.random();
-  if (e.hp <= phaseEdge(e, 4, 16) && r < 0.3) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
+  if (e.hp <= phaseEdge(e, FAN_AT, WIZ_HP) && r < 0.3) { e.fan = true; e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.5) { e.fan = false; e.state = 'windup'; e.t = 0.4; return; }
   if (r < 0.75) {
     e.state = 'slamTele'; e.t = 0.5;
@@ -126,8 +135,8 @@ function update(e, { p, lvl, cam, dt, fx }) {
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
   e.weakSide = p.x + p.w / 2 < e.x + e.w / 2 ? -1 : 1; // the rune's flank
 
-  // --- the rune shatter (the hp 8 edge, once): crack -> crash -> stun ---
-  if (e.stage === 1 && e.hp <= phaseEdge(e, 8, 16) && !e.shattered) {
+  // --- the rune shatter (the hp 5 edge, once): crack -> crash -> stun ---
+  if (e.stage === 1 && e.hp <= phaseEdge(e, CRASH_AT, WIZ_HP) && !e.shattered) {
     e.shattered = true;
     e.state = 'shatter'; e.t = SHATTER_T;
     fx.play('crack');
@@ -313,7 +322,7 @@ function draw(c, e) {
     c.globalAlpha = 1;
   }
   if (!e.dead) { // hp pips: two rows of eight, world space above the boss
-    const n = pipMax(e, 16), per = Math.ceil(n / 2); // two rows
+    const n = pipMax(e, WIZ_HP), per = Math.ceil(n / 2); // two rows
     for (let i = 0; i < n; i++) {
       const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? pipFull : pipEmpty;
@@ -406,14 +415,14 @@ function drawDowned(c, e) {
 }
 
 // The sorcerer: a tall hooded robe, the staff planted or raised by state;
-// the staff-tip glow intensifies at <=4 hp (the phase cue).
+// the staff-tip glow intensifies at <=3 hp (the phase cue).
 function drawSorcerer(c, e) {
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
   const tele = e.state === 'slamTele';
   const casting = e.state === 'sealTele' || e.state === 'windup';
-  const low = e.hp <= phaseEdge(e, 4, 16);
+  const low = e.hp <= phaseEdge(e, FAN_AT, WIZ_HP);
   c.fillStyle = '#2c2c48'; // the robe
   c.beginPath();
   c.moveTo(-20, 28);
@@ -426,7 +435,7 @@ function drawSorcerer(c, e) {
   c.beginPath(); c.arc(0, -22 + (tele ? 6 : 0), 9, 0, Math.PI * 2); c.fill();
   c.fillStyle = '#1a1026'; // the shadowed face
   c.beginPath(); c.arc(2, -21 + (tele ? 6 : 0), 5, 0, Math.PI * 2); c.fill();
-  c.fillStyle = low ? '#ffd166' : '#b06aff'; // the eyes: embered at <=4
+  c.fillStyle = low ? '#ffd166' : '#b06aff'; // the eyes: embered at <=3
   c.fillRect(1, -23 + (tele ? 6 : 0), 2, 2);
   c.fillRect(5, -23 + (tele ? 6 : 0), 2, 2);
   // the staff: planted and braced on the slam telegraph, raised to cast
@@ -464,7 +473,7 @@ function drawSorcerer(c, e) {
 register({
   kind: 'wizardboss',
   w: 64, h: 48,
-  hp: 16, stompable: false,
+  hp: WIZ_HP, stompable: false,
   boss: true, hpStep: 2, isTell: e => TELLS.has(e.state), // difficulty: scaled hp (even: two stages), slowed wind-ups
   hitSound: 'bossHit', deathSound: 'growl',
   weakPoint,

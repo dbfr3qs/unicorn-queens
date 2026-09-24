@@ -20,7 +20,7 @@ describe('boss hp', () => {
     ['troll', 5, 6, 8],
     ['dragon', 8, 11, 14],
     ['spiderboss', 10, 13, 16],
-    ['wizardboss', 10, 12, 16], // even: two stages
+    ['wizardboss', 6, 8, 10], // even: two stages
     ['warden', 10, 13, 16],
     ['queenboss', 15, 18, 24], // a multiple of 3: a row per winter
   ])('%s: %i / %i / %i', (kind, e, m, h) => {

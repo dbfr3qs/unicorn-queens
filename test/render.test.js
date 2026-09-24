@@ -709,12 +709,12 @@ test('l7 throne gate (mid-dissolve: the lattice fading, the dark motes)', () => 
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l7 arena stage 1 (the wizard on the pig mid-hover, 8/16 pips, the swoop telegraph, the bound wraiths)', () => {
+test('l7 arena stage 1 (the wizard on the pig mid-hover, 5/10 pips, the swoop telegraph, the bound wraiths)', () => {
   const g = freshGame7();
   const w = g.enemies.find(e => e.kind === 'wizardboss');
   w.sleeping = false; // out of dormancy for the snapshot
   w.stage = 1; w.age = 0; // the hover clock: age 0 = (6200, groundY-160)
-  w.hp = 8; w.shattered = true; // 8/16 pips; pre-shattered so the edge stays quiet
+  w.hp = 5; w.shattered = true; // 5/10 pips; pre-shattered so the edge stays quiet
   w.state = 'swoopTele'; w.t = 0.5; // the crouched snort telegraph
   g.gameTime = 2.0;
   g.player.x = 5900; // west of the pig: the rune turns to face the player
@@ -722,12 +722,12 @@ test('l7 arena stage 1 (the wizard on the pig mid-hover, 8/16 pips, the swoop te
   expect(step({}, 1)).toMatchSnapshot();
 });
 
-test('l7 arena stage 2 (the sorcerer at 4 hp, ember eyes, a seal column mid-stand)', () => {
+test('l7 arena stage 2 (the sorcerer at 3 hp, ember eyes, a seal column mid-stand)', () => {
   const g = freshGame7();
   const w = g.enemies.find(e => e.kind === 'wizardboss');
   w.sleeping = false;
   w.stage = 2; w.w = 56; w.h = 56; // the risen form
-  w.hp = 4; // the ember-eyes threshold
+  w.hp = 3; // the ember-eyes threshold (FAN_AT)
   w.x = 5800; w.y = g.level.groundY - 56;
   w.state = 'idle'; w.t = 5; // a long idle: the drift pose
   w.columns = [{ x: 5700, w: 40, h: 140, t: 0.4, baseY: g.level.groundY, hit: false, dead: false }]; // risen, standing

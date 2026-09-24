@@ -88,7 +88,7 @@ export function arena(b, x, hp) {
   const p = g.player;
   p.hasBow = true;
   p.x = x; p.y = (seg.y ?? g.level.groundY) - p.h; p.vy = 0;
-  p.hp = 99;
+  p.hp = p.maxHp = 99; // maxHp too: a heart box's pickup clamps hp to it
   boss.hp = hp;
   return boss;
 }

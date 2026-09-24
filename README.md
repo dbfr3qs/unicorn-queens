@@ -119,16 +119,16 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    puffs them to fluff); frost wraiths drift the air and pass under
    arrows aimed at the ground (one arrow to the chest). The throne gate
    dissolves when you first approach it — and that is what wakes the
-   wizard. He rides a war-pig with 16 hp, in two stages of 8. Stage one
+   wizard. He rides a war-pig with 10 hp, in two stages of 5. Stage one
    the pig hovers out of ground-arrow reach: only the rune on the flank
    facing you takes hits (arrows to the body deflect), he lofts lead-aimed
-   dark bolts, swoops at you and sits on the ground for half a second
+   dark bolts, swoops at you and sits on the ground for most of a second
    after (the designed arrow window), and snorts a violet cone from the
-   bottom of his arc. At 8 hp the rune shatters and the pig crashes; the
+   bottom of his arc. At 5 hp the rune shatters and the pig crashes; the
    wizard is stunned on the floor for 2 s, full body. Then he rises as
    the sorcerer: he drifts, fires bolts, slams the floor into shockwaves,
-   and raises seal columns where the circle glints — walk off it. Below
-   4 hp his bolts spread into a fan. This one is not killed. When the
+   and raises seal columns where the circle glints — walk off it. At 3
+   hp his bolts spread into a fan. This one is not killed. When the
    wizard is done, the bound spirits are freed, the cage door swings
    open, the war-pig stands up and walks back down the mountain, and the
    King's word lights the rainbow — the game's first good chord. Walk

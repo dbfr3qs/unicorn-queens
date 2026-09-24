@@ -16,7 +16,7 @@ import { getKind } from '../src/enemies/index.js';
 import { createCamera } from '../src/camera.js';
 import { resetArrows, fireArrow, fireStarArrow, updateArrows, arrows } from '../src/arrows.js';
 import { fireFireball, fireballs, resetFireballs, updateFireballs, resetCones, updateCones, cones, resetShockwaves, shockwaves } from '../src/projectiles.js';
-import { updateColumns } from '../src/enemies/wizardboss.js';
+import { updateColumns, WIZ_HP, CRASH_AT, FAN_AT } from '../src/enemies/wizardboss.js';
 import { game, startGame, fireSunbeam } from '../src/game.js';
 
 const DT = 1 / 60;
@@ -50,11 +50,11 @@ const groundPlayer = (l, x) => {
 beforeEach(() => { resetArrows(); resetFireballs(); resetCones(); resetShockwaves(); reseed(); });
 
 describe('registry', () => {
-  it('registers 64x48, 16 hp, unstompable', () => {
+  it('registers 64x48, WIZ_HP (10), unstompable', () => {
     const k = getKind('wizardboss');
-    expect([k.w, k.h, k.hp, k.stompable]).toEqual([64, 48, 16, false]);
+    expect([k.w, k.h, k.hp, k.stompable]).toEqual([64, 48, WIZ_HP, false]);
     const e = spawn();
-    expect([e.w, e.h, e.hp, e.sleeping]).toEqual([64, 48, 16, false]);
+    expect([e.w, e.h, e.hp, e.sleeping]).toEqual([64, 48, WIZ_HP, false]);
   });
 
   it('is unstompable: the stomp bounces without damage or kill', () => {
@@ -77,7 +77,7 @@ describe('dormancy and the enter', () => {
     const p = groundPlayer(l, 6490); // overlapping the sleeping boss
     const calls = [];
     frames(60, e, p, l, cam(), calls);
-    expect([e.x, e.y, e.hp]).toEqual([6500, 512, 16]); // untouched
+    expect([e.x, e.y, e.hp]).toEqual([6500, 512, WIZ_HP]); // untouched
     expect(p.hp).toBe(3); // the sleeping boss is harmless
   });
 
@@ -119,13 +119,13 @@ describe('stage 1 hover and the weak point', () => {
     }
   });
 
-  it('weakPoint: a 24x24 rune on the flank facing the player', () => {
+  it('weakPoint: the rune on the flank facing the player, hit rect out to the edge', () => {
     const e = frozen(6000, 400);
     const l = lvl();
     const p = groundPlayer(l, 5900); // west: the rune is on the left flank
     updateEnemies([e], p, l, cam(), DT, fx([]));
     let w = getKind('wizardboss').weakPoint(e);
-    expect([w.x, w.y, w.w, w.h]).toEqual([e.x + 8, e.y + 12, 24, 24]);
+    expect([w.x, w.y, w.w, w.h]).toEqual([e.x, e.y + 12, 32, 24]); // drawn 24 wide, 8 px in
     p.x = 6100; // east: the rune moves to the right flank
     updateEnemies([e], p, l, cam(), DT, fx([]));
     w = getKind('wizardboss').weakPoint(e);
@@ -156,7 +156,7 @@ describe('arrows vs the pig', () => {
     const c = cam();
     c.x = 5500; // the arrows only live in the viewport
     for (let i = 0; i < 40; i++) updateArrows([e], l, c, DT, fx(calls), 800);
-    expect(e.hp).toBe(16); // deflected, no damage
+    expect(e.hp).toBe(WIZ_HP); // deflected, no damage
     expect(calls).toContain('deflect');
     expect(arrows.length).toBe(0); // a normal arrow is spent (dead arrows are culled)
   });
@@ -171,7 +171,7 @@ describe('arrows vs the pig', () => {
     const c = cam();
     c.x = 5500;
     for (let i = 0; i < 30; i++) updateArrows([e], l, c, DT, fx(calls), 800);
-    expect(e.hp).toBe(16);
+    expect(e.hp).toBe(WIZ_HP);
     expect(calls.filter(n => n === 'deflect').length).toBe(1); // one spark, not one per frame
     expect(arrows[0].dead).toBe(false); // the star keeps flying
   });
@@ -188,9 +188,26 @@ describe('arrows vs the pig', () => {
     const c = cam();
     c.x = 5500;
     for (let i = 0; i < 40; i++) updateArrows([e], l, c, DT, fx(calls), 800);
-    expect(e.hp).toBe(15);
+    expect(e.hp).toBe(WIZ_HP - 1);
     expect(calls).toContain('bossHit');
     expect(e.dead).toBe(false);
+  });
+
+  it('a level shot at the rune lands wherever in its frame it meets the pig (BOSS-PLAN B2)', () => {
+    // An arrow moves 8.7 px a frame; with the hit rect at the drawn rune,
+    // 8 px in from the flank, ~11 of 12 of these sparked off the body.
+    for (let off = 0; off < 9; off++) {
+      resetArrows();
+      const e = frozen(6000, 512);
+      const l = lvl();
+      const p = groundPlayer(l, 5900 + off);
+      p.hasBow = true; p.facing = 1;
+      fireArrow(p);
+      const c = cam();
+      c.x = 5500;
+      for (let i = 0; i < 40; i++) updateArrows([e], l, c, DT, fx([]), 800);
+      expect(e.hp, `offset ${off}`).toBe(WIZ_HP - 1);
+    }
   });
 });
 
@@ -318,16 +335,16 @@ describe('the snort cone', () => {
   });
 });
 
-describe('the rune shatter (hp 8)', () => {
+describe('the rune shatter (hp CRASH_AT)', () => {
   it('crack -> the crash (thud, on the snow) -> 2 s stunned -> the sorcerer', () => {
     const e = spawn();
-    e.state = 'idle'; e.t = 5; e.hp = 9;
+    e.state = 'idle'; e.t = 5; e.hp = CRASH_AT + 1;
     const l = lvl();
     const p = groundPlayer(l, 5000);
     const c = cam();
     const calls = [];
     damageEnemy(e, fx(calls), c);
-    expect(e.hp).toBe(8);
+    expect(e.hp).toBe(CRASH_AT);
     updateEnemies([e], p, l, c, DT, fx(calls)); // the shatter edge
     expect(e.state).toBe('shatter');
     expect(calls).toContain('crack');
@@ -420,16 +437,16 @@ describe('stage 2: the sorcerer', () => {
     expect(e.columns.length).toBe(0); // the column decays away
   });
 
-  it('the fan: three bolts at <=4 hp', () => {
+  it('the fan: three bolts at <= FAN_AT hp', () => {
     const e = s2(5850);
-    e.hp = 4; e.state = 'windup'; e.t = 0; e.fan = true;
+    e.hp = FAN_AT; e.state = 'windup'; e.t = 0; e.fan = true;
     const l = lvl();
     const p = groundPlayer(l, 6000);
     updateEnemies([e], p, l, cam(), DT, fx([]));
     expect(fireballs.length).toBe(3);
   });
 
-  it('the tempo: idle windows 0.7-1.1 s, shorter (0.5-0.9 s) at <=4 hp', () => {
+  it('the tempo: idle windows 0.7-1.1 s, shorter (0.5-0.9 s) at <= FAN_AT hp', () => {
     const gaps = (hp, n = 5) => {
       const e = s2(5850);
       e.hp = hp;
@@ -446,10 +463,10 @@ describe('stage 2: the sorcerer', () => {
     };
     // frame counts: 0.7-1.1 s -> 41-65 idle frames (the transition frame
     // is not counted), 0.5-0.9 s -> 29-53
-    const normal = gaps(8);
+    const normal = gaps(CRASH_AT);
     expect(normal).toHaveLength(5);
     for (const g of normal) { expect(g).toBeGreaterThanOrEqual(41); expect(g).toBeLessThanOrEqual(66); }
-    const low = gaps(4);
+    const low = gaps(FAN_AT);
     expect(low).toHaveLength(5);
     for (const g of low) { expect(g).toBeGreaterThanOrEqual(29); expect(g).toBeLessThanOrEqual(54); }
   });
@@ -464,8 +481,8 @@ describe('projectile interactions', () => {
     fireFireball(6160, 425, -240, 0, fx([])); // westbound, at the pig's height
     const calls = [];
     let i = 0;
-    while (e.hp === 16 && i++ < 180) updateFireballs(p, l, cam(), DT, fx(calls), [e]);
-    expect(e.hp).toBe(15);
+    while (e.hp === WIZ_HP && i++ < 180) updateFireballs(p, l, cam(), DT, fx(calls), [e]);
+    expect(e.hp).toBe(WIZ_HP - 1);
     expect(calls).toContain('reflect');
     expect(calls).toContain('bossHit');
   });
@@ -484,7 +501,7 @@ describe('projectile interactions', () => {
     fireSunbeam(g.player, g.level, fx(calls), 800);
     expect(wraith.dead).toBe(true);
     expect(wiz.dead).toBe(false);
-    expect(wiz.hp).toBe(16);
+    expect(wiz.hp).toBe(WIZ_HP);
   });
 });
 

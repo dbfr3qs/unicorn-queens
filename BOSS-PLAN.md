@@ -76,7 +76,29 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   time from anywhere — the Warden's triple window takes 9 hp a chime. They
   need a defence (openings), not just pressure. The troll's shield is the
   only thing that slows his kill.
-- [ ] **B2** — wizard: 16 → 10 hp (two stages of 5), a longer swoop window.
+- [x] **B2** — wizard: 16 → 10 hp (two stages of 5; the fan and quick
+  tempo at 3), swoop recovery 0.5 → 0.8 s, stage-1 pick bolt 35 / swoop 45 /
+  cone 20 (was 50 / 30 / 20). **And a bug:** the rune's hit rect sat 8 px in
+  from the flank, and an arrow (8.7 px a frame) meets the body inside those
+  8 px on its first frame of contact — ~11 of 12 true shots sparked off. The
+  hit rect now runs to the flank's edge. (Also a lab bug: a heart box
+  clamped the bot's 99 hp to maxHp 3 and read as ~94 hits; the baseline's
+  wizard 114.9 was mostly that.) After:
+
+  ```
+  boss          kills  median kill  hits taken  3-heart wins  staggered
+  Mage   (L2)   30/30      7 s          2.2          70%           8%
+  Troll  (L3)   30/30      8 s          0.0         100%           9%
+  Dragon (L4)   30/30     28 s          0.9          93%           8%
+  Weaver (L6)   30/30      4 s          0.3         100%          14%
+  Wizard (L7)   30/30     42 s          4.9          23%           4%
+  Warden (L8)   30/30      5 s          0.0         100%          13%
+  Queen  (L9)   30/30     15 s          5.0           0%           0%
+  ```
+
+  Still open for the wizard: his stage 2 (the sorcerer) is always hittable
+  and melts in ~1 s of held fire — the same fault as the Weaver Queen and
+  the Warden (B4, B5); it gets its answer with theirs.
 - [ ] **B3** — troll: walks the player down; more slams between shields;
   a kill that takes long enough for him to attack.
 - [ ] **B4** — Weaver Queen: a defence — openings (e.g. her armoured front,

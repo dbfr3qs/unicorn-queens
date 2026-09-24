@@ -114110,7 +114110,7 @@ save()
 restore()"
 `;
 
-exports[`l7 arena stage 1 (the wizard on the pig mid-hover, 8/16 pips, the swoop telegraph, the bound wraiths) 1`] = `
+exports[`l7 arena stage 1 (the wizard on the pig mid-hover, 5/10 pips, the swoop telegraph, the bound wraiths) 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
@@ -115775,37 +115775,25 @@ save()
       fillRect(-5, -5, 10, 10)
     restore()
     fillStyle=#b06aff
-    fillRect(6183.97, 376.417, 10, 4)
+    fillRect(6201.97, 376.417, 10, 4)
     fillStyle=#b06aff
-    fillRect(6195.97, 376.417, 10, 4)
+    fillRect(6213.97, 376.417, 10, 4)
     fillStyle=#b06aff
-    fillRect(6207.97, 376.417, 10, 4)
+    fillRect(6225.97, 376.417, 10, 4)
     fillStyle=#b06aff
-    fillRect(6219.97, 376.417, 10, 4)
+    fillRect(6237.97, 376.417, 10, 4)
     fillStyle=#b06aff
-    fillRect(6231.97, 376.417, 10, 4)
-    fillStyle=#b06aff
-    fillRect(6243.97, 376.417, 10, 4)
-    fillStyle=#b06aff
-    fillRect(6255.97, 376.417, 10, 4)
-    fillStyle=#b06aff
-    fillRect(6267.97, 376.417, 10, 4)
+    fillRect(6249.97, 376.417, 10, 4)
     fillStyle=#3a2a5c
-    fillRect(6183.97, 383.417, 10, 4)
+    fillRect(6201.97, 383.417, 10, 4)
     fillStyle=#3a2a5c
-    fillRect(6195.97, 383.417, 10, 4)
+    fillRect(6213.97, 383.417, 10, 4)
     fillStyle=#3a2a5c
-    fillRect(6207.97, 383.417, 10, 4)
+    fillRect(6225.97, 383.417, 10, 4)
     fillStyle=#3a2a5c
-    fillRect(6219.97, 383.417, 10, 4)
+    fillRect(6237.97, 383.417, 10, 4)
     fillStyle=#3a2a5c
-    fillRect(6231.97, 383.417, 10, 4)
-    fillStyle=#3a2a5c
-    fillRect(6243.97, 383.417, 10, 4)
-    fillStyle=#3a2a5c
-    fillRect(6255.97, 383.417, 10, 4)
-    fillStyle=#3a2a5c
-    fillRect(6267.97, 383.417, 10, 4)
+    fillRect(6249.97, 383.417, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -115847,7 +115835,7 @@ save()
 restore()"
 `;
 
-exports[`l7 arena stage 2 (the sorcerer at 4 hp, ember eyes, a seal column mid-stand) 1`] = `
+exports[`l7 arena stage 2 (the sorcerer at 3 hp, ember eyes, a seal column mid-stand) 1`] = `
 "fillStyle=#0d0815
 fillRect(0, 0, 800, 600)
 save()
@@ -117511,37 +117499,25 @@ save()
     fillRect(5700, 420, 40, 6)
     globalAlpha=1
     fillStyle=#e33
-    fillRect(5779, 480, 10, 4)
+    fillRect(5797, 480, 10, 4)
     fillStyle=#e33
-    fillRect(5791, 480, 10, 4)
+    fillRect(5809, 480, 10, 4)
     fillStyle=#e33
-    fillRect(5803, 480, 10, 4)
-    fillStyle=#e33
-    fillRect(5815, 480, 10, 4)
+    fillRect(5821, 480, 10, 4)
     fillStyle=#522
-    fillRect(5827, 480, 10, 4)
+    fillRect(5833, 480, 10, 4)
     fillStyle=#522
-    fillRect(5839, 480, 10, 4)
+    fillRect(5845, 480, 10, 4)
     fillStyle=#522
-    fillRect(5851, 480, 10, 4)
+    fillRect(5797, 487, 10, 4)
     fillStyle=#522
-    fillRect(5863, 480, 10, 4)
+    fillRect(5809, 487, 10, 4)
     fillStyle=#522
-    fillRect(5779, 487, 10, 4)
+    fillRect(5821, 487, 10, 4)
     fillStyle=#522
-    fillRect(5791, 487, 10, 4)
+    fillRect(5833, 487, 10, 4)
     fillStyle=#522
-    fillRect(5803, 487, 10, 4)
-    fillStyle=#522
-    fillRect(5815, 487, 10, 4)
-    fillStyle=#522
-    fillRect(5827, 487, 10, 4)
-    fillStyle=#522
-    fillRect(5839, 487, 10, 4)
-    fillStyle=#522
-    fillRect(5851, 487, 10, 4)
-    fillStyle=#522
-    fillRect(5863, 487, 10, 4)
+    fillRect(5845, 487, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -119537,37 +119513,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -121311,37 +121275,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -122716,37 +122668,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -124716,37 +124656,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -126743,37 +126671,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -128770,37 +128686,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -130172,37 +130076,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -131547,37 +131439,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -133112,37 +132992,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -134842,37 +134710,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -136572,37 +136428,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()
@@ -138302,37 +138146,25 @@ save()
       globalAlpha=1
     restore()
     fillStyle=#e33
-    fillRect(6484, 488, 10, 4)
+    fillRect(6502, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 488, 10, 4)
+    fillRect(6514, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6508, 488, 10, 4)
+    fillRect(6526, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6520, 488, 10, 4)
+    fillRect(6538, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6532, 488, 10, 4)
+    fillRect(6550, 488, 10, 4)
     fillStyle=#e33
-    fillRect(6544, 488, 10, 4)
+    fillRect(6502, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6556, 488, 10, 4)
+    fillRect(6514, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6568, 488, 10, 4)
+    fillRect(6526, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6484, 495, 10, 4)
+    fillRect(6538, 495, 10, 4)
     fillStyle=#e33
-    fillRect(6496, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6508, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6520, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6532, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6544, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6556, 495, 10, 4)
-    fillStyle=#e33
-    fillRect(6568, 495, 10, 4)
+    fillRect(6550, 495, 10, 4)
     globalAlpha=1
   restore()
 restore()

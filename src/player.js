@@ -7,6 +7,7 @@ import { spawnLoot } from './loot.js';
 import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 import { difficulty } from './difficulty.js';
+import { solidDoors } from './door.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
 export const HOP_V = P_JUMP_V * 0.85; // levitation hop: shorter than a ground jump
@@ -26,13 +27,15 @@ export const webSlowTime = () => WEB_SLOW_TIME * difficulty().hazard;
 export const flightRecharge = () => FLIGHT_CD * difficulty().hazard;
 export const ICE_ACCEL = 900, ICE_DRAG = 0.02, ICE_MAX = 1.3 * P_SPEED; // level 7 ice: steer 900 px/s², ~no friction, 1.3× run cap (338)
 export const REVIVE_TIME = 1, REVIVE_INVULN = 3; // easy: the beat before the revive, and the grace after it
-export const RESPAWN_MARGIN = 64; // a pit respawn lands at least this far back from the edge
+export const RESPAWN_MARGIN = 128; // a pit respawn lands at least this far back from the edge
 const UNSAFE_FOOTING = new Set(['box', 'gear', 'trapdoor']); // breaks, slides, or opens: never a respawn point
 
 // Where a pit fall puts the player back: the last safe spot, pulled in
 // RESPAWN_MARGIN from any open edge of the surface it was on (an edge
 // flush with a neighbouring ground segment at the same height is not a
 // drop). A surface too narrow for the margin centres the player on it.
+// The pull never passes a door that is a wall right now: level 9's first
+// frost seal stands 50 px in from crevasse 1's lip, on the same floor.
 export function respawnX(p, lvl) {
   const s = p.safeSurf;
   if (!s) return p.safeX;
@@ -40,8 +43,12 @@ export function respawnX(p, lvl) {
   const flush = x => lvl.ground.some(g => g !== s && (g.y ?? lvl.groundY) === top && (g.x === x || g.x + g.w === x));
   const lo = s.x + (flush(s.x) ? 0 : RESPAWN_MARGIN);
   const hi = s.x + s.w - p.w - (flush(s.x + s.w) ? 0 : RESPAWN_MARGIN);
-  if (lo > hi) return s.x + (s.w - p.w) / 2;
-  return Math.max(lo, Math.min(p.safeX, hi));
+  let x = lo > hi ? s.x + (s.w - p.w) / 2 : Math.max(lo, Math.min(p.safeX, hi));
+  for (const d of solidDoors(lvl)) {
+    if (x > p.safeX && d.x >= p.safeX + p.w && d.x < x + p.w) x = Math.max(p.safeX, d.x - p.w); // stop west of it
+    if (x < p.safeX && d.x + d.w <= p.safeX && d.x + d.w > x) x = Math.min(p.safeX, d.x + d.w); // stop east of it
+  }
+  return x;
 }
 
 // carry: permanent acquisitions from the previous level (big, bow),

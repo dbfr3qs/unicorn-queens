@@ -99,9 +99,13 @@ export function updateDoor(lvl, p, dt, fx) {
 // only a way through once it is open.
 const SOLID = new Set(['locked', 'shut', 'closing', 'cracking', 'melting']);
 
+// The doors that are walls right now (the pit respawn must not pass one).
+export function solidDoors(lvl) {
+  return doorsOf(lvl).filter(d => SOLID.has(d.state));
+}
+
 export function resolveDoor(lvl, p) {
-  for (const door of doorsOf(lvl)) {
-    if (!SOLID.has(door.state)) continue;
+  for (const door of solidDoors(lvl)) {
     if (p.x < door.x + door.w && p.x + p.w > door.x && p.y < door.y + door.h && p.y + p.h > door.y) {
       p.x = p.x + p.w / 2 < door.x + door.w / 2 ? door.x - p.w : door.x + door.w;
     }

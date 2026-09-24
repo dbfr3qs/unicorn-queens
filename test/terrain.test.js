@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createLevel, resolveGroundCollision } from '../src/levels/level.js';
 import { createPlayer, updatePlayer, respawnX, P_H, P_W, RESPAWN_MARGIN } from '../src/player.js';
+import { createLevel9 } from '../src/levels/level9.js';
 import { createCamera } from '../src/camera.js';
 
 const DT = 1 / 60;
@@ -77,6 +78,17 @@ describe('fall + respawn', () => {
       ground: [{ x: 0, w: 300, kind: 'snow', y: 500 }, { x: 300, w: 300, kind: 'ice', y: 500 }],
     };
     expect(respawnX({ w: P_W, safeX: 300 - P_W, safeSurf: l.ground[0] }, l)).toBe(300 - P_W);
+  });
+
+  it('never pulls through a shut door (level 9: the first frost seal by crevasse 1)', () => {
+    const l = createLevel9(600);
+    const floor = l.ground.find(g => g.x === 1550);
+    const seal = l.doors.find(d => d.x === 1600);
+    expect(seal.state).toBe('locked');
+    const p = { w: P_W, safeX: 1560, safeSurf: floor }; // the strip between the lip and the seal
+    expect(respawnX(p, l)).toBe(1600 - P_W);
+    seal.state = 'open'; // once it melts, the pull goes on in
+    expect(respawnX(p, l)).toBe(1550 + RESPAWN_MARGIN);
   });
 
   it('boxes and the gear plate never become the respawn point', () => {

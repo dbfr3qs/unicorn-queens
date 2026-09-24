@@ -24,6 +24,12 @@ export function setDifficulty(name) {
   return true;
 }
 
+// A boss's spawn hp under the preset: rounded to a multiple of `step` (the
+// Frost Queen's three winters, the wizard's two stages), never below it.
+export function scaleBossHp(hp, step = 1) {
+  return Math.max(step, Math.round(hp * difficulty().bossHp / step) * step);
+}
+
 // ?difficulty=easy|medium|hard, or null when missing or unknown.
 export function difficultyFromSearch(search = '') {
   const name = new URLSearchParams(search).get('difficulty')?.toLowerCase();

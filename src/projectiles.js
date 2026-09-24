@@ -5,6 +5,7 @@ import { hurtPlayer, WEB_SLOW_TIME } from './player.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
 import { frostPatch } from './thaw.js'; // level 9: the golem's spit lands as ice
+import { difficulty } from './difficulty.js'; // projSpeed
 
 export const FIREBALL_SIZE = 14, FIREBALL_SPEED = 240, FIREBALL_TTL = 3;
 export const fireballs = [];
@@ -17,6 +18,8 @@ export function resetFireballs() {
 // the frost sprite's dart and the Frost Queen's bolts read as hers rather
 // than as the mage's fire. `ttl` lets a short-range dart expire on its own.
 export function fireFireball(x, y, vx, vy, fx, cyan = false, pale = false, ttl = FIREBALL_TTL) {
+  const s = difficulty().projSpeed; // slower on the easier presets, over the same range
+  vx *= s; vy *= s; ttl /= s;
   fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl, dead: false, cool: 0, reflected: false, web: false, cyan, pale });
   fx.play('fireball');
 }
@@ -24,7 +27,9 @@ export function fireFireball(x, y, vx, vy, fx, cyan = false, pale = false, ttl =
 // The Weaver Queen's spit: a fireball flagged web: true — a hit deals the
 // shared 1 damage and additionally slows the player (webT = WEB_SLOW_TIME).
 export function fireWebGlob(x, y, vx, vy, fx) {
-  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL, dead: false, cool: 0, reflected: false, web: true });
+  const s = difficulty().projSpeed;
+  vx *= s; vy *= s;
+  fireballs.push({ x, y, w: FIREBALL_SIZE, h: FIREBALL_SIZE, vx, vy, ttl: FIREBALL_TTL / s, dead: false, cool: 0, reflected: false, web: true });
   fx.play('spit');
 }
 

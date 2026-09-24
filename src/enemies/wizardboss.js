@@ -13,6 +13,7 @@ import { hurtPlayer } from '../player.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
 const ENTER_T = 1.0, SHATTER_T = 0.4, CRASH_T = 0.4, STUN_T = 2.0;
 const SWOOP_TELE_T = 0.5, SWOOP_SPEED = 420, SWOOP_DIST = 504, SWOOP_REC_T = 0.5;
@@ -36,8 +37,9 @@ function hoverX(e) { return 5850 + 350 * Math.cos(2 * Math.PI * e.age / 8); }
 function hoverY(e, lvl) { return lvl.groundY - 160 + 50 * Math.sin(e.age / 2); }
 
 function nextIdle(e) {
-  if (e.stage === 2) return e.hp <= phaseEdge(e, 4, 16) ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
-  return 1.0 + Math.random() * 0.5;
+  const t = e.stage !== 2 ? 1.0 + Math.random() * 0.5
+    : e.hp <= phaseEdge(e, 4, 16) ? 0.5 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
+  return t * difficulty().bossCd;
 }
 
 // Lead-aimed bolt(s) from the staff tip (the dragon's tFlight pattern).
@@ -462,6 +464,7 @@ register({
   kind: 'wizardboss',
   w: 64, h: 48,
   hp: 16, stompable: false,
+  boss: true, hpStep: 2, isTell: e => e.state === 'windup', // difficulty: scaled hp (even: two stages), slowed wind-up
   hitSound: 'bossHit', deathSound: 'growl',
   weakPoint,
   onHit, onDeath,

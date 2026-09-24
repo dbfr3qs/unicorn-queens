@@ -23,6 +23,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
 export const PILLAR_TOTAL = 1.55; // rise 0.25 + stand 0.8 + decay 0.5
 const PILLAR_SOLID = 1.05; // solid through rise + stand
@@ -39,7 +40,7 @@ function onDeath(e, fx, cam) {
 }
 
 function nextIdle(e) {
-  return e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.7 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
+  return (e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.7 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5) * difficulty().bossCd;
 }
 
 // Attack pick: phase 1 lunge 40 / spit 35 / pillar 25;
@@ -277,6 +278,7 @@ register({
   kind: 'spiderboss',
   w: 72, h: 56,
   hp: 16, stompable: false,
+  boss: true, isTell: e => e.state === 'lungeTele' || e.state === 'spitWind' || e.state === 'pillarTele', // difficulty: scaled hp, slowed telegraphs
   phase2At: 8,
   idleSpeed: 60,
   lungeTele: 0.5, lungeSpeed: 380, lungeDist: 260, lungeRec: 0.6,

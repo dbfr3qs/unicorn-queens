@@ -8,6 +8,7 @@ import { shake } from './camera.js';
 import { HURT_INVULN, hurtPlayer } from './player.js';
 import { FX } from './effects.js';
 import { getKind } from './enemies/index.js';
+import { difficulty, scaleBossHp } from './difficulty.js';
 // each kind import self-registers into the enemy kind registry
 import './enemies/slime.js';
 import './enemies/zombie.js';
@@ -47,8 +48,8 @@ export function spawnEnemy(spec, lvl) {
     minX: spec.minX ?? spec.band?.[0] ?? 0,
     maxX: spec.maxX ?? spec.band?.[1] ?? lvl.width,
     dir: spec.dir ?? -1,
-    hp: k.hp ?? 1,
-    maxHp: k.hp ?? 1, // what it spawned with: the boss phase edges and pips scale from it
+    hp: spawnHp(k),
+    maxHp: spawnHp(k), // what it spawned with: the boss phase edges and pips scale from it
     dead: false,
     sleeping: spec.sleeping ?? false, // the elder adder's coil (enemies.js guard)
     bound: spec.bound ?? false, // the level 7 arena wraiths (always solid)
@@ -86,10 +87,17 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
   for (const e of enemies) {
     if (e.dead) continue;
     // method call so `this` is the kind entry (brains read tuning off it)
-    getKind(e.kind).update(e, env);
+    const k = getKind(e.kind);
+    const tell = k.isTell?.(e) ? difficulty().bossTell : 1; // a boss's wind-up runs slow on the easier presets
+    k.update(e, tell === 1 ? env : { ...env, dt: dt / tell });
     if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit
     hitPlayer(e, p, cam, fx);
   }
+}
+
+// A boss's hp is the preset's share of its design; everyone else's is as written.
+function spawnHp(k) {
+  return k.boss ? scaleBossHp(k.hp, k.hpStep) : (k.hp ?? 1);
 }
 
 // Shared stomp vs side contact, applied to every kind.

@@ -43,8 +43,11 @@ render snapshots unchanged unless the phase says otherwise.
   ice spikes); death counter.
 - [x] **D4** — boss phase thresholds as fractions of max hp (all seven bosses).
   No behaviour change at Hard.
-- [ ] **D5** — boss scaling: `bossHp`, `bossCd`, `bossTell`, `projSpeed`
-  (may take two turns).
+- [x] **D5** — boss scaling: `bossHp`, `bossCd`, `bossTell`, `projSpeed`.
+  Bosses are flagged `boss: true`; `hpStep` rounds the Frost Queen to 3s and
+  the wizard to 2s. Wind-ups are each kind's `isTell(e)` states, run on
+  `dt / bossTell`. Not scaled: floor-hazard glints that live outside a boss's
+  update (the Frost Queen's spike glint), boulder arcs, shockwave speed.
 - [ ] **D6** — hazards and regular enemies: `hazard` (wind gust, web slow,
   bookcase window, flight recharge); Hard-only roster tags.
 - [ ] **D7** — picker on the title card; HUD label; change it from the end card.

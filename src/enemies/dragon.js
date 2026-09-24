@@ -12,6 +12,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
 function onHit(e) {
   e.flash = this.flashT;
@@ -26,7 +27,7 @@ function onDeath(e, fx, cam) {
 
 function nextIdle(e) {
   // phase 2 runs on a faster tempo
-  return e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.8 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5;
+  return (e.hp <= phaseEdge(e, this.phase2At, this.hp) ? 0.8 + Math.random() * 0.4 : 1.0 + Math.random() * 0.5) * difficulty().bossCd;
 }
 
 // Move e.y toward target at speed px/s; true when it arrives.
@@ -252,6 +253,7 @@ register({
   kind: 'dragon',
   w: 60, h: 44,
   hp: 14, stompable: false,
+  boss: true, isTell: e => e.state === 'windup' || (e.state === 'perch' && e.perch === 'inhale'), // difficulty: scaled hp, slowed wind-ups
   windupT: 0.6, phase2At: 7,
   staggerT: 0.3, flashT: 0.15,
   aggroRange: 700,

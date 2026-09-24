@@ -15,6 +15,7 @@ import { FX } from '../effects.js';
 import { shake } from '../camera.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { palette } from '../render/theme.js';
 
 const A_W = 14, A_H = 4; // arrow body size (kept in sync with the arrows.js hit test)
@@ -30,7 +31,7 @@ function onDeath(e, fx, cam) {
   shake(cam, 12, 0.4);
 }
 
-function nextIdle() { return this.idleMin + Math.random() * (this.idleMax - this.idleMin); }
+function nextIdle() { return (this.idleMin + Math.random() * (this.idleMax - this.idleMin)) * difficulty().bossCd; }
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
 // An arrow moving toward the troll's front (the side it faces).
@@ -214,6 +215,7 @@ register({
   kind: 'troll',
   w: 52, h: 64,
   hp: 8, stompable: false,
+  boss: true, isTell: e => e.state === 'slamWindup' || e.state === 'lobWindup', // difficulty: scaled hp, slowed wind-ups
   idleMin: 1.0, idleMax: 1.6,
   staggerT: 0.3, flashT: 0.15,
   aggroRange: 600,

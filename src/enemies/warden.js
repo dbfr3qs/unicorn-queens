@@ -35,6 +35,7 @@
 
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { fireFireball, fireShockwaves } from '../projectiles.js';
 import { hurtPlayer } from '../player.js';
 import { shake } from '../camera.js';
@@ -72,7 +73,7 @@ export function pipCount(e) {
 }
 
 function nextIdle(e) {
-  return inP2(e) ? 0.6 + wardenRand(e) * 0.4 : 1.0 + wardenRand(e) * 0.5;
+  return (inP2(e) ? 0.6 + wardenRand(e) * 0.4 : 1.0 + wardenRand(e) * 0.5) * difficulty().bossCd;
 }
 
 function startSlam(e, fx) {
@@ -341,6 +342,7 @@ register({
   kind: 'warden',
   w: 60, h: 64,
   hp: WARDEN_HP,
+  boss: true, isTell: e => e.state === 'slamWind' || e.state === 'sweepTele' || e.state === 'charge', // difficulty: scaled hp, slowed telegraphs
   stompable: false, // arrow-only (the dragon rule)
   hitSound: 'bossHit', // standard boss-hit path (spiderboss's name)
   // The reset window: arrows are worth 3 while the core is cyan (stars stay

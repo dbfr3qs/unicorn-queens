@@ -16,6 +16,7 @@ import { fireFireball, fireShockwaves, fireCone } from '../projectiles.js';
 import { frostPatch } from '../thaw.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { drawFrozenQueen } from '../render/frostpalace.js';
 
 export const E_W = 56, E_H = 60, QUEEN_HP = 24;
@@ -110,7 +111,7 @@ export function updateQueenWake(lvl, enemies, dt, fx, cam) {
 
 // The idle between attacks, seeded so a spawn replays identically.
 function nextIdle(e) {
-  return 0.8 + (e.x % 5) * 0.1;
+  return (0.8 + (e.x % 5) * 0.1) * difficulty().bossCd;
 }
 
 // One spike: a glint on the floor where it is coming, then a column. The x is
@@ -447,6 +448,7 @@ register({
   kind: 'queenboss',
   w: E_W, h: E_H,
   hp: QUEEN_HP,
+  boss: true, hpStep: 3, isTell: e => !!e.wind, // difficulty: scaled hp (a pip row per winter), slowed wind-ups
   stompable: false, // the dragon rule: she is ice all the way down
   hitValue: () => 1,
   hitSound: 'bossHit',

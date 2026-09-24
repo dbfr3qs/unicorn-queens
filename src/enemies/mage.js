@@ -10,6 +10,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { palette } from '../render/theme.js';
 
 function onHit(e) {
@@ -154,7 +155,7 @@ function update(e, { p, lvl, dt, fx }) {
   }
 }
 
-function nextIdle() { return this.idleMin + Math.random() * (this.idleMax - this.idleMin); }
+function nextIdle() { return (this.idleMin + Math.random() * (this.idleMax - this.idleMin)) * difficulty().bossCd; }
 
 function draw(c, e) {
   if (e.levitating) { // soft floor shadow while floating
@@ -206,6 +207,7 @@ register({
   kind: 'mage',
   w: 42, h: 54,
   hp: 5, stompable: false,
+  boss: true, isTell: e => e.state === 'windup', // difficulty: scaled hp, slowed wind-up
   idleMin: 1.2, idleMax: 1.9, windupT: 0.7, staggerT: 0.25, flashT: 0.15, aggroRange: 500,
   floatSpeed: 150,
   dodgeLook: 280, dodgeCooldown: 0.6, dodgeHeight: 64, threatMargin: 8,

@@ -7,6 +7,7 @@
   "scripts": {
     "serve": "node server.mjs 9000",
     "smoke": "node smoke.mjs",
+    "bosslab": "node tools/bosslab.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

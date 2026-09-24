@@ -83,24 +83,36 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   8 px on its first frame of contact — ~11 of 12 true shots sparked off. The
   hit rect now runs to the flank's edge. (Also a lab bug: a heart box
   clamped the bot's 99 hp to maxHp 3 and read as ~94 hits; the baseline's
-  wizard 114.9 was mostly that.) After:
-
-  ```
-  boss          kills  median kill  hits taken  3-heart wins  staggered
-  Mage   (L2)   30/30      7 s          2.2          70%           8%
-  Troll  (L3)   30/30      8 s          0.0         100%           9%
-  Dragon (L4)   30/30     28 s          0.9          93%           8%
-  Weaver (L6)   30/30      4 s          0.3         100%          14%
-  Wizard (L7)   30/30     42 s          4.9          23%           4%
-  Warden (L8)   30/30      5 s          0.0         100%          13%
-  Queen  (L9)   30/30     15 s          5.0           0%           0%
-  ```
+  wizard 114.9 was mostly that.) Measured in B3 once the lab read each
+  boss's real spawn hp (see B3): **wizard 21 s, 2.7 hits taken, 47%
+  3-heart wins.** (The B2 commit's table — 42 s, 4.9 — was taken at his
+  old 16 hp: the lab started every fight from its own hp table.)
 
   Still open for the wizard: his stage 2 (the sorcerer) is always hittable
   and melts in ~1 s of held fire — the same fault as the Weaver Queen and
   the Warden (B4, B5); it gets its answer with theirs.
-- [ ] **B3** — troll: walks the player down; more slams between shields;
-  a kill that takes long enough for him to attack.
+- [x] **B3** — troll. He was a turtle: every arrow raised the reactive
+  shield, a shield ended in idle, and the next arrow raised it again — 75%
+  of the fight behind the slab and not one attack. Now: **block, then
+  punish** (a shield drops straight into an attack, and he can't shield
+  again until he has swung); he **walks you down** in idle (60 px/s, stops
+  110 px short); picks the slam close (70%) and boulders at range (60%);
+  **doesn't flinch mid-swing** (windups and the hop); the hop reaches 300 px,
+  his waves run 240 px/s, phase 2 chains half its slams; the reactive shield
+  is his lesson (75% / 90%, 0.6 s cooldown); 8 → 16 hp, phase 2 at 8; pips
+  in two rows. **Lab fix:** fights and the reach map start from the boss's
+  own spawn hp (phases are shares of it), not a table in the lab. After:
+
+  ```
+  boss          kills  median kill  hits taken  3-heart wins  staggered
+  Mage   (L2)   30/30      7 s          2.2          70%           8%
+  Troll  (L3)   30/30      9 s          1.8         100%           6%
+  Dragon (L4)   30/30     28 s          0.9          93%           8%
+  Weaver (L6)   30/30      4 s          0.3         100%          14%
+  Wizard (L7)   30/30     21 s          2.7          47%           3%
+  Warden (L8)   30/30      5 s          0.0         100%          13%
+  Queen  (L9)   30/30     15 s          5.0           0%           0%
+  ```
 - [ ] **B4** — Weaver Queen: a defence — openings (e.g. her armoured front,
   soft after a lunge or a spit) — then presses into the middle in phase 2.
 - [ ] **B5** — Warden: brass that deflects outside the reset window (the

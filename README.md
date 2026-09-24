@@ -48,11 +48,14 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    key unlocks a jail cell; the witch inside grants you the flight
    spell (permanent for the run). The same key opens the troll's
    door: it is consumed there, and the portcullis drops shut behind
-   you, so the fight is a one-way commit. The troll has 8 hp and a
-   stone shield that bounces arrows (the top of his head is open, and
-   he sometimes rolls it away); he slams the floor into shockwaves
-   and lobs boulders you can't shoot down. Below 4 hp he winds up
-   faster, throws three boulders, and his eyes glow. Beat him to make
+   you, so the fight is a one-way commit. The troll has 16 hp and a
+   stone shield that bounces arrows (the top of his head is open) — he
+   raises it when he sees arrows coming, and when it drops he answers
+   with an attack: hit him while he swings, he won't flinch. He walks
+   you down, slams the floor into shockwaves when he's close, and lobs
+   boulders you can't shoot down when you're not. Below 8 hp he winds
+   up faster, throws three boulders, sometimes slams twice, and his
+   eyes glow. Beat him to make
    the pearl appear, take it, and walk the four steps down to the
    exit.
 

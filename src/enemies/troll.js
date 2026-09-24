@@ -22,13 +22,29 @@ const A_W = 14, A_H = 4; // arrow body size (kept in sync with the arrows.js hit
 
 function onHit(e) {
   e.flash = this.flashT;
+  if (COMMITTED.has(e.state)) return; // mid-swing he doesn't flinch (BOSS-PLAN B3)
   e.state = 'stagger';
   e.t = this.staggerT;
 }
+const COMMITTED = new Set(['slamWindup', 'slamHop', 'lobWindup']);
 
 // Death: the hall shakes when the troll drops (pearl trigger wired in P8).
 function onDeath(e, fx, cam) {
   shake(cam, 12, 0.4);
+}
+
+// An attack: close in, most likely the slam; at range, the boulders. It
+// pays off a shield — he can't raise another until he has swung.
+function startAttack(e, p, ws) {
+  e.owesAttack = false;
+  const near = Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.slamRange;
+  if (Math.random() < (near ? this.slamNear : this.slamFar)) {
+    e.state = 'slamWindup';
+    e.t = this.windupSlam * ws;
+  } else {
+    e.state = 'lobWindup';
+    e.t = this.windupLob * ws;
+  }
 }
 
 function nextIdle() { return (this.idleMin + Math.random() * (this.idleMax - this.idleMin)) * difficulty().bossCd; }
@@ -79,7 +95,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
   // Reactive shield: an arrow approaching within 300 px starts a 150 ms
   // telegraph; the roll at expiry decides. Idle only - an attack already
   // winding up cannot be interrupted into a shield.
-  if (e.state === 'idle' && e.reactiveT === undefined && e.reactiveCd <= 0) {
+  if (e.state === 'idle' && e.reactiveT === undefined && e.reactiveCd <= 0 && !e.owesAttack) {
     const threat = arrows.find(a => !a.dead && towardFront(e, a) &&
         frontGap(e, a) > 0 && frontGap(e, a) < this.reactiveLook);
     if (threat) e.reactiveT = this.reactiveDelay;
@@ -91,6 +107,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
       if (e.state === 'idle' &&
           Math.random() < (e.phase2 ? this.reactiveChance2 : this.reactiveChance)) {
         e.state = 'shield';
+        e.owesAttack = true;
         e.t = this.shieldDurMin + Math.random() * (this.shieldDurMax - this.shieldDurMin);
       }
       e.reactiveCd = this.reactiveCooldown;
@@ -98,30 +115,29 @@ function update(e, { p, lvl, cam, dt, fx }) {
   }
 
   if (e.state === 'idle') {
+    // He walks you down between attacks (BOSS-PLAN B3: he used to stand).
+    const gap = p.x + p.w / 2 - (e.x + e.w / 2);
+    e.walking = !p.dead && Math.abs(gap) > this.walkStop && Math.abs(gap) < this.aggroRange;
+    if (e.walking) e.x = clamp(e.x + Math.sign(gap) * this.walkSpeed * dt, e.minX, e.maxX);
     e.t -= dt;
     if (e.t > 0) return;
-    const inRange = !p.dead && Math.abs(p.x + p.w / 2 - (e.x + e.w / 2)) < this.aggroRange;
+    e.walking = false;
+    const inRange = !p.dead && Math.abs(gap) < this.aggroRange;
     if (!inRange) { e.t = 0.4; return; }
-    const r = Math.random();
-    if (r < (e.phase2 ? this.shieldChance2 : this.shieldChance) && e.shieldCd <= 0) {
+    const shieldP = e.phase2 ? this.shieldChance2 : this.shieldChance;
+    if (Math.random() < shieldP && e.shieldCd <= 0 && !e.owesAttack) {
       e.state = 'shield';
+      e.owesAttack = true;
       e.t = this.shieldDurMin + Math.random() * (this.shieldDurMax - this.shieldDurMin);
-    } else if (r < 0.75) {
-      e.state = 'slamWindup';
-      e.t = this.windupSlam * ws;
-    } else {
-      e.state = 'lobWindup';
-      e.t = this.windupLob * ws;
-    }
+    } else startAttack.call(this, e, p, ws);
     return;
   }
   if (e.state === 'shield') {
     deflectFrontArrows(e, fx);
     e.t -= dt;
-    if (e.t <= 0) {
-      e.state = 'idle';
-      e.t = this.nextIdle();
+    if (e.t <= 0) { // the slab drops and he answers: block, then punish
       e.shieldCd = this.shieldCdMin + Math.random() * (this.shieldCdMax - this.shieldCdMin);
+      startAttack.call(this, e, p, ws);
     }
     return;
   }
@@ -140,11 +156,18 @@ function update(e, { p, lvl, cam, dt, fx }) {
     e.x = Math.max(e.minX, Math.min(e.maxX, e.x + e.vx * dt));
     if (e.t <= 0) { // floor pound
       e.vx = 0;
-      e.state = 'idle';
-      e.t = this.nextIdle();
       fx.play('thud');
       shake(cam, 10, 0.3);
-      fireShockwaves(e.x + e.w / 2, lvl.groundY, fx);
+      fireShockwaves(e.x + e.w / 2, lvl.groundY, fx, undefined, this.shockSpeed);
+      if (e.phase2 && !e.chained && Math.random() < this.chainChance2) { // phase 2: again, quicker
+        e.chained = true;
+        e.state = 'slamWindup';
+        e.t = this.windupSlam * ws * this.chainScale;
+      } else {
+        e.chained = false;
+        e.state = 'idle';
+        e.t = this.nextIdle();
+      }
       burst(e.x + e.w / 2, lvl.groundY - 4, FX.slamDust);
     }
     return;
@@ -202,11 +225,12 @@ function draw(c, e) {
     c.globalAlpha = 1;
   }
   c.restore();
-  if (!e.dead) { // 8 hp pips, world space above the boss (mage pattern)
-    const n = pipMax(e, 8);
+  if (!e.dead) { // hp pips, world space above the boss: two rows of 8 at 16 hp
+    const n = pipMax(e, 16), per = n > 8 ? Math.ceil(n / 2) : n;
     for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? '#a3d977' : '#3a4034';
-      c.fillRect(e.x + e.w / 2 - n * 4 + i * 8, e.y - 14, 7, 4);
+      c.fillRect(e.x + e.w / 2 - per * 4 + col * 8, e.y - 21 + row * 7, 7, 4);
     }
   }
 }
@@ -214,19 +238,23 @@ function draw(c, e) {
 register({
   kind: 'troll',
   w: 52, h: 64,
-  hp: 8, stompable: false,
+  hp: 16, stompable: false, // 8 before BOSS-PLAN B3
   boss: true, isTell: e => e.state === 'slamWindup' || e.state === 'lobWindup', // difficulty: scaled hp, slowed wind-ups
   idleMin: 1.0, idleMax: 1.6,
   staggerT: 0.3, flashT: 0.15,
   aggroRange: 600,
   windupSlam: 0.8, windupLob: 0.6, windupScale2: 0.7,
-  slamHopDist: 220, slamHopTime: 0.4,
+  slamHopDist: 300, slamHopTime: 0.4, // 220 before BOSS-PLAN B3
+  shockSpeed: 240, // his waves (the shared default is 180)
+  chainChance2: 0.5, chainScale: 0.6, // phase 2: a second slam, its windup 60 %
   shieldDurMin: 1.6, shieldDurMax: 2.2,
   shieldCdMin: 1.2, shieldCdMax: 2.0,
-  shieldChance: 0.45, shieldChance2: 0.6,
+  shieldChance: 0.35, shieldChance2: 0.5, // 0.45 / 0.6 before BOSS-PLAN B3
+  walkSpeed: 60, walkStop: 110, // the idle walk
+  slamRange: 260, slamNear: 0.7, slamFar: 0.4, // slam share of the non-shield picks
   reactiveLook: 300, reactiveDelay: 0.15,
-  reactiveChance: 0.45, reactiveChance2: 0.65, reactiveCooldown: 1.0,
-  boulders1: 2, boulders2: 3, phase2Hp: 4,
+  reactiveChance: 0.75, reactiveChance2: 0.9, reactiveCooldown: 0.6, // 0.45 / 0.65 / 1.0 before BOSS-PLAN B3: the shield is his lesson
+  boulders1: 2, boulders2: 3, phase2Hp: 8, // half, as before
   hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.trollDeath,
   onHit, onDeath, update, nextIdle, draw,
 });

@@ -287,7 +287,7 @@ test('l3 troll hall (slam windup, boulder in flight, hp pips)', () => {
   g.camera.x = 3274; // 3660 + 14 - 400: locked door + hall in frame
   const troll = g.enemies.find(e => e.kind === 'troll');
   troll.state = 'slamWindup'; troll.t = 0.4; // mid the 0.8 s windup
-  troll.hp = 5; // pips: 5 green, 3 dim
+  troll.hp = 5; // pips: 5 green, 11 dim (two rows of 8)
   fireBoulder(3930, 500, 3720, 545, { play: () => {} }); // lobbed toward the player
   expect(step({}, 1)).toMatchSnapshot(); // boulder just launched
 });

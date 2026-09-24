@@ -17,7 +17,7 @@ describe('boss hp', () => {
   // [kind, easy, medium, hard]
   it.each([
     ['mage', 3, 4, 5],
-    ['troll', 5, 6, 8],
+    ['troll', 10, 13, 16],
     ['dragon', 8, 11, 14],
     ['spiderboss', 10, 13, 16],
     ['wizardboss', 6, 8, 10], // even: two stages

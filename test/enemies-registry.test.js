@@ -23,7 +23,7 @@ const EXPECTED = {
   zombie: { w: 34, h: 40, stompable: true },
   ghost: { w: 28, h: 26, stompable: false },
   mage: { w: 42, h: 54, stompable: false, hp: 5 },
-  troll: { w: 52, h: 64, stompable: false, hp: 8 },
+  troll: { w: 52, h: 64, stompable: false, hp: 16 }, // 8 before BOSS-PLAN B3
   bat: { w: 24, h: 18, stompable: true, hp: 1 },
   bee: { w: 18, h: 14, stompable: true, hp: 1 },
   dragon: { w: 60, h: 44, stompable: false, hp: 14 },

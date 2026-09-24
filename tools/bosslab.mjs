@@ -30,22 +30,24 @@ const DT = 1 / 60, VIEW_W = 800;
 const WARMUP = 4, WINDOW = 40, STEP = 50; // s before counting, s counted, px between spots
 const fx = { play() {} };
 
-// Each fight: its level, the floor you can stand on in the arena, the hp
-// at the start of each phase, and how to wake it the way the level does.
+// Each fight: its level, the floor you can stand on in the arena, where
+// each phase starts as a share of the hp the boss spawns with (the game's
+// own number, so a change to it is measured), and how to wake it the way
+// the level does.
 export const BOSSES = {
-  mage: { name: 'Mage', level: 2, kind: 'mage', arena: [2600, 3450], phases: [5, 2] },
-  troll: { name: 'Troll', level: 3, kind: 'troll', arena: [3590, 4250], phases: [8, 4] },
-  dragon: { name: 'Dragon', level: 4, kind: 'dragon', arena: [3590, 4800], phases: [14, 7] },
+  mage: { name: 'Mage', level: 2, kind: 'mage', arena: [2600, 3450], phases: [1, 0.4] },
+  troll: { name: 'Troll', level: 3, kind: 'troll', arena: [3590, 4250], phases: [1, 0.5] },
+  dragon: { name: 'Dragon', level: 4, kind: 'dragon', arena: [3590, 4800], phases: [1, 0.5] },
   weaver: {
-    name: 'Weaver Queen', level: 6, kind: 'spiderboss', arena: [5840, 6800], phases: [16, 8],
+    name: 'Weaver Queen', level: 6, kind: 'spiderboss', arena: [5840, 6800], phases: [1, 0.5],
     wake: g => { g.level.door.state = 'open'; },
   },
   wizard: {
-    name: 'Wizard', level: 7, kind: 'wizardboss', arena: [5440, 6300], phases: [16, 8], // 8: the rune breaks, stage 2
+    name: 'Wizard', level: 7, kind: 'wizardboss', arena: [5440, 6300], phases: [1, 0.5], // half: the rune breaks, stage 2
     wake: g => { g.level.throneGateOpen = true; for (const d of g.level.doors ?? []) d.state = 'open'; },
   },
   warden: {
-    name: 'Warden', level: 8, kind: 'warden', arena: [4940, 5820], phases: [16, 8],
+    name: 'Warden', level: 8, kind: 'warden', arena: [4940, 5820], phases: [1, 0.5],
     wake: (g, boss) => {
       boss.sleeping = false;
       for (const s of g.level.springs ?? []) s.cut = true; // the fight comes after the third cut
@@ -53,7 +55,7 @@ export const BOSSES = {
     },
   },
   queen: {
-    name: 'Frost Queen', level: 9, kind: 'queenboss', arena: [5240, 6000], phases: [24, 16, 8],
+    name: 'Frost Queen', level: 9, kind: 'queenboss', arena: [5240, 6000], phases: [1, 2 / 3, 1 / 3],
     wake: g => { g.level.queenUnfreeze = { t: 0, boss: false }; },
   },
 };
@@ -76,7 +78,7 @@ function groundAt(lvl, x) {
 
 // A fresh fight with the player at x. Returns the boss, or null if there
 // is no floor at x.
-export function arena(b, x, hp) {
+export function arena(b, x, share = 1) {
   startGame(600, b.level - 1);
   const g = game;
   g.level.dialogs = null;
@@ -89,7 +91,7 @@ export function arena(b, x, hp) {
   p.hasBow = true;
   p.x = x; p.y = (seg.y ?? g.level.groundY) - p.h; p.vy = 0;
   p.hp = p.maxHp = 99; // maxHp too: a heart box's pickup clamps hp to it
-  boss.hp = hp;
+  boss.hp = Math.max(1, Math.round(boss.maxHp * share));
   return boss;
 }
 
@@ -101,9 +103,9 @@ function frame(x) {
 }
 
 // Hits per minute at x in the phase that starts at hp.
-export function hitsAt(b, x, hp) {
-  seed(Math.round(x) * 31 + hp);
-  const boss = arena(b, x, hp);
+export function hitsAt(b, x, share) {
+  seed(Math.round(x) * 31 + Math.round(share * 100));
+  const boss = arena(b, x, share);
   if (!boss) return null;
   for (let t = 0; t < WARMUP; t += DT) frame(x);
   let hits = 0, last = game.player.hp;
@@ -121,7 +123,7 @@ const FIGHTS = 30, FIGHT_MAX = 240; // fights per boss; s before a fight is call
 // One fight, entrance to kill: { t, hits, won } (won false on a timeout).
 export function fightOnce(b, n) {
   seed(1000 + n * 7919);
-  const boss = arena(b, b.arena[0] + 40, b.phases[0]);
+  const boss = arena(b, b.arena[0] + 40);
   releaseAll();
   const bot = createBot(boss, b.arena, b.keep);
   const p = game.player;
@@ -183,11 +185,11 @@ export function reachMap(b) {
   input.left = input.right = input.jump = input.fire = input.cast = false;
   const xs = [];
   for (let x = b.arena[0]; x <= b.arena[1] - P_W; x += STEP) xs.push(x);
-  return b.phases.map(hp => {
-    const vs = xs.map(x => hitsAt(b, x, hp));
+  return b.phases.map(share => {
+    const vs = xs.map(x => hitsAt(b, x, share));
     const stood = vs.filter(v => v !== null);
     return {
-      hp, xs, vs,
+      hp: Math.round(share * 100) + '%', xs, vs,
       mean: stood.reduce((a, v) => a + v, 0) / stood.length,
       safe: safeZones(xs, vs),
     };
@@ -199,7 +201,7 @@ function report(key) {
   console.log(`\n${b.name} (level ${b.level})  arena ${b.arena[0]}–${b.arena[1]}`);
   for (const ph of reachMap(b)) {
     const strip = ph.vs.map(glyph).join('');
-    console.log(`  from ${String(ph.hp).padStart(2)} hp  |${strip}|  ${ph.mean.toFixed(1)} hits/min across the arena`);
+    console.log(`  from ${String(ph.hp).padStart(4)} hp |${strip}|  ${ph.mean.toFixed(1)} hits/min across the arena`);
     console.log(`  ${' '.repeat(11)}${ph.xs[0]}${' '.repeat(Math.max(1, strip.length - 8))}${ph.xs.at(-1)}`);
     if (ph.safe.length) console.log(`  ${' '.repeat(11)}SAFE (never hit): ${ph.safe.join(', ')}`);
   }

@@ -1,7 +1,8 @@
 // The boss lab: headless measurements of the seven boss fights.
 //
-//   npm run bosslab            every boss
-//   npm run bosslab troll      one (mage, troll, dragon, weaver, wizard, warden, queen)
+//   npm run bosslab                  the reach map, every boss
+//   npm run bosslab troll            one (mage, troll, dragon, weaver, wizard, warden, queen)
+//   npm run bosslab fight [boss]     the bot fights (tools/bot.mjs)
 //
 // The reach map: a dummy player stands at each spot across the arena
 // (pinned there, 99 hp, the usual hit invulnerability) while the boss
@@ -10,11 +11,20 @@
 // stand and win. Only the boss is in the room (every other enemy is
 // removed), dialogue is off, and Math.random is seeded, so a run is
 // repeatable. Difficulty is hard: the game as designed.
+//
+// The bot fights: the bot (a ¼ s reaction, no flight) fights each boss
+// from the arena's entrance to the kill, FIGHTS times with different
+// seeds. Reports how long the kill took, how many hits the bot took (with
+// 99 hp, so every fight finishes), how often those hits would have fitted
+// in 3 hearts — a hard-mode win without a heart pickup — and the share of
+// the fight the boss spent staggered (near 100%: arrows lock it out of
+// ever attacking).
 import { game, startGame, update } from '../src/game.js';
 import { input } from '../src/input.js';
 import { setDifficulty } from '../src/difficulty.js';
 import { P_W } from '../src/player.js';
 import { periodFor } from '../src/clock.js';
+import { createBot, botStep, releaseAll } from './bot.mjs';
 
 const DT = 1 / 60, VIEW_W = 800;
 const WARMUP = 4, WINDOW = 40, STEP = 50; // s before counting, s counted, px between spots
@@ -106,6 +116,44 @@ export function hitsAt(b, x, hp) {
   return (hits / WINDOW) * 60;
 }
 
+const FIGHTS = 30, FIGHT_MAX = 240; // fights per boss; s before a fight is called a timeout
+
+// One fight, entrance to kill: { t, hits, won } (won false on a timeout).
+export function fightOnce(b, n) {
+  seed(1000 + n * 7919);
+  const boss = arena(b, b.arena[0] + 40, b.phases[0]);
+  releaseAll();
+  const bot = createBot(boss, b.arena, b.keep);
+  const p = game.player;
+  let hits = 0, last = p.hp, t = 0, stag = 0;
+  while (t < FIGHT_MAX && !boss.dead && !boss.dying) {
+    botStep(bot, DT);
+    update(DT, VIEW_W, fx);
+    if (boss.state === 'stagger') stag += DT;
+    if (p.hp < last) hits += last - p.hp;
+    if (p.hp < 50) p.hp = 99;
+    last = p.hp;
+    t += DT;
+  }
+  releaseAll();
+  return { t, hits, stag, won: boss.dead || !!boss.dying };
+}
+
+export function fights(b) {
+  setDifficulty('hard');
+  const rs = Array.from({ length: FIGHTS }, (_, n) => fightOnce(b, n));
+  const won = rs.filter(r => r.won);
+  const ts = won.map(r => r.t).sort((x, y) => x - y);
+  const median = ts.length ? ts[Math.floor(ts.length / 2)] : NaN;
+  const hits = rs.reduce((a, r) => a + r.hits, 0) / rs.length;
+  return {
+    kills: won.length, median, hits,
+    perMin: rs.reduce((a, r) => a + r.hits, 0) / rs.reduce((a, r) => a + r.t, 0) * 60,
+    win3: rs.filter(r => r.won && r.hits <= 2).length / rs.length,
+    stagger: rs.reduce((a, r) => a + r.stag, 0) / rs.reduce((a, r) => a + r.t, 0),
+  };
+}
+
 // One column per spot: · never hit, else hits/min in fives (1 = up to 5,
 // 8 = 35–40: a hit every time the invulnerability runs out).
 function glyph(v) {
@@ -160,9 +208,19 @@ function report(key) {
 if (import.meta.url === `file://${process.argv[1]}`) main();
 
 function main() {
-const only = process.argv[2];
+const fight = process.argv[2] === 'fight';
+const only = process.argv[fight ? 3 : 2];
 const keys = only ? [only] : Object.keys(BOSSES);
 if (only && !BOSSES[only]) { console.error(`unknown boss: ${only} (${Object.keys(BOSSES).join(', ')})`); process.exit(1); }
+if (fight) {
+  console.log(`Boss lab — bot fights. ${FIGHTS} fights each, hard, ${FIGHT_MAX} s cap.`);
+  console.log('boss              level  kills  median kill  hits taken  hits/min  3-heart wins  staggered');
+  for (const k of keys) {
+    const b = BOSSES[k], r = fights(b);
+    console.log(`${b.name.padEnd(18)}${String(b.level).padStart(5)}  ${String(r.kills).padStart(2)}/${FIGHTS}  ${(r.median.toFixed(0) + ' s').padStart(11)}  ${r.hits.toFixed(1).padStart(10)}  ${r.perMin.toFixed(1).padStart(8)}  ${(Math.round(r.win3 * 100) + '%').padStart(12)}  ${(Math.round(r.stagger * 100) + '%').padStart(9)}`);
+  }
+  return;
+}
 console.log(`Boss lab — reach map. ${WINDOW} s per spot, every ${STEP} px, hard.`);
 console.log('Each column is a spot on the floor: · never hit; 1–8 hits/min in fives (8 = every time invulnerability ends).');
 for (const k of keys) report(k);

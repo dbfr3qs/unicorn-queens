@@ -17,6 +17,7 @@
 // unit tests); the Weaver Queen is the one real opponent left in the run.
 
 import { describe, it, expect, afterEach } from 'vitest';
+import { isOpen } from '../src/enemies/spiderboss.js';
 import { reseed } from './helpers/seeded-rng.js';
 import { game, startGame, update } from '../src/game.js';
 import { input } from '../src/input.js';
@@ -217,6 +218,10 @@ describe('level 6 playthrough', () => {
     const q = game.enemies.find(e => e.kind === 'spiderboss');
     expect(q).toBeTruthy();
     reseed();
+    // Six hearts for the duel: this test proves the level's wiring (cogs,
+    // bridge, Queen, pearl, exit), not that a script wins a hard fight in
+    // three — the boss lab (npm run bosslab fight) measures the fight.
+    p.maxHp = p.hp = 6;
     let f = 0;
     while (!q.dead && !p.dead && f < 10800) {
       const bc = q.x + 36, pc = p.x + 14;
@@ -230,7 +235,9 @@ describe('level 6 playthrough', () => {
         dir = 0; // finish the hop straight up
       } else if (threat && p.onGround) {
         jump = true; // a straight hop clears the glob / egg's line
-      } else if (q.state === 'lungeTele' || q.state === 'lunge' || q.state === 'lungeRec' || q.state === 'pillarTele') {
+      } else if (isOpen(q)) {
+        fire = true; // her web glows: stand and shoot, whatever the range (B4)
+      } else if (q.state === 'lungeTele' || q.state === 'lunge' || q.state === 'pillarTele') {
         dir = side; // fall back to our wall
       } else if (q.state === 'volley') {
         dir = side; // the eggs land where we stood when she picked
@@ -238,7 +245,7 @@ describe('level 6 playthrough', () => {
         const want = Math.max(5812, Math.min(6755, bc + side * 380));
         const d = want - pc;
         dir = d > 8 ? 1 : d < -8 ? -1 : 0; // hold range
-        if (Math.abs(d) < 30) fire = true; // shoot whenever roughly at range
+        // no shooting the carapace: wait for an opening (B4)
       }
       if (fire && p.facing !== faceDir) dir = faceDir; // step into facing first
       setInput({ right: dir > 0, left: dir < 0, jump, fire });
@@ -251,6 +258,9 @@ describe('level 6 playthrough', () => {
 
     // --- the pearl and the exit ---------------------------------------------
     expect(until(() => lvl.pearl.visible, 30), 'pearl never appeared').toBe(true);
+    // the duel may end east of the altar: walk back west of it first
+    for (let g = 0; p.x > 6120 && g < 600; g++) { setInput({ left: true }); update(DT, 800, silent); }
+    setInput({});
     expect(walkJump(1, q2 => q2.x > 6180 && q2.x < 6260, 30,
       () => p.onGround && p.y + p.h <= 520.5, 600), `altar hop 2; ${pos()}`).toBe(true);
     let guard = 0;

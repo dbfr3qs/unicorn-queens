@@ -192,7 +192,7 @@ export function createLevel6(viewH = 600) {
       { kind: 'spider', x: 2900, y: 410 },
       { kind: 'spider', x: 3750, y: 410 },
       { kind: 'spider', x: 4400, y: 410 },
-    { kind: 'spiderboss', x: 6100, minX: 5900, maxX: 6650 },
+    { kind: 'spiderboss', x: 6100, minX: 5840, maxX: 6650 }, // minX: the web wall's inner edge (5900 before BOSS-PLAN B4 left a doorway strip her lunge and pillars couldn't reach)
     ],
   };
 }

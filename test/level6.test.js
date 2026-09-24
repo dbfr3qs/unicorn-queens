@@ -168,6 +168,6 @@ describe('level 6 data', () => {
   it('the roster gains the Weaver Queen (M7)', () => {
     expect(lvl.roster).toHaveLength(13);
     const q = lvl.roster.find(r => r.kind === 'spiderboss');
-    expect([q.x, q.minX, q.maxX]).toEqual([6100, 5900, 6650]);
+    expect([q.x, q.minX, q.maxX]).toEqual([6100, 5840, 6650]);
   });
 });

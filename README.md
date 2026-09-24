@@ -104,7 +104,10 @@ game's own sheets, any key to skip. `src/intro.js` is the scene as a pure functi
    stompable, and she never leaves her half of the hollow. She crawls
    at you, lunges, spits web globs (a hit slows you for 2.5 s), and
    raises web pillars at your feet — the glint shows where, so walk off
-   it. Below 8 hp she also throws a volley of three web eggs. Beat her
+   it. Her carapace turns arrows: she is open only in the beat after each
+   attack — the web on her back glows gold — so dodge, then shoot. Below
+   8 hp she crawls faster, her globs fly faster and lead you, and she
+   also throws a volley of three web eggs. Beat her
    and the pearl appears on her altar; take it and the exit arch lights
    up. The mire is not the end.
 7. **The Peak** — the snow-topped mountain the mist gate carried you up

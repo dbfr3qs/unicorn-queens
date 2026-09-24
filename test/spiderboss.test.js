@@ -21,7 +21,7 @@ import {
 import { updatePlayer, P_SPEED, FLY_UP, WEB_SLOW, WEB_SLOW_TIME } from '../src/player.js';
 import { updatePearl } from '../src/pearl.js';
 import { particles } from '../src/particles.js';
-import { updatePillars, PILLAR_TOTAL } from '../src/enemies/spiderboss.js';
+import { updatePillars, PILLAR_TOTAL, isOpen } from '../src/enemies/spiderboss.js';
 
 const DT = 1 / 60;
 const calls = [];
@@ -56,7 +56,7 @@ describe('registry + stomp', () => {
     const s = getKind('spiderboss');
     expect([s.w, s.h, s.hp, s.stompable]).toEqual([72, 56, 16, false]);
     const r = lvl().roster.find(r => r.kind === 'spiderboss');
-    expect([r.x, r.minX, r.maxX]).toEqual([6100, 5900, 6650]);
+    expect([r.x, r.minX, r.maxX]).toEqual([6100, 5840, 6650]); // minX: the web wall's inner edge (B4)
     expect(boss().y).toBe(groundY() - 56);
   });
 
@@ -73,8 +73,9 @@ describe('registry + stomp', () => {
 });
 
 describe('arrows', () => {
-  it('an arrow staggers the boss: flash, hp −1, no death', () => {
+  it('an arrow staggers the boss while she is open: flash, hp −1, no death', () => {
     placeBoss(6100);
+    boss().state = 'recover'; boss().t = 5; // the beat after an attack (B4)
     place(6000, groundY() - 36);
     p().facing = 1;
     fireArrow(p());
@@ -111,7 +112,7 @@ describe('the lunge', () => {
     }
     expect(e.x - startX).toBeGreaterThan(240);
     expect(e.x - startX).toBeLessThanOrEqual(264); // the 260 px cap
-    frames(40); // through the recover (0.6 s)
+    frames(62); // through the recover (1.0 s: her opening, B4)
     expect(e.state).toBe('idle');
   });
 });
@@ -136,10 +137,11 @@ describe('the spit', () => {
     expect(p().webT).toBe(WEB_SLOW_TIME);
   });
 
-  it('a moving player is hit by the lead (a straight aim would pass behind)', () => {
+  it('phase 2: a moving player is hit by the lead (a straight aim would pass behind)', () => {
     placeBoss(6100);
     place(6300, groundY() - 36);
     const e = boss();
+    e.hp = 8; // phase 1 aims where you are, at 190 px/s (B4)
     e.state = 'spitWind';
     e.t = 0;
     e.spitCount = 1;
@@ -295,5 +297,63 @@ describe('sunbeam + death', () => {
     expect(lvl().pearl.visible).toBe(false);
     updatePearl(lvl(), p(), game.enemies, fx);
     expect(lvl().pearl.visible).toBe(true);
+  });
+});
+
+// BOSS-PLAN B4: the carapace. Arrows glance off except in the beat after
+// each attack; phase 1's web is slower and aimed where you are.
+describe('B4: the carapace and her openings', () => {
+  const shoot = () => {
+    placeBoss(6100);
+    place(6000, groundY() - 36);
+    p().facing = 1;
+    fireArrow(p());
+    calls.length = 0;
+    for (let i = 0; i < 40; i++) updateArrows([boss()], lvl(), cam, DT, fx, 8000);
+  };
+
+  it('an arrow glances off her in idle and in her wind-ups', () => {
+    for (const state of ['idle', 'lungeTele', 'spitWind', 'pillarTele']) {
+      resetArrows();
+      boss().state = state; boss().t = 5; boss().hp = 16;
+      shoot();
+      expect(boss().hp, state).toBe(16);
+      expect(calls, state).toContain('deflect');
+    }
+  });
+
+  it.each(['lungeRec', 'recover', 'stagger'])('%s is an opening', state => {
+    boss().state = state; boss().t = 5;
+    expect(isOpen(boss())).toBe(true);
+    shoot();
+    expect(boss().hp).toBe(15);
+  });
+
+  it.each([
+    ['spitWind', e => { e.spitCount = 1; }],
+    ['pillarTele', e => { e.pillarX = 6000; }],
+    ['volley', e => { e.volleyX = 6000; }],
+  ])('%s ends in the recover opening, then idle', (state, set) => {
+    const e = boss();
+    e.state = state; e.t = 0; set(e);
+    updateEnemies([e], p(), lvl(), cam, DT, fx);
+    expect(e.state).toBe('recover');
+    expect(e.t).toBeCloseTo(getKind('spiderboss').openT);
+    frames(Math.ceil(getKind('spiderboss').openT / DT) + 2);
+    expect(e.state).not.toBe('recover');
+  });
+
+  it('phase 1: the glob flies at 190 px/s straight at where you stand', () => {
+    placeBoss(6100);
+    place(6400, groundY() - 36);
+    p().vx = 260; // running: no lead in phase 1
+    const e = boss();
+    e.state = 'spitWind'; e.t = 0; e.spitCount = 1;
+    updateEnemies([e], p(), lvl(), cam, DT, fx);
+    const g = fireballs.find(f => f.web);
+    expect(Math.hypot(g.vx, g.vy)).toBeCloseTo(190);
+    const ox = e.x + e.w / 2 + e.dir * 30, oy = e.y + e.h / 2;
+    const aim = Math.atan2(p().y + p().h / 2 - oy, p().x + p().w / 2 - ox);
+    expect(Math.atan2(g.vy, g.vx)).toBeCloseTo(aim, 2);
   });
 });

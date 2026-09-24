@@ -28,6 +28,19 @@ import { difficulty } from '../difficulty.js'; // bossCd stretches the idle betw
 export const PILLAR_TOTAL = 1.55; // rise 0.25 + stand 0.8 + decay 0.5
 const PILLAR_SOLID = 1.05; // solid through rise + stand
 
+// Her armour (BOSS-PLAN B4): arrows glance off the carapace except in the
+// beat after each of her attacks — the lunge's recovery, and a short
+// 'recover' after a spit, a pillar or the egg volley — or while she's
+// staggered. The web on her abdomen glows gold while she is open.
+const OPEN = new Set(['lungeRec', 'recover', 'stagger']);
+export const isOpen = e => OPEN.has(e.state);
+
+// After an attack: her opening, then the idle.
+function recover(e) {
+  e.state = 'recover';
+  e.t = this.openT;
+}
+
 function onHit(e) {
   e.flash = this.flashT;
   e.state = 'stagger';
@@ -122,7 +135,7 @@ function update(e, { p, lvl, dt, fx }) {
     }
     return;
   }
-  if (e.state === 'lungeRec') {
+  if (e.state === 'lungeRec' || e.state === 'recover') {
     e.t -= dt;
     if (e.t <= 0) { e.state = 'idle'; e.t = nextIdle.call(this, e); }
     return;
@@ -132,14 +145,16 @@ function update(e, { p, lvl, dt, fx }) {
     if (e.t <= 0) {
       const ox = e.x + e.w / 2 + e.dir * 30, oy = e.y + e.h / 2; // the fangs
       const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
-      const tFlight = Math.hypot(cx - ox, cy - oy) / FIREBALL_SPEED || 1;
-      const tx = Math.max(0, Math.min(lvl.width, cx + p.vx * tFlight)); // lead the player
+      const p2 = e.hp <= phaseEdge(e, this.phase2At, this.hp);
+      const speed = p2 ? FIREBALL_SPEED : this.globSpeed1; // phase 1's web is heavier (BOSS-PLAN B4)
+      const tFlight = Math.hypot(cx - ox, cy - oy) / speed || 1;
+      const lead = p2 ? p.vx * tFlight : 0; // phase 2 leads you; phase 1 aims where you are
+      const tx = Math.max(0, Math.min(lvl.width, cx + lead));
       const dx = tx - ox, dy = cy - oy;
       const d = Math.hypot(dx, dy) || 1;
-      fireWebGlob(ox - 7, oy - 7, dx / d * FIREBALL_SPEED, dy / d * FIREBALL_SPEED, fx);
+      fireWebGlob(ox - 7, oy - 7, dx / d * speed, dy / d * speed, fx);
       if (e.spitCount > 1) { e.spitCount = 1; e.t = 0.25; return; } // a second glob after a beat
-      e.state = 'idle';
-      e.t = nextIdle.call(this, e);
+      recover.call(this, e);
     }
     return;
   }
@@ -147,8 +162,7 @@ function update(e, { p, lvl, dt, fx }) {
     e.t -= dt;
     if (e.t <= 0) {
       e.pillars.push({ x: e.pillarX, w: 40, h: 140, gy: lvl.groundY, t: 0 });
-      e.state = 'idle';
-      e.t = nextIdle.call(this, e);
+      recover.call(this, e);
     }
     return;
   }
@@ -159,15 +173,15 @@ function update(e, { p, lvl, dt, fx }) {
         fireBoulder(e.x + e.w / 2 - BOULDER_SIZE / 2, e.y + 8,
           e.volleyX + off, lvl.groundY - BOULDER_SIZE, fx, true); // the web eggs
       }
-      e.state = 'idle';
-      e.t = nextIdle.call(this, e);
+      recover.call(this, e);
     }
     return;
   }
   // idle: crawl toward the player at 60 px/s, clamped to the band
   e.t -= dt;
   const dx = (p.x + p.w / 2) - (e.x + e.w / 2);
-  if (Math.abs(dx) > 4) e.x += Math.sign(dx) * Math.min(this.idleSpeed * dt, Math.abs(dx));
+  const speed = e.hp <= phaseEdge(e, this.phase2At, this.hp) ? this.idleSpeed2 : this.idleSpeed; // phase 2 presses
+  if (Math.abs(dx) > 4) e.x += Math.sign(dx) * Math.min(speed * dt, Math.abs(dx));
   e.x = Math.max(e.minX, Math.min(e.maxX - e.w, e.x));
   if (e.t <= 0) pickAttack.call(this, e, p, lvl, fx);
 }
@@ -198,7 +212,7 @@ function draw(c, e) {
   }
   c.fillStyle = '#3a3a48'; // the great abdomen
   c.beginPath(); c.ellipse(-12, -bodyY - 6, 24, 18, 0, 0, Math.PI * 2); c.fill();
-  c.strokeStyle = 'rgba(232, 224, 208, 0.5)'; // the pale web pattern
+  c.strokeStyle = isOpen(e) ? 'rgba(255, 209, 102, 0.95)' : 'rgba(232, 224, 208, 0.5)'; // the web pattern: gold while she is open
   c.lineWidth = 1.5;
   for (let i = 0; i < 3; i++) {
     c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
@@ -280,12 +294,15 @@ register({
   hp: 16, stompable: false,
   boss: true, isTell: e => e.state === 'lungeTele' || e.state === 'spitWind' || e.state === 'pillarTele', // difficulty: scaled hp, slowed telegraphs
   phase2At: 8,
-  idleSpeed: 60,
-  lungeTele: 0.5, lungeSpeed: 380, lungeDist: 260, lungeRec: 0.6,
+  idleSpeed: 60, idleSpeed2: 100, // phase 2 crawls at you (60 before BOSS-PLAN B4)
+  openT: 0.9, // the opening after a spit, a pillar or the volley
+  globSpeed1: 190, // phase 1's web globs (phase 2: FIREBALL_SPEED)
+  lungeTele: 0.5, lungeSpeed: 380, lungeDist: 260, lungeRec: 1.0, // rec 0.6 before B4: it is an opening now
   spitWind: 0.4,
   pillarTele: 0.6,
   staggerT: 0.3, flashT: 0.15,
   hitSound: 'bossHit', deathSound: 'growl',
+  arrowBlocked: e => !isOpen(e), // the carapace
   onHit, onDeath,
   update, nextIdle, draw,
 });

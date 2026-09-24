@@ -113,8 +113,19 @@ staggered more than ~20% of its fight, every boss killed 30/30.
   Warden (L8)   30/30      5 s          0.0         100%          13%
   Queen  (L9)   30/30     15 s          5.0           0%           0%
   ```
-- [ ] **B4** — Weaver Queen: a defence — openings (e.g. her armoured front,
-  soft after a lunge or a spit) — then presses into the middle in phase 2.
+- [x] **B4** — Weaver Queen. **The carapace:** arrows glance off (the
+  `arrowBlocked` hook) except when she is open — the lunge's recovery (0.6 →
+  1.0 s) and a new 0.9 s `recover` after a spit, a pillar or the volley, or
+  a stagger; the web on her abdomen glows gold while open. Her band starts
+  at the web wall (5840; the 5840–5900 doorway strip was out of her lunge
+  and pillars' reach). Phase 1's globs fly at 190 px/s at where you stand;
+  phase 2's at 240 with the lead, and she crawls at 100 px/s (60). The web
+  glob was her main damage (2.2 of 3.9 hits before the slower phase 1).
+  The level 6 playthrough's script now shoots her openings and gets six
+  hearts for the duel (it tests wiring; the lab measures the fight).
+  After: **19 s, 3.3 hits taken, 37% 3-heart wins** (was 4 s, 0.3). A shade
+  above the wizard (21 s, 2.7) — his stage 2 is still free; its defence
+  (with B5) should lift him past her.
 - [ ] **B5** — Warden: brass that deflects outside the reset window (the
   window is the only opening), the window worth less; more pressure.
 - [ ] **B6** — Frost Queen: the last phase escalates; fewer heart boxes.

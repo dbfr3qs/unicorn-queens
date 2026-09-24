@@ -5,7 +5,7 @@
 // over the top of it. Before the PNG has decoded, or anywhere that cannot decode one at
 // all, the original vector art draws instead and nothing else changes. The overlays are
 // positioned from whichever body actually went down, not from a guess.
-import { P_H, BIG_H, WEB_SLOW_TIME } from '../player.js';
+import { P_H, BIG_H, webSlowTime } from '../player.js';
 import { palette } from './theme.js';
 import { sprite, frameAt } from '../sprites.js';
 import { drawSpriteFeet, scaleToHeight } from './sprite.js';
@@ -96,7 +96,7 @@ export function drawPlayer(c, player, t) {
     c.beginPath(); c.ellipse(A.back[0] + 6, A.back[1] + 5 - flap, 7, 3.5, -0.4, 0, Math.PI * 2); c.fill();
   }
   if (player.webT > 0) { // web-slow: white threads wrapped across the sprite
-    const a = Math.min(1, (WEB_SLOW_TIME - player.webT) / 0.2) * 0.8; // ramps in over the first 0.2 s
+    const a = Math.min(1, (webSlowTime() - player.webT) / 0.2) * 0.8; // ramps in over the first 0.2 s
     c.strokeStyle = 'rgba(240, 240, 248, ' + a.toFixed(2) + ')';
     c.lineWidth = 1.5;
     for (let i = 0; i < 3; i++) { // three wrapped threads

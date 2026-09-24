@@ -6,7 +6,7 @@ import { muted, audioSuspended } from '../audio.js';
 import { spriteReady } from '../sprites.js';
 import { drawSpriteCentre, scaleToHeight } from './sprite.js';
 import { musicSuspended } from '../music.js';
-import { FLIGHT_TIME, FLIGHT_CD } from '../player.js';
+import { FLIGHT_TIME, flightRecharge } from '../player.js';
 import { palette, fonts } from './theme.js';
 
 export function drawHud(ctx, viewW, viewH) {
@@ -83,7 +83,7 @@ export function drawHud(ctx, viewW, viewH) {
   if (player.hasFlight) { // flight meter: gold drains in flight, lavender refills on cooldown
     const bw = 64, bh = 5, bx = viewW / 2 - bw / 2, by = 32;
     const frac = player.flying ? player.flightT / FLIGHT_TIME
-      : player.flightCd > 0 ? 1 - player.flightCd / FLIGHT_CD : 1;
+      : player.flightCd > 0 ? 1 - player.flightCd / flightRecharge() : 1;
     ctx.fillStyle = palette.hint;
     ctx.fillRect(bx, by, bw, bh);
     ctx.fillStyle = player.flying ? palette.gold

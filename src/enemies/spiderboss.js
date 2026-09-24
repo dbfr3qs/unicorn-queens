@@ -17,7 +17,7 @@
 //         2 (≤8)    lunge 30 / spit (double) 30 / pillar 25 / volley 15,
 //          idle 0.7–1.1 s.
 import { fireWebGlob, fireBoulder, FIREBALL_SPEED, BOULDER_SIZE } from '../projectiles.js';
-import { hurtPlayer, WEB_SLOW_TIME } from '../player.js';
+import { hurtPlayer, webSlowTime } from '../player.js';
 import { shake } from '../camera.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
@@ -83,7 +83,7 @@ export function updatePillars(e, p, lvl, cam, dt, fx) {
     if (q.t >= PILLAR_SOLID || p.dead || p.invuln > 0) continue;
     const top = q.gy - q.h;
     if (p.x < q.x + q.w && p.x + p.w > q.x && p.y < q.gy && p.y + p.h > top) {
-      if (hurtPlayer(p, cam, fx)) p.webT = WEB_SLOW_TIME;
+      if (hurtPlayer(p, cam, fx)) p.webT = webSlowTime();
     }
   }
 }

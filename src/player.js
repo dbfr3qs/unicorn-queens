@@ -19,7 +19,11 @@ export const COYOTE = 0.08, JBUF = 0.12, JUMP_CUT = -180;
 export const FLIGHT_TIME = 10, FLIGHT_CD = 15; // witch's spell: 10 s flight, 15 s recharge
 export const FLY_UP = 220, FLY_DOWN = 200, FLY_SINK = 50, FLY_CEIL = 60;
 export const FLY_LAUNCH = 0.15; // a ground cast lifts off upward for a beat
-export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow
+export const WEB_SLOW = 0.45, WEB_SLOW_TIME = 2.5; // the Weaver Queen's web-slow (time at hard)
+export const GUST_PUSH = 100; // the peak's gust: px/s west on a grounded player (at hard)
+// The hazard-scaled values (the preset's `hazard`; exactly the constants at hard).
+export const webSlowTime = () => WEB_SLOW_TIME * difficulty().hazard;
+export const flightRecharge = () => FLIGHT_CD * difficulty().hazard;
 export const ICE_ACCEL = 900, ICE_DRAG = 0.02, ICE_MAX = 1.3 * P_SPEED; // level 7 ice: steer 900 px/s², ~no friction, 1.3× run cap (338)
 export const REVIVE_TIME = 1, REVIVE_INVULN = 3; // easy: the beat before the revive, and the grace after it
 export const RESPAWN_MARGIN = 64; // a pit respawn lands at least this far back from the edge
@@ -129,7 +133,7 @@ export function revivePlayer(p, lvl, fx) {
 function endFlight(p, fx) {
   p.flying = false;
   p.flightT = 0;
-  p.flightCd = FLIGHT_CD;
+  p.flightCd = flightRecharge();
   fx.play('flightEnd');
 }
 
@@ -162,9 +166,9 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   if (player.vx !== 0) player.facing = Math.sign(player.vx);
   // the gust's headwind: a position push on grounded players in the
-  // snowfield — vx untouched (a slide keeps 338 and drifts slide − 100)
+  // snowfield — vx untouched (a slide keeps 338 and drifts slide − 100 at hard)
   if (lvl.wind?.phase === 'gust' && !player.flying && player.onGround &&
-      inWindZone(player.x + player.w / 2)) player.x -= 100 * dt;
+      inWindZone(player.x + player.w / 2)) player.x -= GUST_PUSH * difficulty().hazard * dt;
   player.fireCd = Math.max(0, player.fireCd - dt);
   player.boots = Math.max(0, player.boots - dt);
   player.lantern = Math.max(0, player.lantern - dt);

@@ -33,6 +33,7 @@ import { updateClock } from './clock.js'; // level 8: the Great Clock
 import { updateSprings } from './springs.js'; // level 8: the mainsprings (touch-sever)
 import { FX } from './effects.js';
 import { setTrack, duck } from './music.js'; // the soundtrack follows the level
+import { difficulty } from './difficulty.js'; // the blizzard's drift is a hazard
 
 export const game = {
   level: null, player: null, enemies: null,
@@ -128,7 +129,7 @@ export function update(dt, viewW, fx) {
   if (game.level.blizzard && !game.player.dead) {
     // the storm's drift, applied here rather than in the player so it reaches
     // a flying queen too — the level 7 wind's pattern, gentler
-    game.player.vx += BLIZZ_DRIFT * blizzardWobble(game.gameTime) * dt;
+    game.player.vx += BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(game.gameTime) * dt;
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);

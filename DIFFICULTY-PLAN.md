@@ -48,8 +48,12 @@ render snapshots unchanged unless the phase says otherwise.
   the wizard to 2s. Wind-ups are each kind's `isTell(e)` states, run on
   `dt / bossTell`. Not scaled: floor-hazard glints that live outside a boss's
   update (the Frost Queen's spike glint), boulder arcs, shockwave speed.
-- [ ] **D6** — hazards and regular enemies: `hazard` (wind gust, web slow,
-  bookcase window, flight recharge); Hard-only roster tags.
+- [x] **D6** — hazards and regular enemies: `hazard` scales the peak's gust
+  push, the web slow, the blizzard drift and the flight recharge. The
+  bookcase window is left alone (it already holds open on a player, and its
+  timing is the clock's beat). Roster entries take `only: ['hard']` or
+  `['medium', 'hard']` — the mechanism is in; which enemies to tag is a D8
+  playtest call.
 - [ ] **D7** — picker on the title card; HUD label; change it from the end card.
   A change must start a fresh run (no `prev`): a carried `maxHp` is sized to
   the old preset's hearts.

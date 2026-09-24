@@ -1,7 +1,7 @@
 // Enemy projectiles: fireballs from the mage. Unlike the player's arrows,
 // they cannot be shot down, have no gravity, and fizzle out after a while.
 import { burst } from './particles.js';
-import { hurtPlayer, WEB_SLOW_TIME } from './player.js';
+import { hurtPlayer, webSlowTime } from './player.js';
 import { damageEnemy } from './enemies.js';
 import { FX } from './effects.js';
 import { frostPatch } from './thaw.js'; // level 9: the golem's spit lands as ice
@@ -25,7 +25,7 @@ export function fireFireball(x, y, vx, vy, fx, cyan = false, pale = false, ttl =
 }
 
 // The Weaver Queen's spit: a fireball flagged web: true — a hit deals the
-// shared 1 damage and additionally slows the player (webT = WEB_SLOW_TIME).
+// shared 1 damage and additionally slows the player (webT = webSlowTime()).
 export function fireWebGlob(x, y, vx, vy, fx) {
   const s = difficulty().projSpeed;
   vx *= s; vy *= s;
@@ -59,7 +59,7 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
       } else if (p.invuln <= 0) {
         f.dead = true;
         hurtPlayer(p, cam, fx);
-        if (f.web) p.webT = WEB_SLOW_TIME; // the web-slow rides on the hit
+        if (f.web) p.webT = webSlowTime(); // the web-slow rides on the hit
       }
     }
     if (f.dead) continue;

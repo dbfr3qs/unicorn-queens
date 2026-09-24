@@ -8,7 +8,7 @@ import { shake } from './camera.js';
 import { HURT_INVULN, hurtPlayer } from './player.js';
 import { FX } from './effects.js';
 import { getKind } from './enemies/index.js';
-import { difficulty, scaleBossHp } from './difficulty.js';
+import { difficulty, difficultyName, scaleBossHp } from './difficulty.js';
 // each kind import self-registers into the enemy kind registry
 import './enemies/slime.js';
 import './enemies/zombie.js';
@@ -79,7 +79,8 @@ export function damageEnemy(e, fx, cam, mult = 1, lvl) {
 
 // Enemy placement comes from the level data (lvl.roster).
 export function createEnemies(lvl) {
-  return (lvl.roster ?? []).map(spec => spawnEnemy(spec, lvl));
+  // a roster entry's `only: ['hard']` (or ['medium', 'hard']) keeps it off the easier presets
+  return (lvl.roster ?? []).filter(spec => !spec.only || spec.only.includes(difficultyName())).map(spec => spawnEnemy(spec, lvl));
 }
 
 export function updateEnemies(enemies, p, lvl, cam, dt, fx) {

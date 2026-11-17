@@ -256,6 +256,7 @@ export function drawLevel(c, lvl, t = 0) {
         c.fillStyle = '#7a4fd0';
         c.fillRect(b.x, b.y, b.w, b.h);
         c.strokeStyle = '#4a2d7a';
+        c.lineWidth = 1; // as the crate's: the previous swirl (or any earlier draw) leaves 2
         c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
       }
       const a = t * 1.2 + b.x * 0.01; // swirl angle: gameTime-driven, per-box phase

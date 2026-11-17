@@ -5478,6 +5478,7 @@ exports[`intro: the card (black, the title at full) 1`] = `
       fillStyle=#7a4fd0
       fillRect(1700, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(1701.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -5502,6 +5503,7 @@ exports[`intro: the card (black, the title at full) 1`] = `
       fillStyle=#7a4fd0
       fillRect(4450, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(4451.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -6885,6 +6887,7 @@ exports[`intro: the grab (both of them rising, the Queen running after, the sorc
       fillStyle=#7a4fd0
       fillRect(1700, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(1701.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -6909,6 +6912,7 @@ exports[`intro: the grab (both of them rising, the Queen running after, the sorc
       fillStyle=#7a4fd0
       fillRect(4450, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(4451.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -8311,6 +8315,7 @@ exports[`intro: the stroll (the two of them east, his line up, the fade lifted) 
       fillStyle=#7a4fd0
       fillRect(1700, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(1701.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -8335,6 +8340,7 @@ exports[`intro: the stroll (the two of them east, his line up, the fade lifted) 
       fillStyle=#7a4fd0
       fillRect(4450, 524, 36, 36)
       strokeStyle=#4a2d7a
+      lineWidth=1
       strokeRect(4451.5, 525.5, 33, 33)
       strokeStyle=#d9c8ff
       lineWidth=2
@@ -9980,6 +9986,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1000, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1001.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -11799,6 +11806,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1500, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1501.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -15007,6 +15015,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(2750, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(2751.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -17556,6 +17565,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1100, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1101.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -18892,6 +18902,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1100, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1101.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -19709,6 +19720,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1100, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1101.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -20486,6 +20498,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(1100, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(1101.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -25632,6 +25645,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3400, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3401.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -26880,6 +26894,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3400, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3401.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -29426,6 +29441,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3400, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3401.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -30680,6 +30696,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3400, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3401.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -61823,6 +61840,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(4450, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(4451.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -69352,6 +69370,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3200, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3201.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -70273,6 +70292,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3200, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3201.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -79517,6 +79537,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3200, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3201.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2
@@ -89893,6 +89914,7 @@ save()
     fillStyle=#7a4fd0
     fillRect(3200, 524, 36, 36)
     strokeStyle=#4a2d7a
+    lineWidth=1
     strokeRect(3201.5, 525.5, 33, 33)
     strokeStyle=#d9c8ff
     lineWidth=2

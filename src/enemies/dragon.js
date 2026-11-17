@@ -11,6 +11,7 @@ import { shake } from '../camera.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { spriteGlow } from './glow.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
@@ -238,14 +239,15 @@ function draw(c, e) {
 // Overlay pieces, shared by draw and drawOverlay. The breath tell and the flash are in
 // the body's local frame (origin: the middle of the box, flipped by e.dir); the pips
 // are world space.
-function drawBreathTell(c, e) {
+// jaw: false over a sprite, where the vector jaw does not sit on the sheet's head
+function drawBreathTell(c, e, jaw = true) {
   if (e.state === 'perch' && (e.perch === 'inhale' || e.perch === 'breath')) {
     // the tell: a pulsing chest glow while it winds up the breath
     c.globalAlpha = 0.35 + 0.35 * (0.5 + 0.5 * Math.sin(e.phase * 3));
     c.fillStyle = '#ff8c42';
     c.beginPath(); c.ellipse(2, 4, 14, 10, 0, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
-    if (e.perch === 'breath') { // open jaw while the cone runs
+    if (jaw && e.perch === 'breath') { // open jaw while the cone runs
       c.fillStyle = '#ffd166';
       c.fillRect(28, -2, 12, 8);
     }
@@ -261,35 +263,32 @@ function drawFlash(c, e) {
   }
 }
 
-function drawPips(c, e) {
+// top: the body's top edge (the box's for the vector body, the drawn sheet's over a sprite)
+function drawPips(c, e, top = e.y) {
   if (!e.dead) { // hp pips: two rows of seven, world space above the dragon
     const n = pipMax(e, 14), per = Math.ceil(n / 2); // two rows
     for (let i = 0; i < n; i++) {
       const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 24 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, top - 24 + row * 7, 10, 4);
     }
   }
 }
 
 // The sprite path: the sheet is the body. The fireball windup, which the vector draw
-// shows only by recolouring the eye, is drawn here as the glowing eye with a halo
-// round the head; the breath tell, the flash and the pips are the shared pieces.
-function drawOverlay(c, e) {
+// shows only by recolouring the eye, is drawn here as the eye's gold glowing over the
+// whole sheet (the vector eye's spot is not the sheet's head). The breath tell's chest
+// glow sits on the sheet's body and stays; its open jaw does not, and the breath cone
+// carries that state. The flash and the pips are the shared pieces.
+function drawOverlay(c, e, { top = e.y } = {}) {
+  if (e.state === 'windup') spriteGlow(c, e, top, '#ffd166');
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
-  if (e.state === 'windup') {
-    c.globalAlpha = 0.45;
-    c.fillStyle = '#ffd166';
-    c.beginPath(); c.ellipse(24, -4, 14, 10, 0, 0, Math.PI * 2); c.fill();
-    c.globalAlpha = 1;
-    c.fillRect(20, -8, 4, 4);
-  }
-  drawBreathTell(c, e);
+  drawBreathTell(c, e, false);
   drawFlash(c, e);
   c.restore();
-  drawPips(c, e);
+  drawPips(c, e, top);
 }
 
 register({

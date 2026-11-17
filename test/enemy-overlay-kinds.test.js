@@ -26,7 +26,7 @@ describe('overlays over a drawn sprite (non-boss kinds)', () => {
     const k = getKind(kind), spy = vi.spyOn(k, 'drawOverlay');
     const e = spawnOne(kind);
     drawEnemies(createRecordingCtx().ctx, [e]);
-    expect(spy).toHaveBeenCalledWith(expect.anything(), e);
+    expect(spy).toHaveBeenCalledWith(expect.anything(), e, { top: e.y + e.h - e.h * 1.45 }); // the drawn sheet's top
   });
 
   it.each(WITHOUT)('%s: nothing state-dependent to read, so no overlay; the sprite alone draws', kind => {
@@ -54,10 +54,20 @@ describe('overlays over a drawn sprite (non-boss kinds)', () => {
     expect(lines(spawnOne('ghost', { flicker: 0, phase: 0 }))).not.toContain('strokeStyle=rgba(255, 205, 130, 0.6)');
   });
 
-  it('the snake shows its tongue flick on the telegraph only', () => {
-    expect(lines(spawnOne('snake', { state: 'telegraph' }))).toContain('strokeStyle=#e33');
-    expect(lines(spawnOne('snake', { state: 'patrol' }))).not.toContain('strokeStyle=#e33');
-    expect(lines(spawnOne('adder', { state: 'telegraph' }))).toContain('strokeStyle=#e33');
+  it('the snake shows its tongue\'s red as a glow over the sheet on the telegraph only', () => {
+    expect(lines(spawnOne('snake', { state: 'telegraph' }))).toContain('fillStyle=#e33');
+    expect(lines(spawnOne('snake', { state: 'telegraph' })).some(s => s.startsWith('ellipse('))).toBe(true);
+    expect(lines(spawnOne('snake', { state: 'telegraph' }))).not.toContain('strokeStyle=#e33'); // no tongue off the sheet
+    expect(lines(spawnOne('snake', { state: 'patrol' }))).not.toContain('fillStyle=#e33');
+    expect(lines(spawnOne('adder', { state: 'telegraph' }))).toContain('fillStyle=#e33');
+  });
+
+  it('a sleeping snake\'s z\'s sit over the middle of its box, whichever way it faces', () => {
+    const e = spawnOne('snake', { sleeping: true, dir: -1 });
+    const r = createRecordingCtx();
+    getKind('snake').drawOverlay(r.ctx, e);
+    expect(r.lines).toContain(`translate(${e.x + e.w / 2}, ${e.y + e.h})`);
+    expect(r.lines).toContain('moveTo(6, -30)'); // the first z, just past the middle
   });
 
   it('a sleeping adder shows its sleeping mark, an awake one does not', () => {

@@ -10,6 +10,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { spriteGlow } from './glow.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { palette } from '../render/theme.js';
 
@@ -182,30 +183,29 @@ function drawFlash(c, e) {
   }
 }
 
-function drawPips(c, e) {
+// top: the body's top edge (the box's for the vector body, the drawn sheet's over a sprite)
+function drawPips(c, e, top = e.y) {
   if (!e.dead) { // hp pips, world space above the boss
     const n = pipMax(e, 5);
     for (let i = 0; i < n; i++) {
       c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - n * 6 + 1 + i * 12, e.y - 14, 10, 4);
+      c.fillRect(e.x + e.w / 2 - n * 6 + 1 + i * 12, top - 14, 10, 4);
     }
   }
 }
 
 // The sprite path: the sheet is the body, so what the vector draw shows by recolouring
-// (the staff orb in the windup) is drawn here as the orb itself, over the sprite.
-function drawOverlay(c, e) {
+// (the staff orb in the windup) is drawn here as the orb's orange glowing over the
+// whole sheet (the vector orb's spot is not where the sheet's staff is).
+function drawOverlay(c, e, { top = e.y } = {}) {
   drawShadow(c, e);
+  if (e.state === 'windup') spriteGlow(c, e, top, '#ff8c42');
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
-  if (e.state === 'windup') {
-    c.fillStyle = '#ff8c42';
-    c.fillRect(11, -24, 9, 9);
-  }
   drawFlash(c, e);
   c.restore();
-  drawPips(c, e);
+  drawPips(c, e, top);
 }
 
 function draw(c, e) {

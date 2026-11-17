@@ -35,6 +35,7 @@
 
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
+import { spriteGlow } from './glow.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { fireFireball, fireShockwaves, resetFireballs, resetBoulders, resetCones, resetShockwaves } from '../projectiles.js';
 import { hurtPlayer } from '../player.js';
@@ -275,8 +276,9 @@ function drawSweep(c, e) {
 }
 
 // The reset-window glow on the chest core: cyan, 0.3 s pulse.
+const windowAlpha = e => 0.75 + 0.25 * Math.sin((e.phase ?? 0) * (2 * Math.PI) / 0.3);
 function drawWindowGlow(c, e, bob) {
-  c.globalAlpha = 0.75 + 0.25 * Math.sin((e.phase ?? 0) * (2 * Math.PI) / 0.3);
+  c.globalAlpha = windowAlpha(e);
   c.fillStyle = '#7ec8ff';
   c.fillRect(-7, -42 + bob, 14, 14);
   c.globalAlpha = 1;
@@ -304,12 +306,13 @@ function drawChargeArm(c, e, bob) {
 
 // The chest core when the reset window is shut: dim amber (brighter in P2), a slow 2 s
 // pulse while sleeping.
+const coreAlpha = e => (e.sleeping
+  ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin((e.phase ?? 0) * Math.PI))
+  : (inP2(e) ? 0.8 : 0.45));
+const coreColour = e => (inP2(e) ? '#e8b86d' : '#c98f3d');
 function drawCoreGlow(c, e, bob) {
-  const ph = e.phase ?? 0;
-  c.globalAlpha = e.sleeping
-    ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin(ph * Math.PI))
-    : (inP2(e) ? 0.8 : 0.45);
-  c.fillStyle = inP2(e) ? '#e8b86d' : '#c98f3d';
+  c.globalAlpha = coreAlpha(e);
+  c.fillStyle = coreColour(e);
   c.fillRect(-7, -42 + bob, 14, 14);
   c.globalAlpha = 1;
 }
@@ -323,7 +326,8 @@ function drawFlash(c, e) {
   }
 }
 
-function drawPips(c, e) {
+// top: the body's top edge (the box's for the vector body, the drawn sheet's over a sprite)
+function drawPips(c, e, top = e.y) {
   // The 16 pips: two rows of 8, his winding (spiderboss pattern).
   if (!e.dead) {
     const n = pipCount(e);
@@ -331,26 +335,28 @@ function drawPips(c, e) {
     for (let i = 0; i < max; i++) {
       const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < n ? '#ffd75e' : '#5e4a1e';
-      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 20 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, top - 20 + row * 7, 10, 4);
     }
   }
 }
 
 // The sprite path: the sheet is the body; this is everything that depends on his state.
-function drawOverlay(c, e) {
-  const bob = bobOf(e);
+// The vector chest core and arms do not sit on the sheet's armour, so over a sprite the
+// core's state (the reset window's cyan, the amber of P1/P2/sleep) is a glow over the
+// whole sheet at half the core's alpha, the slam and bolt wind-ups (raised and extended
+// arm) are a glow in the house tell orange (not cyan: that is the window's "shoot now"),
+// and the sweep's extended arm is left to the world band and blade, which carry that tell.
+function drawOverlay(c, e, { top = e.y } = {}) {
   drawSweep(c, e);
+  if (e.inWindow && !e.dead) spriteGlow(c, e, top, '#7ec8ff', windowAlpha(e) * 0.5);
+  else spriteGlow(c, e, top, coreColour(e), coreAlpha(e) * 0.5);
+  if (e.state === 'slamWind' || e.state === 'charge') spriteGlow(c, e, top, '#ff8c42');
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h);
   c.scale(e.dir ?? 1, 1);
-  if (e.inWindow && !e.dead) drawWindowGlow(c, e, bob);
-  else drawCoreGlow(c, e, bob);
-  c.fillStyle = '#6e5424';
-  drawPoseArm(c, e, bob);
-  drawChargeArm(c, e, bob);
   drawFlash(c, e);
   c.restore();
-  drawPips(c, e);
+  drawPips(c, e, top);
 }
 
 function draw(c, e) {

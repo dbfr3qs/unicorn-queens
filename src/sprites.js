@@ -69,10 +69,23 @@ export function spritesLoaded(timeoutMs = LOAD_TIMEOUT) {
       resolve({ ready: st.ready, total: st.total });
     };
     const settle = () => { if (--pending <= 0) finish(); };
+    // `load` fires when the bytes arrive, not when they are decoded: left alone, each sheet
+    // decodes inside its first drawImage, a hitch on the first frame. decode() moves that
+    // work here. A rejected decode (broken image) still settles; no decode() settles on load.
+    const settleDecoded = img => {
+      if (typeof img.decode !== 'function') return settle();
+      let p;
+      try { p = img.decode(); } catch { return settle(); }
+      Promise.resolve(p).then(settle, settle);
+    };
     for (const { img } of sheets.values()) {
-      if (img.complete) continue; // already decoded, or already failed
+      if (img.complete) {
+        // Already failed: nothing coming. Already loaded: still decode it, as above.
+        if (img.naturalWidth > 0) { pending++; settleDecoded(img); }
+        continue;
+      }
       pending++;
-      img.addEventListener('load', settle, { once: true });
+      img.addEventListener('load', () => settleDecoded(img), { once: true });
       img.addEventListener('error', settle, { once: true });
     }
     if (pending === 0) finish();

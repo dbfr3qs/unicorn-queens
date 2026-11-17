@@ -1,7 +1,7 @@
 // The loader's contract under Node, which is where the whole test suite and smoke.mjs
 // run: no Image global, so every lookup must return null rather than throw, and metadata
 // must still be readable so callers can size things correctly.
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
   sprite, spriteMeta, frameAt, spriteStatus, spritesLoaded, loadProgress, LOAD_TIMEOUT,
 } from '../src/sprites.js';
@@ -119,5 +119,106 @@ describe('the preload gate', () => {
   it('keeps a timeout, so a broken sheet can delay the start but never stop it', () => {
     expect(LOAD_TIMEOUT).toBeGreaterThan(0);
     expect(Number.isFinite(LOAD_TIMEOUT)).toBe(true);
+  });
+});
+
+// spritesLoaded() decodes each sheet before resolving. These tests need an `Image`, which
+// the module reads at import time, so each one stubs it and imports a fresh copy.
+describe('spritesLoaded decodes sheets before resolving', () => {
+  const N = Object.keys(SPRITES).length;
+
+  async function load(configure = () => {}) {
+    const made = [];
+    class FakeImage {
+      constructor() {
+        this.complete = false; this.naturalWidth = 0; this.listeners = {};
+        this.decodeCalls = 0; this.decodeResult = null;
+        made.push(this);
+        configure(this, made.length - 1);
+      }
+      addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+      fire(type) {
+        if (type === 'load') { this.complete = true; this.naturalWidth = 8; }
+        for (const fn of this.listeners[type] || []) fn();
+      }
+      decode() {
+        this.decodeCalls++;
+        return new Promise((res, rej) => { this.decodeResult = { res, rej }; });
+      }
+    }
+    vi.stubGlobal('Image', FakeImage);
+    vi.resetModules();
+    const mod = await import('../src/sprites.js');
+    return { mod, made };
+  }
+  const flush = () => new Promise(r => setImmediate(r));
+  const track = p => { const o = { done: false }; p.then(() => { o.done = true; }); return o; };
+
+  afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
+
+  it('stays pending after every load until every decode() settles', async () => {
+    const { mod, made } = await load();
+    const t = track(mod.spritesLoaded());
+    made.forEach(i => i.fire('load'));
+    await flush();
+    expect(made.every(i => i.decodeCalls === 1)).toBe(true);
+    expect(t.done).toBe(false);
+    made.slice(1).forEach(i => i.decodeResult.res());
+    await flush();
+    expect(t.done).toBe(false); // the first is still decoding
+    made[0].decodeResult.res();
+    await flush();
+    expect(t.done).toBe(true);
+  });
+
+  it('a decode() that rejects still settles that sheet', async () => {
+    const { mod, made } = await load();
+    const t = track(mod.spritesLoaded());
+    made.forEach(i => i.fire('load'));
+    made.forEach((i, k) => (k === 0 ? i.decodeResult.rej(new Error('bad')) : i.decodeResult.res()));
+    await flush();
+    expect(t.done).toBe(true);
+  });
+
+  it('an image without decode() settles on load', async () => {
+    const { mod, made } = await load(img => { img.decode = undefined; });
+    const t = track(mod.spritesLoaded());
+    made.forEach(i => i.fire('load'));
+    await flush();
+    expect(t.done).toBe(true);
+  });
+
+  it('an error settles without decoding', async () => {
+    const { mod, made } = await load();
+    const t = track(mod.spritesLoaded());
+    made.forEach(i => i.fire('error'));
+    await flush();
+    expect(t.done).toBe(true);
+    expect(made.every(i => i.decodeCalls === 0)).toBe(true);
+  });
+
+  it('already-complete images are decoded too; failed ones are skipped', async () => {
+    const { mod, made } = await load((img, k) => {
+      img.complete = true; img.naturalWidth = k === 0 ? 0 : 8; // first one failed earlier
+    });
+    const t = track(mod.spritesLoaded());
+    await flush();
+    expect(made[0].decodeCalls).toBe(0);
+    expect(made.slice(1).every(i => i.decodeCalls === 1)).toBe(true);
+    expect(t.done).toBe(N === 1);
+    made.slice(1).forEach(i => i.decodeResult.res());
+    await flush();
+    expect(t.done).toBe(true);
+  });
+
+  it('the timeout resolves if a decode never settles', async () => {
+    vi.useFakeTimers();
+    const { mod, made } = await load();
+    const t = track(mod.spritesLoaded(1000));
+    made.forEach(i => i.fire('load'));
+    await vi.advanceTimersByTimeAsync(999);
+    expect(t.done).toBe(false);
+    await vi.advanceTimersByTimeAsync(2);
+    expect(t.done).toBe(true);
   });
 });

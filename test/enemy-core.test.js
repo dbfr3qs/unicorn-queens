@@ -5,6 +5,11 @@ import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemie
 import { getKind } from '../src/enemies/index.js';
 import { createCamera } from '../src/camera.js';
 import { LEVELS } from '../src/levels/index.js';
+import { createLevel8 } from '../src/levels/level8.js';
+import { createLevel9 } from '../src/levels/level9.js';
+import { updateClock } from '../src/clock.js';
+import { setDifficulty, difficultyName } from '../src/difficulty.js';
+import { SPIKE_LIFE } from '../src/enemies/queenboss.js';
 import { fireballs, boulders, cones, shockwaves } from '../src/projectiles.js';
 
 const rig = () => {
@@ -53,5 +58,37 @@ describe('a boss\'s last hit', () => {
     damageEnemy(e, fx, createCamera(), e.hp, l);
     for (const list of [fireballs, boulders, cones, shockwaves]) expect(list).toHaveLength(0);
     if (kind === 'queenboss') expect(l.blizzard).toBe(null);
+  });
+});
+
+describe('boss clocks', () => {
+  const cam = createCamera(), fx = { play() {} }, DT = 1 / 60;
+  const startDifficulty = difficultyName();
+  afterEach(() => { setDifficulty(startDifficulty); });
+
+  it('the Warden never reads a stale chime on waking', () => {
+    for (let wakeAt = 0; wakeAt < 16; wakeAt++) { // sweep the clock phase he wakes on
+      const l = createLevel8();
+      const p = createPlayer(l); p.x = 5400; p.y = l.groundY - p.h;
+      const e = spawnEnemy({ kind: 'warden', x: 5560, band: [5100, 5800] }, l);
+      e.sleeping = true; const x0 = e.x;
+      const tickClock = () => updateClock(l, p, [e], DT, fx);
+      for (let i = 0; i < 200 + wakeAt * 20; i++) { tickClock(); updateEnemies([e], p, l, cam, DT, fx); }
+      const chimes = l.clock.chimeCount;
+      e.sleeping = false; tickClock(); updateEnemies([e], p, l, cam, DT, fx);
+      if (l.clock.chimeCount !== chimes) continue; // a real chime on the waking frame: he may rightly advance
+      expect(e.state, `wakeAt ${wakeAt}`).toBe('idle'); expect(e.x).toBe(x0);
+    }
+  });
+  it("easy: the Queen's spike lasts as long as on hard while she winds up", () => {
+    setDifficulty('easy');
+    const l = createLevel9(600);
+    const p = createPlayer(l); p.x = 100; // far from the spike
+    const e = spawnEnemy(l.roster.find(s => s.kind === 'queenboss'), l); e.sleeping = true;
+    vi.spyOn(getKind('queenboss'), 'isTell').mockReturnValue(true); // every frame is tell-scaled
+    updateEnemies([e], p, l, cam, DT, fx); // first update creates her state
+    const sp = { x: 5000, t: 0, cracked: false }; e.spikes.push(sp);
+    for (let t = 0; t < SPIKE_LIFE + 0.1; t += DT) updateEnemies([e], p, l, cam, DT, fx);
+    expect(e.spikes).not.toContain(sp); // gone after SPIKE_LIFE, not SPIKE_LIFE x bossTell
   });
 });

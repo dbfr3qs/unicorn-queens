@@ -95,7 +95,7 @@ export function createEnemies(lvl) {
 }
 
 export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
-  const env = { p, lvl, cam, dt, fx };
+  const env = { p, lvl, cam, dt, rawDt: dt, fx }; // rawDt: the frame's unscaled dt; dt is tell-scaled for a wind-up
   const vy0 = p.vy; // fall speed before any stomp this frame rewrites it
   for (const e of enemies) {
     if (e.dead) continue;

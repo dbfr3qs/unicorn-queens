@@ -16,6 +16,8 @@ import { difficulty } from '../difficulty.js'; // bossCd stretches the idle betw
 
 function onHit(e) {
   e.flash = this.flashT;
+  // a stagger low on the perch or dive resumes by that move's ascent
+  if (e.state !== 'stagger') e.resume = e.state === 'perch' || e.state === 'dive' ? e.state : null;
   e.state = 'stagger';
   e.t = this.staggerT;
 }
@@ -141,7 +143,13 @@ function update(e, { p, lvl, dt, fx }) {
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1; // face the player
   if (e.state === 'stagger') {
     e.t -= dt;
-    if (e.t <= 0) { e.state = 'idle'; e.t = nextIdle.call(this, e); }
+    if (e.t <= 0) {
+      if (e.resume) { // back up to the band by the ascent leg, not a jump
+        if (e.resume === 'perch') e.perch = 'ascend'; else e.dive = 'ascend';
+        e.state = e.resume;
+        e.floatY = Math.max(this.hoverMin, Math.min(this.hoverMax, e.floatY ?? e.y));
+      } else { e.state = 'idle'; e.t = nextIdle.call(this, e); }
+    }
     return; // frozen, wings crumpled
   }
   if (e.state === 'perch') { updatePerch.call(this, e, p, lvl, dt, fx); return; }

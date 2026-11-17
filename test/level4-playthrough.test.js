@@ -147,13 +147,22 @@ describe('level 4 full playthrough', () => {
       update(DT, 800, silent); // a standing player's head
       pj++;
     }
+    setInput({}); // let go: the pickup frame may have her mid-run
     expect(lvl.pearl.taken).toBe(true);
     expect(lvl.exit.locked).toBe(false);
 
     // --- 6. The shaft opens, and the fly spell carries her out -------
     expect(until(() => lvl.shaft.state === 'open', 180)).toBe(true);
-    setInput({ right: true });
-    expect(until(() => p.x > 4186 && p.x < 4214, 300)).toBe(true); // under the shaft
+    // steer under the shaft from either side, like the pearl approach
+    const underShaft = () => p.x > 4186 && p.x < 4214;
+    let ps = 0;
+    while (!underShaft() && ps < 300) {
+      const want = 4200 - p.x;
+      setInput({ right: want > 6, left: want < -6 });
+      update(DT, 800, silent);
+      ps++;
+    }
+    expect(underShaft()).toBe(true); // under the shaft
     setInput({});
     setInput({ cast: true });
     frames(1); // the one-frame cast flag

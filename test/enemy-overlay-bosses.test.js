@@ -42,6 +42,13 @@ const drawn = e => { const r = createRecordingCtx(); drawEnemies(r.ctx, [e]); re
 const count = (lines, re) => lines.filter(s => re.test(s)).length;
 const pipMaxOf = (e, kind) => e.maxHp ?? getKind(kind).hp;
 const args = (...v) => v.map(x => Number(x.toFixed(3))).join(', '); // as the recording ctx rounds
+// The drawn sheet's top edge, as render/enemies.js passes it (OVERHANG 1.45), and the
+// sprite path's glow cue over the sheet (src/enemies/glow.js).
+const topOf = e => e.y + e.h - e.h * 1.45;
+const glowOf = e => {
+  const top = topOf(e), bottom = e.y + e.h;
+  return `ellipse(${args(e.x + e.w / 2, (top + bottom) / 2, e.w * 0.55, (bottom - top) * 0.42)}, 0, 0, 6.283)`;
+};
 
 afterEach(() => { vi.restoreAllMocks(); drawSpriteFeet.mockClear(); });
 
@@ -55,7 +62,14 @@ describe('boss overlays over a drawn sprite', () => {
     const k = getKind(kind), spy = vi.spyOn(k, 'drawOverlay');
     const e = boss(kind, s => { if (kind === 'wizardboss') s.stage = 2; }); // the form his sheet depicts
     drawEnemies(createRecordingCtx().ctx, [e]);
-    expect(spy).toHaveBeenCalledWith(expect.anything(), e);
+    expect(spy).toHaveBeenCalledWith(expect.anything(), e, { top: topOf(e) });
+  });
+
+  it.each(['troll', 'dragon', 'wizardboss'])('%s: the pips sit above the drawn sheet, not the box (final review F9)', kind => {
+    const e = boss(kind, s => { if (kind === 'wizardboss') s.stage = 2; });
+    const ys = drawn(e).filter(s => /^fillRect\(.*, (10|7), 4\)$/.test(s)).map(s => Number(s.split(', ')[1]));
+    expect(ys.length).toBeGreaterThan(0);
+    expect(Math.max(...ys)).toBeLessThan(topOf(e)); // every pip clears the sheet's top edge
   });
 
   it.each([
@@ -91,14 +105,19 @@ describe('the troll over his sprite', () => {
     expect(drawn(boss('troll'))).not.toContain('fillRect(-24, -36, 48, 72)');
   });
 
-  it('raises the club for the slam (crouched) and the lob, and only then', () => {
-    const slam = drawn(boss('troll', s => s.state = 'slamWindup'));
-    const lob = drawn(boss('troll', s => s.state = 'lobWindup'));
-    const idle = drawn(boss('troll', s => s.state = 'idle'));
-    expect(slam).toContain('translate(0, 5)'); // the crouch
-    expect(slam).toContain('fillRect(1, -52, 13, 10)'); // the club head, overhead
-    expect(lob).toContain('fillRect(19, -52, 13, 10)'); // the club head, cocked to throw
-    expect(idle.some(s => /, 13, 10\)$/.test(s))).toBe(false);
+  it('glows orange for the slam and gold for the lob over the sheet, and only then (no vector club)', () => {
+    const slamE = boss('troll', s => { s.state = 'slamWindup'; s.phase2 = false; });
+    const lobE = boss('troll', s => { s.state = 'lobWindup'; s.phase2 = false; });
+    const slam = drawn(slamE), lob = drawn(lobE);
+    const idle = drawn(boss('troll', s => { s.state = 'idle'; s.phase2 = false; }));
+    expect(slam).toContain('fillStyle=#ff8c42');
+    expect(slam).toContain(glowOf(slamE));
+    expect(lob).toContain('fillStyle=#ffd166');
+    expect(lob).toContain(glowOf(lobE));
+    expect(lob).not.toContain('fillStyle=#ff8c42'); // the two still read apart
+    for (const l of [slam, lob, idle]) expect(l.some(s => /, 13, 10\)$/.test(s))).toBe(false);
+    expect(idle).not.toContain('fillStyle=#ff8c42');
+    expect(idle).not.toContain('fillStyle=#ffd166');
   });
 
   it('holds the stone slab while shielding, and only then', () => {
@@ -109,9 +128,12 @@ describe('the troll over his sprite', () => {
     expect(down).not.toContain('fillStyle=#9aa0a8');
   });
 
-  it('shows the ember eyes in phase 2, and only then', () => {
-    expect(drawn(boss('troll', s => s.phase2 = true))).toContain('fillStyle=#ff8c42');
-    expect(drawn(boss('troll', s => s.phase2 = false))).not.toContain('fillStyle=#ff8c42');
+  it('shows phase 2\'s ember as a faint wash over the sheet, and only then', () => {
+    const p2 = drawn(boss('troll', s => { s.state = 'idle'; s.phase2 = true; }));
+    expect(p2).toContain('fillStyle=#ff8c42');
+    expect(p2).toContain('globalAlpha=0.3');
+    expect(p2).not.toContain('fillRect(6, -26, 5, 5)'); // no eye square on the sheet's collar
+    expect(drawn(boss('troll', s => { s.state = 'idle'; s.phase2 = false; }))).not.toContain('fillStyle=#ff8c42');
   });
 });
 
@@ -127,18 +149,22 @@ describe('the dragon over its sprite', () => {
     expect(drawn(boss('dragon', s => s.flash = 0.1))).toContain('ellipse(0, 0, 28, 18, 0, 0, 6.283)');
   });
 
-  it('glows its eye through the fireball windup, and only then', () => {
-    expect(drawn(boss('dragon', s => s.state = 'windup'))).toContain('fillStyle=#ffd166');
+  it('glows its eye\'s gold over the sheet through the fireball windup, and only then', () => {
+    const e = boss('dragon', s => s.state = 'windup');
+    const windup = drawn(e);
+    expect(windup).toContain('fillStyle=#ffd166');
+    expect(windup).toContain(glowOf(e));
+    expect(windup).not.toContain('fillRect(20, -8, 4, 4)'); // no eye dot off the sheet's head
     expect(drawn(boss('dragon', s => s.state = 'idle'))).not.toContain('fillStyle=#ffd166');
   });
 
-  it('shows the chest glow through the inhale and the open jaw through the breath', () => {
+  it('shows the chest glow through the inhale and the breath; no vector jaw over the sheet', () => {
     const inhale = drawn(boss('dragon', s => { s.state = 'perch'; s.perch = 'inhale'; }));
     const breath = drawn(boss('dragon', s => { s.state = 'perch'; s.perch = 'breath'; }));
     const descend = drawn(boss('dragon', s => { s.state = 'perch'; s.perch = 'descend'; }));
     expect(inhale).toContain('fillStyle=#ff8c42');
-    expect(inhale).not.toContain('fillRect(28, -2, 12, 8)');
-    expect(breath).toContain('fillRect(28, -2, 12, 8)');
+    expect(breath).toContain('fillStyle=#ff8c42');
+    expect(breath).not.toContain('fillRect(28, -2, 12, 8)');
     expect(descend).not.toContain('fillStyle=#ff8c42');
   });
 });
@@ -183,21 +209,24 @@ describe('the wizard over his sprite', () => {
     expect(idle).not.toContain('fillStyle=#ff8c42');
   });
 
-  it('stage 2: the staff raised to cast, and the seal glint on the floor', () => {
+  it('stage 2: the staff tip\'s violet glows over the sheet while he casts, and the seal glint on the floor', () => {
     const e = boss('wizardboss', s => { s.stage = 2; s.state = 'sealTele'; s.sealX = 5700; });
     const seal = drawn(e);
     const idle = drawn(boss('wizardboss', s => { s.stage = 2; s.state = 'idle'; }));
-    expect(seal.some(s => s.startsWith('arc(16, -30,'))).toBe(true); // the staff tip, raised
+    expect(seal).toContain('fillStyle=#9a6ac8');
+    expect(seal).toContain(glowOf(e));
+    expect(seal.some(s => s.startsWith('arc(16, -30,'))).toBe(false); // no vector staff over the sheet
     expect(seal).toContain(`moveTo(${args(5700, e.y + e.h - 10)})`); // the glint
-    expect(idle.some(s => s.startsWith('arc(16, -30,'))).toBe(false);
+    expect(idle).not.toContain('fillStyle=#9a6ac8');
   });
 
-  it('stage 2: the embered eyes and the gold staff glow at the last stand', () => {
-    const low = drawn(boss('wizardboss', s => { s.stage = 2; s.state = 'idle'; s.hp = 2; }));
+  it('stage 2: the last stand\'s gold glows over the sheet', () => {
+    const e = boss('wizardboss', s => { s.stage = 2; s.state = 'idle'; s.hp = 2; });
+    const low = drawn(e);
     const high = drawn(boss('wizardboss', s => { s.stage = 2; s.state = 'idle'; s.hp = 6; }));
-    expect(low).toContain('fillRect(1, -23, 2, 2)');
     expect(low).toContain('fillStyle=#ffd166');
-    expect(high).not.toContain('fillRect(1, -23, 2, 2)');
+    expect(low).toContain(glowOf(e));
+    expect(low).not.toContain('fillRect(1, -23, 2, 2)'); // no eye dots off the sheet's face
     expect(high).not.toContain('fillStyle=#ffd166');
   });
 
@@ -283,7 +312,7 @@ describe('the sheet is used only for the forms it depicts', () => {
     const spy = vi.spyOn(getKind('wizardboss'), 'drawOverlay');
     const lines = drawn(e);
     expect(sheetDrawnFor(e)).toBe(true);
-    expect(spy).toHaveBeenCalledWith(expect.anything(), e);
+    expect(spy).toHaveBeenCalledWith(expect.anything(), e, { top: topOf(e) });
     expect(lines).not.toContain('fillStyle=#2c2c48'); // not the vector robe
   });
 

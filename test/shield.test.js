@@ -96,6 +96,20 @@ describe('reflect', () => {
     expect(closest).toBeLessThan(20);
   });
 
+  it('a bolt reflected from 500 px away still reaches the shooter (final review F2)', () => {
+    const { l, p, cam } = rig(); p.shield = 1; resetFireballs();
+    const sx = p.x + 500, sy = p.y + p.h / 2 - 7;             // the shooter, level with her chest
+    fireFireball(sx, sy, -240, 0, quiet);
+    let closest = Infinity, caught = false;
+    for (let i = 0; i < 360; i++) {
+      updateFireballs(p, l, cam, 1 / 60, quiet);
+      const f = fireballs[0]; caught ||= !!f?.reflected;
+      if (f?.reflected && !f.dead) closest = Math.min(closest, Math.hypot(f.x - sx, f.y - sy));
+    }
+    expect(caught).toBe(true);
+    expect(closest).toBeLessThan(20);
+  });
+
   it('a reflected bolt never hits the player who reflected it', () => {
     const { l, p, cam } = rig(); resetFireballs();
     fireFireball(p.x, p.y, 0, 0, quiet); fireballs[0].reflected = true;

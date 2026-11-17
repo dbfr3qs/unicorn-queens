@@ -112,7 +112,9 @@ export function createLevel7(viewH = 600) {
         x: 5900, y: 0, w: 300, h: groundY, // the open cage: the King speaks once the storm breaks
         beats: [{
           id: 'l7-king-end',
-          when: game => game.enemies.some(e => e.kind === 'wizardboss' && e.dead), // the beat waits for the release
+          // the beat waits for the release, and for the cage door to finish swinging open
+          when: game => game.enemies.some(e => e.kind === 'wizardboss' && e.dead) &&
+            game.level.ending7.started && game.level.cage.openT <= 0,
           onOpen: g => { g.level.exit.locked = false; }, // his word lights the rainbow (release cannot: the stage-2 camp overlaps the exit rect)
           lines: [
             { speaker: 'The Unicorn King', text: 'You did it. I am… free. The storm breaks.' },

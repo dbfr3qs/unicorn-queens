@@ -30,8 +30,9 @@ export function drawEnemies(c, enemies) {
       const drew = drawSpriteFeet(c, e.kind, 0, scaleToHeight(e.kind, e.h * OVERHANG));
       c.restore();
       if (drew) {
-        // the sheet is only the body: hp pips, tells, flashes and the kind's hazards stay
-        getKind(e.kind).drawOverlay?.(c, e);
+        // the sheet is only the body: hp pips, tells, flashes and the kind's hazards stay.
+        // `top` is the drawn sheet's top edge, so pips and glows sit on the art, not the box.
+        getKind(e.kind).drawOverlay?.(c, e, { top: e.y + e.h - e.h * OVERHANG });
         continue;
       }
     }

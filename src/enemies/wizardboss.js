@@ -15,6 +15,7 @@ import { burst } from '../particles.js';
 import { hurtPlayer } from '../player.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { spriteGlow } from './glow.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
@@ -374,7 +375,8 @@ function drawColumns(c, e) {
   }
 }
 
-function drawPips(c, e) {
+// top: the body's top edge (the box's for the vector body, the drawn sheet's over a sprite)
+function drawPips(c, e, top = e.y) {
   const pipFull = e.stage === 1 ? '#b06aff' : '#e33'; // violet rune pips, then the sorcerer's
   const pipEmpty = e.stage === 1 ? '#3a2a5c' : '#522';
   if (!e.dead) { // hp pips: two rows of eight, world space above the boss
@@ -382,7 +384,7 @@ function drawPips(c, e) {
     for (let i = 0; i < n; i++) {
       const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? pipFull : pipEmpty;
-      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 24 + row * 7, 10, 4);
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, top - 24 + row * 7, 10, 4);
     }
   }
 }
@@ -425,11 +427,14 @@ function drawStaff(c, tipX, tipY) {
   c.beginPath(); c.moveTo(8, 20); c.lineTo(tipX, tipY); c.stroke();
 }
 
-function drawStaffGlow(c, e, { low, tipX, tipY }) {
+const staffGlowAlpha = (e, low) => {
   const ph = e.phase ?? 0; // the dormant boss never runs its update: no NaN glow
-  const glow = low ? 0.7 + 0.3 * Math.sin(ph * 3) : 0.5 + 0.25 * Math.sin(ph * 2);
-  c.globalAlpha = glow;
-  c.fillStyle = low ? '#ffd166' : '#9a6ac8'; // the staff-tip glow
+  return low ? 0.7 + 0.3 * Math.sin(ph * 3) : 0.5 + 0.25 * Math.sin(ph * 2);
+};
+const staffGlowColour = low => (low ? '#ffd166' : '#9a6ac8');
+function drawStaffGlow(c, e, { low, tipX, tipY }) {
+  c.globalAlpha = staffGlowAlpha(e, low);
+  c.fillStyle = staffGlowColour(low); // the staff-tip glow
   c.beginPath(); c.arc(tipX, tipY, low ? 7 : 5, 0, Math.PI * 2); c.fill();
   c.globalAlpha = 1;
 }
@@ -451,12 +456,15 @@ function drawSealGlint(c, e) {
 
 // The sprite path, the sorcerer form only (wantsSprite): the sheet is the body; this is
 // everything that depends on his state. What the vector draw shows by pose or colour is
-// drawn here as overlay-only cues: the staff and its tip raised to cast, an orange glow
-// for the slam telegraph (the hood drop and the planted staff), and the embered eyes and
-// gold staff tip of the last stand.
-function drawOverlay(c, e) {
+// drawn here as overlay-only cues, as glows over the sheet (the vector staff and eyes do
+// not sit on the sheet's): an orange glow for the slam telegraph (the hood drop and the
+// planted staff), the staff tip's colour over the sheet while he casts, and the gold of
+// the last stand's embered eyes and staff tip, pulsing at half the tip's alpha.
+function drawOverlay(c, e, { top = e.y } = {}) {
   drawWard(c, e);
-  const pose = sorcererPose(e), dy = pose.tele ? 6 : 0;
+  const pose = sorcererPose(e);
+  if (!pose.tele && pose.casting) spriteGlow(c, e, top, staffGlowColour(pose.low));
+  else if (!pose.tele && pose.low) spriteGlow(c, e, top, staffGlowColour(true), staffGlowAlpha(e, true) * 0.5);
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
@@ -466,18 +474,11 @@ function drawOverlay(c, e) {
     c.beginPath(); c.ellipse(0, 4, 22, 28, 0, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
   }
-  if (pose.low) { // the eyes: embered at <=3
-    c.fillStyle = '#ffd166';
-    c.fillRect(1, -23 + dy, 2, 2);
-    c.fillRect(5, -23 + dy, 2, 2);
-  }
-  if (pose.casting || pose.tele) drawStaff(c, pose.tipX, pose.tipY);
-  if (pose.casting || pose.tele || pose.low) drawStaffGlow(c, e, pose);
   c.restore();
   drawSealGlint(c, e);
   drawFlash(c, e);
   drawColumns(c, e);
-  drawPips(c, e);
+  drawPips(c, e, top);
 }
 
 function drawPig(c, e) {

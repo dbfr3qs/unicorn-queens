@@ -19,6 +19,7 @@
 import { resolveGroundCollision } from '../levels/level.js';
 import { P_GRAVITY, P_TERM_VY } from '../player.js';
 import { register } from './index.js';
+import { spriteGlow } from './glow.js';
 import { palette } from '../render/theme.js';
 
 function makeSnakeBrain(t) {
@@ -90,32 +91,25 @@ function makeSnakeBrain(t) {
 }
 
 // The sprite path: the sheet shows neither the strike telegraph nor the sleeping coil,
-// so the tongue flick (red, as the vector draw) and a sleeper's "z z" are drawn over it.
-function makeSnakeOverlay(big) {
-  return function drawOverlay(c, e) {
-    const asleep = e.sleeping, tell = !asleep && e.state === 'telegraph';
-    if (!asleep && !tell) return;
-    c.save();
-    c.translate(e.x, e.y + e.h); // the belly line, as the vector draw
-    c.scale(e.dir, 1);
-    const w = e.w;
-    if (asleep) { // two small z's above the coil
-      c.strokeStyle = palette.white;
-      c.lineWidth = 1.5;
-      c.beginPath();
-      c.moveTo(w / 2 + 6, -30); c.lineTo(w / 2 + 12, -30); c.lineTo(w / 2 + 6, -24); c.lineTo(w / 2 + 12, -24);
-      c.moveTo(w / 2 + 14, -38); c.lineTo(w / 2 + 18, -38); c.lineTo(w / 2 + 14, -34); c.lineTo(w / 2 + 18, -34);
-      c.stroke();
-    } else {
-      const headY = (big ? -26 : -24) + Math.sin(e.x * 0.3) * 1.5; // the risen head
-      c.strokeStyle = '#e33';
-      c.lineWidth = 1;
-      c.beginPath(); c.moveTo(w, headY + 4); c.lineTo(w + 6, headY + 3); c.stroke();
-      c.beginPath(); c.moveTo(w + 6, headY + 3); c.lineTo(w + 9, headY + 1);
-      c.moveTo(w + 6, headY + 3); c.lineTo(w + 9, headY + 5); c.stroke();
-    }
-    c.restore();
-  };
+// so the telegraph is the tongue's red glowing over the sheet (the vector tongue's spot
+// is off the sheet's head) and a sleeper's "z z" is drawn above it.
+function drawSnakeOverlay(c, e, { top = e.y } = {}) {
+  const asleep = e.sleeping, tell = !asleep && e.state === 'telegraph';
+  if (!asleep && !tell) return;
+  c.save();
+  if (tell) { spriteGlow(c, e, top, '#e33'); c.restore(); return; }
+  // the belly line, from the middle of the box: the sheet is centred on it (the vector
+  // body's frame starts at e.x, which flips off the sheet when the snake faces left)
+  c.translate(e.x + e.w / 2, e.y + e.h);
+  c.scale(e.dir, 1);
+  // two small z's above the coil
+  c.strokeStyle = palette.white;
+  c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(6, -30); c.lineTo(12, -30); c.lineTo(6, -24); c.lineTo(12, -24);
+  c.moveTo(14, -38); c.lineTo(18, -38); c.lineTo(14, -34); c.lineTo(18, -34);
+  c.stroke();
+  c.restore();
 }
 
 // A low, arching body: a flat band while patrolling, a rising hump (and
@@ -176,7 +170,7 @@ register({
     cooldown: 4, telegraph: 0.25, recover: 0.5,
   }),
   draw: makeSnakeDraw(false),
-  drawOverlay: makeSnakeOverlay(false),
+  drawOverlay: drawSnakeOverlay,
 });
 
 register({
@@ -191,5 +185,5 @@ register({
     cooldown: 6, telegraph: 0.3, recover: 0.6,
   }),
   draw: makeSnakeDraw(true),
-  drawOverlay: makeSnakeOverlay(true),
+  drawOverlay: drawSnakeOverlay,
 });

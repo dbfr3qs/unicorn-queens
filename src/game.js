@@ -102,9 +102,14 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
 
 // No simulation step is longer than 1/60 s: a slow frame is split into equal
 // sub-steps, so the jump, troll slab, boulders and stomp behave as at 60 fps.
+// A frame up to 10 % over 1/60 s is still one step: real 60 Hz timestamps
+// jitter past 16.667 ms, and splitting those would change the 60 fps feel.
 export const MAX_STEP = 1 / 60;
+export function stepCount(dt) {
+  return dt <= MAX_STEP * 1.1 ? 1 : Math.ceil(dt / MAX_STEP - 1e-6);
+}
 export function stepFrame(dt, viewW, fx) {
-  const n = Math.max(1, Math.ceil(dt / MAX_STEP - 1e-6));
+  const n = stepCount(dt);
   for (let i = 0; i < n; i++) update(dt / n, viewW, fx);
 }
 

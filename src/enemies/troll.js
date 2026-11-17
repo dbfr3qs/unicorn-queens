@@ -14,6 +14,7 @@ import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { shake } from '../camera.js';
 import { register } from './index.js';
+import { spriteGlow } from './glow.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 import { palette } from '../render/theme.js';
@@ -216,35 +217,35 @@ function drawFlash(c, e) {
   }
 }
 
-function drawPips(c, e) {
+// top: the body's top edge (the box's for the vector body, the drawn sheet's over a sprite)
+function drawPips(c, e, top = e.y) {
   if (!e.dead) { // hp pips, world space above the boss: two rows of 8 at 16 hp
     const n = pipMax(e, 16), per = n > 8 ? Math.ceil(n / 2) : n;
     for (let i = 0; i < n; i++) {
       const row = i < per ? 0 : 1, col = i % per;
       c.fillStyle = i < e.hp ? '#a3d977' : '#3a4034';
-      c.fillRect(e.x + e.w / 2 - per * 4 + col * 8, e.y - 21 + row * 7, 7, 4);
+      c.fillRect(e.x + e.w / 2 - per * 4 + col * 8, top - 21 + row * 7, 7, 4);
     }
   }
 }
 
 // The sprite path: the sheet is the body. What the vector draw shows by pose or colour
-// is drawn here over it: the raised club of each windup (overhead for the slam, cocked
-// for the lob, so the two still read apart) and the ember eye of phase 2.
-function drawOverlay(c, e) {
+// is drawn here over it as glows over the whole sheet (the vector club and eyes do not
+// sit on the sheet's staff and face): the slam windup in the house tell orange, the lob
+// windup in the throw gold (so the two still read apart), and phase 2's ember eyes as a
+// faint ember wash. The stone slab is a shield on the box, and stays.
+function drawOverlay(c, e, { top = e.y } = {}) {
+  if (e.phase2) spriteGlow(c, e, top, '#ff8c42', 0.3);
+  if (e.state === 'slamWindup') spriteGlow(c, e, top, '#ff8c42');
+  else if (e.state === 'lobWindup') spriteGlow(c, e, top, '#ffd166');
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
   c.translate(0, crouchOf(e));
-  if (e.phase2) {
-    c.fillStyle = '#ff8c42'; // ember eyes in phase 2
-    c.fillRect(6, -26, 5, 5);
-  }
-  if (e.state === 'slamWindup') drawClub(c, 4, -44);
-  else if (e.state === 'lobWindup') drawClub(c, 22, -44);
   drawShield(c, e);
   drawFlash(c, e);
   c.restore();
-  drawPips(c, e);
+  drawPips(c, e, top);
 }
 
 function draw(c, e) {

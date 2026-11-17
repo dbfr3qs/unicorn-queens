@@ -22,6 +22,7 @@ import { shake } from '../camera.js';
 import { burst } from '../particles.js';
 import { FX } from '../effects.js';
 import { register } from './index.js';
+import { spriteGlow } from './glow.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
 
@@ -208,13 +209,14 @@ function drawFlash(c, e, bodyY) {
 }
 
 // Overlay-only cues (the vector body shows these by pose and recolouring, which a
-// static sprite cannot). The open window: the vector web pattern, gold, over the sprite.
+// static sprite cannot). The open window: the vector web pattern, gold, over the sprite,
+// centred on the sheet's abdomen (the vector body's sits 12 px back, off the art).
 function drawOpenWeb(c, e, bodyY) {
   if (!isOpen(e)) return;
   c.strokeStyle = 'rgba(255, 209, 102, 0.95)';
   c.lineWidth = 1.5;
   for (let i = 0; i < 3; i++) {
-    c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.ellipse(0, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
   }
 }
 
@@ -277,15 +279,18 @@ function drawWorld(c, e) {
   }
 }
 
-// The sprite path: the sheet is the body; the web pillars, her tells and the pips stay.
-function drawOverlay(c, e) {
+// The sprite path: the sheet is the body; the web pillars, her tells and the pips stay
+// (her sheet's art stops well below the cell's top, so the box-anchored pips already sit
+// just above it). The vector fangs do not sit on the sheet's head, so the spit wind-up is
+// their pale glow over the whole sheet.
+function drawOverlay(c, e, { top = e.y } = {}) {
   const bodyY = bodyYOf(e);
+  if (e.state === 'spitWind') spriteGlow(c, e, top, 'rgba(240, 240, 248, 0.5)');
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h);
   c.scale(e.dir, 1);
   drawOpenWeb(c, e, bodyY);
   drawLungeTell(c, e, bodyY);
-  drawFangs(c, e, bodyY);
   drawFlash(c, e, bodyY);
   c.restore();
   drawWorld(c, e);

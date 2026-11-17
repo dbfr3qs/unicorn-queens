@@ -4,7 +4,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
 vi.mock('../src/sprites.js', async importActual => ({ ...(await importActual()), spriteReady: () => true }));
-vi.mock('../src/render/sprite.js', async importActual => ({ ...(await importActual()), drawSpriteFeet: () => true }));
+vi.mock('../src/render/sprite.js', async importActual => ({ ...(await importActual()), drawSpriteFeet: vi.fn(() => true) }));
 
 import { LEVELS } from '../src/levels/index.js';
 import { createPlayer } from '../src/player.js';
@@ -12,6 +12,7 @@ import { createCamera } from '../src/camera.js';
 import { spawnEnemy } from '../src/enemies.js';
 import { getKind } from '../src/enemies/index.js';
 import { drawEnemies } from '../src/render/enemies.js';
+import { drawSpriteFeet } from '../src/render/sprite.js';
 import { createRecordingCtx } from './helpers/recording-ctx.js';
 
 const LEVEL_OF = { troll: 2, dragon: 3, wizardboss: 6, queenboss: 8 };
@@ -42,7 +43,7 @@ const count = (lines, re) => lines.filter(s => re.test(s)).length;
 const pipMaxOf = (e, kind) => e.maxHp ?? getKind(kind).hp;
 const args = (...v) => v.map(x => Number(x.toFixed(3))).join(', '); // as the recording ctx rounds
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => { vi.restoreAllMocks(); drawSpriteFeet.mockClear(); });
 
 describe('boss overlays over a drawn sprite', () => {
   it('every boss has an overlay', () => {
@@ -52,7 +53,7 @@ describe('boss overlays over a drawn sprite', () => {
 
   it.each(BOSSES)('%s: its overlay is drawn over the sprite', kind => {
     const k = getKind(kind), spy = vi.spyOn(k, 'drawOverlay');
-    const e = boss(kind);
+    const e = boss(kind, s => { if (kind === 'wizardboss') s.stage = 2; }); // the form his sheet depicts
     drawEnemies(createRecordingCtx().ctx, [e]);
     expect(spy).toHaveBeenCalledWith(expect.anything(), e);
   });
@@ -61,8 +62,8 @@ describe('boss overlays over a drawn sprite', () => {
     ['troll', s => s.state = 'slamWindup'],
     ['troll', s => { s.state = 'shield'; s.shield = true; s.phase2 = true; s.flash = 0.1; }],
     ['dragon', s => { s.state = 'perch'; s.perch = 'breath'; s.flash = 0.1; }],
-    ['wizardboss', s => { s.state = 'swoopTele'; s.flash = 0.1; s.columns = [{ x: 5800, w: 40, h: 140, t: 0.5, baseY: 560 }]; }],
-    ['wizardboss', s => { s.state = 'stunned'; s.flash = 0.1; }],
+    ['wizardboss', s => { s.stage = 2; s.state = 'sealTele'; s.sealX = 5700; s.flash = 0.1; s.columns = [{ x: 5800, w: 40, h: 140, t: 0.5, baseY: 560 }]; }],
+    ['wizardboss', s => { s.stage = 2; s.state = 'windup'; s.hp = 2; }],
     ['wizardboss', s => { s.stage = 2; s.state = 'slamTele'; s.hp = 2; s.flash = 0.1; }],
     ['wizardboss', s => { s.stage = 2; s.state = 'idle'; }],
     ['queenboss', s => { s.wind = 'slam'; s.phaseT = 0.5; s.staggerT = 0.2; s.spikes = [{ x: 5500, t: 0.3 }, { x: 5600, t: 1.0 }]; }],
@@ -257,5 +258,39 @@ describe('the Frost Queen over a sprite', () => {
     expect(count(panels, /^fillRect\(.*, 8, 8\)$/)).toBe(5); // the armour panels
     expect(light).toContain('fillStyle=#ffe9b0'); // the light going up
     expect(count(light, /^fillRect\(.*, 14, 6\)$/)).toBe(0);
+  });
+});
+
+describe('the sheet is used only for the forms it depicts', () => {
+  const sheetDrawnFor = e => drawSpriteFeet.mock.calls.some(([, name]) => name === e.kind);
+
+  it.each([
+    ['the war-pig in flight', s => s.state = 'idle', 'fillStyle=#5a6488'], // the hog's body
+    ['the swooping war-pig', s => s.state = 'swoopTele', 'fillStyle=#5a6488'],
+    ['the downed hog', s => s.state = 'stunned', 'fillStyle=#3a4258'], // the folded legs
+    ['the shattering hog', s => s.state = 'shatter', 'fillStyle=#3a4258'],
+  ])('the wizard as %s keeps his vector drawing', (_, set, body) => {
+    const e = boss('wizardboss', set);
+    const spy = vi.spyOn(getKind('wizardboss'), 'drawOverlay');
+    const lines = drawn(e);
+    expect(sheetDrawnFor(e)).toBe(false);
+    expect(spy).not.toHaveBeenCalled();
+    expect(lines).toContain(body);
+  });
+
+  it('the wizard as the sorcerer gets his sheet and the overlay', () => {
+    const e = boss('wizardboss', s => { s.stage = 2; s.state = 'idle'; });
+    const spy = vi.spyOn(getKind('wizardboss'), 'drawOverlay');
+    const lines = drawn(e);
+    expect(sheetDrawnFor(e)).toBe(true);
+    expect(spy).toHaveBeenCalledWith(expect.anything(), e);
+    expect(lines).not.toContain('fillStyle=#2c2c48'); // not the vector robe
+  });
+
+  it('a kind with no wantsSprite still gets its sheet', () => {
+    expect(getKind('troll').wantsSprite).toBeUndefined();
+    const e = boss('troll');
+    drawn(e);
+    expect(sheetDrawnFor(e)).toBe(true);
   });
 });

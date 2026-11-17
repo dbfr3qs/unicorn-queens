@@ -20,7 +20,8 @@ export function drawEnemies(c, enemies) {
     // the damage path the instant the last arrow lands, but her six seconds of
     // coming apart are the whole point of ending it that way.
     if (e.dead && !e.dying) continue;
-    if (spriteReady(e.kind)) {
+    // a kind may decline its sheet for a form the sheet does not depict (wantsSprite)
+    if (spriteReady(e.kind) && (getKind(e.kind).wantsSprite?.(e) ?? true)) {
       c.save();
       // the BOTTOM of the box, not its middle: an enemy scaled past its box must grow
       // upward, or its feet sink through the platform it is standing on

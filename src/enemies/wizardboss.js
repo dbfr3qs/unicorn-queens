@@ -332,13 +332,17 @@ export function updateColumns(e, p, dt, fx, cam) {
   e.columns = e.columns.filter(c => !c.dead);
 }
 
-// His three presentations: the flight, the fall and the sorcerer.
+// His three presentations: the flight, the fall and the sorcerer. The sheet is the
+// sorcerer, so it is wanted only in that form (the pig and the downed hog keep draw).
 const isDowned = e => e.state === 'shatter' || e.state === 'crash' || e.state === 'stunned';
+const formOf = e => (e.stage !== 1 ? 'sorcerer' : isDowned(e) ? 'downed' : 'pig');
+const wantsSprite = e => formOf(e) === 'sorcerer';
 
 function draw(c, e) {
-  if (e.stage === 1 && !isDowned(e)) {
+  const form = formOf(e);
+  if (form === 'pig') {
     drawPig(c, e); // the war-pig + the mounted wizard + the rune
-  } else if (e.stage === 1) {
+  } else if (form === 'downed') {
     drawDowned(c, e); // the crashed pig + the dazed wizard (or the shatter shake)
   } else {
     drawSorcerer(c, e);
@@ -347,8 +351,8 @@ function draw(c, e) {
   drawPips(c, e);
 }
 
-// Overlay pieces, shared by draw and drawOverlay. The columns, pips, rune, ward, glint
-// and flash are world space; the others are in the frame each presentation sets up.
+// Overlay pieces, shared by draw and drawOverlay. The columns, pips, ward, glint and
+// flash are world space; the staff pieces are in the sorcerer's frame.
 function drawColumns(c, e) {
   // the seal columns (world-space, like the Queen's pillars): rise, stand,
   // then sink back fading — the player must see the box before it bites
@@ -389,30 +393,6 @@ function drawFlash(c, e) {
     c.fillStyle = '#fff';
     c.fillRect(e.x, e.y, e.w, e.h);
     c.globalAlpha = 1;
-  }
-}
-
-// the rune on the near flank (the only thing that takes hits)
-function drawRune(c, e) {
-  const rx = e.weakSide === -1 ? e.x + 8 : e.x + e.w - 32;
-  const ry = e.y + 12;
-  c.save();
-  c.translate(rx + 12, ry + 12);
-  c.rotate(Math.PI / 4);
-  c.globalAlpha = 0.7 + 0.3 * Math.sin(e.phase * 1.5); // the pulse
-  c.fillStyle = '#6a3a9a';
-  c.fillRect(-10, -10, 20, 20);
-  c.fillStyle = '#9a6ac8';
-  c.fillRect(-5, -5, 10, 10);
-  c.restore();
-}
-
-// the daze stars (pure in e.phase), in the downed frame (origin: his feet)
-function drawDazeStars(c, e) {
-  c.fillStyle = '#ffd166';
-  for (let i = 0; i < 3; i++) {
-    const a = e.phase + (i * 2 * Math.PI) / 3;
-    c.fillRect(Math.cos(a) * 12 - 1, -54 + Math.sin(a) * 3, 3, 3);
   }
 }
 
@@ -469,59 +449,32 @@ function drawSealGlint(c, e) {
   }
 }
 
-// The sprite path: the sheet (the sorcerer) is the body in every presentation; this is
-// everything that depends on his state. What the vector draws show by pose or colour is
-// drawn here as overlay-only cues: on the pig, the staff tip glowing for the bolt and
-// the hog's eye and a gold glow for the swoop telegraph; on the sorcerer, the staff and
-// its tip raised to cast, an orange glow for the slam telegraph (the hood drop and the
-// planted staff), and the embered eyes and gold staff tip of the last stand.
+// The sprite path, the sorcerer form only (wantsSprite): the sheet is the body; this is
+// everything that depends on his state. What the vector draw shows by pose or colour is
+// drawn here as overlay-only cues: the staff and its tip raised to cast, an orange glow
+// for the slam telegraph (the hood drop and the planted staff), and the embered eyes and
+// gold staff tip of the last stand.
 function drawOverlay(c, e) {
-  if (e.stage === 1 && !isDowned(e)) {
-    c.save();
-    c.translate(e.x + e.w / 2, e.y + e.h / 2);
-    c.scale(e.dir, 1);
-    const bob = Math.sin(e.phase);
-    if (e.state === 'windup') { // the staff tip, glowing for the bolt
-      c.fillStyle = '#ffd166';
-      c.beginPath(); c.arc(-1, -34 + bob * 2, 5, 0, Math.PI * 2); c.fill();
-    }
-    if (e.state === 'swoopTele') { // the hog lowered, its eye glowing
-      c.globalAlpha = 0.4;
-      c.fillStyle = '#ffd166';
-      c.beginPath(); c.ellipse(0, 4, 30, 18, 0, 0, Math.PI * 2); c.fill();
-      c.globalAlpha = 1;
-      c.fillRect(26, -4, 3, 3);
-    }
-    c.restore();
-    drawRune(c, e);
-  } else if (e.stage === 1) {
-    const tremble = e.state === 'shatter' ? Math.sin(e.phase * 20) * 2 : 0;
-    c.save();
-    c.translate(e.x + e.w / 2 + tremble, e.y + e.h);
-    drawDazeStars(c, e);
-    c.restore();
-  } else {
-    drawWard(c, e);
-    const pose = sorcererPose(e), dy = pose.tele ? 6 : 0;
-    c.save();
-    c.translate(e.x + e.w / 2, e.y + e.h / 2);
-    c.scale(e.dir, 1);
-    if (pose.tele) { // the slam telegraph: the house tell orange over the body
-      c.globalAlpha = 0.45;
-      c.fillStyle = '#ff8c42';
-      c.beginPath(); c.ellipse(0, 4, 22, 28, 0, 0, Math.PI * 2); c.fill();
-      c.globalAlpha = 1;
-    }
-    if (pose.low) { // the eyes: embered at <=3
-      c.fillStyle = '#ffd166';
-      c.fillRect(1, -23 + dy, 2, 2);
-      c.fillRect(5, -23 + dy, 2, 2);
-    }
-    if (pose.casting || pose.tele) drawStaff(c, pose.tipX, pose.tipY);
-    if (pose.casting || pose.tele || pose.low) drawStaffGlow(c, e, pose);
-    c.restore();
-    drawSealGlint(c, e);
+  drawWard(c, e);
+  const pose = sorcererPose(e), dy = pose.tele ? 6 : 0;
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  if (pose.tele) { // the slam telegraph: the house tell orange over the body
+    c.globalAlpha = 0.45;
+    c.fillStyle = '#ff8c42';
+    c.beginPath(); c.ellipse(0, 4, 22, 28, 0, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
   }
+  if (pose.low) { // the eyes: embered at <=3
+    c.fillStyle = '#ffd166';
+    c.fillRect(1, -23 + dy, 2, 2);
+    c.fillRect(5, -23 + dy, 2, 2);
+  }
+  if (pose.casting || pose.tele) drawStaff(c, pose.tipX, pose.tipY);
+  if (pose.casting || pose.tele || pose.low) drawStaffGlow(c, e, pose);
+  c.restore();
+  drawSealGlint(c, e);
   drawFlash(c, e);
   drawColumns(c, e);
   drawPips(c, e);
@@ -560,7 +513,18 @@ function drawPig(c, e) {
   c.fillStyle = e.state === 'windup' ? '#ffd166' : '#9a6ac8'; // the staff tip
   c.beginPath(); c.arc(-1, -34 + (tele ? 4 : bob * 2), 3, 0, Math.PI * 2); c.fill();
   c.restore();
-  drawRune(c, e);
+  // the rune on the near flank (the only thing that takes hits)
+  const rx = e.weakSide === -1 ? e.x + 8 : e.x + e.w - 32;
+  const ry = e.y + 12;
+  c.save();
+  c.translate(rx + 12, ry + 12);
+  c.rotate(Math.PI / 4);
+  c.globalAlpha = 0.7 + 0.3 * Math.sin(e.phase * 1.5); // the pulse
+  c.fillStyle = '#6a3a9a';
+  c.fillRect(-10, -10, 20, 20);
+  c.fillStyle = '#9a6ac8';
+  c.fillRect(-5, -5, 10, 10);
+  c.restore();
   drawFlash(c, e);
 }
 
@@ -580,7 +544,11 @@ function drawDowned(c, e) {
   c.beginPath(); c.arc(0, -47, 5, 0, Math.PI * 2); c.fill(); // the hood
   c.fillStyle = '#8a93b8'; // the dropped staff
   c.fillRect(10, -40, 2, 28);
-  drawDazeStars(c, e);
+  c.fillStyle = '#ffd166'; // the daze stars (pure in e.phase)
+  for (let i = 0; i < 3; i++) {
+    const a = e.phase + (i * 2 * Math.PI) / 3;
+    c.fillRect(Math.cos(a) * 12 - 1, -54 + Math.sin(a) * 3, 3, 3);
+  }
   c.restore();
   drawFlash(c, e);
 }
@@ -625,5 +593,5 @@ register({
   weakPoint,
   arrowBlocked: e => warded(e) || FALLING.has(e.state),
   onHit, onDeath,
-  update, draw, drawOverlay,
+  update, draw, drawOverlay, wantsSprite,
 });

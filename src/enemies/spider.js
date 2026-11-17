@@ -84,8 +84,9 @@ export function makeSpiderBrain() {
         e.x = tx;
         e.y = ty;
       } else {
-        e.x += (dx / d) * S_CLIMB_SPEED * dt;
-        e.y += (dy / d) * S_CLIMB_SPEED * dt;
+        const step = Math.min(S_CLIMB_SPEED * dt, d);
+        e.x += (dx / d) * step;
+        e.y += (dy / d) * step;
       }
     }
   };

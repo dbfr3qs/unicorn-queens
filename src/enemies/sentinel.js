@@ -75,7 +75,7 @@ register({
   hitSound: 'clank',
   stompSound: 'gear', stompFx: FX.gearBurst, // a burst of brass shards
   arrowBlocked: (e, a) => e.shieldUp &&
-    ((a.vx > 0 && e.dir > 0) || (a.vx < 0 && e.dir < 0)), // a front arrow into the shield
+    ((a.vx > 0 && e.dir < 0) || (a.vx < 0 && e.dir > 0)), // a front arrow into the shield
   update,
   draw,
 });

@@ -139,3 +139,16 @@ describe('contact', () => {
     expect(p.hp).toBe(hp0 - 1);
   });
 });
+
+describe('walking home', () => {
+  it('outside its band and no longer chasing, it walks back — never jumps', () => {
+    const { l, e, p, cam } = rig();
+    e.x = e.maxX + 158; p.y = e.y - 400; // player out of aggro height; far, so no dart
+    let prev = e.x;
+    for (let i = 0; i < 600 && e.x + e.w > e.maxX; i++) {
+      getKind('hare').update(e, { p, lvl: l, dt: 1 / 60, fx: fx([]), cam });
+      expect(Math.abs(e.x - prev)).toBeLessThan(5); prev = e.x;
+    }
+    expect(e.x + e.w).toBeLessThanOrEqual(e.maxX + 1);
+  });
+});

@@ -8,6 +8,7 @@ import { reseed } from './helpers/seeded-rng.js'; // deterministic attack picks
 import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V, HURT_INVULN } from '../src/enemies.js';
+import { getKind } from '../src/enemies/index.js';
 import { createCamera } from '../src/camera.js';
 import { resetArrows, fireArrow, updateArrows } from '../src/arrows.js';
 import { fireFireball, fireballs, resetFireballs, updateFireballs, resetCones, updateCones, cones } from '../src/projectiles.js';
@@ -287,5 +288,37 @@ describe('the range rule', () => {
     expect(zombie.dead).toBe(true);
     expect(dr.dead).toBe(false);
     expect(dr.hp).toBe(14);
+  });
+});
+
+describe('hit while low', () => {
+  // Each low move has an ascent leg at its own speed; a hit there must
+  // leave by that leg, never jump to the band in one frame.
+  const rise = (setup, speed) => {
+    const l = lvl(), e = d(), p = createPlayer(l), k = getKind('dragon');
+    p.x = 700; p.y = l.groundY - p.h;
+    setup(e, l);
+    damageEnemy(e, fx([]), createCamera());
+    expect(e.state).toBe('stagger');
+    const y0 = e.y;
+    let prev = e.y, idle = 0;
+    for (let i = 0; i < 180 && idle < 10; i++) { // until 10 frames into idle
+      k.update(e, { p, lvl: l, dt: DT, fx: fx([]) });
+      if (e.state === 'idle') idle++;
+      expect(Math.abs(e.y - prev)).toBeLessThanOrEqual(speed(k) / 60 + 1e-9);
+      prev = e.y;
+    }
+    expect(e.y).toBeLessThan(y0); // she rose
+    expect(e.state).toBe('idle');
+    expect(e.y).toBeGreaterThanOrEqual(k.hoverMin);
+    expect(e.y).toBeLessThanOrEqual(k.hoverMax); // back in her band
+  };
+
+  it('a dragon hit on her perch rises by the perch ascent, not in one frame', () => {
+    rise((e, l) => { e.state = 'perch'; e.perch = 'recover'; e.t = 0.5; e.y = l.groundY - e.h - 6; }, k => k.perchSpeed);
+  });
+
+  it('a dragon hit at the low point of her dive rises by the dive ascent', () => {
+    rise((e, l) => { e.state = 'dive'; e.dive = 'low'; e.t = 0.7; e.diveDir = 1; e.y = l.groundY - 55; }, k => k.diveSpeed);
   });
 });

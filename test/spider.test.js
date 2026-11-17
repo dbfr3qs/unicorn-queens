@@ -131,3 +131,12 @@ describe('the pounce', () => {
     expect(e.state).toBe('hang');
   });
 });
+
+describe('low frame rate', () => {
+  it('at 20 fps a climbing spider still reaches its anchor and hangs', () => {
+    const e = spawnEnemy({ kind: 'spider', x: 800, y: 410 }, lvl());
+    e.state = 'climb'; e.x = e.anchorX; e.y = e.anchorY + 46 + 10;
+    for (let i = 0; i < 40; i++) getKind('spider').update(e, { p: p(), lvl: lvl(), dt: 1 / 20, fx });
+    expect(e.state).not.toBe('climb');
+  });
+});

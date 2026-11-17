@@ -45,8 +45,16 @@ function update(e, { p, lvl, dt, fx }) {
   e.x += e.vx * dt;
   e.y += e.vy * dt;
   if (e.state === 'patrol') { // turn at the bounds
-    if (e.x < e.minX) { e.x = e.minX; e.dir = 1; }
-    else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
+    // An ordinary patrol turn overshoots by at most one frame's travel:
+    // snap to the edge. Further out (after a hop) it walks back.
+    const step = Math.abs(e.vx) * dt;
+    if (e.x < e.minX) {
+      if (e.minX - e.x <= step) e.x = e.minX;
+      e.dir = 1;
+    } else if (e.x + e.w > e.maxX) {
+      if (e.x + e.w - e.maxX <= step) e.x = e.maxX - e.w;
+      e.dir = -1;
+    }
   }
   resolveGroundCollision(e, lvl, dt);
   if (e.state === 'hop' && e.onGround) { e.state = 'recover'; e.recoverT = 0.4; e.vx = 0; }

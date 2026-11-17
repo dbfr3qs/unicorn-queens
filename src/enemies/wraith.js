@@ -48,6 +48,20 @@ function update(e, { p, lvl, dt }) {
   }
 }
 
+// The sprite path: a sheet cannot fade, so the wind's thickening of the snowfield wraiths
+// (and the release fade) is shown as the frost rim, drawn at the wraith's own alpha.
+// Bound arena wraiths are always solid and get none.
+function drawOverlay(c, e) {
+  if (e.bound && !e.freed) return;
+  c.save();
+  c.globalAlpha = wraithAlpha(e, windPhase(game.gameTime));
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.strokeStyle = '#8fd3f4';
+  c.lineWidth = 1.5;
+  c.strokeRect(-13.5, -15.5, 27, 32);
+  c.restore();
+}
+
 function draw(c, e) {
   const phase = windPhase(game.gameTime); // bound wraiths ignore it (always solid)
   c.save();
@@ -78,4 +92,5 @@ register({
   stompable: false, // the ghost bounce: the stomp rebounds, the wraith lives
   update,
   draw,
+  drawOverlay,
 });

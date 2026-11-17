@@ -60,6 +60,19 @@ function update(e, { p, lvl, dt, fx }) {
   if (e.state === 'hop' && e.onGround) { e.state = 'recover'; e.recoverT = 0.4; e.vx = 0; }
 }
 
+// The sprite path: a sheet cannot crouch, so the dart's wind-up (the 0.3 s crouch) is
+// shown as the game's orange tell mark over the hare's head.
+function drawOverlay(c, e) {
+  if (e.state !== 'crouch') return;
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  c.fillStyle = '#ff8c42'; // the tell colour (mage windup orb, spider boss lunge)
+  c.fillRect(-1.5, -28, 3, 8);
+  c.fillRect(-1.5, -17, 3, 3);
+  c.restore();
+}
+
 function draw(c, e) {
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
@@ -89,4 +102,5 @@ register({
   stompSound: 'puff', stompFx: FX.fluffPuff, // stomps: a puff over the stomp
   update,
   draw,
+  drawOverlay,
 });

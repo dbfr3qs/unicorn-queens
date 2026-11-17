@@ -95,15 +95,6 @@ export const SPRITES = {
     "hitbox": null,
     "w": 1106
   },
-  "bg_glacier_ice": {
-    "anchor": "tile",
-    "file": "bg_glacier_ice.png",
-    "fps": 0,
-    "frames": 1,
-    "h": 200,
-    "hitbox": null,
-    "w": 459
-  },
   "bg_mire_sky": {
     "anchor": "tile",
     "file": "bg_mire_sky.png",

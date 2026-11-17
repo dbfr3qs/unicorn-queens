@@ -199,16 +199,17 @@ describe('the keyboard audio unlock', () => {
     expect(b.calls).not.toContain('resume');
   });
 
-  it('runs on every initMusic call, not just the first', async () => {
+  it('initMusic keeps trying to resume on every call, but initialises once', async () => {
     // input.js calls initMusic on every keydown. The press that starts
     // the ~200 KB fetch is rarely the one that gets to unlock the
     // context, so later presses have to keep trying.
     const b = unlockable();
+    b.ctx.resume = () => b.calls.push('resume'); // the browser keeps refusing
     await initMusic(async () => b);
-    const after = b.calls.length;
     await initMusic(async () => b);
     await initMusic(async () => b);
-    expect(b.calls.length).toBeGreaterThan(after);
+    expect(b.calls.filter(c => c === 'resume').length).toBeGreaterThan(2);
+    expect(b.calls.filter(c => c === 'initAudio')).toHaveLength(1);
   });
 
   it('swallows a browser that refuses to resume', () => {
@@ -251,5 +252,39 @@ describe('initMusic', () => {
     setTrack('meadow');
     await initMusic(async () => r);
     expect(evaluated(r)).toHaveLength(1);
+  });
+});
+
+describe('Strudel audio initialisation', () => {
+  let resumes, fake, resolveInit;
+  beforeEach(() => {
+    resumes = 0;
+    const ctx = { state: 'suspended', resume() { resumes++; } };
+    fake = {
+      ...recorder(), initAudioCalls: 0,
+      initAudio() { fake.initAudioCalls++; return new Promise(r => { resolveInit = r; }); },
+      getAudioContext: () => ctx,
+    };
+    fake.evaluated = fake.calls.filter(() => false);
+    fake.evaluate = src => fake.evaluated.push(src);
+  });
+
+  it('initAudio runs once however many gestures arrive; resume runs each time', () => {
+    _setBackend(fake); for (let i = 0; i < 5; i++) resumeAudio();
+    expect(fake.initAudioCalls).toBe(1); expect(resumes).toBeGreaterThanOrEqual(5);
+  });
+
+  it('the pattern is not evaluated until the worklets have loaded, and then only the current track', async () => {
+    _setBackend(fake); setTrack('meadow'); setTrack('peak');
+    expect(fake.evaluated).toHaveLength(0);
+    resolveInit(); await Promise.resolve(); await Promise.resolve();
+    expect(fake.evaluated).toHaveLength(1);
+    expect(fake.evaluated[0]).toMatch(/setcpm/);
+    expect(music.playing).toBe(true);
+  });
+
+  it('a backend with no initAudio still evaluates at once', () => {
+    _setBackend({ ...fake, initAudio: undefined }); setTrack('meadow');
+    expect(fake.evaluated).toHaveLength(1);
   });
 });

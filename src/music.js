@@ -37,6 +37,12 @@ export const music = {
 let backend = null;
 // a setTrack() that arrived before the bundle finished loading
 let pending = null;
+// Strudel's initAudio() promise (worklets loaded), made once per backend;
+// audioSettled flips when it resolves or rejects. audioWaiting is true
+// while a setTrack() is queued behind it.
+let audioReady = null;
+let audioSettled = false;
+let audioWaiting = false;
 
 /**
  * The gain every track multiplies itself by, read per event.
@@ -133,9 +139,18 @@ export function musicSuspended() {
   try { return backend?.getAudioContext?.()?.state === 'suspended'; } catch { return false; }
 }
 
+function ensureAudio() {
+  if (audioReady || !backend?.initAudio) return;
+  audioSettled = false;
+  const settle = () => { audioSettled = true; };
+  let p;
+  try { p = Promise.resolve(backend.initAudio()); } catch { p = Promise.resolve(); }
+  audioReady = p.then(settle, settle);
+}
+
 export function resumeAudio() {
   try {
-    backend?.initAudio?.();
+    ensureAudio();
     const ctx = backend?.getAudioContext?.();
     if (!ctx) return;
     if (ctx.state !== 'running') ctx.resume();
@@ -168,6 +183,24 @@ export function setTrack(levelName) {
 
   if (!backend) { pending = levelName; return; }
 
+  // The real initAudio() loads the worklets asynchronously; a pattern
+  // evaluated before they exist plays its first notes on the wrong voices.
+  ensureAudio();
+  if (audioReady && !audioSettled) {
+    if (!audioWaiting) {
+      audioWaiting = true;
+      const ready = audioReady;
+      ready.then(() => {
+        audioWaiting = false;
+        if (ready === audioReady && backend && music.track !== null) startTrack(music.track);
+      });
+    }
+    return;
+  }
+  startTrack(levelName);
+}
+
+function startTrack(levelName) {
   const src = trackFor(levelName);
   if (!src) {
     backend.hush();
@@ -222,6 +255,9 @@ export function _setBackend(b) {
 export function _reset() {
   backend = null;
   pending = null;
+  audioReady = null;
+  audioSettled = false;
+  audioWaiting = false;
   initMusic.inFlight = null;
   resumeAudio.announced = false;
   Object.assign(music, {

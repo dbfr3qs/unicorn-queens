@@ -8,6 +8,7 @@ import { NOOK_COVER } from './key.js'; // level 3: the wall the key nook owns
 import { DEAD_SINK } from './mire.js'; // level 6: how far a dead tree's roots go under the line
 import { drawWall, drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
 import { lightLevel, clockCuts } from '../clock.js'; // level 8: the spring dim (M3 shared read)
+import { onScreen, onScreenX } from './cull.js';
 
 export function drawZones(c, lvl, cam, t, viewW) {
   const left = cam.x - 160, right = cam.x + viewW + 160; // margin for parallax
@@ -78,6 +79,7 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     for (let wy = 40, row = 0; wy < gy; wy += 28, row++) {
       const off = row % 2 ? 32 : 0; // staggered vertical joints
       for (let wx = Math.floor(zx0 / 64) * 64 + off; wx < zx1; wx += 64) {
+        if (!onScreen(wx, 3)) continue;
         c.fillRect(wx - cam.x, wy, 3, 28);
       }
     }
@@ -85,6 +87,7 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   const every = isHall ? 200 : 250; // torch interval
   const clear = a => !(lvl.keyNook && a > NOOK_COVER.x0 - 12 && a < NOOK_COVER.x1 + 12);
   for (let wx = Math.ceil(zx0 / every) * every + 60; wx < zx1; wx += every) {
+    if (!onScreen(wx - 70, every / 2 + 104)) continue; // the torch's glow (r 70) to the alcove's far edge
     const x = wx - cam.x;
     if (clear(wx)) { // a torch, unless the nook's arch stands where it would
       const fl = Math.sin(t * 7 + (wx * 0.71) % 6.28) * 2; // seeded flicker
@@ -117,7 +120,7 @@ function drawDungeon(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     // big pillars: on the torches' 200 px beat, 50 px east of each torch, which
     // is the gap between a torch and the alcove that follows it — the 240 px
     // beat they had put one across an alcove every so often
-    for (let wx = Math.ceil(zx0 / every) * every + 60 + 50; wx < zx1 - 20; wx += every) drawPillar(c, 'pillar_dungeon', wx - cam.x, gy, 260, '#31200f', '#41290f');
+    for (let wx = Math.ceil(zx0 / every) * every + 60 + 50; wx < zx1 - 20; wx += every) if (onScreen(wx - 120, 240)) drawPillar(c, 'pillar_dungeon', wx - cam.x, gy, 260, '#31200f', '#41290f');
   }
 }
 
@@ -137,6 +140,7 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   for (let wy = 40, row = 0; wy < gy; wy += 28, row++) {
     const off = row % 2 ? 32 : 0; // staggered vertical joints
     for (let wx = Math.floor(zx0 / 64) * 64 + off; wx < zx1; wx += 64) {
+      if (!onScreen(wx - 3, 12)) continue;
       c.fillStyle = '#0c130e';
       c.fillRect(wx - cam.x, wy, 3, 28);
       if ((wx * 7 + row * 13) % 11 === 0) { // moss tuft on the joint
@@ -149,17 +153,19 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   } // the generated wall_deep texture is already mossy, so its tufts come with the bricks
   c.fillStyle = '#4a7a3a'; // phosphorescent moss glow spots
   for (let wx = Math.ceil(zx0 / 260) * 260 + 90; wx < zx1; wx += 260) {
+    if (!onScreen(wx - 26, 52)) continue;
     c.globalAlpha = 0.08 + Math.sin(t * 0.8 + (wx * 0.13) % 6.28) * 0.03;
     c.beginPath(); c.arc(wx - cam.x, 380, 26, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
   }
   c.fillStyle = '#3a5a4a'; // drips: seeded x, time-phased fall
   for (let wx = Math.ceil(zx0 / 140) * 140 + 40; wx < zx1; wx += 140) {
+    if (!onScreen(wx, 2)) continue;
     const ph = (t * 0.45 + (wx * 0.37) % 1) % 1;
     c.fillRect(wx - cam.x, 200 + ph * (gy - 210), 2, 7);
   }
   for (let wx = Math.ceil(zx0 / 230) * 230 + 60; wx < zx1; wx += 230) { // puddles
-    if ((lvl.lava ?? []).some(m => wx + 24 > m.x && wx - 24 < m.x + m.w)) continue;
+    if ((lvl.lava ?? []).some(m => wx + 24 > m.x && wx - 24 < m.x + m.w) || !onScreen(wx - 24, 48)) continue;
     c.fillStyle = '#0a120c';
     c.fillRect(wx - cam.x - 24, gy, 48, 5);
     c.fillStyle = '#1d3324'; // faint reflection streak
@@ -167,6 +173,7 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   }
   const every = isHall ? 250 : 320; // torch interval
   for (let wx = Math.ceil(zx0 / every) * every + 60; wx < zx1; wx += every) {
+    if (!onScreen(wx - 70, 140)) continue; // the glow is the widest part (r 70)
     const x = wx - cam.x;
     const fl = Math.sin(t * 7 + (wx * 0.71) % 6.28) * 2; // seeded flicker
     c.save(); // warm glow, dimmer than the undercroft
@@ -184,11 +191,11 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     c.fillRect(x - 2, 296 + fl * 0.3, 4, 8);
   }
   if (isHall) {
-    for (const px of [3680, 3940, 4420, 4700]) drawPillar(c, 'pillar_deep', px - cam.x, gy, 260, '#1a241a', '#243324'); // dark-green pillars, clear of the shaft
-    for (const px of [3820, 4300, 4600]) drawBones(c, px - cam.x, gy);
+    for (const px of [3680, 3940, 4420, 4700]) if (onScreen(px - 120, 240)) drawPillar(c, 'pillar_deep', px - cam.x, gy, 260, '#1a241a', '#243324'); // dark-green pillars, clear of the shaft
+    for (const px of [3820, 4300, 4600]) if (onScreen(px, 40)) drawBones(c, px - cam.x, gy);
   } else {
-    for (const px of [2750, 3350]) drawBones(c, px - cam.x, gy); // vault dressing
-    drawTreasure(c, 3480 - cam.x, gy);
+    for (const px of [2750, 3350]) if (onScreen(px, 40)) drawBones(c, px - cam.x, gy); // vault dressing
+    if (onScreen(3480, 40)) drawTreasure(c, 3480 - cam.x, gy);
   }
 }
 
@@ -250,6 +257,7 @@ function drawHillRidge(c, peaks, period, off, color, gy, trees) {
       c.fillStyle = trees;
       for (const p of peaks) {
         const tx = p.x + p.w / 2 + k * period;
+        if (!onScreenX(tx - shift - 9, 18)) continue; // the tree line rides the same shift as the ridge (the translate above)
         c.beginPath();
         c.moveTo(tx - 9, gy - p.h);
         c.lineTo(tx, gy - p.h - 26);
@@ -286,7 +294,7 @@ function drawForestZone(c, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
       const bx0 = DEEP_X - DEEP_RAMP + (DEEP_RAMP / BANDS) * b;
       const bx1 = b === BANDS - 1 ? Math.min(zx1, lvl.width) : bx0 + DEEP_RAMP / BANDS;
       const x0 = Math.max(zx0, bx0), x1 = Math.min(zx1, lvl.width, bx1);
-      if (x1 <= x0) continue;
+      if (x1 <= x0 || !onScreen(x0, x1 - x0)) continue;
       c.fillStyle = `rgba(8, 30, 16, ${(0.18 * (b + 1)) / BANDS})`;
       c.fillRect(x0 - cam.x, 0, x1 - x0, lvl.groundY);
     }
@@ -414,6 +422,7 @@ function drawMireFireflies(c, zx0, zx1, cam, t) {
     const hy = 240 + ((i * 53) % 200);
     const x = hx + Math.sin(t * 0.4 + i * 1.7) * 30 - cam.x;
     const y = hy + Math.sin(t * 0.7 + i * 2.3) * 18;
+    if (!onScreenX(x, 2)) continue;
     c.globalAlpha = Math.max(0.1, 0.45 + Math.sin(t * 2 + i * 2.9) * 0.35);
     c.fillRect(x, y, 2, 2);
   }
@@ -509,6 +518,7 @@ function drawPeakSky(c, sx0, w, lvl, cam, t, clear) {
   for (let i = 0; i < n; i++) { // seeded star field, parallax 0.05
     const x = ((i * 331 + 97) % 997) / 997 * 1200 - cam.x * 0.05;
     const y = ((i * 211 + 41) % 883) / 883 * (lvl.groundY - 160);
+    if (!onScreenX(x, 2)) continue;
     c.globalAlpha = 0.4 + 0.3 * Math.sin(t * 1.3 + i * 1.7);
     c.fillRect(x, y, 2, 2);
   }
@@ -536,6 +546,7 @@ function drawSnowLayer(c, zx0, zx1, lvl, cam, t, par, n, r, speed, tilt) {
     const wx = zx0 + (seed / 997) * w;
     const fall = (t * speed + (seed * 13) % lvl.groundY) % lvl.groundY;
     const x = wx - cam.x * par + tilt;
+    if (!onScreenX(x, r)) continue;
     c.globalAlpha = par > 0.4 ? 0.8 : 0.5;
     c.fillRect(x, fall, r, r);
   }
@@ -599,6 +610,7 @@ function drawSpireInterior(c, zx0, zx1, sx0, sx1, lvl, cam, t) {
     for (let wy = 40, row = 0; wy < gy; wy += 28, row++) {
       const off = row % 2 ? 32 : 0; // staggered vertical joints
       for (let wx = Math.floor(zx0 / 64) * 64 + off; wx < zx1; wx += 64) {
+        if (!onScreen(wx, 3)) continue;
         c.fillRect(wx - cam.x, wy, 3, 28);
       }
     }
@@ -607,6 +619,7 @@ function drawSpireInterior(c, zx0, zx1, sx0, sx1, lvl, cam, t) {
     const hx = zx0 + 150 + i * ((zx1 - zx0 - 300) / 6);
     const x = hx + Math.sin(t * 0.3 + i * 1.9) * 40 - cam.x;
     const y = 200 + Math.sin(t * 0.45 + i * 2.6) * 90 + ((i * 53) % 120);
+    if (!onScreenX(x - 14, 28)) continue;
     c.fillStyle = '#ffd9a0';
     c.globalAlpha = 0.25 + 0.15 * Math.sin(t * 3 + i * 2.2); // the ~2 s pulse
     c.beginPath(); c.arc(x, y, 14, 0, Math.PI * 2); c.fill();
@@ -627,6 +640,7 @@ function drawCloudSea(c, sx0, w, lvl, cam, t, viewW) {
   for (let i = 0; i < 5; i++) { // the drifting puffs
     const span = viewW + 420;
     const cx = (((i * 300 + 120 - t * (10 + i * 3)) % span) + span) % span - 210 + sx0;
+    if (!onScreenX(cx - 90 - i * 14, 180 + i * 28)) continue;
     c.beginPath(); c.ellipse(cx, gy - 46 + (i % 2) * 10, 90 + i * 14, 14 + i * 2, 0, 0, Math.PI * 2); c.fill();
   }
   c.fillStyle = '#f0eefc'; // the bright crest line
@@ -669,9 +683,10 @@ function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   if (isHall) {
     for (let wx = zx0 + 90; wx < zx1; wx += 180) { // columns — none in the exit doorway
       if (lvl.exit && wx > lvl.exit.x - 40 && wx < lvl.exit.x + lvl.exit.w + 40) continue;
-      drawPillar(c, 'pillar', wx - cam.x, lvl.groundY, 250, '#2c1c4a', '#3a2760', 24);
+      if (onScreen(wx - 120, 240)) drawPillar(c, 'pillar', wx - cam.x, lvl.groundY, 250, '#2c1c4a', '#3a2760', 24);
     }
     for (let wx = zx0 + 180; wx < zx1; wx += 360) { // banners
+      if (!onScreen(wx - 60, 120)) continue;
       const x = wx - cam.x;
       if (spriteReady('banner')) { // the hanging, rod to hem, top at 84
         c.save();
@@ -693,6 +708,7 @@ function drawStone(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
     return;
   }
   for (let wx = zx0 + 100; wx < zx1 - 60; wx += 300) { // windows + torches
+    if (!onScreen(wx, 90)) continue; // arch 60 wide, torch to +86
     const x = wx - cam.x;
     c.fillStyle = '#0e0a20'; // night sky through the arch
     c.beginPath();
@@ -802,6 +818,7 @@ function drawCloudBands(c, x, w, gy, t) { // the sea of clouds, two drifting ban
     const off = (t * 8 + band * 40) % 160;
     c.fillStyle = band ? '#a898c8' : '#b8a8d8';
     for (let bx = x - 160 + off; bx < x + w + 160; bx += 160) {
+      if (!onScreenX(bx - 70, 140)) continue;
       c.beginPath();
       c.ellipse(bx, by, 70, 14, 0, 0, Math.PI * 2);
       c.fill();
@@ -836,7 +853,7 @@ function drawCitadelWall(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t) {
   // the floor lattice: brass lines every 80 px, world-anchored
   c.globalAlpha = 0.15;
   c.fillStyle = '#b8860b';
-  for (let wx = Math.floor(zx0 / 80) * 80; wx < zx1; wx += 80) c.fillRect(wx - cam.x, gy - 3, 2, 3);
+  for (let wx = Math.floor(zx0 / 80) * 80; wx < zx1; wx += 80) if (onScreen(wx, 2)) c.fillRect(wx - cam.x, gy - 3, 2, 3);
   c.globalAlpha = 1;
   // the arched windows, every 400 px: twilight + a cloud band + a rainbow wisp
   for (let wx = Math.ceil(zx0 / 400) * 400; wx < zx1; wx += 400) {
@@ -889,6 +906,7 @@ function drawCitadelWall(c, deep, zx0, zx1, sx0, sx1, lvl, cam, t) {
 }
 
 function drawClockFace(c, wx, wy, r, cam, clock) { // the brass face, one hand on the beat
+  if (!onScreen(wx - r - 3, 2 * r + 6)) return; // plus half the 6 px rim stroke
   const x = wx - cam.x;
   c.fillStyle = '#12102a';
   c.beginPath(); c.arc(x, wy, r, 0, Math.PI * 2); c.fill();
@@ -911,6 +929,7 @@ function drawClockFace(c, wx, wy, r, cam, clock) { // the brass face, one hand o
 function drawGreatGear(c, wx, wy, cam, clock) { // the 500-px gear, turning with gearRot
   const x = wx - cam.x * 0.5;
   const r = 250;
+  if (!onScreenX(x - r - 8, 2 * r + 16)) return; // teeth reach r + 2
   const rot = (clock.gearRot ?? 0) * Math.PI * 2;
   c.fillStyle = '#151228';
   c.beginPath(); c.arc(x, wy, r, 0, Math.PI * 2); c.fill();
@@ -1045,7 +1064,7 @@ function drawFrostStars(c, sx0, w, lvl, cam, t, skyT) {
     const x = ((i * 173 + 37) % 1600) - (cam.x * 0.05) % 1600;
     const y = 20 + ((i * 97 + 11) % 260);
     const sx = sx0 + ((x % 1600) + 1600) % 1600;
-    if (sx < sx0 - 4 || sx > sx0 + w) continue;
+    if (sx < sx0 - 4 || sx > sx0 + w || !onScreenX(sx, 2)) continue;
     c.globalAlpha = a * (0.5 + 0.5 * Math.sin(t * 2 + i));
     c.fillRect(sx, y, 2, 2);
   }
@@ -1066,6 +1085,7 @@ function drawFrostFlakes(c, sx0, w, lvl, t, dense) {
       // the phase offset matters as much as the speed: without it seven speeds
       // means seven rows of flakes marching down in formation
       const fall = (t * (18 + (i % 7)) * (dense ? 2 : 1) + i * 37 + layer * 91) % h;
+      if (!onScreenX(x - 10, 26)) continue; // the sway is +-10
       c.fillRect(x + Math.sin(t + i) * 10, fall - 20, layer ? 2 : 3, layer ? 2 : 3);
     }
   }
@@ -1077,6 +1097,7 @@ function drawFrostFlakes(c, sx0, w, lvl, t, dense) {
 // closer without ever being reached in this zone.
 function drawPalaceSilhouette(c, lvl, cam) {
   const gy = lvl.groundY, bx = 2500 - cam.x * 0.2;
+  if (!onScreenX(bx - 190, 380)) return; // the mass is bx +- 180
   c.globalAlpha = 0.5;
   c.fillStyle = '#2b3d63';
   c.fillRect(bx - 180, gy - 300, 360, 300); // the mass
@@ -1105,6 +1126,7 @@ function drawFrozenSea(c, sx0, w, lvl, cam) {
   c.fillRect(sx0, gy - 90, w, 26);
   c.fillStyle = '#6f93ad'; // the caught crests
   for (let x = Math.floor((sx0 - off) / 60) * 60; x < sx0 + w - off; x += 60) {
+    if (!onScreenX(x + off, 30)) continue;
     c.fillRect(x + off, gy - 96, 30, 7);
   }
 }
@@ -1138,6 +1160,7 @@ function drawFrozenThroneZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
     // hearths are changing, seen from inside. Arched, because a rectangle of
     // sky on a stone wall reads as a hole rather than a window.
     for (let wx = Math.floor(zx0 / 300) * 300 + 150; wx < zx1; wx += 300) {
+      if (!onScreen(wx - 40, 80)) continue; // arch 56 wide plus the 4 px trim and 6 px sill
       const x = wx - cam.x;
       const pal = skyPalette(skyT);
       const top = 120, bot = 262, half = 28;
@@ -1209,6 +1232,7 @@ function drawFrozenThroneZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
     const off = -cam.x * 0.3;
     for (let fx0 = Math.floor((sx0 - off) / 200) * 200; fx0 < sx1 - off; fx0 += 200) {
       const px = fx0 + off;
+      if (!onScreenX(px, 50)) continue;
       c.fillStyle = '#3d5478'; // the frozen window
       c.fillRect(px, gy - 320, 46, 90);
       c.globalAlpha = 0.25;
@@ -1235,7 +1259,7 @@ function drawFrozenThroneZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
     }
     drawTimeVein(c, lvl, cam, t);
     c.fillStyle = '#b8d8e8'; // the east wall: the glacier closes the level
-    c.fillRect(5950 - cam.x, 0, 60, gy);
+    if (onScreen(5950, 60)) c.fillRect(5950 - cam.x, 0, 60, gy);
     drawFrostFlakes(c, sx0, w, lvl, t, dense);
   }
   c.restore();
@@ -1246,6 +1270,7 @@ function drawFrozenThroneZone(c, kind, zx0, zx1, sx0, sx1, lvl, cam, t, viewW) {
 // ending dims it (M7).
 function drawTimeVein(c, lvl, cam, t) {
   const cx = 5650 - cam.x, cy = 300;
+  if (!onScreenX(cx - 160, 320)) return; // the spiral reaches about 150 px
   const dim = lvl.ending9?.started ? 0.25 : 1;
   const sway = (3 * Math.PI / 180) * Math.sin(t * 0.4);
   c.save();

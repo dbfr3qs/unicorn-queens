@@ -8,6 +8,7 @@
 // That is the whole integration contract. There is no loading screen and no ready flag to
 // wait on — see src/sprites.js for why.
 import { sprite, spriteMeta } from '../sprites.js';
+import { onScreen } from './cull.js';
 
 // Raw blit of one cell from a horizontal strip. dx/dy/dw/dh are in the caller's current
 // transform, so an enclosing scale() or translate() applies as usual.
@@ -81,6 +82,7 @@ export function drawTileStrip(c, name, wx0, wx1, camX, y, h, tileW) {
   c.rect(wx0 - camX, y, wx1 - wx0, h);
   c.clip();
   for (let x = Math.floor(wx0 / w) * w; x < wx1; x += w) {
+    if (!onScreen(x, w)) continue; // the tile is clipped to the strip anyway; world x is the view's frame in both passes
     c.drawImage(s.img, 0, 0, meta.w, meta.h, x - camX, y, w, h);
   }
   c.restore();
@@ -111,6 +113,7 @@ export function drawTileGrid(c, name, wx0, wx1, camX, y0, y1, tileW, tileH, orig
   c.clip();
   const gy0 = originY + Math.floor((y0 - originY) / tileH) * tileH;
   for (let x = Math.floor(wx0 / tileW) * tileW; x < wx1; x += tileW) {
+    if (!onScreen(x, tileW)) continue;
     for (let y = gy0; y < y1; y += tileH) {
       c.drawImage(s.img, 0, 0, meta.w, meta.h, x - camX, y, tileW, tileH);
     }
@@ -135,6 +138,7 @@ export function drawWall(c, name, zx0, zx1, camX, gy) {
   c.rect(zx0 - camX, 0, zx1 - zx0, gy);
   c.clip();
   for (let wx = Math.floor(zx0 / w) * w; wx < zx1; wx += w) {
+    if (!onScreen(wx, w)) continue;
     c.drawImage(s.img, 0, 0, meta.w, meta.h, wx - camX, 0, w, gy);
   }
   c.restore();

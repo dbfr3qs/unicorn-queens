@@ -3,6 +3,7 @@
 import { palette } from './theme.js';
 import { drawTileStrip, drawSpriteCentre, drawSpriteFeet, scaleToHeight, scaleToWidth } from './sprite.js';
 import { spriteReady } from '../sprites.js';
+import { onScreen } from './cull.js';
 
 // How deep the ground texture is drawn, in screen pixels; the 192px-tall source packs
 // two of its own pixels into each of these, which is what keeps it as crisp as the
@@ -25,6 +26,7 @@ function slab(c, tex, x, y, w, h, fill, tileW = 96) {
 
 export function drawLevel(c, lvl, t = 0) {
   for (const seg of lvl.ground) {
+    if (!onScreen(seg.x, seg.w)) continue;
     const top = seg.y ?? lvl.groundY;
     if (seg.kind === 'plank') { // wooden bridge deck
       slab(c, 'tex_wood', seg.x, top, seg.w, Math.max(0, lvl.height - top), '#5d3a1e', 180);
@@ -93,12 +95,14 @@ export function drawLevel(c, lvl, t = 0) {
     c.fillRect(seg.x, top, seg.w, 4);
   }
   for (const m of lvl.moats ?? []) { // moat water below the bridge deck
+    if (!onScreen(m.x, m.w)) continue;
     c.fillStyle = '#0d2b4e';
     c.fillRect(m.x, lvl.groundY + 6, m.w, Math.max(0, lvl.height - lvl.groundY - 6));
     c.fillStyle = '#1d4e8e'; // surface line
     c.fillRect(m.x, lvl.groundY + 6, m.w, 3);
   }
   for (const m of lvl.lava ?? []) { // lava / sludge / water / crevasse / cauldron
+    if (!onScreen(m.x - 24, m.w + 48)) continue; // glow +-8, shaft lip +-20
     const top = lvl.groundY + 4;
     if (m.water) { // level 5: pond and stream (falling in = the pit rule)
       c.fillStyle = '#0d2b4e'; // body
@@ -205,6 +209,7 @@ export function drawLevel(c, lvl, t = 0) {
   c.fillStyle = '#4a2d7a';
   for (const p of lvl.platforms) {
     if (p.hidden || (p.kind && p.kind !== 'platform')) continue; // hidden nook ledge: in the wall
+    if (!onScreen(p.x, p.w)) continue;
     if (drawTileStrip(c, 'plat_ledge', p.x, p.x + p.w, 0, p.y, 12, 96)) {
       c.fillStyle = '#8a5fc0'; // lit top edge: 12px of grain alone does not read as a ledge
       c.fillRect(p.x, p.y, p.w, 2);
@@ -218,6 +223,7 @@ export function drawLevel(c, lvl, t = 0) {
     // The trapdoor keeps rendering while hidden — hidden only removes its
     // collision; drawTrapdoor draws the flush lid or the dropped-lid pose.
     if ((p.hidden && p.kind !== 'trapdoor') || !p.kind || p.kind === 'platform') continue;
+    if (!onScreen(p.x - 8, p.w + 16)) continue; // bases, gear ring, nest sheet overhang the bar
     if (p.kind === 'branch') drawBranch(c, p);
     else if (p.kind === 'lily') drawLily(c, p);
     else if (p.kind === 'log') drawLog(c, p);
@@ -233,7 +239,7 @@ export function drawLevel(c, lvl, t = 0) {
     else if (p.kind === 'trapdoor') drawTrapdoor(c, p, lvl);
   }
   for (const b of lvl.boxes) {
-    if (b.broken) continue;
+    if (b.broken || !onScreen(b.x, b.w)) continue;
     // The sprite fills the collision box exactly: unlike a character, a box IS its box —
     // the player lands on its top edge, so overhanging it would put the surface in the
     // wrong place. Drawn from the box centre because that is how the cells are composed.
@@ -266,7 +272,7 @@ export function drawLevel(c, lvl, t = 0) {
     }
   }
   drawStairDoor(c, lvl); // levels 2-3: the way down, which nothing marked before
-  if (!lvl.goal) return; // level 2 exits via the staircase, no flag
+  if (!lvl.goal || !onScreen(lvl.goal.x - 100, 200)) return; // level 2 exits via the staircase, no flag; the flag sheet's width is not in the data
   const g = lvl.goal; // goal flag
   if (spriteReady('goal_flag')) {
     c.save();
@@ -296,7 +302,7 @@ export function drawLevel(c, lvl, t = 0) {
 // where it can actually be seen — the steps then run down through it.
 function drawStairDoor(c, lvl) {
   const e = lvl.exit;
-  if (!e || e.kind || !lvl.stairDoor) return; // only the plain staircase exits
+  if (!e || e.kind || !lvl.stairDoor || !onScreen(e.x - 100, 110)) return; // only the plain staircase exits
   c.save();
   if (e.locked) c.globalAlpha = 0.5; // dimmed while the pearl still seals it
   // The sheet was cut out free-standing, so its opening is transparent — which

@@ -229,7 +229,17 @@ function draw(c, e) {
   c.fillRect(20, -8, 4, 4);
   c.fillStyle = '#12240f'; // nostril
   c.fillRect(34, -6, 2, 3);
-  if (perched && (e.perch === 'inhale' || e.perch === 'breath')) {
+  drawBreathTell(c, e);
+  drawFlash(c, e);
+  c.restore();
+  drawPips(c, e);
+}
+
+// Overlay pieces, shared by draw and drawOverlay. The breath tell and the flash are in
+// the body's local frame (origin: the middle of the box, flipped by e.dir); the pips
+// are world space.
+function drawBreathTell(c, e) {
+  if (e.state === 'perch' && (e.perch === 'inhale' || e.perch === 'breath')) {
     // the tell: a pulsing chest glow while it winds up the breath
     c.globalAlpha = 0.35 + 0.35 * (0.5 + 0.5 * Math.sin(e.phase * 3));
     c.fillStyle = '#ff8c42';
@@ -240,13 +250,18 @@ function draw(c, e) {
       c.fillRect(28, -2, 12, 8);
     }
   }
+}
+
+function drawFlash(c, e) {
   if (e.flash > 0) { // hit flash
     c.globalAlpha = 0.7;
     c.fillStyle = '#fff';
     c.beginPath(); c.ellipse(0, 0, 28, 18, 0, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
   }
-  c.restore();
+}
+
+function drawPips(c, e) {
   if (!e.dead) { // hp pips: two rows of seven, world space above the dragon
     const n = pipMax(e, 14), per = Math.ceil(n / 2); // two rows
     for (let i = 0; i < n; i++) {
@@ -255,6 +270,26 @@ function draw(c, e) {
       c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 24 + row * 7, 10, 4);
     }
   }
+}
+
+// The sprite path: the sheet is the body. The fireball windup, which the vector draw
+// shows only by recolouring the eye, is drawn here as the glowing eye with a halo
+// round the head; the breath tell, the flash and the pips are the shared pieces.
+function drawOverlay(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  if (e.state === 'windup') {
+    c.globalAlpha = 0.45;
+    c.fillStyle = '#ffd166';
+    c.beginPath(); c.ellipse(24, -4, 14, 10, 0, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = 1;
+    c.fillRect(20, -8, 4, 4);
+  }
+  drawBreathTell(c, e);
+  drawFlash(c, e);
+  c.restore();
+  drawPips(c, e);
 }
 
 register({
@@ -274,5 +309,5 @@ register({
   floatSpeed: 120, driftSpeed: 40,
   hitSound: 'bossHit', deathSound: 'boss',
   onHit, onDeath,
-  update, nextIdle, draw,
+  update, nextIdle, draw, drawOverlay,
 });

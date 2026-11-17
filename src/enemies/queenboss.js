@@ -361,9 +361,34 @@ function updateSpikes(e, p, lvl, cam, dt, fx) {
 function draw(c, e) {
   const t = e.t ?? 0;
   if (e.dying) { drawDying(c, e, t); return; }
-  for (const sp of e.spikes ?? []) drawSpike(c, sp, 560); // behind her, on the floor
+  drawSpikes(c, e); // behind her, on the floor
   drawFrozenQueen(c, e.x, e.y + e.h, t, !e.sleeping);
   if (e.sleeping) return; // the shell is her whole appearance until it is off
+  drawTells(c, e);
+  drawPips(c, e);
+}
+
+// The sprite path (render/enemies.js, when a 'queenboss' sheet has decoded — today
+// there is none, and her body comes from drawFrozenQueen inside draw). Everything
+// that depends on her state: the spikes, the tells, the pips, or the unmaking. Her
+// vector body shows nothing by pose or colour beyond awake/asleep and the dying fade,
+// so there is no overlay-only cue here.
+function drawOverlay(c, e) {
+  c.save();
+  if (e.dying) drawUnmaking(c, e);
+  else {
+    drawSpikes(c, e);
+    if (!e.sleeping) { drawTells(c, e); drawPips(c, e); }
+  }
+  c.restore();
+}
+
+// Overlay pieces, shared by draw and drawOverlay; all world space.
+function drawSpikes(c, e) {
+  for (const sp of e.spikes ?? []) drawSpike(c, sp, 560);
+}
+
+function drawTells(c, e) {
   if (e.phaseT > 0) { // the wound: her staff flares and she is open
     c.globalAlpha = Math.min(0.8, e.phaseT);
     c.fillStyle = '#e8f7fc';
@@ -382,20 +407,27 @@ function draw(c, e) {
     c.fillRect(e.x, e.y, e.w, e.h);
     c.globalAlpha = 1;
   }
-  drawPips(c, e);
 }
 
 // The unmaking: the arms drop, the armour peels, she kneels, and then she is
 // light going up. No burst, no rage — the ice comes off and there is nobody
 // underneath it any more.
+const dyingElapsed = e => DYING_T - e.dyingT;
+const dyingRise = e => (dyingElapsed(e) >= DY_KNEES ? Math.min(1, (dyingElapsed(e) - DY_KNEES) / (DYING_T - DY_KNEES)) : 0);
+
 function drawDying(c, e, t) {
-  const elapsed = DYING_T - e.dyingT;
+  const elapsed = dyingElapsed(e);
   const kneel = elapsed >= DY_KNEES ? 0 : elapsed >= DY_CASCADE
     ? Math.min(1, (elapsed - DY_CASCADE) / (DY_KNEES - DY_CASCADE)) : 0;
-  const rise = elapsed >= DY_KNEES ? Math.min(1, (elapsed - DY_KNEES) / (DYING_T - DY_KNEES)) : 0;
+  const rise = dyingRise(e);
   c.globalAlpha = 1 - rise;
   drawFrozenQueen(c, e.x, e.y + e.h - kneel * 10, t, true);
   c.globalAlpha = 1;
+  drawUnmaking(c, e);
+}
+
+function drawUnmaking(c, e) {
+  const elapsed = dyingElapsed(e), rise = dyingRise(e);
   if (elapsed > 0.3 && elapsed < DY_KNEES) { // the armour coming off in panels
     const k = Math.min(1, (elapsed - 0.3) / (DY_KNEES - 0.3));
     c.fillStyle = '#e8f7fc';
@@ -493,4 +525,5 @@ register({
   },
   update,
   draw,
+  drawOverlay,
 });

@@ -1,9 +1,9 @@
 // Entry point: canvas, render loop wiring, restart key.
-import { game, startGame, startLoop, update, restartTarget } from './game.js';
+import { game, startGame, startLoop, stepFrame, restartTarget } from './game.js';
 import { draw } from './render/index.js';
 import { fx, initAudio } from './audio.js';
-import { onKeyDown, onKeyUp } from './input.js';
-import { pollGamepads } from './gamepad.js'; // a controller, read once a frame as keys
+import { onKeyDown, onKeyUp, releaseAllKeys } from './input.js';
+import { pollGamepads, resetGamepads } from './gamepad.js'; // a controller, read once a frame as keys
 import { initTouch, wantsTouch } from './touch.js'; // a phone or tablet: on-screen buttons, also as keys
 import { initMusic } from './music.js';
 import { levelIndexFromSearch } from './levels/index.js';
@@ -13,7 +13,7 @@ import { cardReady } from './ending9.js'; // level 9: the end card
 import { endIntro } from './intro.js'; // the opening scene (the card's Space starts it)
 import { spritesLoaded, loadProgress } from './sprites.js';
 import { palette, fonts } from './render/theme.js';
-import { fullscreenApi, toggleFullscreenOn } from './shell.js';
+import { fullscreenApi, toggleFullscreenOn, isFullscreenKey, skipsIntro, cardOpen } from './shell.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -54,7 +54,7 @@ function toast(text) {
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => { toastEl.hidden = true; }, 6000);
 }
-addEventListener('keydown', e => { if (e.code === 'KeyF' && !e.repeat && e.isTrusted) toggleFullscreen(); });
+addEventListener('keydown', e => { if (isFullscreenKey(e)) toggleFullscreen(); });
 const fsLink = document.getElementById('fullscreen'); // absent under smoke.mjs's stub document
 if (typeof fsLink?.addEventListener === 'function') fsLink.addEventListener('click', e => { e.preventDefault(); toggleFullscreen(); });
 // A coarse pointer means a thumb: put the buttons up. Going fullscreen from
@@ -75,27 +75,6 @@ for (const ev of ['pointerdown', 'touchend']) addEventListener(ev, () => { initA
 // And the music bundle is fetched now, not on the first gesture, so that
 // first gesture can resume a context that already exists.
 if (typeof document !== 'undefined' && typeof document.createElement === 'function') initMusic();
-addEventListener('keydown', e => {
-  if (e.repeat) return; // holding jump through the end screen must not auto-advance
-  if (pickerKey(e.code, canvas.height)) return; // the difficulty card takes every key while it is up
-  if (game.intro) { endIntro(); return; } // any key: straight to level 1 (a pad's or a thumb's key too)
-  if (e.code === 'Space' && cardReady(game.level)) {
-    // The end card: a true new game, by way of the difficulty card and the
-    // opening. No prev player, so no carry at all — back to level 1 small,
-    // bowless and unable to fly.
-    openPicker();
-    return;
-  }
-  if (e.code === 'Space' && (game.player.dead || game.player.won)) {
-    // startGame carries big/bow on advance only; the heart cap (maxHp)
-    // always survives, being permanent for the run
-    startGame(canvas.height, restartTarget(), game.player);
-    // The restart press IS a held jump: mark it so the new player doesn't
-    // read it as a fresh press and hop on spawn. Release + press jumps
-    // normally; a plain startGame (first load, tests) is untouched.
-    game.player.jumpHeld = true;
-  }
-});
 // ?level=N (1-based) boots straight into that level for testing, with the
 // gear a run would have carried in (LEVELS[].carry), and no card: the
 // URL's ?difficulty= (or the remembered one) stands. A plain start opens
@@ -143,8 +122,36 @@ if (loadProgress() < 1 && typeof requestAnimationFrame === 'function') tick();
 await spritesLoaded();
 if (loadingRaf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(loadingRaf);
 
+// Registered only now: during loading no key may restart or skip anything.
+// cardT: seconds the death/win card has been up (see cardOpen).
+let cardT = 0;
+addEventListener('keydown', e => {
+  if (e.repeat) return; // holding jump through the end screen must not auto-advance
+  if (pickerKey(e.code, canvas.height)) return; // the difficulty card takes every key while it is up
+  if (game.intro) { if (skipsIntro(e)) endIntro(); return; } // a key that skips: straight to level 1 (a pad's or a thumb's too); M, N, F, modified keys do not
+  if (e.code === 'Space' && cardReady(game.level)) {
+    // The end card: a true new game, by way of the difficulty card and the
+    // opening. No prev player, so no carry at all — back to level 1 small,
+    // bowless and unable to fly.
+    openPicker();
+    return;
+  }
+  if (e.code === 'Space' && (game.player.dead || game.player.won) && cardOpen(cardT)) {
+    // startGame carries big/bow on advance only; the heart cap (maxHp)
+    // always survives, being permanent for the run
+    startGame(canvas.height, restartTarget(), game.player);
+    cardT = 0;
+    // The restart press IS a held jump: mark it so the new player doesn't
+    // read it as a fresh press and hop on spawn. Release + press jumps
+    // normally; a plain startGame (first load, tests) is untouched.
+    game.player.jumpHeld = true;
+  }
+});
+addEventListener('blur', () => { releaseAllKeys(); resetGamepads(); });
+
 startLoop(dt => {
   pollGamepads(); // before update, so a press this frame is this frame's input
-  update(dt, canvas.width, fx);
+  stepFrame(dt, canvas.width, fx);
+  cardT = game.player.dead || game.player.won ? cardT + dt : 0;
   draw(ctx, canvas.width, canvas.height);
 });

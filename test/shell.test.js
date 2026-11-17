@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fullscreenApi, toggleFullscreenOn } from '../src/shell.js';
+import { fullscreenApi, toggleFullscreenOn, isFullscreenKey, skipsIntro, cardOpen, CARD_GUARD } from '../src/shell.js';
 
 describe('fullscreenApi', () => {
   it('targets the page, so the touch controls stay on screen', async () => {
@@ -57,5 +57,23 @@ describe('toggleFullscreenOn', () => {
     const { calls, fs } = rig(true, false);
     expect(await toggleFullscreenOn(fs)).toBe(false);
     expect(calls).toEqual(['exit']);
+  });
+});
+
+const key = (code, extra = {}) => ({ code, repeat: false, isTrusted: true, ctrlKey: false, metaKey: false, altKey: false, ...extra });
+describe('key rules', () => {
+  it('F toggles fullscreen; Ctrl+F, Cmd+F, Alt+F, a repeat and a synthetic F do not', () => {
+    expect(isFullscreenKey(key('KeyF'))).toBe(true);
+    for (const x of [{ ctrlKey: true }, { metaKey: true }, { altKey: true }, { repeat: true }, { isTrusted: false }]) expect(isFullscreenKey(key('KeyF', x))).toBe(false);
+    expect(isFullscreenKey(key('KeyG'))).toBe(false);
+  });
+  it('M, N, F and modified keys do not skip the intro; Space and arrows do', () => {
+    for (const c of ['KeyM', 'KeyN', 'KeyF']) expect(skipsIntro(key(c))).toBe(false);
+    expect(skipsIntro(key('KeyR', { ctrlKey: true }))).toBe(false);
+    expect(skipsIntro(key('Space'))).toBe(true); expect(skipsIntro(key('ArrowRight'))).toBe(true);
+  });
+  it('the end card ignores Space for its first 0.4 s', () => {
+    expect(CARD_GUARD).toBe(0.4);
+    expect(cardOpen(0.016)).toBe(false); expect(cardOpen(0.4)).toBe(true);
   });
 });

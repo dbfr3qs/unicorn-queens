@@ -29,3 +29,18 @@ export async function toggleFullscreenOn(fs) {
   await fs.request();
   return fs.active();
 }
+
+// The end card ignores Space for this long, so a held or mashed jump from
+// the death/win moment cannot dismiss it unread.
+export const CARD_GUARD = 0.4;
+export const cardOpen = t => t >= CARD_GUARD;
+
+// F toggles fullscreen: a real, first press, with no modifier (Ctrl/Cmd+F is
+// the browser's find, Alt+F a menu).
+export const isFullscreenKey = e =>
+  e.code === 'KeyF' && !e.repeat && e.isTrusted && !e.ctrlKey && !e.metaKey && !e.altKey;
+
+// Keys that end the opening scene: not the mute/music/fullscreen keys, not
+// anything modified.
+const NOT_SKIP = new Set(['KeyM', 'KeyN', 'KeyF']);
+export const skipsIntro = e => !NOT_SKIP.has(e.code) && !e.ctrlKey && !e.metaKey && !e.altKey;

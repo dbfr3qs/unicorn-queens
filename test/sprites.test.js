@@ -1,7 +1,7 @@
 // The loader's contract under Node, which is where the whole test suite and smoke.mjs
 // run: no Image global, so every lookup must return null rather than throw, and metadata
 // must still be readable so callers can size things correctly.
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   sprite, spriteMeta, frameAt, spriteStatus, spritesLoaded, loadProgress, LOAD_TIMEOUT,
 } from '../src/sprites.js';
@@ -125,8 +125,6 @@ describe('the preload gate', () => {
 // spritesLoaded() decodes each sheet before resolving. These tests need an `Image`, which
 // the module reads at import time, so each one stubs it and imports a fresh copy.
 describe('spritesLoaded decodes sheets before resolving', () => {
-  const N = Object.keys(SPRITES).length;
-
   async function load(configure = () => {}) {
     const made = [];
     class FakeImage {
@@ -154,7 +152,9 @@ describe('spritesLoaded decodes sheets before resolving', () => {
   const flush = () => new Promise(r => setImmediate(r));
   const track = p => { const o = { done: false }; p.then(() => { o.done = true; }); return o; };
 
-  afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
+  // Fake only setTimeout so no test leaves a real 20 s load timer pending.
+  beforeEach(() => { vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] }); });
+  afterEach(() => { vi.unstubAllGlobals(); vi.clearAllTimers(); vi.useRealTimers(); });
 
   it('stays pending after every load until every decode() settles', async () => {
     const { mod, made } = await load();
@@ -205,14 +205,35 @@ describe('spritesLoaded decodes sheets before resolving', () => {
     await flush();
     expect(made[0].decodeCalls).toBe(0);
     expect(made.slice(1).every(i => i.decodeCalls === 1)).toBe(true);
-    expect(t.done).toBe(N === 1);
+    expect(t.done).toBe(false);
     made.slice(1).forEach(i => i.decodeResult.res());
     await flush();
     expect(t.done).toBe(true);
   });
 
+  // Result must not depend on iteration order: the FIRST sheet settling synchronously
+  // must not resolve the promise while a later sheet is still loading.
+  for (const [label, firstDecode] of [
+    ['has no decode()', () => undefined],
+    ['decode() throws synchronously', () => () => { throw new Error('sync'); }],
+  ]) {
+    it(`an already-complete first sheet that ${label} does not resolve early`, async () => {
+      const { mod, made } = await load((img, k) => {
+        if (k === 0) { img.complete = true; img.naturalWidth = 8; img.decode = firstDecode(); }
+      });
+      const t = track(mod.spritesLoaded());
+      await flush();
+      expect(t.done).toBe(false); // the later sheets are still loading
+      made.slice(1).forEach(i => i.fire('load'));
+      await flush();
+      expect(t.done).toBe(false); // ...and still decoding
+      made.slice(1).forEach(i => i.decodeResult.res());
+      await flush();
+      expect(t.done).toBe(true);
+    });
+  }
+
   it('the timeout resolves if a decode never settles', async () => {
-    vi.useFakeTimers();
     const { mod, made } = await load();
     const t = track(mod.spritesLoaded(1000));
     made.forEach(i => i.fire('load'));

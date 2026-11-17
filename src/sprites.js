@@ -78,18 +78,24 @@ export function spritesLoaded(timeoutMs = LOAD_TIMEOUT) {
       try { p = img.decode(); } catch { return settle(); }
       Promise.resolve(p).then(settle, settle);
     };
+    // Count every sheet that needs waiting on BEFORE starting any wait, so a wait that
+    // settles synchronously cannot bring `pending` to 0 mid-loop and resolve early.
+    const waits = [];
     for (const { img } of sheets.values()) {
       if (img.complete) {
         // Already failed: nothing coming. Already loaded: still decode it, as above.
-        if (img.naturalWidth > 0) { pending++; settleDecoded(img); }
+        if (img.naturalWidth > 0) waits.push(() => settleDecoded(img));
         continue;
       }
-      pending++;
-      img.addEventListener('load', () => settleDecoded(img), { once: true });
-      img.addEventListener('error', settle, { once: true });
+      waits.push(() => {
+        img.addEventListener('load', () => settleDecoded(img), { once: true });
+        img.addEventListener('error', settle, { once: true });
+      });
     }
+    pending = waits.length;
+    if (pending > 0) setTimeout(finish, timeoutMs);
+    for (const start of waits) start();
     if (pending === 0) finish();
-    else setTimeout(finish, timeoutMs);
   });
 }
 

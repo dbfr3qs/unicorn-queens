@@ -21,10 +21,10 @@ const UNLOCK_LINES = [
 ];
 
 // Approach zone: the cell mouth expanded 60 px west (the side the player
-// comes from) and 40 px up (a low skimmer still counts as approaching).
+// comes from) and up to the ceiling (a flier cannot skip over it).
 export function cellApproach(lvl) {
   const c = lvl.cell;
-  return { x: c.x - 60, y: c.y - 40, w: c.w + 60, h: c.h + 40 };
+  return { x: c.x - 60, y: 0, w: c.w + 60, h: c.y + c.h };
 }
 
 export function updateCell(lvl, p, dt, fx) {

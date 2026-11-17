@@ -215,8 +215,8 @@ function updateRevive(dt, fx) {
 }
 
 // Proximity dialogue: each lvl.dialogs entry is a trigger rect with
-// ordered beats. Beats fire on ENTRY of the rect (game.dialogsIn tracks
-// who is standing in which rect), so a `repeat` beat re-fires on each
+// ordered beats. A beat fires once per stay in the rect (game.dialogsIn
+// marks rects where one has fired), so a `repeat` beat re-fires on each
 // approach while plain beats fire once per run (id in game.dialogsFired).
 // A beat's `when(game)` gates it; the first eligible beat opens.
 function checkDialogs(fx) {
@@ -226,10 +226,10 @@ function checkDialogs(fx) {
   for (const d of dialogs) {
     const inside = p.x < d.x + d.w && p.x + p.w > d.x && p.y < d.y + d.h && p.y + p.h > d.y;
     if (!inside) { game.dialogsIn.delete(d.id); continue; }
-    if (game.dialogsIn.has(d.id)) continue; // already standing in it
-    game.dialogsIn.add(d.id); // entry edge this frame
+    if (game.dialogsIn.has(d.id)) continue; // a beat already fired for this stay
     const beat = d.beats.find(b => (b.repeat || !game.dialogsFired.has(b.id)) && (!b.when || b.when(game)));
-    if (!beat) continue;
+    if (!beat) continue; // not marked: a beat that becomes eligible while she stands here still fires
+    game.dialogsIn.add(d.id);
     if (!beat.repeat) game.dialogsFired.add(beat.id);
     openDialogue(beat.lines);
     fx.play('dialog');

@@ -109,7 +109,7 @@ export function createLevel7(viewH = 600) {
       },
       {
         id: 'l7-king-end',
-        x: 5900, y: groundY - 140, w: 300, h: 140, // the open cage: the King speaks once the storm breaks
+        x: 5900, y: 0, w: 300, h: groundY, // the open cage: the King speaks once the storm breaks
         beats: [{
           id: 'l7-king-end',
           when: game => game.enemies.some(e => e.kind === 'wizardboss' && e.dead), // the beat waits for the release

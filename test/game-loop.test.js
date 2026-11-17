@@ -3,6 +3,9 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { game, startGame, stepFrame, update } from '../src/game.js';
 import { BLIZZ_DRIFT, blizzardWobble } from '../src/enemies/queenboss.js';
 import { input } from '../src/input.js';
+import { LEVELS } from '../src/levels/index.js';
+import { cellApproach } from '../src/cell.js';
+import { isDialogueOpen, advanceDialogue } from '../src/dialogue.js';
 import { setDifficulty, difficulty } from '../src/difficulty.js';
 
 const fx = { play() {} };
@@ -48,5 +51,37 @@ describe('level 9 blizzard', () => {
     update(1 / 60, 800, fx);
     expect(game.player.x - x0).toBeCloseTo(BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(t) / 60, 5);
     expect(game.player.x).not.toBe(x0);
+  });
+});
+
+describe('trigger rects (bug review 2.4)', () => {
+  it('the cell zone reaches the ceiling', () => {
+    const l = LEVELS[2].make(600), a = cellApproach(l);
+    expect(a.y).toBe(0); expect(a.y + a.h).toBe(l.cell.y + l.cell.h);
+  });
+  it.each([[6, 'l7-king-end'], [7, 'l8-arena'], [8, 'l9-gate']])('level %i trigger %s is full height', (idx, id) => {
+    const l = LEVELS[idx].make(600), d = l.dialogs.find(x => x.id === id);
+    expect(d.y).toBe(0); expect(d.h).toBe(l.groundY);
+  });
+  it('a beat whose condition comes true while she stands in the rect still fires', () => {
+    startGame(600, 6);
+    const d = game.level.dialogs.find(x => x.id === 'l7-king-end');
+    game.player.x = d.x + 20; game.player.y = game.level.groundY - game.player.h;
+    update(1 / 60, 800, fx);
+    while (isDialogueOpen()) advanceDialogue(); // another beat may open first
+    for (const e of game.enemies) if (e.kind === 'wizardboss') e.dead = true;
+    update(1 / 60, 800, fx); expect(isDialogueOpen()).toBe(true);
+  });
+  it('a repeat beat fires once per entry, not every frame', () => {
+    startGame(600, 4);
+    const d = game.level.dialogs.find(x => x.id === 'queen');
+    const stand = () => { game.player.x = d.x + 20; game.player.y = d.y + 1; };
+    let opens = 0;
+    const frames = n => { for (let i = 0; i < n; i++) { update(1 / 60, 800, fx); if (isDialogueOpen()) { opens++; while (isDialogueOpen()) advanceDialogue(); } } };
+    stand(); frames(5);
+    expect(opens).toBe(1);
+    game.player.x = d.x - 500; frames(1); // leave
+    stand(); frames(5);
+    expect(opens).toBe(2);
   });
 });

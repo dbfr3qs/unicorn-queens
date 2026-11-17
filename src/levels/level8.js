@@ -143,7 +143,7 @@ export function createLevel8(viewH = 600) {
       },
       {
         id: 'l8-arena',
-        x: 4900, y: groundY - 140, w: 250, h: 140, // the threshold of the Warden's arena
+        x: 4900, y: 0, w: 250, h: groundY, // the threshold of the Warden's arena
         beats: [{
           id: 'l8-arena',
           when: g => clockCuts(g.level) === 3, // only once the third spring is cut

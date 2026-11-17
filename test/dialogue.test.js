@@ -4,7 +4,7 @@ import { game, startGame, update } from '../src/game.js';
 import {
   isDialogueOpen, currentLine, openDialogue, advanceDialogue, resetDialogue,
 } from '../src/dialogue.js';
-import { input, onKeyDown } from '../src/input.js';
+import { input, onKeyDown, onKeyUp } from '../src/input.js';
 import { spawnEnemy } from '../src/enemies.js';
 import { burst, particles } from '../src/particles.js';
 import { FX } from '../src/effects.js';
@@ -112,8 +112,11 @@ describe('advance', () => {
     expect(currentLine().text).toBe('c');
     onKeyDown(ev('ArrowLeft')); // c -> close
     expect(isDialogueOpen()).toBe(false);
-    expect(input.left).toBe(false); // ArrowLeft advanced, did not move
+    // ArrowLeft is still physically down, so it moves once the box closes
+    // (Bug review 1.1); the dismissing Space is stale and never jumps.
+    expect(input.left).toBe(true);
     expect(input.jump).toBe(false); // Space advanced, did not jump
+    onKeyUp(ev('ArrowLeft')); onKeyUp(ev('Space')); onKeyUp(ev('Enter'));
   });
 });
 

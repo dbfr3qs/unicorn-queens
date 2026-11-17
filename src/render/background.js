@@ -2,6 +2,7 @@
 // Pure module: no DOM/canvas globals (ground line comes from the level).
 import { palette } from './theme.js';
 import { drawTiled } from './sprite.js';
+import { sprite } from '../sprites.js';
 
 function makeRidge(width, minH, maxH, gap, rng) {
   const peaks = [];
@@ -59,12 +60,18 @@ export function drawStars(c, off, t) {
 // background reading as blockier than the things standing in front of it.
 const FAR_H = 200, NEAR_H = 260;
 
+// Every named sheet decoded (falsy names are skipped). Checked before any layer is drawn,
+// so a sheet that failed to load cannot leave a half-drawn background behind.
+function allLoaded(...names) {
+  return names.every((n) => !n || sprite(n));
+}
+
 // Generated parallax: the same three depths as the vector version, at the same speeds,
 // so the sense of depth is unchanged. Returns false if any layer has not decoded, and the
 // caller falls back — drawing two of three layers would look worse than drawing none.
 export function drawParallax(c, lvl, cam, viewW) {
-  const sky = drawTiled(c, 'bg_night_sky', cam.x * 0.2, 0, lvl.groundY, viewW);
-  if (!sky) return false;
+  if (!allLoaded('bg_night_sky', 'bg_night_far', 'bg_night_near')) return false;
+  drawTiled(c, 'bg_night_sky', cam.x * 0.2, 0, lvl.groundY, viewW);
   drawTiled(c, 'bg_night_far', cam.x * 0.35, lvl.groundY - FAR_H, FAR_H, viewW);
   drawTiled(c, 'bg_night_near', cam.x * 0.6, lvl.groundY - NEAR_H, NEAR_H, viewW);
   return true;
@@ -74,7 +81,8 @@ export function drawParallax(c, lvl, cam, viewW) {
 // false means at least the sky is missing, and the caller keeps its vector art. Detail
 // layers a zone draws on top - fog, fireflies, snowfall, the rainbow - are untouched.
 export function drawZoneParallax(c, skyName, ridgeName, ridgeH, lvl, cam, viewW) {
-  if (!drawTiled(c, skyName, cam.x * 0.2, 0, lvl.groundY, viewW)) return false;
+  if (!allLoaded(skyName, ridgeName)) return false;
+  drawTiled(c, skyName, cam.x * 0.2, 0, lvl.groundY, viewW);
   if (ridgeName) {
     drawTiled(c, ridgeName, cam.x * 0.45, lvl.groundY - ridgeH, ridgeH, viewW);
   }
@@ -87,7 +95,8 @@ export function drawZoneParallax(c, skyName, ridgeName, ridgeH, lvl, cam, viewW)
 // continuous change out of two static images — and at skyT 0 and 3 it is
 // exactly one of them, so the ends are as crisp as any other level's sky.
 export function drawThawParallax(c, coldSky, warmSky, warmth, ridgeName, ridgeH, lvl, cam, viewW) {
-  if (!drawTiled(c, coldSky, cam.x * 0.2, 0, lvl.groundY, viewW)) return false;
+  if (!allLoaded(coldSky, warmth > 0 && warmSky, ridgeName)) return false;
+  drawTiled(c, coldSky, cam.x * 0.2, 0, lvl.groundY, viewW);
   if (warmth > 0) {
     c.save();
     c.globalAlpha = Math.min(1, warmth);

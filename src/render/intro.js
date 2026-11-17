@@ -62,6 +62,7 @@ export function drawIntro(c, viewW, viewH) {
   if (!it) return;
   const { level, camera, t } = it;
   const p = pose(t);
+  c.save(); // the intro leaves the canvas state as it found it
   c.fillStyle = palette.clear;
   c.fillRect(0, 0, viewW, viewH);
   const shx = camera.shake > 0 ? (Math.random() * 2 - 1) * camera.mag : 0;
@@ -117,4 +118,5 @@ export function drawIntro(c, viewW, viewH) {
   c.font = fonts.hint;
   c.fillStyle = palette.hint;
   c.fillText('any key skips', viewW - 12, viewH - 14);
+  c.restore();
 }

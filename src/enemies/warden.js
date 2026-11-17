@@ -36,7 +36,7 @@
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
-import { fireFireball, fireShockwaves } from '../projectiles.js';
+import { fireFireball, fireShockwaves, resetFireballs, resetBoulders, resetCones, resetShockwaves } from '../projectiles.js';
 import { hurtPlayer } from '../player.js';
 import { shake } from '../camera.js';
 
@@ -128,7 +128,7 @@ function update(e, { p, lvl, cam, dt, fx }) {
     e.inWindow = false;
   }
   e.phase = (e.phase ?? 0) + dt; // drives the core pulses (sleeping too)
-  if (e.sleeping) return; // standing at attention; the arena beat wakes him
+  if (e.sleeping) { e.lastT = lvl.clock ? lvl.clock.t : 0; return; } // keep the chime baseline current, so waking never reads a stale wrap
   e.flash = Math.max(0, (e.flash ?? 0) - dt);
   e.y = lvl.groundY - e.h; // grounded boss
   e.dir = p.x + p.w / 2 >= e.x + e.w / 2 ? 1 : -1;
@@ -371,6 +371,7 @@ register({
     e.rested = false;
     e.tolled = false;
     if (lvl.clock) lvl.clock.stopped = true;
+    resetFireballs(); resetBoulders(); resetCones(); resetShockwaves();
   },
   update,
   draw,

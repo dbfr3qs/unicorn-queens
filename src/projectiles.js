@@ -54,6 +54,7 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
         f.vx = -f.vx;
         f.vy = -f.vy;
         f.reflected = true;
+        f.ttl = FIREBALL_TTL / difficulty().projSpeed; // a fresh bolt's life: a far catch still gets home
         f.cool = 0.4; // time to clear the player's body
         fx.play('reflect');
         burst(f.x + f.w / 2, f.y + f.h / 2, FX.reflect);

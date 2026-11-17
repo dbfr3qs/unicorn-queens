@@ -38,6 +38,24 @@ function playerFrame(player, t) {
   return { sheet: 'player', frame: 0 };
 }
 
+// The lantern's glow is the same gradient every frame (it lives in the player's translated,
+// scaled space), so it is built once per context and centre instead of once per draw.
+const LANTERN_R = 90;
+const glows = new WeakMap(); // context -> Map(centre -> gradient)
+function lanternGlow(c, [mx, my]) {
+  let byCentre = glows.get(c);
+  if (!byCentre) glows.set(c, byCentre = new Map());
+  const key = mx + ',' + my;
+  let g = byCentre.get(key);
+  if (!g) {
+    g = c.createRadialGradient(mx, my, 8, mx, my, LANTERN_R);
+    g.addColorStop(0, 'rgba(255, 205, 130, 0.35)');
+    g.addColorStop(1, 'rgba(255, 205, 130, 0)');
+    byCentre.set(key, g);
+  }
+  return g;
+}
+
 export function drawPlayer(c, player, t) {
   if (player.reviving > 0) return; // easy's revive beat: gone for a moment
   c.save();
@@ -53,11 +71,9 @@ export function drawPlayer(c, player, t) {
   const useSprite = !!sprite(sheet);
   const A = useSprite ? ANCHOR.sprite : ANCHOR.vector;
   if (player.lantern > 0) { // lantern: warm radial glow around the rider
-    const g = c.createRadialGradient(A.mid[0], A.mid[1], 8, A.mid[0], A.mid[1], 90);
-    g.addColorStop(0, 'rgba(255, 205, 130, 0.35)');
-    g.addColorStop(1, 'rgba(255, 205, 130, 0)');
+    const g = lanternGlow(c, A.mid);
     c.fillStyle = g;
-    c.beginPath(); c.arc(A.mid[0], A.mid[1], 90, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(A.mid[0], A.mid[1], LANTERN_R, 0, Math.PI * 2); c.fill();
   }
   if (player.invuln > 0 && Math.floor(player.invuln * 12) % 2 === 0) c.globalAlpha = 0.35;
   const drewSprite = drawSpriteFeet(c, sheet, frame, scaleToHeight(sheet, DRAW_H));

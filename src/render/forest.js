@@ -6,6 +6,7 @@
 // behind the entities.
 import { spriteReady } from '../sprites.js';
 import { drawSpriteFeet, scaleToHeight } from './sprite.js';
+import { onScreen } from './cull.js';
 
 const DEEP_X = 3700; // same band as the zone darkening (zones.js)
 
@@ -22,6 +23,7 @@ const SHAPES = ['tree', 'tree_tall', 'tree_wide'];
 // deep-woods shade, `s` a size scale (the glade tree is bigger), `v` a seed
 // that picks the shape, a little extra size, and which way it faces.
 function drawTree(c, x, gy, dark, s, v = 0) {
+  if (!onScreen(x - 300, 600)) return; // the sprite's clip rect is x +- 300; the vector canopy is narrower
   // The vector tree stands about 456*s tall on the ground line — a 380*s trunk with the
   // canopy circles reaching 76*s above it. The sheet is drawn to that same height so the
   // canopy lands where the level was laid out expecting it, whichever art is in use.
@@ -74,6 +76,7 @@ function drawTree(c, x, gy, dark, s, v = 0) {
 // arrives.
 const HOLE_UP = 221, HOLE_LEFT = 19.5, HOLE_Y = 280;
 function drawHollowTree(c, x, gy) {
+  if (!onScreen(x - 300, 600)) return; // the sprite's clip rect is x +- 300; the vector canopy is narrower
   if (spriteReady('tree_hollow')) {
     const sink = 14;
     const scale = (gy + sink - HOLE_Y) / HOLE_UP;
@@ -152,7 +155,7 @@ export function drawForest(c, lvl, t = 0) {
   for (let x = 14; x < 5560; x += 46) {
     const h = (x * 73) % 100;
     const fx = x + (h % 24);
-    if (fx > 5420 || inWater(fx)) continue;
+    if (fx > 5420 || inWater(fx) || !onScreen(fx - 2, 12)) continue;
     if (h < 55) { // a flower
       c.fillStyle = '#2e6a34';
       c.fillRect(fx, gy - 8, 2, 8); // stem
@@ -166,10 +169,10 @@ export function drawForest(c, lvl, t = 0) {
     }
   }
   for (const e of lvl.roster ?? []) {
-    if (e.kind === 'bee') drawHomeFlower(c, e.x, gy);
+    if (e.kind === 'bee' && onScreen(e.x - 8, 18)) drawHomeFlower(c, e.x, gy);
   }
   for (const m of water) {
-    drawReeds(c, m.x + 6, gy);
-    drawReeds(c, m.x + m.w - 14, gy);
+    if (onScreen(m.x + 6, 10)) drawReeds(c, m.x + 6, gy);
+    if (onScreen(m.x + m.w - 14, 10)) drawReeds(c, m.x + m.w - 14, gy);
   }
 }

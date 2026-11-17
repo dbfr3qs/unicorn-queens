@@ -4,6 +4,7 @@
 import { DOOR_OPEN, DOOR_CLOSE } from '../door.js';
 import { spriteReady } from '../sprites.js';
 import { drawWall, drawTileGrid } from './sprite.js';
+import { onScreen } from './cull.js';
 
 // The portcullis doors' two parts, from sheets where they have decoded.
 // The jambs are the wall the door is set in — the level names the sheet on
@@ -46,6 +47,7 @@ function drawWeb(c, door, alpha) {
 export function drawDoor(c, lvl, gameTime) {
   const doors = lvl.doors ?? (lvl.door ? [lvl.door] : []);
   for (const door of doors) {
+    if (!onScreen(door.x - JAMB, door.w + 2 * JAMB)) continue; // jambs stand JAMB outside the opening
     if (door.kind === 'webwall') drawWebWall(c, door, gameTime);
     else if (door.kind === 'irongate') drawIronGate(c, door, gameTime);
     else if (door.kind === 'thronegate') drawThroneGate(c, door, gameTime);

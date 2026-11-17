@@ -136,3 +136,16 @@ describe('when the PNG has not decoded', () => {
     expect(lines).not.toContain('fillRect(-15, -2, 7, 3)'); // the sprite hoof
   });
 });
+
+describe('lantern glow', () => {
+  it('builds its gradient once and reuses it on later draws', async () => {
+    vi.resetModules();
+    const { drawPlayer } = await import('../src/render/player.js');
+    const { ctx, lines } = createRecordingCtx();
+    drawPlayer(ctx, makePlayer({ lantern: 1 }), 0);
+    drawPlayer(ctx, makePlayer({ lantern: 1 }), 0.1);
+    drawPlayer(ctx, makePlayer({ lantern: 1, big: true }), 0.2); // a bigger rider scales the context, not the gradient
+    expect(lines.filter(l => l.startsWith('createRadialGradient(')).length).toBe(1);
+    expect(lines.filter(l => l === 'arc(0, -24, 90, 0, 6.283)').length).toBe(3);
+  });
+});

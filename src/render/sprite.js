@@ -8,6 +8,15 @@
 // That is the whole integration contract. There is no loading screen and no ready flag to
 // wait on — see src/sprites.js for why.
 import { sprite, spriteMeta } from '../sprites.js';
+import { onScreen } from './cull.js';
+
+// A tile's on-screen span as whole pixels. The EDGES are rounded, not x and width on their
+// own: the right edge of one tile and the left edge of the next are the same number, so
+// they round alike and neighbours abut with no seam and no overlap.
+function tileSpan(x, w, camX) {
+  const left = Math.round(x - camX);
+  return [left, Math.round(x + w - camX) - left];
+}
 
 // Raw blit of one cell from a horizontal strip. dx/dy/dw/dh are in the caller's current
 // transform, so an enclosing scale() or translate() applies as usual.
@@ -60,7 +69,10 @@ export function drawTiled(c, name, offset, y, h, viewW) {
   const w = meta.w * scale;
   if (w <= 0) return false;
   let x = -(((offset % w) + w) % w);   // modulo that stays positive for negative offsets
-  for (; x < viewW; x += w) c.drawImage(s.img, 0, 0, meta.w, meta.h, x, y, w, h);
+  for (; x < viewW; x += w) {
+    const [dx, dw] = tileSpan(x, w, 0);
+    if (dw > 0) c.drawImage(s.img, 0, 0, meta.w, meta.h, dx, y, dw, h);
+  }
   return true;
 }
 
@@ -81,7 +93,9 @@ export function drawTileStrip(c, name, wx0, wx1, camX, y, h, tileW) {
   c.rect(wx0 - camX, y, wx1 - wx0, h);
   c.clip();
   for (let x = Math.floor(wx0 / w) * w; x < wx1; x += w) {
-    c.drawImage(s.img, 0, 0, meta.w, meta.h, x - camX, y, w, h);
+    const [dx, dw] = tileSpan(x, w, camX);
+    if (dw <= 0 || !onScreen(dx + camX, dw)) continue; // the tile is clipped to the strip anyway; world x is the view's frame in both passes
+    c.drawImage(s.img, 0, 0, meta.w, meta.h, dx, y, dw, h);
   }
   c.restore();
   return true;
@@ -111,8 +125,10 @@ export function drawTileGrid(c, name, wx0, wx1, camX, y0, y1, tileW, tileH, orig
   c.clip();
   const gy0 = originY + Math.floor((y0 - originY) / tileH) * tileH;
   for (let x = Math.floor(wx0 / tileW) * tileW; x < wx1; x += tileW) {
+    const [dx, dw] = tileSpan(x, tileW, camX);
+    if (dw <= 0 || !onScreen(dx + camX, dw)) continue;
     for (let y = gy0; y < y1; y += tileH) {
-      c.drawImage(s.img, 0, 0, meta.w, meta.h, x - camX, y, tileW, tileH);
+      c.drawImage(s.img, 0, 0, meta.w, meta.h, dx, y, dw, tileH);
     }
   }
   c.restore();
@@ -135,7 +151,9 @@ export function drawWall(c, name, zx0, zx1, camX, gy) {
   c.rect(zx0 - camX, 0, zx1 - zx0, gy);
   c.clip();
   for (let wx = Math.floor(zx0 / w) * w; wx < zx1; wx += w) {
-    c.drawImage(s.img, 0, 0, meta.w, meta.h, wx - camX, 0, w, gy);
+    const [dx, dw] = tileSpan(wx, w, camX);
+    if (dw <= 0 || !onScreen(dx + camX, dw)) continue;
+    c.drawImage(s.img, 0, 0, meta.w, meta.h, dx, 0, dw, gy);
   }
   c.restore();
   return true;

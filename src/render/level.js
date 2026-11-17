@@ -268,6 +268,7 @@ export function drawLevel(c, lvl, t = 0) {
       c.fillStyle = '#c98f3d';
       c.fillRect(b.x, b.y, b.w, b.h);
       c.strokeStyle = '#8a5f22';
+      c.lineWidth = 1; // the mystery box's swirl (and the previous draw) leave 2
       c.strokeRect(b.x + 1.5, b.y + 1.5, b.w - 3, b.h - 3);
     }
   }

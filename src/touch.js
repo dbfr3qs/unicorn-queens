@@ -100,6 +100,9 @@ function wirePad(cluster, buttons, dispatch) {
   const move = e => pad.move(e.pointerId, code(e));
   const up = e => pad.lift(e.pointerId);
   cluster.addEventListener('pointerdown', e => {
+    // A primary touch means no other finger is down, so any pointer still
+    // held in the pad lost its up/cancel event: lift it before the new one.
+    if (e.isPrimary && e.pointerType === 'touch') pad.liftAll();
     try { cluster.setPointerCapture?.(e.pointerId); } catch { /* the pointer may already be gone */ }
     pad.point(e.pointerId, code(e));
   });

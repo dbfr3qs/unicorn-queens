@@ -1,5 +1,7 @@
 // Tiny zero-dep static server for local dev: node server.mjs [port]
 // (ES modules in index.html won't load from file://, so serve over http.)
+// Binds 127.0.0.1 by default; HOST=0.0.0.0 node server.mjs [port] serves the
+// LAN too, e.g. to try the touch controls on a phone.
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -7,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.argv[2] || 8000);
+const host = process.env.HOST ?? '127.0.0.1';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -44,6 +47,6 @@ createServer(async (req, res) => {
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('not found: ' + path);
   }
-}).listen(port, '127.0.0.1', () => {
-  console.log(`unicorn-queens: http://localhost:${port}/`);
+}).listen(port, host, () => {
+  console.log(`unicorn-queens: http://localhost:${port}/ (bound to ${host})`);
 });

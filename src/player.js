@@ -36,6 +36,11 @@ const UNSAFE_FOOTING = new Set(['box', 'gear', 'trapdoor']); // breaks, slides, 
 // drop). A surface too narrow for the margin centres the player on it.
 // The pull never passes a door that is a wall right now: level 9's first
 // frost seal stands 50 px in from crevasse 1's lip, on the same floor.
+// The y a respawn stands at: on the recorded surface, at the size she is now.
+export function respawnY(p, lvl) {
+  return (p.safeSurf?.y ?? lvl.groundY) - p.h;
+}
+
 export function respawnX(p, lvl) {
   const s = p.safeSurf;
   if (!s) return p.safeX;
@@ -129,7 +134,7 @@ export function revivePlayer(p, lvl, fx) {
   p.webT = 0;
   p.iceAir = false;
   p.x = respawnX(p, lvl);
-  p.y = p.safeY;
+  p.y = respawnY(p, lvl);
   p.vx = 0; p.vy = 0;
   p.cuttable = false;
   fx.play('heart');
@@ -273,7 +278,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
       if (player.flying) endFlight(player, fx); // the spell was used up
       player.invuln = difficulty().invuln;
       player.x = respawnX(player, lvl);
-      player.y = player.safeY;
+      player.y = respawnY(player, lvl);
       player.vx = 0;
       player.vy = 0;
     }

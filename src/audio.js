@@ -16,12 +16,42 @@ export function toggleMuted() {
 // through as well. So the first real gesture also starts this, looping and
 // inaudible, and leaves it running. (The iPad has no switch; it never needed
 // this.)
-const SILENCE = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+// Built at call time (no Buffer in the browser): a RIFF/WAVE header for
+// 16-bit mono PCM, then all-zero samples, base64-encoded by hand.
+export function silentWav(rate = 44100, seconds = 0.1) {
+  const n = Math.round(rate * seconds) * 2; // data bytes
+  const bytes = new Uint8Array(44 + n);
+  const dv = new DataView(bytes.buffer);
+  const tag = (o, t) => { for (let i = 0; i < 4; i++) bytes[o + i] = t.charCodeAt(i); };
+  tag(0, 'RIFF'); dv.setUint32(4, 36 + n, true); tag(8, 'WAVE');
+  tag(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); // PCM
+  dv.setUint16(22, 1, true); dv.setUint32(24, rate, true); // mono, rate
+  dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  tag(36, 'data'); dv.setUint32(40, n, true);
+  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b0 = bytes[i], b1 = bytes[i + 1], b2 = bytes[i + 2];
+    const v = (b0 << 16) | ((b1 || 0) << 8) | (b2 || 0);
+    out += A[(v >> 18) & 63] + A[(v >> 12) & 63]
+      + (i + 1 < bytes.length ? A[(v >> 6) & 63] : '=')
+      + (i + 2 < bytes.length ? A[v & 63] : '=');
+  }
+  return 'data:audio/wav;base64,' + out;
+}
+
+// iPhones, and iPads that present as a touch Mac (iPadOS). Only these
+// follow the ring/silent switch the loop above works around.
+export function isIOS(nav = globalThis.navigator) {
+  if (!nav) return false;
+  return /iPhone|iPad|iPod/.test(nav.userAgent || '')
+    || (nav.platform === 'MacIntel' && nav.maxTouchPoints > 1);
+}
 let unmute = null;
 function unmuteIOS() {
-  if (unmute || typeof Audio === 'undefined') return;
+  if (unmute || typeof Audio === 'undefined' || !isIOS()) return;
   try {
-    unmute = new Audio(SILENCE);
+    unmute = new Audio(silentWav());
     unmute.loop = true;
     unmute.setAttribute('playsinline', '');
     unmute.volume = 0.01; // not 0: a muted element does not count as playback
@@ -35,7 +65,7 @@ export function initAudio() {
   if (!audioCtx) {
     try { audioCtx = new (globalThis.AudioContext || globalThis.webkitAudioContext)(); } catch (e) { audioCtx = null; }
   }
-  if (audioCtx && audioCtx.state === 'suspended') {
+  if (audioCtx && audioCtx.state !== 'running') {
     audioCtx.resume();
     // iOS additionally wants a sound started inside the gesture before it
     // will treat the context as unlocked: one silent sample does it.
@@ -54,7 +84,7 @@ export function initAudio() {
 // — so the HUD can ask for a click. False before any attempt and after one
 // that worked.
 export function audioSuspended() {
-  return !!audioCtx && audioCtx.state === 'suspended';
+  return !!audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted');
 }
 
 function beep(freq, endFreq, dur, type, vol, delay) {

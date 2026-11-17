@@ -37,6 +37,15 @@ export const music = {
 let backend = null;
 // a setTrack() that arrived before the bundle finished loading
 let pending = null;
+// Strudel's initAudio() promise (worklets loaded), made once per backend;
+// audioSettled flips when it resolves or rejects. audioWaiting is true
+// while a setTrack() is queued behind it.
+let audioReady = null;
+let audioSettled = false;
+let audioWaiting = false;
+// true while the context is suspended by onVisibility(true), so that
+// onVisibility(false) resumes only what it suspended.
+let heldForVisibility = false;
 
 /**
  * The gain every track multiplies itself by, read per event.
@@ -74,6 +83,12 @@ async function loadStrudel() {
   // scheduled, silence out. resumeAudio() below is what actually starts
   // the sound, driven by the keypress that got us here.
   await globalThis.initStrudel();
+  // Strudel's clock is the context's clock: suspending the context stops
+  // scheduling, so a hidden tab queues nothing to play late on return.
+  // Guarded: no document under Node, and smoke.mjs's stub has no listener.
+  if (typeof document?.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', () => onVisibility(document.hidden));
+  }
   const { evaluate, hush, signal, gain, initAudio, getAudioContext } = globalThis;
   return { evaluate, hush, signal, gain, initAudio, getAudioContext };
 }
@@ -133,9 +148,18 @@ export function musicSuspended() {
   try { return backend?.getAudioContext?.()?.state === 'suspended'; } catch { return false; }
 }
 
+function ensureAudio() {
+  if (audioReady || !backend?.initAudio) return;
+  audioSettled = false;
+  const settle = () => { audioSettled = true; };
+  let p;
+  try { p = Promise.resolve(backend.initAudio()); } catch { p = Promise.resolve(); }
+  audioReady = p.then(settle, settle);
+}
+
 export function resumeAudio() {
   try {
-    backend?.initAudio?.();
+    ensureAudio();
     const ctx = backend?.getAudioContext?.();
     if (!ctx) return;
     if (ctx.state !== 'running') ctx.resume();
@@ -147,6 +171,26 @@ export function resumeAudio() {
       console.info('music: audio running');
     }
   } catch { /* not yet permitted; the next keypress retries */ }
+}
+
+/**
+ * The tab was hidden (true) or shown (false): suspend or resume the
+ * context. Only a context this call suspended is resumed, so a context
+ * the browser is still holding shut is left for the next gesture.
+ */
+export function onVisibility(hidden) {
+  try {
+    const ctx = backend?.getAudioContext?.();
+    if (!ctx) return;
+    if (hidden) {
+      if (ctx.state === 'suspended' || heldForVisibility) return;
+      heldForVisibility = true;
+      ctx.suspend();
+    } else if (heldForVisibility) {
+      heldForVisibility = false;
+      ctx.resume();
+    }
+  } catch { /* the next visibility change retries */ }
 }
 
 // ---- playback ----------------------------------------------------------
@@ -168,6 +212,24 @@ export function setTrack(levelName) {
 
   if (!backend) { pending = levelName; return; }
 
+  // The real initAudio() loads the worklets asynchronously; a pattern
+  // evaluated before they exist plays its first notes on the wrong voices.
+  ensureAudio();
+  if (audioReady && !audioSettled) {
+    if (!audioWaiting) {
+      audioWaiting = true;
+      const ready = audioReady;
+      ready.then(() => {
+        audioWaiting = false;
+        if (ready === audioReady && backend && music.track !== null) startTrack(music.track);
+      });
+    }
+    return;
+  }
+  startTrack(levelName);
+}
+
+function startTrack(levelName) {
   const src = trackFor(levelName);
   if (!src) {
     backend.hush();
@@ -222,6 +284,10 @@ export function _setBackend(b) {
 export function _reset() {
   backend = null;
   pending = null;
+  audioReady = null;
+  audioSettled = false;
+  audioWaiting = false;
+  heldForVisibility = false;
   initMusic.inFlight = null;
   resumeAudio.announced = false;
   Object.assign(music, {

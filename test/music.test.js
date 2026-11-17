@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   music, setTrack, stopMusic, initMusic, gainNow,
-  setMusicMuted, toggleMusicMuted, duck, setVolume, resumeAudio,
+  setMusicMuted, toggleMusicMuted, duck, setVolume, resumeAudio, onVisibility,
   _setBackend, _reset,
 } from '../src/music.js';
 
@@ -199,16 +199,17 @@ describe('the keyboard audio unlock', () => {
     expect(b.calls).not.toContain('resume');
   });
 
-  it('runs on every initMusic call, not just the first', async () => {
+  it('initMusic keeps trying to resume on every call, but initialises once', async () => {
     // input.js calls initMusic on every keydown. The press that starts
     // the ~200 KB fetch is rarely the one that gets to unlock the
     // context, so later presses have to keep trying.
     const b = unlockable();
+    b.ctx.resume = () => b.calls.push('resume'); // the browser keeps refusing
     await initMusic(async () => b);
-    const after = b.calls.length;
     await initMusic(async () => b);
     await initMusic(async () => b);
-    expect(b.calls.length).toBeGreaterThan(after);
+    expect(b.calls.filter(c => c === 'resume').length).toBeGreaterThan(2);
+    expect(b.calls.filter(c => c === 'initAudio')).toHaveLength(1);
   });
 
   it('swallows a browser that refuses to resume', () => {
@@ -251,5 +252,82 @@ describe('initMusic', () => {
     setTrack('meadow');
     await initMusic(async () => r);
     expect(evaluated(r)).toHaveLength(1);
+  });
+});
+
+describe('Strudel audio initialisation', () => {
+  let resumes, fake, resolveInit;
+  beforeEach(() => {
+    resumes = 0;
+    const ctx = { state: 'suspended', resume() { resumes++; } };
+    fake = {
+      ...recorder(), initAudioCalls: 0,
+      initAudio() { fake.initAudioCalls++; return new Promise(r => { resolveInit = r; }); },
+      getAudioContext: () => ctx,
+    };
+    fake.evaluated = fake.calls.filter(() => false);
+    fake.evaluate = src => fake.evaluated.push(src);
+  });
+
+  it('initAudio runs once however many gestures arrive; resume runs each time', () => {
+    _setBackend(fake); for (let i = 0; i < 5; i++) resumeAudio();
+    expect(fake.initAudioCalls).toBe(1); expect(resumes).toBeGreaterThanOrEqual(5);
+  });
+
+  it('the pattern is not evaluated until the worklets have loaded, and then only the current track', async () => {
+    _setBackend(fake); setTrack('meadow'); setTrack('peak');
+    expect(fake.evaluated).toHaveLength(0);
+    resolveInit(); await Promise.resolve(); await Promise.resolve();
+    expect(fake.evaluated).toHaveLength(1);
+    expect(fake.evaluated[0]).toMatch(/setcpm/);
+    expect(music.playing).toBe(true);
+  });
+
+  it('a backend with no initAudio still evaluates at once', () => {
+    _setBackend({ ...fake, initAudio: undefined }); setTrack('meadow');
+    expect(fake.evaluated).toHaveLength(1);
+  });
+});
+
+describe('onVisibility', () => {
+  const rig = (state = 'running') => {
+    const ctx = {
+      state, suspends: 0, resumes: 0,
+      suspend() { ctx.suspends++; ctx.state = 'suspended'; },
+      resume() { ctx.resumes++; ctx.state = 'running'; },
+    };
+    return { ctx, b: { ...recorder(), getAudioContext: () => ctx } };
+  };
+
+  it('suspends the context when hidden and resumes it when shown', () => {
+    const { ctx, b } = rig();
+    _setBackend(b);
+    onVisibility(true);
+    expect(ctx.suspends).toBe(1);
+    onVisibility(false);
+    expect(ctx.resumes).toBe(1);
+  });
+
+  it('does not suspend twice, nor resume what it did not suspend', () => {
+    const { ctx, b } = rig();
+    _setBackend(b);
+    onVisibility(true); onVisibility(true);
+    expect(ctx.suspends).toBe(1);
+    onVisibility(false); onVisibility(false);
+    expect(ctx.resumes).toBe(1);
+  });
+
+  it('leaves a context the browser is holding shut alone', () => {
+    const { ctx, b } = rig('suspended');
+    _setBackend(b);
+    onVisibility(true); onVisibility(false);
+    expect(ctx.suspends).toBe(0);
+    expect(ctx.resumes).toBe(0);
+  });
+
+  it('does not throw with no backend or a throwing context', () => {
+    expect(() => { onVisibility(true); onVisibility(false); }).not.toThrow();
+    _setBackend({ ...recorder(), getAudioContext: () => { throw new Error('x'); } });
+    expect(() => onVisibility(true)).not.toThrow();
   });
 });

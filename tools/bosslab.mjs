@@ -22,6 +22,8 @@
 // in 3 hearts — a hard-mode win without a heart pickup — and the share of
 // the fight the boss spent staggered (near 100%: arrows lock it out of
 // ever attacking).
+import { pathToFileURL } from 'node:url';
+import { realpathSync } from 'node:fs';
 import { game, startGame, update } from '../src/game.js';
 import { input } from '../src/input.js';
 import { setDifficulty } from '../src/difficulty.js';
@@ -269,7 +271,7 @@ function report(key) {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+if (import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) main();
 
 function main() {
 if (process.argv[2] === 'why') {

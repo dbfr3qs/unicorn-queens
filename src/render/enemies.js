@@ -28,7 +28,11 @@ export function drawEnemies(c, enemies) {
       c.scale(e.dir || 1, 1);
       const drew = drawSpriteFeet(c, e.kind, 0, scaleToHeight(e.kind, e.h * OVERHANG));
       c.restore();
-      if (drew) continue;
+      if (drew) {
+        // the sheet is only the body: hp pips, tells, flashes and the kind's hazards stay
+        getKind(e.kind).drawOverlay?.(c, e);
+        continue;
+      }
     }
     getKind(e.kind).draw(c, e);
   }

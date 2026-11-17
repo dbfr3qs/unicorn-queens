@@ -243,12 +243,13 @@ function update(e, { p, lvl, cam, dt, fx }) {
   if (e.state === 'idle') e.t -= dt;
 }
 
-function draw(c, e) {
-  const ph = e.phase ?? 0;
-  const sleeping = !!e.sleeping;
-  const p2 = inP2(e);
-  const bob = sleeping ? Math.sin(ph * Math.PI) * 1.5 : 0; // the 2 s breath
+// Overlay pieces, shared by draw and drawOverlay. The sweep band, blade and pips are
+// world space; the others are in the body's local frame (origin: the middle of his
+// feet, flipped by e.dir) and take the sleeping bob.
+const bobOf = e => (e.sleeping ? Math.sin((e.phase ?? 0) * Math.PI) * 1.5 : 0);
 
+function drawSweep(c, e) {
+  const ph = e.phase ?? 0;
   // The sweep band (telegraph) + blade: world space, floor level.
   const gy = e.y + e.h;
   if (e.state === 'sweepTele' && e.sweepBand) {
@@ -271,6 +272,81 @@ function draw(c, e) {
     c.fillStyle = '#d8b86a';
     c.fillRect(e.sweepX, gy - 14, 120, 14);
   }
+}
+
+// The reset-window glow on the chest core: cyan, 0.3 s pulse.
+function drawWindowGlow(c, e, bob) {
+  c.globalAlpha = 0.75 + 0.25 * Math.sin((e.phase ?? 0) * (2 * Math.PI) / 0.3);
+  c.fillStyle = '#7ec8ff';
+  c.fillRect(-7, -42 + bob, 14, 14);
+  c.globalAlpha = 1;
+}
+
+// The arm poses that are tells. Returns whether it drew the pose arm (so the idle
+// arms are skipped).
+function drawPoseArm(c, e, bob) {
+  if (e.state === 'slamWind') {
+    c.fillRect(8, -70, 10, 22); // the arm raised
+    return true;
+  }
+  if (e.state === 'sweepTele' || e.state === 'sweep' || e.state === 'retract') {
+    c.fillRect(8, -46 + bob, 12, 8); // the arm extended (the blade is drawn above)
+    return true;
+  }
+  return false;
+}
+
+function drawChargeArm(c, e, bob) {
+  if (e.state === 'charge') { // the extended arm, the glow building
+    c.fillRect(8, -46 + bob, 16, 8);
+  }
+}
+
+function drawFlash(c, e) {
+  if ((e.flash ?? 0) > 0) {
+    c.globalAlpha = 0.7;
+    c.fillStyle = '#fff';
+    c.fillRect(-30, -64, 60, 64);
+    c.globalAlpha = 1;
+  }
+}
+
+function drawPips(c, e) {
+  // The 16 pips: two rows of 8, his winding (spiderboss pattern).
+  if (!e.dead) {
+    const n = pipCount(e);
+    const max = pipMax(e, WARDEN_HP), per = Math.ceil(max / 2); // two rows
+    for (let i = 0; i < max; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
+      c.fillStyle = i < n ? '#ffd75e' : '#5e4a1e';
+      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 20 + row * 7, 10, 4);
+    }
+  }
+}
+
+// The sprite path: the sheet is the body; this is everything that depends on his state.
+function drawOverlay(c, e) {
+  const bob = bobOf(e);
+  drawSweep(c, e);
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h);
+  c.scale(e.dir ?? 1, 1);
+  if (e.inWindow && !e.dead) drawWindowGlow(c, e, bob);
+  c.fillStyle = '#6e5424';
+  drawPoseArm(c, e, bob);
+  drawChargeArm(c, e, bob);
+  drawFlash(c, e);
+  c.restore();
+  drawPips(c, e);
+}
+
+function draw(c, e) {
+  const ph = e.phase ?? 0;
+  const sleeping = !!e.sleeping;
+  const p2 = inP2(e);
+  const bob = sleeping ? Math.sin(ph * Math.PI) * 1.5 : 0; // the 2 s breath
+  const gy = e.y + e.h;
+  drawSweep(c, e);
 
   c.save();
   c.translate(e.x + e.w / 2, gy);
@@ -296,10 +372,7 @@ function draw(c, e) {
   c.fillStyle = '#3a3060';
   c.fillRect(-7, -42 + bob, 14, 14);
   if (e.inWindow && !e.dead) {
-    c.globalAlpha = 0.75 + 0.25 * Math.sin(ph * (2 * Math.PI) / 0.3);
-    c.fillStyle = '#7ec8ff';
-    c.fillRect(-7, -42 + bob, 14, 14);
-    c.globalAlpha = 1;
+    drawWindowGlow(c, e, bob);
   } else {
     c.globalAlpha = sleeping
       ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin(ph * Math.PI))
@@ -310,35 +383,14 @@ function draw(c, e) {
   }
   // arms
   c.fillStyle = '#6e5424';
-  if (e.state === 'slamWind') {
-    c.fillRect(8, -70, 10, 22); // the arm raised
-  } else if (e.state === 'sweepTele' || e.state === 'sweep' || e.state === 'retract') {
-    c.fillRect(8, -46 + bob, 12, 8); // the arm extended (the blade is drawn above)
-  } else {
+  if (!drawPoseArm(c, e, bob)) {
     c.fillRect(16, -44 + bob, 8, 24);
     c.fillRect(-24, -44 + bob, 8, 24);
   }
-  if (e.state === 'charge') { // the extended arm, the glow building
-    c.fillRect(8, -46 + bob, 16, 8);
-  }
-  if ((e.flash ?? 0) > 0) {
-    c.globalAlpha = 0.7;
-    c.fillStyle = '#fff';
-    c.fillRect(-30, -64, 60, 64);
-    c.globalAlpha = 1;
-  }
+  drawChargeArm(c, e, bob);
+  drawFlash(c, e);
   c.restore();
-
-  // The 16 pips: two rows of 8, his winding (spiderboss pattern).
-  if (!e.dead) {
-    const n = pipCount(e);
-    const max = pipMax(e, WARDEN_HP), per = Math.ceil(max / 2); // two rows
-    for (let i = 0; i < max; i++) {
-      const row = i < per ? 0 : 1, col = i % per;
-      c.fillStyle = i < n ? '#ffd75e' : '#5e4a1e';
-      c.fillRect(e.x + e.w / 2 - per * 6 + col * 12, e.y - 20 + row * 7, 10, 4);
-    }
-  }
+  drawPips(c, e);
 }
 
 register({
@@ -375,4 +427,5 @@ register({
   },
   update,
   draw,
+  drawOverlay,
 });

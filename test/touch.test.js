@@ -34,4 +34,16 @@ describe('the d-pad is one surface', () => {
     pad.point(1, 'ArrowLeft'); pad.point(2, 'ArrowUp'); pad.liftAll(); pad.liftAll();
     expect(l.filter(s => s.startsWith('keyup'))).toHaveLength(2);
   });
+  it('a move from a pointer that is not engaged does nothing', () => {
+    const [l, d] = log(); const pad = createPad(d);
+    pad.move(1, 'ArrowLeft'); // hovering, never pressed
+    pad.point(2, 'ArrowRight'); pad.lift(2);
+    pad.move(2, 'ArrowLeft'); // hovering again after the click
+    expect(l).toEqual(['keydown:ArrowRight', 'keyup:ArrowRight']);
+  });
+  it('an engaged pointer that went down on the hub can roll onto a key by moving', () => {
+    const [l, d] = log(); const pad = createPad(d);
+    pad.point(1, null); pad.move(1, 'ArrowUp'); pad.move(1, null);
+    expect(l).toEqual(['keydown:ArrowUp', 'keyup:ArrowUp']);
+  });
 });

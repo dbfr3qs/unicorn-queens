@@ -72,17 +72,21 @@ export function padCodeAt(x, y, rect) {
 
 export function createPad(dispatch) {
   const at = new Map(); // pointerId -> code
+  const engaged = new Set(); // pointers between their down and their lift, hub or not
   const held = code => [...at.values()].includes(code);
   const point = (id, code) => {
+    engaged.add(id);
     const prev = at.get(id) ?? null;
     if (prev === code) return;
     if (code === null) at.delete(id); else at.set(id, code);
     if (prev !== null && !held(prev)) dispatch('keyup', prev);
     if (code !== null && [...at.values()].filter(c => c === code).length === 1) dispatch('keydown', code);
   };
-  const lift = id => point(id, null);
-  const liftAll = () => { for (const id of [...at.keys()]) lift(id); };
-  return { point, lift, liftAll };
+  const lift = id => { point(id, null); engaged.delete(id); };
+  const liftAll = () => { for (const id of [...engaged]) lift(id); };
+  // A move only counts for a pointer that went down: a hovering mouse or pen moves unpressed.
+  const move = (id, code) => { if (engaged.has(id)) point(id, code); };
+  return { point, move, lift, liftAll };
 }
 
 // One set of listeners for the whole cross; its buttons ignore the pointer.
@@ -91,11 +95,12 @@ function wirePad(cluster, buttons, dispatch) {
     buttons[code]?.classList.toggle('down', type === 'keydown');
     dispatch(type, code);
   });
-  const move = e => pad.point(e.pointerId, padCodeAt(e.clientX, e.clientY, cluster.getBoundingClientRect()));
+  const code = e => padCodeAt(e.clientX, e.clientY, cluster.getBoundingClientRect());
+  const move = e => pad.move(e.pointerId, code(e));
   const up = e => pad.lift(e.pointerId);
   cluster.addEventListener('pointerdown', e => {
     try { cluster.setPointerCapture?.(e.pointerId); } catch { /* the pointer may already be gone */ }
-    move(e);
+    pad.point(e.pointerId, code(e));
   });
   cluster.addEventListener('pointermove', move);
   cluster.addEventListener('pointerup', up);

@@ -90,7 +90,7 @@ describe('the shield deflects front arrows', () => {
 
   it('a front arrow into a raised shield is consumed: deflect, no damage', () => {
     const { l, e, p, cam } = bare(rig());
-    e.shieldUp = true; e.dir = -1; // facing left, shield up
+    e.shieldUp = true; e.dir = 1; // facing right, shield up
     p.x = e.x + e.w + 100; p.y = l.groundY - P_H; p.facing = -1; // arrow flies left (vx < 0), into the front
     cam.x = e.x - 100;
     const calls = [];
@@ -102,7 +102,7 @@ describe('the shield deflects front arrows', () => {
 
   it('a rear arrow during the shield lands (hp 2 -> 1)', () => {
     const { l, e, p, cam } = bare(rig());
-    e.shieldUp = true; e.dir = -1; // facing left; the arrow comes from behind (vx > 0)
+    e.shieldUp = true; e.dir = 1; // facing right; the arrow flies right (vx > 0) into his back
     p.x = e.x - 150; p.y = l.groundY - P_H; p.facing = 1;
     cam.x = e.x - 200;
     const calls = [];

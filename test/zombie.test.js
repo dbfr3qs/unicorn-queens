@@ -4,6 +4,7 @@ import { createPlayer } from '../src/player.js';
 import { spawnEnemy, updateEnemies, E_STOMP_V } from '../src/enemies.js';
 import { updateArrows, arrows, ARROW_SPEED } from '../src/arrows.js';
 import { createCamera } from '../src/camera.js';
+import { getKind } from '../src/enemies/index.js';
 
 const DT = 1 / 60;
 const lvl = () => createLevel(600);
@@ -82,5 +83,21 @@ describe('killing a zombie', () => {
     arrows.push({ x: 555, y: l.groundY - 40 + 10, vx: ARROW_SPEED, dead: false });
     updateArrows([e], l, createCamera(), DT, fx([]));
     expect(e.dead).toBe(true);
+  });
+});
+
+describe('walking home', () => {
+  it('outside its band and no longer chasing, it walks back — never jumps', () => {
+    const l = lvl();
+    const e = z(560, l, 500, 700);
+    const p = createPlayer(l);
+    const cam = createCamera();
+    e.x = e.maxX + 158; p.y = e.y - 400; // player out of aggro height
+    let prev = e.x;
+    for (let i = 0; i < 600 && e.x + e.w > e.maxX; i++) {
+      getKind('zombie').update(e, { p, lvl: l, dt: 1 / 60, fx: fx([]), cam });
+      expect(Math.abs(e.x - prev)).toBeLessThan(5); prev = e.x;
+    }
+    expect(e.x + e.w).toBeLessThanOrEqual(e.maxX + 1);
   });
 });

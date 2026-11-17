@@ -192,9 +192,9 @@ function drawDeep(c, isHall, zx0, zx1, sx0, sx1, lvl, cam, t) {
   }
   if (isHall) {
     for (const px of [3680, 3940, 4420, 4700]) if (onScreen(px - 120, 240)) drawPillar(c, 'pillar_deep', px - cam.x, gy, 260, '#1a241a', '#243324'); // dark-green pillars, clear of the shaft
-    for (const px of [3820, 4300, 4600]) if (onScreen(px, 40)) drawBones(c, px - cam.x, gy);
+    for (const px of [3820, 4300, 4600]) if (onScreen(px, 42)) drawBones(c, px - cam.x, gy);
   } else {
-    for (const px of [2750, 3350]) if (onScreen(px, 40)) drawBones(c, px - cam.x, gy); // vault dressing
+    for (const px of [2750, 3350]) if (onScreen(px, 42)) drawBones(c, px - cam.x, gy); // vault dressing
     if (onScreen(3480, 40)) drawTreasure(c, 3480 - cam.x, gy);
   }
 }

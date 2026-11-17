@@ -302,7 +302,7 @@ export function drawLevel(c, lvl, t = 0) {
 // where it can actually be seen — the steps then run down through it.
 function drawStairDoor(c, lvl) {
   const e = lvl.exit;
-  if (!e || e.kind || !lvl.stairDoor || !onScreen(e.x - 100, 110)) return; // only the plain staircase exits
+  if (!e || e.kind || !lvl.stairDoor || !onScreen(e.x - 110, 126)) return; // only the plain staircase exits
   c.save();
   if (e.locked) c.globalAlpha = 0.5; // dimmed while the pearl still seals it
   // The sheet was cut out free-standing, so its opening is transparent — which

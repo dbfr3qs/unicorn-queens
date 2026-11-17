@@ -169,7 +169,7 @@ export function drawForest(c, lvl, t = 0) {
     }
   }
   for (const e of lvl.roster ?? []) {
-    if (e.kind === 'bee' && onScreen(e.x, 16)) drawHomeFlower(c, e.x, gy);
+    if (e.kind === 'bee' && onScreen(e.x - 8, 18)) drawHomeFlower(c, e.x, gy);
   }
   for (const m of water) {
     if (onScreen(m.x + 6, 10)) drawReeds(c, m.x + 6, gy);

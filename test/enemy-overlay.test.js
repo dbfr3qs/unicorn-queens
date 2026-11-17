@@ -77,6 +77,46 @@ describe('overlay over a drawn sprite', () => {
     expect(r.lines).toContain('fillRect(500, 480, 40, 120)'); // the pillar column, fully grown
   });
 
+  it('the spider boss shows the gold web only while open', () => {
+    const open = spawnOne('spiderboss'); open.state = 'recover';
+    const shut = spawnOne('spiderboss'); shut.state = 'idle';
+    const a = createRecordingCtx(), b = createRecordingCtx();
+    drawEnemies(a.ctx, [open]); drawEnemies(b.ctx, [shut]);
+    expect(a.lines.filter(s => s === 'strokeStyle=rgba(255, 209, 102, 0.95)')).toHaveLength(1);
+    expect(a.lines.filter(s => s.startsWith('ellipse(-12,'))).toHaveLength(3);
+    expect(b.lines.filter(s => s.startsWith('strokeStyle='))).toHaveLength(0);
+  });
+
+  it('the spider boss lunge tell is shown for lungeTele only', () => {
+    const tell = spawnOne('spiderboss'); tell.state = 'lungeTele';
+    const idle = spawnOne('spiderboss'); idle.state = 'idle';
+    const a = createRecordingCtx(), b = createRecordingCtx();
+    drawEnemies(a.ctx, [tell]); drawEnemies(b.ctx, [idle]);
+    expect(a.lines).toContain('fillStyle=#ff8c42');
+    expect(b.lines).not.toContain('fillStyle=#ff8c42');
+  });
+
+  it('the warden core glow (dim, phase 2, sleeping) is drawn over the sprite', () => {
+    const dim = spawnOne('warden'); dim.phase = 1;
+    const p2 = spawnOne('warden'); p2.phase = 1; p2.hp = 4;
+    const asleep = spawnOne('warden'); asleep.phase = 1; asleep.sleeping = true;
+    const glow = e => { const r = createRecordingCtx(); drawEnemies(r.ctx, [e]); return r.lines; };
+    expect(glow(dim)).toContain('globalAlpha=0.45');
+    expect(glow(dim)).toContain('fillStyle=#c98f3d');
+    expect(glow(p2)).toContain('globalAlpha=0.8');
+    expect(glow(p2)).toContain('fillStyle=#e8b86d');
+    expect(glow(asleep).some(s => /^globalAlpha=0\.(2|3|4)\d*$/.test(s))).toBe(true);
+  });
+
+  it.each(['mage', 'warden', 'spiderboss'])('%s: drawOverlay leaves the canvas balanced', kind => {
+    const e = spawnOne(kind); e.flash = 0.1; e.levitating = true; e.homeY = e.y + 40;
+    const r = createRecordingCtx();
+    getKind(kind).drawOverlay(r.ctx, e);
+    const n = name => r.lines.filter(s => s === name).length;
+    expect(n('save()')).toBeGreaterThan(0);
+    expect(n('save()')).toBe(n('restore()'));
+  });
+
   it('a kind with no overlay still draws its sprite alone', () => {
     expect(() => drawEnemies(createRecordingCtx().ctx, [spawnOne('slime')])).not.toThrow();
   });

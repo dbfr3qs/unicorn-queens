@@ -207,6 +207,27 @@ function drawFlash(c, e, bodyY) {
   }
 }
 
+// Overlay-only cues (the vector body shows these by pose and recolouring, which a
+// static sprite cannot). The open window: the vector web pattern, gold, over the sprite.
+function drawOpenWeb(c, e, bodyY) {
+  if (!isOpen(e)) return;
+  c.strokeStyle = 'rgba(255, 209, 102, 0.95)';
+  c.lineWidth = 1.5;
+  for (let i = 0; i < 3; i++) {
+    c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
+  }
+}
+
+// The lunge telegraph: the mage's windup orange, a translucent tint over the whole body
+// for as long as she crouches.
+function drawLungeTell(c, e, bodyY) {
+  if (e.state !== 'lungeTele') return;
+  c.globalAlpha = 0.45;
+  c.fillStyle = '#ff8c42';
+  c.beginPath(); c.ellipse(-4, -bodyY - 4, 30, 20, 0, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+}
+
 // world-space extras (no camera in draw): the pillars, the glint, pips
 function drawWorld(c, e) {
   for (const q of e.pillars ?? []) {
@@ -262,6 +283,8 @@ function drawOverlay(c, e) {
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h);
   c.scale(e.dir, 1);
+  drawOpenWeb(c, e, bodyY);
+  drawLungeTell(c, e, bodyY);
   drawFangs(c, e, bodyY);
   drawFlash(c, e, bodyY);
   c.restore();

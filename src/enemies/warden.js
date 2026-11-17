@@ -302,6 +302,18 @@ function drawChargeArm(c, e, bob) {
   }
 }
 
+// The chest core when the reset window is shut: dim amber (brighter in P2), a slow 2 s
+// pulse while sleeping.
+function drawCoreGlow(c, e, bob) {
+  const ph = e.phase ?? 0;
+  c.globalAlpha = e.sleeping
+    ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin(ph * Math.PI))
+    : (inP2(e) ? 0.8 : 0.45);
+  c.fillStyle = inP2(e) ? '#e8b86d' : '#c98f3d';
+  c.fillRect(-7, -42 + bob, 14, 14);
+  c.globalAlpha = 1;
+}
+
 function drawFlash(c, e) {
   if ((e.flash ?? 0) > 0) {
     c.globalAlpha = 0.7;
@@ -332,6 +344,7 @@ function drawOverlay(c, e) {
   c.translate(e.x + e.w / 2, e.y + e.h);
   c.scale(e.dir ?? 1, 1);
   if (e.inWindow && !e.dead) drawWindowGlow(c, e, bob);
+  else drawCoreGlow(c, e, bob);
   c.fillStyle = '#6e5424';
   drawPoseArm(c, e, bob);
   drawChargeArm(c, e, bob);
@@ -341,10 +354,7 @@ function drawOverlay(c, e) {
 }
 
 function draw(c, e) {
-  const ph = e.phase ?? 0;
-  const sleeping = !!e.sleeping;
-  const p2 = inP2(e);
-  const bob = sleeping ? Math.sin(ph * Math.PI) * 1.5 : 0; // the 2 s breath
+  const bob = bobOf(e); // the 2 s breath while sleeping
   const gy = e.y + e.h;
   drawSweep(c, e);
 
@@ -374,12 +384,7 @@ function draw(c, e) {
   if (e.inWindow && !e.dead) {
     drawWindowGlow(c, e, bob);
   } else {
-    c.globalAlpha = sleeping
-      ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin(ph * Math.PI))
-      : (p2 ? 0.8 : 0.45);
-    c.fillStyle = p2 ? '#e8b86d' : '#c98f3d';
-    c.fillRect(-7, -42 + bob, 14, 14);
-    c.globalAlpha = 1;
+    drawCoreGlow(c, e, bob);
   }
   // arms
   c.fillStyle = '#6e5424';

@@ -12,7 +12,7 @@ import { FX } from '../effects.js';
 import { burst } from '../particles.js';
 import { shake } from '../camera.js';
 import { hurtPlayer } from '../player.js';
-import { fireFireball, fireShockwaves, fireCone } from '../projectiles.js';
+import { fireFireball, fireShockwaves, fireCone, resetFireballs, resetBoulders, resetCones, resetShockwaves } from '../projectiles.js';
 import { frostPatch } from '../thaw.js';
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
@@ -479,11 +479,13 @@ register({
   // The last arrow releases her; it does not kill her. onZero replaces the
   // usual burst-and-sound with the six-second unmaking, and updateQueenDying
   // (driven from game.js) runs it.
-  onZero: (e, fx, cam) => {
+  onZero: (e, fx, cam, lvl) => {
     e.dying = true;
     e.dyingT = DYING_T;
     e.wind = null;
     e.spikes = [];
+    resetFireballs(); resetBoulders(); resetCones(); resetShockwaves();
+    if (lvl) lvl.blizzard = null;
     fx.play('crack');
     burst(e.x + e.w / 2, e.y + e.h / 2, FX.iceShard);
     if (cam) shake(cam, 5, 0.3);

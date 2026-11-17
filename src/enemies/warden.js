@@ -36,7 +36,7 @@
 import { register } from './index.js';
 import { phaseEdge, pipMax } from './phase.js';
 import { difficulty } from '../difficulty.js'; // bossCd stretches the idle between attacks
-import { fireFireball, fireShockwaves } from '../projectiles.js';
+import { fireFireball, fireShockwaves, resetFireballs, resetBoulders, resetCones, resetShockwaves } from '../projectiles.js';
 import { hurtPlayer } from '../player.js';
 import { shake } from '../camera.js';
 
@@ -371,6 +371,7 @@ register({
     e.rested = false;
     e.tolled = false;
     if (lvl.clock) lvl.clock.stopped = true;
+    resetFireballs(); resetBoulders(); resetCones(); resetShockwaves();
   },
   update,
   draw,

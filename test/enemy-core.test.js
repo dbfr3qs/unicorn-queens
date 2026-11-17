@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { createLevel } from '../src/levels/level.js';
 import { createPlayer } from '../src/player.js';
-import { spawnEnemy, updateEnemies, E_STOMP_V } from '../src/enemies.js';
+import { spawnEnemy, updateEnemies, damageEnemy, E_STOMP_V } from '../src/enemies.js';
 import { getKind } from '../src/enemies/index.js';
 import { createCamera } from '../src/camera.js';
+import { LEVELS } from '../src/levels/index.js';
+import { fireballs, boulders, cones, shockwaves } from '../src/projectiles.js';
 
 const rig = () => {
   const l = createLevel(600);
@@ -38,5 +40,18 @@ describe('stomp contact rule', () => {
     p.vy = 300; p.cuttable = true; p.y = g.y + 4 - p.h;
     hitOnly([g], p, l, 1 / 60);
     expect(p.vy).toBe(E_STOMP_V); expect(p.cuttable).toBe(false);
+  });
+});
+
+describe('a boss\'s last hit', () => {
+  it.each(['queenboss', 'warden'])('%s: the final blow empties the air', kind => {
+    const l = LEVELS[kind === 'warden' ? 7 : 8].make(600);
+    const e = spawnEnemy(l.roster.find(s => s.kind === kind), l); e.sleeping = false;
+    const fx = { play() {} };
+    for (const list of [fireballs, boulders, cones, shockwaves]) list.push({ dead: false });
+    l.blizzard = { t: 5, next: 1 };
+    damageEnemy(e, fx, createCamera(), e.hp, l);
+    for (const list of [fireballs, boulders, cones, shockwaves]) expect(list).toHaveLength(0);
+    if (kind === 'queenboss') expect(l.blizzard).toBe(null);
   });
 });

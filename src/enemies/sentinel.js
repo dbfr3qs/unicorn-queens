@@ -39,6 +39,27 @@ function update(e, { p, lvl, dt, fx }) {
   else if (e.x + e.w > e.maxX) { e.x = e.maxX - e.w; e.dir = -1; }
 }
 
+// The raised shield: a brass plate in front, alpha 0.85. State the player reads (a front
+// arrow clangs off it), so it is shared by the vector draw and the sprite overlay.
+function drawShield(c, e) {
+  if (!e.shieldUp) return;
+  c.globalAlpha = 0.85;
+  c.fillStyle = '#c9a24a';
+  c.fillRect(12, -15, 8, 30);
+  c.fillStyle = '#e8c876';
+  c.fillRect(18, -15, 2, 30);
+  c.globalAlpha = 1;
+}
+
+// The sprite path: the sheet is the body, the shield plate is drawn over it.
+function drawOverlay(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  drawShield(c, e);
+  c.restore();
+}
+
 function draw(c, e) {
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
@@ -55,14 +76,7 @@ function draw(c, e) {
   c.fillRect(-5, -4, 10, 10);
   c.fillStyle = '#ffd75e'; // the warm core
   c.fillRect(-3, -2, 6, 6);
-  if (e.shieldUp) { // the raised shield: a brass plate in front, alpha 0.85
-    c.globalAlpha = 0.85;
-    c.fillStyle = '#c9a24a';
-    c.fillRect(12, -15, 8, 30);
-    c.fillStyle = '#e8c876';
-    c.fillRect(18, -15, 2, 30);
-    c.globalAlpha = 1;
-  }
+  drawShield(c, e);
   c.restore();
 }
 
@@ -78,4 +92,5 @@ register({
     ((a.vx > 0 && e.dir < 0) || (a.vx < 0 && e.dir > 0)), // a front arrow into the shield
   update,
   draw,
+  drawOverlay,
 });

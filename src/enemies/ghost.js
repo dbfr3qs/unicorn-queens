@@ -32,6 +32,18 @@ function update(e, { p, dt }) {
   }
 }
 
+// The sprite path: a sheet cannot dim, so fleeing a lit lantern (the vector draw's alpha
+// 0.4) is shown as a ring of the lantern's own warm light around the ghost.
+function drawOverlay(c, e) {
+  if (!(e.flicker > 0)) return;
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.strokeStyle = 'rgba(255, 205, 130, 0.6)';
+  c.lineWidth = 2;
+  c.beginPath(); c.arc(0, 0, e.w * 0.75, 0, Math.PI * 2); c.stroke();
+  c.restore();
+}
+
 function draw(c, e) {
   c.save();
   c.globalAlpha = e.flicker > 0 ? 0.4 : 0.75; // dimmer while fleeing the lantern
@@ -55,4 +67,5 @@ register({
   stompable: false,
   update,
   draw,
+  drawOverlay,
 });

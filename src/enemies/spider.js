@@ -92,19 +92,32 @@ export function makeSpiderBrain() {
   };
 }
 
+// The thread, anchor -> spider, while it is still attached (hang, climb).
+function strokeThread(c, e, x0, y0, x1, y1) {
+  if (e.state !== 'hang' && e.state !== 'climb') return;
+  c.strokeStyle = 'rgba(232, 232, 220, 0.7)';
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(x0, y0);
+  c.lineTo(x1, y1);
+  c.stroke();
+}
+
+// The sprite path: the thread is anchored in the world, so it is drawn in world
+// coordinates (the sheet is the body; the pounce itself reads from its motion).
+export function makeSpiderOverlay() {
+  return function drawOverlay(c, e) {
+    c.save();
+    strokeThread(c, e, e.anchorX, e.anchorY, e.x + e.w / 2, e.y + 2);
+    c.restore();
+  };
+}
+
 export function makeSpiderDraw() {
   return function draw(c, e) {
     c.save();
     c.translate(e.x + e.w / 2, e.y + e.h / 2);
-    // the thread: anchor -> spider, while it is still attached
-    if (e.state === 'hang' || e.state === 'climb') {
-      c.strokeStyle = 'rgba(232, 232, 220, 0.7)';
-      c.lineWidth = 1;
-      c.beginPath();
-      c.moveTo(e.anchorX - (e.x + e.w / 2), e.anchorY - (e.y + e.h / 2));
-      c.lineTo(0, -e.h / 2 + 2);
-      c.stroke();
-    }
+    strokeThread(c, e, e.anchorX - (e.x + e.w / 2), e.anchorY - (e.y + e.h / 2), 0, -e.h / 2 + 2);
     const dir = e.vx !== 0 ? (e.vx > 0 ? 1 : -1) : 1;
     c.scale(dir, 1);
     const moving = e.state === 'pounce' || e.state === 'climb';
@@ -152,4 +165,5 @@ register({
   stompable: true,
   update: makeSpiderBrain(),
   draw: makeSpiderDraw(),
+  drawOverlay: makeSpiderOverlay(),
 });

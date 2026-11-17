@@ -89,6 +89,35 @@ function makeSnakeBrain(t) {
   };
 }
 
+// The sprite path: the sheet shows neither the strike telegraph nor the sleeping coil,
+// so the tongue flick (red, as the vector draw) and a sleeper's "z z" are drawn over it.
+function makeSnakeOverlay(big) {
+  return function drawOverlay(c, e) {
+    const asleep = e.sleeping, tell = !asleep && e.state === 'telegraph';
+    if (!asleep && !tell) return;
+    c.save();
+    c.translate(e.x, e.y + e.h); // the belly line, as the vector draw
+    c.scale(e.dir, 1);
+    const w = e.w;
+    if (asleep) { // two small z's above the coil
+      c.strokeStyle = palette.white;
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(w / 2 + 6, -30); c.lineTo(w / 2 + 12, -30); c.lineTo(w / 2 + 6, -24); c.lineTo(w / 2 + 12, -24);
+      c.moveTo(w / 2 + 14, -38); c.lineTo(w / 2 + 18, -38); c.lineTo(w / 2 + 14, -34); c.lineTo(w / 2 + 18, -34);
+      c.stroke();
+    } else {
+      const headY = (big ? -26 : -24) + Math.sin(e.x * 0.3) * 1.5; // the risen head
+      c.strokeStyle = '#e33';
+      c.lineWidth = 1;
+      c.beginPath(); c.moveTo(w, headY + 4); c.lineTo(w + 6, headY + 3); c.stroke();
+      c.beginPath(); c.moveTo(w + 6, headY + 3); c.lineTo(w + 9, headY + 1);
+      c.moveTo(w + 6, headY + 3); c.lineTo(w + 9, headY + 5); c.stroke();
+    }
+    c.restore();
+  };
+}
+
 // A low, arching body: a flat band while patrolling, a rising hump (and
 // head + forked tongue) on the telegraph and the lunge.
 function makeSnakeDraw(big) {
@@ -147,6 +176,7 @@ register({
     cooldown: 4, telegraph: 0.25, recover: 0.5,
   }),
   draw: makeSnakeDraw(false),
+  drawOverlay: makeSnakeOverlay(false),
 });
 
 register({
@@ -161,4 +191,5 @@ register({
     cooldown: 6, telegraph: 0.3, recover: 0.6,
   }),
   draw: makeSnakeDraw(true),
+  drawOverlay: makeSnakeOverlay(true),
 });

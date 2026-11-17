@@ -193389,7 +193389,6 @@ save()
       fillRect(-12, -6, 5, 6)
       fillRect(7, -6, 5, 6)
       save()
-        translate(0, 0.574)
         fillStyle=#f5d76e
         fillRect(-7, -44, 4, 13)
         fillStyle=#8fd3f4

@@ -22,82 +22,51 @@ if (!game.level || !game.player || !game.enemies) throw new Error('startGame did
 
 const FRAMES = 300; // ~5s of game time
 let ts = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at frame ' + i);
-  cb(ts);
+// Drive FRAMES frames of the real loop; fail unless game time actually grew
+// (a difficulty card or pause that swallows update() would otherwise pass).
+function run(label) {
+  const t0 = game.gameTime;
+  for (let i = 0; i < FRAMES; i++) {
+    ts += 16.7;
+    const cb = rafCb; rafCb = null;
+    if (!cb) throw new Error(`requestAnimationFrame chain broke at ${label} frame ${i}`);
+    cb(ts);
+  }
+  if (!(game.gameTime > t0)) throw new Error(`smoke: ${label} did not advance`);
 }
+// first run: level 1 (startGame takes the difficulty card down)
+startGame(600, 0);
+run('level 1');
 // second run: level 2 (bridge, castle interior, boss hall)
 startGame(600, 1);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-2 frame ' + i);
-  cb(ts);
-}
+run('level 2');
 // third run: level 3 (dungeon, lava, key chain, troll hall, stairs down)
 startGame(600, 2);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-3 frame ' + i);
-  cb(ts);
-}
+run('level 3');
 // fourth run: level 4 (deep warren, sludge gauntlet, vault, dragon hall)
 startGame(600, 3);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-4 frame ' + i);
-  cb(ts);
-}
+run('level 4');
 // fifth run: level 5 (gate, forest daylight, pond, mist gate)
 startGame(600, 4);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-5 frame ' + i);
-  cb(ts);
-}
+run('level 5');
 // sixth run: level 6 (mire gate, swamp gloom, winch temple, web wall)
 startGame(600, 5);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-6 frame ' + i);
-  cb(ts);
-}
+run('level 6');
 // seventh run: level 7 (gate, snowfield, spire, throne — the iron gate holds)
 startGame(600, 6);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-7 frame ' + i);
-  cb(ts);
-}
+run('level 7');
 // eighth run: level 8 (skybridge, citadel, gear hall, observatory — the gear door holds)
 startGame(600, 7);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-8 frame ' + i);
-  cb(ts);
-}
+run('level 8');
 // ninth run: level 9 (glacier, palace, hall, throne — the frozen throne, no goal)
 startGame(600, 8);
 game.lastTs = 0;
-for (let i = 0; i < FRAMES; i++) {
-  ts += 16.7;
-  const cb = rafCb; rafCb = null;
-  if (!cb) throw new Error('requestAnimationFrame chain broke at level-9 frame ' + i);
-  cb(ts);
-}
+run('level 9');
 console.log(`smoke OK: ${FRAMES} frames ran without throwing (levels 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9)`);

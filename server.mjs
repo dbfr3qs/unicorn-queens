@@ -18,11 +18,18 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.webmanifest': 'application/manifest+json',
 };
 
 createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
-  let path = normalize(decodeURIComponent(url.pathname)).replace(/^[/\\]+/, '');
+  let path;
+  try {
+    path = normalize(decodeURIComponent(url.pathname)).replace(/^[/\\]+/, '');
+  } catch { // malformed %-escape
+    res.writeHead(400, { 'content-type': 'text/plain' });
+    return res.end('bad request');
+  }
   if (path === '') path = 'index.html';
   const file = join(root, path);
   if (!file.startsWith(root)) { // no path traversal
@@ -37,6 +44,6 @@ createServer(async (req, res) => {
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('not found: ' + path);
   }
-}).listen(port, () => {
+}).listen(port, '127.0.0.1', () => {
   console.log(`unicorn-queens: http://localhost:${port}/`);
 });

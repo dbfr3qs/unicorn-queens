@@ -100,6 +100,14 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
   raf(loop);
 }
 
+// No simulation step is longer than 1/60 s: a slow frame is split into equal
+// sub-steps, so the jump, troll slab, boulders and stomp behave as at 60 fps.
+export const MAX_STEP = 1 / 60;
+export function stepFrame(dt, viewW, fx) {
+  const n = Math.max(1, Math.ceil(dt / MAX_STEP - 1e-6));
+  for (let i = 0; i < n; i++) update(dt / n, viewW, fx);
+}
+
 export function update(dt, viewW, fx) {
   if (game.picker) return; // the difficulty card: nothing moves until a choice
   if (game.intro) { updateIntro(dt, fx); return; } // the opening: level 1 waits underneath, untouched

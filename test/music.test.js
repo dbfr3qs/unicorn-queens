@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   music, setTrack, stopMusic, initMusic, gainNow,
-  setMusicMuted, toggleMusicMuted, duck, setVolume, resumeAudio,
+  setMusicMuted, toggleMusicMuted, duck, setVolume, resumeAudio, onVisibility,
   _setBackend, _reset,
 } from '../src/music.js';
 
@@ -286,5 +286,48 @@ describe('Strudel audio initialisation', () => {
   it('a backend with no initAudio still evaluates at once', () => {
     _setBackend({ ...fake, initAudio: undefined }); setTrack('meadow');
     expect(fake.evaluated).toHaveLength(1);
+  });
+});
+
+describe('onVisibility', () => {
+  const rig = (state = 'running') => {
+    const ctx = {
+      state, suspends: 0, resumes: 0,
+      suspend() { ctx.suspends++; ctx.state = 'suspended'; },
+      resume() { ctx.resumes++; ctx.state = 'running'; },
+    };
+    return { ctx, b: { ...recorder(), getAudioContext: () => ctx } };
+  };
+
+  it('suspends the context when hidden and resumes it when shown', () => {
+    const { ctx, b } = rig();
+    _setBackend(b);
+    onVisibility(true);
+    expect(ctx.suspends).toBe(1);
+    onVisibility(false);
+    expect(ctx.resumes).toBe(1);
+  });
+
+  it('does not suspend twice, nor resume what it did not suspend', () => {
+    const { ctx, b } = rig();
+    _setBackend(b);
+    onVisibility(true); onVisibility(true);
+    expect(ctx.suspends).toBe(1);
+    onVisibility(false); onVisibility(false);
+    expect(ctx.resumes).toBe(1);
+  });
+
+  it('leaves a context the browser is holding shut alone', () => {
+    const { ctx, b } = rig('suspended');
+    _setBackend(b);
+    onVisibility(true); onVisibility(false);
+    expect(ctx.suspends).toBe(0);
+    expect(ctx.resumes).toBe(0);
+  });
+
+  it('does not throw with no backend or a throwing context', () => {
+    expect(() => { onVisibility(true); onVisibility(false); }).not.toThrow();
+    _setBackend({ ...recorder(), getAudioContext: () => { throw new Error('x'); } });
+    expect(() => onVisibility(true)).not.toThrow();
   });
 });

@@ -95,6 +95,7 @@ function wirePad(cluster, buttons, dispatch) {
     buttons[code]?.classList.toggle('down', type === 'keydown');
     dispatch(type, code);
   });
+  wired.add({ release: pad.liftAll });
   const code = e => padCodeAt(e.clientX, e.clientY, cluster.getBoundingClientRect());
   const move = e => pad.move(e.pointerId, code(e));
   const up = e => pad.lift(e.pointerId);
@@ -109,29 +110,41 @@ function wirePad(cluster, buttons, dispatch) {
   cluster.addEventListener('contextmenu', e => e.preventDefault()); // a long press is a hold, not a menu
 }
 
+// Every wired button's release, so a hidden page can let go of all of them.
+const wired = new Set();
+
+export function releaseAllTouch() {
+  wired.forEach(w => w.release());
+}
+
 // Wire one action button: its pointer down is the key down; the same
-// pointer's up, cancel or wander off the button is the key up. Nothing else
-// can release it, so two thumbs never release each other's keys.
-function wire(btn, code, dispatch) {
+// pointer's up, cancel or lost capture is the key up. A pointer that goes
+// down while the button is held (its own release was missed) takes it over
+// without a second keydown, so a lost release cannot latch the key.
+export function wire(btn, code, dispatch) {
   let pointer = null;
-  const down = e => {
-    if (pointer !== null) return;
-    pointer = e.pointerId;
-    btn.setPointerCapture?.(e.pointerId);
-    btn.classList.add('down');
-    dispatch('keydown', code);
-  };
-  const up = e => {
-    if (e.pointerId !== pointer) return;
+  const release = () => {
+    if (pointer === null) return;
     pointer = null;
     btn.classList.remove('down');
     dispatch('keyup', code);
   };
+  const down = e => {
+    if (pointer !== null) { pointer = e.pointerId; return; }
+    pointer = e.pointerId;
+    try { btn.setPointerCapture?.(e.pointerId); } catch { /* the pointer may already be gone */ }
+    btn.classList.add('down');
+    dispatch('keydown', code);
+  };
+  const up = e => { if (e.pointerId === pointer) release(); };
   btn.addEventListener('pointerdown', down);
   btn.addEventListener('pointerup', up);
   btn.addEventListener('pointercancel', up);
   btn.addEventListener('lostpointercapture', up);
   btn.addEventListener('contextmenu', e => e.preventDefault()); // a long press is a hold, not a menu
+  const w = { release };
+  wired.add(w);
+  return w;
 }
 
 export function initTouch(onFullscreen, dispatch = dispatchKey) {
@@ -174,6 +187,9 @@ export function initTouch(onFullscreen, dispatch = dispatchKey) {
     fs.addEventListener('click', onFullscreen);
     root.appendChild(fs);
   }
+  window.addEventListener('blur', releaseAllTouch);
+  window.addEventListener('pagehide', releaseAllTouch);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAllTouch(); });
   document.body.classList.add('touch');
   document.body.appendChild(root);
   return root;

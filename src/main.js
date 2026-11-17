@@ -21,7 +21,13 @@ const ctx = canvas.getContext('2d');
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
 // Early, with the key listeners: they are live during loading, so a focus loss then must release keys too.
-addEventListener('blur', () => { releaseAllKeys(); resetGamepads(); });
+const releaseKeys = () => { releaseAllKeys(); resetGamepads(); };
+addEventListener('blur', releaseKeys);
+// As touch does: a page sent away (app switch, tab hidden) may never see the keyups.
+addEventListener('pagehide', releaseKeys);
+if (typeof document.addEventListener === 'function') { // absent under smoke.mjs's stub document
+  document.addEventListener('visibilitychange', () => { if (document.hidden) releaseKeys(); });
+}
 // Fullscreen: F, or the footer link. The page goes fullscreen, not the
 // canvas, so the touch buttons come with it; index.html's :root:fullscreen
 // rules scale the canvas to fit. This needs a real gesture — the browser

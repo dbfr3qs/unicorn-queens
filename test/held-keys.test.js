@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { input, onKeyDown, onKeyUp, resetInput } from '../src/input.js';
+import { input, onKeyDown, onKeyUp, resetInput, releaseAllKeys, _resetMute } from '../src/input.js';
+import * as audio from '../src/audio.js';
+import { music } from '../src/music.js';
 import { openDialogue, isDialogueOpen, resetDialogue } from '../src/dialogue.js';
 
 const ev = code => {
@@ -8,7 +10,11 @@ const ev = code => {
   return e;
 };
 
-beforeEach(() => { resetInput(); resetDialogue(); });
+beforeEach(() => {
+  resetInput(); resetDialogue(); _resetMute();
+  if (audio.muted) audio.toggleMuted(); // start unmuted
+  music.muted = false;
+});
 
 const LINE = [{ speaker: 'x', text: 'y' }];
 it('a movement key held through a dialogue moves again when the box closes', () => {
@@ -43,4 +49,17 @@ it('releasing A while D is held keeps running right; releasing J keeps X firing'
 it('a restart that closes the box hands held movement back (Review Focus 2)', () => {
   onKeyDown(ev('ArrowLeft')); openDialogue(LINE); resetDialogue();
   expect(input.left).toBe(true);
+});
+it('releaseAllKeys drops everything held', () => {
+  onKeyDown(ev('ArrowRight')); onKeyDown(ev('Space')); releaseAllKeys();
+  expect(input.right).toBe(false); expect(input.jump).toBe(false);
+});
+it('holding M toggles once', () => {
+  onKeyDown(ev('KeyM')); onKeyDown({ ...ev('KeyM'), repeat: true });
+  expect(audio.muted).toBe(true);
+});
+it("M does not overwrite N's music-only mute", () => {
+  onKeyDown(ev('KeyN'));                        // music off, sfx on
+  onKeyDown(ev('KeyM')); onKeyDown(ev('KeyM')); // master off, then on again
+  expect(audio.muted).toBe(false); expect(music.muted).toBe(true);
 });

@@ -38,11 +38,13 @@ const CSS = `
 #touch .left { gap: 0; }
 #touch .left .row { gap: 0; justify-content: flex-start; }
 #touch .cell { width: 58px; height: 58px; }
+#touch .left { pointer-events: auto; touch-action: none; }
 #touch button { pointer-events: auto; touch-action: none; width: 64px; height: 64px; border-radius: 50%;
   border: 2px solid rgba(181,126,220,0.75); background: rgba(26,16,37,0.55); color: #e8dcff;
   font: bold 15px monospace; padding: 0; -webkit-tap-highlight-color: transparent; }
 #touch button.pad { width: 58px; height: 58px; border-radius: 10px; font-size: 18px; } /* the cross: square keys, touching */
 #touch .hub { width: 58px; height: 58px; background: rgba(26,16,37,0.55); border: 2px solid rgba(181,126,220,0.35); box-sizing: border-box; }
+#touch button.pad, #touch .hub { pointer-events: none; }
 #touch button.wide { width: 138px; border-radius: 32px; }
 #touch button.down { background: rgba(181,126,220,0.6); }
 /* Make room: the game gives up its 1:1 before it lets the buttons sit on
@@ -54,9 +56,57 @@ body.touch footer { top: calc(8px + env(safe-area-inset-top)); left: calc(12px +
 #touch .fs { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: calc(10px + env(safe-area-inset-right)); width: 44px; height: 44px; font-size: 20px; }
 `;
 
-// Wire one button: its pointer down is the key down; the same pointer's up,
-// cancel or wander off the button is the key up. Nothing else can release
-// it, so two thumbs never release each other's keys.
+// The d-pad: where each finger is, not which button it landed on. A code is
+// down while at least one pointer is on it; a pointer that slides to another
+// cell (or onto the hub, or off the pad) swaps or drops its key, so two thumbs
+// never release each other's keys and a slide needs no lift.
+export function padCodeAt(x, y, rect) {
+  const c = Math.floor((x - rect.left) / (rect.width / 3));
+  const r = Math.floor((y - rect.top) / (rect.height / 3));
+  if (c === 1 && r === 0) return 'ArrowUp';
+  if (c === 1 && r === 2) return 'ArrowDown';
+  if (r === 1 && c === 0) return 'ArrowLeft';
+  if (r === 1 && c === 2) return 'ArrowRight';
+  return null; // the hub, the corners, and anywhere outside
+}
+
+export function createPad(dispatch) {
+  const at = new Map(); // pointerId -> code
+  const held = code => [...at.values()].includes(code);
+  const point = (id, code) => {
+    const prev = at.get(id) ?? null;
+    if (prev === code) return;
+    if (code === null) at.delete(id); else at.set(id, code);
+    if (prev !== null && !held(prev)) dispatch('keyup', prev);
+    if (code !== null && [...at.values()].filter(c => c === code).length === 1) dispatch('keydown', code);
+  };
+  const lift = id => point(id, null);
+  const liftAll = () => { for (const id of [...at.keys()]) lift(id); };
+  return { point, lift, liftAll };
+}
+
+// One set of listeners for the whole cross; its buttons ignore the pointer.
+function wirePad(cluster, buttons, dispatch) {
+  const pad = createPad((type, code) => {
+    buttons[code]?.classList.toggle('down', type === 'keydown');
+    dispatch(type, code);
+  });
+  const move = e => pad.point(e.pointerId, padCodeAt(e.clientX, e.clientY, cluster.getBoundingClientRect()));
+  const up = e => pad.lift(e.pointerId);
+  cluster.addEventListener('pointerdown', e => {
+    try { cluster.setPointerCapture?.(e.pointerId); } catch { /* the pointer may already be gone */ }
+    move(e);
+  });
+  cluster.addEventListener('pointermove', move);
+  cluster.addEventListener('pointerup', up);
+  cluster.addEventListener('pointercancel', up);
+  cluster.addEventListener('lostpointercapture', up);
+  cluster.addEventListener('contextmenu', e => e.preventDefault()); // a long press is a hold, not a menu
+}
+
+// Wire one action button: its pointer down is the key down; the same
+// pointer's up, cancel or wander off the button is the key up. Nothing else
+// can release it, so two thumbs never release each other's keys.
 function wire(btn, code, dispatch) {
   let pointer = null;
   const down = e => {
@@ -86,6 +136,7 @@ export function initTouch(onFullscreen, dispatch = dispatchKey) {
   document.head.appendChild(style);
   const root = document.createElement('div');
   root.id = 'touch';
+  const buttons = {};
   for (const [side, rows] of [['left', LEFT], ['right', RIGHT]]) {
     const cluster = document.createElement('div');
     cluster.className = `cluster ${side}`;
@@ -104,11 +155,12 @@ export function initTouch(onFullscreen, dispatch = dispatchKey) {
         btn.textContent = b.label;
         btn.className = [b.pad ? 'pad' : '', b.wide ? 'wide' : ''].join(' ').trim();
         btn.setAttribute('aria-label', b.code);
-        wire(btn, b.code, dispatch);
+        if (b.pad) buttons[b.code] = btn; else wire(btn, b.code, dispatch);
         el.appendChild(btn);
       }
       cluster.appendChild(el);
     }
+    if (side === 'left') wirePad(cluster, buttons, dispatch);
     root.appendChild(cluster);
   }
   if (onFullscreen) { // real gesture, so the browser allows it here

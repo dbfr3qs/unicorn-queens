@@ -20,12 +20,19 @@
   canvas { background: #0d0815; border: 2px solid #b57edc; border-radius: 4px; box-sizing: border-box;
     max-width: 100vw; max-height: 100vh; max-height: 100dvh; width: auto; height: auto; object-fit: contain; image-rendering: pixelated; }
   @media (min-width: 804px) and (min-height: 604px) { canvas { image-rendering: auto; } } /* 1:1: nothing to smooth or to step */
-  /* Fullscreen (F, or the footer link): the canvas stays 800x600 inside and
-     is scaled to the largest 4:3 box the display allows, letterboxed in the
-     game's own dark. Nearest-neighbour, so the pixels stay pixels. */
-  canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
-  canvas:-webkit-full-screen { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
-  canvas::backdrop { background: #0d0815; }
+  /* Fullscreen (F, or the footer link): the page is fullscreen, not the
+     canvas, so the touch overlay (position: fixed in <body>) stays visible.
+     The canvas stays 800x600 inside and is scaled to the largest 4:3 box the
+     display allows, letterboxed in the game's own dark; nearest-neighbour, so
+     the pixels stay pixels. body.touch canvas's max-width/max-height (in
+     src/touch.js) are other properties, so they still cap this width/height
+     and keep the buttons off the picture. */
+  :root:fullscreen body { background: #0d0815; }
+  :root:fullscreen canvas { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
+  :root:fullscreen footer { display: none; }
+  :root:-webkit-full-screen body { background: #0d0815; }
+  :root:-webkit-full-screen canvas { width: 100vw; height: 100vh; object-fit: contain; image-rendering: pixelated; border: 0; border-radius: 0; }
+  :root:-webkit-full-screen footer { display: none; }
   /* the licence's one ask of a public copy: a way to the source */
   footer { position: fixed; bottom: 8px; right: 12px; font: 12px monospace; }
   footer a { color: #8a7fa8; text-decoration: none; margin-left: 14px; }

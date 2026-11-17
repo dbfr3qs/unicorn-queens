@@ -96,6 +96,7 @@ export function createEnemies(lvl) {
 
 export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
   const env = { p, lvl, cam, dt, fx };
+  const vy0 = p.vy; // fall speed before any stomp this frame rewrites it
   for (const e of enemies) {
     if (e.dead) continue;
     // method call so `this` is the kind entry (brains read tuning off it)
@@ -104,7 +105,7 @@ export function updateEnemies(enemies, p, lvl, cam, dt, fx) {
     const tell = k.isTell?.(e) ? difficulty().bossTell : 1; // a boss's wind-up runs slow on the easier presets
     k.update(e, tell === 1 ? env : { ...env, dt: dt / tell });
     if (e.y > lvl.height + 100) { e.dead = true; continue; } // fell into a pit
-    hitPlayer(e, p, cam, fx);
+    hitPlayer(e, p, cam, fx, vy0, dt);
   }
 }
 
@@ -114,11 +115,11 @@ function spawnHp(k) {
 }
 
 // Shared stomp vs side contact, applied to every kind.
-function hitPlayer(e, p, cam, fx) {
+function hitPlayer(e, p, cam, fx, vy0, dt) {
   if (e.sleeping || e.freed) return; // a coiled adder / a freed spirit is harmless (no stomp either)
   if (p.dead || p.invuln > 0) return;
   if (!(p.x < e.x + e.w && p.x + p.w > e.x && p.y < e.y + e.h && p.y + p.h > e.y)) return;
-  const stomp = p.vy > 0 && p.y + p.h - e.y < 16;
+  const stomp = vy0 > 0 && (p.y + p.h - vy0 * dt) - e.y < 16; // swept: where the feet were at the start of the frame
   const k = getKind(e.kind);
   if (stomp && k.stompable) {
     e.dead = true;   // stomped
@@ -130,6 +131,7 @@ function hitPlayer(e, p, cam, fx) {
     shake(cam, 5, 0.18);
   } else if (stomp) {
     p.vy = E_STOMP_V; // bounced off an unstompable enemy (ghost)
+    p.cuttable = false;
   } else {
     hurtPlayer(p, cam, fx);
   }

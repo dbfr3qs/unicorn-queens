@@ -21,3 +21,11 @@ export function fullscreenApi(doc) {
     active: () => !!(doc.fullscreenElement || doc.webkitFullscreenElement),
   };
 }
+
+// Toggle on a fullscreenApi; resolves true only if the page was ENTERED
+// (really fullscreen afterwards), so callers can gate entry-only follow-ups.
+export async function toggleFullscreenOn(fs) {
+  if (fs.active()) { await fs.exit(); return false; }
+  await fs.request();
+  return fs.active();
+}

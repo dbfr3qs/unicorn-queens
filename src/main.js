@@ -13,7 +13,7 @@ import { cardReady } from './ending9.js'; // level 9: the end card
 import { endIntro } from './intro.js'; // the opening scene (the card's Space starts it)
 import { spritesLoaded, loadProgress } from './sprites.js';
 import { palette, fonts } from './render/theme.js';
-import { fullscreenApi } from './shell.js';
+import { fullscreenApi, toggleFullscreenOn } from './shell.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -22,23 +22,23 @@ addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
 // Fullscreen: F, or the footer link. The page goes fullscreen, not the
 // canvas, so the touch buttons come with it; index.html's :root:fullscreen
-// rules scale the canvas to fit. This needs a real
-// gesture — the browser refuses it otherwise — which is why there is no pad
-// button for it: a pad's presses are synthetic and would be refused.
+// rules scale the canvas to fit. This needs a real gesture — the browser
+// refuses it otherwise — which is why there is no pad button for it: a
+// pad's presses are synthetic and would be refused.
 // Already fullscreen by another road: launched from the home screen, where
 // the manifest asked for it. Nothing to toggle, and no button to show.
 const standalone = () => (typeof navigator !== 'undefined' && navigator.standalone === true) ||
   (typeof matchMedia === 'function' && matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
 
-// Returns the request's promise (never rejecting) so a caller can chain on it.
+// Resolves true only if fullscreen was entered (never rejects).
 function toggleFullscreen() {
   const fs = fullscreenApi(document); // lazily: smoke.mjs's stub document has no documentElement
-  if (fs?.active()) return fs.exit();
-  if (fs) return fs.request();
+  if (fs) return toggleFullscreenOn(fs);
   // No fullscreen API at all: that is an iPhone (Safari there has it only
   // for video). The way to a fullscreen game on an iPhone is the home
   // screen, so say so, once, where the button was pressed.
   toast('No fullscreen in Safari on iPhone — Share → Add to Home Screen, then open it from there.');
+  return Promise.resolve(false);
 }
 
 let toastEl = null;
@@ -61,7 +61,7 @@ if (typeof fsLink?.addEventListener === 'function') fsLink.addEventListener('cli
 // the touch button also asks for landscape, where the phone allows it.
 if (wantsTouch()) {
   const root = initTouch(() => {
-    toggleFullscreen()?.then(() => screen.orientation?.lock?.('landscape')?.catch(() => {}));
+    toggleFullscreen().then(entered => { if (entered) screen.orientation?.lock?.('landscape')?.catch(() => {}); });
   });
   if (fsLink) fsLink.hidden = true; // the ⛶ button does this job on touch
   if (standalone()) root?.querySelector('.fs')?.remove(); // launched fullscreen already

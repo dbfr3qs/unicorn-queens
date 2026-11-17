@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fullscreenApi } from '../src/shell.js';
+import { fullscreenApi, toggleFullscreenOn } from '../src/shell.js';
 
 describe('fullscreenApi', () => {
   it('targets the page, so the touch controls stay on screen', async () => {
@@ -31,5 +31,31 @@ describe('fullscreenApi', () => {
   it('a refused or throwing exit does not reject', async () => {
     const doc = { documentElement: { requestFullscreen() {} }, exitFullscreen: () => Promise.reject(new Error('no')) };
     await expect(fullscreenApi(doc).exit()).resolves.toBeUndefined();
+  });
+});
+
+describe('toggleFullscreenOn', () => {
+  const rig = (startActive, refuse) => {
+    const calls = [];
+    const doc = {
+      fullscreenElement: startActive ? {} : null,
+      documentElement: { requestFullscreen() { calls.push('request'); if (!refuse) doc.fullscreenElement = this; return Promise.resolve(); } },
+      exitFullscreen() { calls.push('exit'); doc.fullscreenElement = null; return Promise.resolve(); },
+    };
+    return { calls, fs: fullscreenApi(doc) };
+  };
+  it('enters when inactive and the request succeeds: true', async () => {
+    const { calls, fs } = rig(false, false);
+    expect(await toggleFullscreenOn(fs)).toBe(true);
+    expect(calls).toEqual(['request']);
+  });
+  it('a refused request leaves it inactive: false', async () => {
+    const { fs } = rig(false, true);
+    expect(await toggleFullscreenOn(fs)).toBe(false);
+  });
+  it('already active: exits, does not request, false', async () => {
+    const { calls, fs } = rig(true, false);
+    expect(await toggleFullscreenOn(fs)).toBe(false);
+    expect(calls).toEqual(['exit']);
   });
 });

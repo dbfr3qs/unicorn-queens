@@ -13,6 +13,7 @@ import { difficultyName } from '../difficulty.js';
 export function drawHud(ctx, viewW, viewH) {
   const { player } = game;
   ctx.save();
+  ctx.textAlign = 'left';
   ctx.font = fonts.hud;
   ctx.textBaseline = 'top';
   for (let i = 0; i < player.maxHp; i++) { // 4th pip appears with the heart cap
@@ -121,6 +122,7 @@ export function drawHud(ctx, viewW, viewH) {
     ctx.restore();
   }
   ctx.save();
+  ctx.textAlign = 'left';
   ctx.font = fonts.hint;
   ctx.fillStyle = palette.hint;
   ctx.textBaseline = 'bottom';

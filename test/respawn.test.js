@@ -1,0 +1,98 @@
+import { describe, it, expect, afterEach } from 'vitest';
+import { createLevel, pitLine } from '../src/levels/level.js';
+import { LEVELS } from '../src/levels/index.js';
+import { createPlayer, updatePlayer, hurtPlayer, revivePlayer, respawnX, respawnY, BIG_W, BIG_H } from '../src/player.js';
+import { createCamera } from '../src/camera.js';
+import { solidDoors } from '../src/door.js';
+import { setDifficulty } from '../src/difficulty.js';
+
+const DT = 1 / 60;
+const fx = { play() {} };
+const cam = createCamera();
+const noInput = { left: false, right: false, jump: false, fire: false, up: false, down: false, cast: false };
+
+afterEach(() => setDifficulty('hard'));
+
+describe('respawn height (§2.1)', () => {
+  it('growing in mid-air then falling in a pit respawns on the floor, not in it', () => {
+    const l = createLevel(600), p = createPlayer(l);
+    for (let i = 0; i < 5; i++) updatePlayer(p, noInput, l, cam, DT, fx); // lands: safe spot recorded at h 36
+    p.big = true; p.w = BIG_W; p.h = BIG_H;                               // the grow pickup, taken in the air
+    p.y = l.height + 1; updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.y + p.h).toBe(l.groundY);
+  });
+  it('easy revive uses the same height', () => {
+    setDifficulty('easy');
+    const l = createLevel(600), p = createPlayer(l);
+    p.safeSurf = l.ground[0]; p.h = BIG_H; revivePlayer(p, l, fx);
+    expect(p.y + p.h).toBe(l.groundY);
+  });
+  it('no recorded surface: the ground line; a platform: its top (Review Focus 4)', () => {
+    const l = createLevel(600), p = createPlayer(l);
+    expect(respawnY(p, l)).toBe(l.groundY - p.h);
+    p.safeSurf = l.platforms[0];
+    expect(respawnY(p, l)).toBe(l.platforms[0].y - p.h);
+  });
+});
+
+describe('the pit line (§2.2)', () => {
+  it.each([[1, 3550], [2, 4350]])('small player standing on the bottom exit step of level %i is not falling', (idx, x) => {
+    const l = LEVELS[idx].make(600), p = createPlayer(l);
+    p.x = x; p.y = l.groundY + 80 - p.h;
+    for (let i = 0; i < 60; i++) updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.hp).toBe(3); expect(Math.abs(p.x - x)).toBeLessThan(1);
+  });
+  it('level 1 is unchanged', () => { const l = createLevel(600); expect(pitLine(l)).toBe(l.height); });
+});
+
+describe('the safe spot and solid doors (§2.3)', () => {
+  const frostDoor = l => solidDoors(l)[0];
+  it('level 9: a safe spot recorded against a solid door respawns on the side she was on', () => {
+    const l = LEVELS[8].make(600), p = createPlayer(l), d = frostDoor(l);
+    p.safeSurf = l.ground.find(g => g.x <= d.x && g.x + g.w >= d.x + d.w);
+    p.safeX = d.x - p.w + 6;                       // overlapping the door, as today's order records it
+    expect(respawnX(p, l) + p.w).toBeLessThanOrEqual(d.x);
+  });
+  it('walking into a solid door never records a spot inside it', () => {
+    const l = LEVELS[8].make(600), p = createPlayer(l), d = frostDoor(l);
+    p.x = d.x - p.w - 4; p.y = l.groundY - p.h;
+    for (let i = 0; i < 30; i++) updatePlayer(p, { ...noInput, right: true }, l, cam, DT, fx);
+    expect(p.safeX + p.w).toBeLessThanOrEqual(d.x);
+  });
+  it('level 6: a frame the web wall pushed her on records no spot; the respawn stays on the west segment', () => {
+    const l = LEVELS[5].make(600), p = createPlayer(l), d = frostDoor(l);
+    expect(d.kind).toBe('webwall');
+    const west = l.ground.find(g => g.x + g.w <= d.x && g.x + g.w >= d.x - 400); // the segment before the pit
+    const hollow = l.ground.find(g => g.x === d.x);
+    p.x = west.x + 1000; p.y = l.groundY - p.h;
+    for (let i = 0; i < 5; i++) updatePlayer(p, noInput, l, cam, DT, fx);   // seeds a safe spot on the west segment
+    const seeded = p.safeX;
+    expect(p.safeSurf).toBe(west);
+    p.x = d.x + 4; p.y = l.groundY - p.h; p.vy = 0;        // on the hollow's lip, centre west of the wall's centre
+    for (let i = 0; i < 5; i++) updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.safeX).toBe(seeded);
+    expect(p.safeSurf).toBe(west);
+    const x = respawnX(p, l);
+    expect(x).toBeGreaterThanOrEqual(west.x);
+    expect(x + p.w).toBeLessThanOrEqual(west.x + west.w);
+    expect(hollow).toBeDefined();
+  });
+});
+
+describe('damage rules (Bug review 3/4)', () => {
+  it('hurtPlayer does nothing once the level is won', () => {
+    const p = createPlayer(createLevel(600)); p.won = true;
+    expect(hurtPlayer(p, cam, fx)).toBe(false); expect(p.hp).toBe(3);
+  });
+  it('easy: a pit fall that costs nothing grants no invulnerability', () => {
+    setDifficulty('easy');
+    const l = createLevel(600), p = createPlayer(l);
+    p.y = l.height + 1; updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.invuln).toBe(0);
+  });
+  it('hard: a pit fall that costs a heart still grants invulnerability', () => {
+    const l = createLevel(600), p = createPlayer(l);
+    p.y = l.height + 1; updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.hp).toBe(2); expect(p.invuln).toBeGreaterThan(0);
+  });
+});

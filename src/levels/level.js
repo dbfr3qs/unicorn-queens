@@ -45,6 +45,14 @@ export function createLevel(viewH = 600) {
   };
 }
 
+// The y below which a falling player is in a pit: the view height, or the
+// lowest floor's top where a level's stairs descend past it (levels 2 and 3).
+export function pitLine(lvl) {
+  let line = lvl.height;
+  for (const seg of lvl.ground ?? []) line = Math.max(line, seg.y ?? lvl.groundY);
+  return line;
+}
+
 // The kind of surface under a grounded entity's feet ('snow', 'ice',
 // 'stone', 'dais', 'platform', 'box', …) or null: the level 7 ice model
 // asks which ground it stands on. Scans ground then platforms at the

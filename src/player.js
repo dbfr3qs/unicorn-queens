@@ -1,5 +1,5 @@
 // Player: state and physics (jump buffering, coyote time, squash & stretch).
-import { resolveGroundCollision, effectiveKind } from './levels/level.js';
+import { resolveGroundCollision, effectiveKind, pitLine } from './levels/level.js';
 import { inWindZone } from './wind.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
@@ -7,7 +7,7 @@ import { spawnLoot } from './loot.js';
 import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 import { difficulty } from './difficulty.js';
-import { solidDoors } from './door.js';
+import { solidDoors, resolveDoor } from './door.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
 export const HOP_V = P_JUMP_V * 0.85; // levitation hop: shorter than a ground jump
@@ -44,11 +44,18 @@ export function respawnX(p, lvl) {
   const lo = s.x + (flush(s.x) ? 0 : RESPAWN_MARGIN);
   const hi = s.x + s.w - p.w - (flush(s.x + s.w) ? 0 : RESPAWN_MARGIN);
   let x = lo > hi ? s.x + (s.w - p.w) / 2 : Math.max(lo, Math.min(p.safeX, hi));
+  const c = p.safeX + p.w / 2;
   for (const d of solidDoors(lvl)) {
-    if (x > p.safeX && d.x >= p.safeX + p.w && d.x < x + p.w) x = Math.max(p.safeX, d.x - p.w); // stop west of it
-    if (x < p.safeX && d.x + d.w <= p.safeX && d.x + d.w > x) x = Math.min(p.safeX, d.x + d.w); // stop east of it
+    const dc = d.x + d.w / 2;
+    if (dc > c && d.x < x + p.w) x = Math.min(x, d.x - p.w); // door to the east: stay west of it
+    if (dc < c && d.x + d.w > x) x = Math.max(x, d.x + d.w); // door to the west: stay east of it
   }
   return x;
+}
+
+// The y a respawn stands at: on the recorded surface, at the size she is now.
+export function respawnY(p, lvl) {
+  return (p.safeSurf?.y ?? lvl.groundY) - p.h;
 }
 
 // carry: permanent acquisitions from the previous level (big, bow),
@@ -96,7 +103,7 @@ export function createPlayer(lvl, carry = {}) {
 // Shared one-hit damage: knockback, invulnerability, death check.
 // Returns true if the hit landed (false while dead or invulnerable).
 export function hurtPlayer(p, cam, fx) {
-  if (p.dead || p.invuln > 0) return false;
+  if (p.dead || p.won || p.invuln > 0) return false; // a won level cannot be lost
   p.hp -= 1;
   p.invuln = difficulty().invuln;
   p.vy = -250;
@@ -129,7 +136,7 @@ export function revivePlayer(p, lvl, fx) {
   p.webT = 0;
   p.iceAir = false;
   p.x = respawnX(p, lvl);
-  p.y = p.safeY;
+  p.y = respawnY(p, lvl);
   p.vx = 0; p.vy = 0;
   p.cuttable = false;
   fx.play('heart');
@@ -244,8 +251,11 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     player.vy = Math.max(0, player.vy);
   }
   const surface = resolveGroundCollision(player, lvl, dt);
+  const doorX = player.x;
+  resolveDoor(lvl, player); // before the safe spot is taken
+  const pushed = player.x !== doorX; // a frame the door pushed her on records no spot: the last one stands
   if (player.flying && player.onGround && !wasOnGround) endFlight(player, fx); // landing ends flight
-  if (player.onGround && surface && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
+  if (player.onGround && surface && !pushed && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
     player.safeX = player.x; player.safeY = player.y; player.safeSurf = surface;
   }
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust
@@ -264,16 +274,16 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   player.sx += (1 - player.sx) * Math.min(1, dt * 14); // ease back to rest
   player.sy += (1 - player.sy) * Math.min(1, dt * 14);
-  if (player.y > lvl.height) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
+  if (player.y > pitLine(lvl)) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
     player.hp -= difficulty().pitDamage;
     player.cuttable = false;
     if (player.hp <= 0) { shake(cam, 10, 0.4); downPlayer(player, cam, fx); }
     else {
       fx.play('hurt');
       if (player.flying) endFlight(player, fx); // the spell was used up
-      player.invuln = difficulty().invuln;
+      if (difficulty().pitDamage > 0) player.invuln = difficulty().invuln; // a free fall grants no grace
       player.x = respawnX(player, lvl);
-      player.y = player.safeY;
+      player.y = respawnY(player, lvl);
       player.vx = 0;
       player.vy = 0;
     }

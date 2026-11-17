@@ -7,7 +7,7 @@ import { spawnLoot } from './loot.js';
 import { fireArrow, fireStarArrow, FIRE_CD } from './arrows.js';
 import { FX } from './effects.js';
 import { difficulty } from './difficulty.js';
-import { solidDoors } from './door.js';
+import { solidDoors, resolveDoor } from './door.js';
 
 export const P_SPEED = 260, P_GRAVITY = 1200, P_JUMP_V = -560, P_BOUNCE_V = -320, P_TERM_VY = 800;
 export const HOP_V = P_JUMP_V * 0.85; // levitation hop: shorter than a ground jump
@@ -44,9 +44,11 @@ export function respawnX(p, lvl) {
   const lo = s.x + (flush(s.x) ? 0 : RESPAWN_MARGIN);
   const hi = s.x + s.w - p.w - (flush(s.x + s.w) ? 0 : RESPAWN_MARGIN);
   let x = lo > hi ? s.x + (s.w - p.w) / 2 : Math.max(lo, Math.min(p.safeX, hi));
+  const c = p.safeX + p.w / 2;
   for (const d of solidDoors(lvl)) {
-    if (x > p.safeX && d.x >= p.safeX + p.w && d.x < x + p.w) x = Math.max(p.safeX, d.x - p.w); // stop west of it
-    if (x < p.safeX && d.x + d.w <= p.safeX && d.x + d.w > x) x = Math.min(p.safeX, d.x + d.w); // stop east of it
+    const dc = d.x + d.w / 2;
+    if (dc > c && d.x < x + p.w) x = Math.min(x, d.x - p.w); // door to the east: stay west of it
+    if (dc < c && d.x + d.w > x) x = Math.max(x, d.x + d.w); // door to the west: stay east of it
   }
   return x;
 }
@@ -249,6 +251,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     player.vy = Math.max(0, player.vy);
   }
   const surface = resolveGroundCollision(player, lvl, dt);
+  resolveDoor(lvl, player); // before the safe spot is taken: a solid door has already pushed her out
   if (player.flying && player.onGround && !wasOnGround) endFlight(player, fx); // landing ends flight
   if (player.onGround && surface && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
     player.safeX = player.x; player.safeY = player.y; player.safeSurf = surface;

@@ -103,7 +103,7 @@ export function createPlayer(lvl, carry = {}) {
 // Shared one-hit damage: knockback, invulnerability, death check.
 // Returns true if the hit landed (false while dead or invulnerable).
 export function hurtPlayer(p, cam, fx) {
-  if (p.dead || p.invuln > 0) return false;
+  if (p.dead || p.won || p.invuln > 0) return false; // a won level cannot be lost
   p.hp -= 1;
   p.invuln = difficulty().invuln;
   p.vy = -250;
@@ -281,7 +281,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     else {
       fx.play('hurt');
       if (player.flying) endFlight(player, fx); // the spell was used up
-      player.invuln = difficulty().invuln;
+      if (difficulty().pitDamage > 0) player.invuln = difficulty().invuln; // a free fall grants no grace
       player.x = respawnX(player, lvl);
       player.y = respawnY(player, lvl);
       player.vx = 0;

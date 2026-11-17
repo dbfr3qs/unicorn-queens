@@ -76,7 +76,7 @@ describe('pit falls', () => {
     expect(p.dead).toBe(false);
     expect(p.x).toBe(600);
     expect(p.y).toBe(l.groundY - P_H);
-    expect(p.invuln).toBe(PRESETS.easy.invuln);
+    expect(p.invuln).toBe(0); // a free fall grants no grace (Bug review 3/4)
   });
 
   it.each([['medium', 3], ['hard', 2]])('cost a heart on %s', (d, left) => {

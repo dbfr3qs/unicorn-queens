@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { createLevel, pitLine } from '../src/levels/level.js';
 import { LEVELS } from '../src/levels/index.js';
-import { createPlayer, updatePlayer, revivePlayer, respawnX, respawnY, BIG_W, BIG_H } from '../src/player.js';
+import { createPlayer, updatePlayer, hurtPlayer, revivePlayer, respawnX, respawnY, BIG_W, BIG_H } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { solidDoors } from '../src/door.js';
 import { setDifficulty } from '../src/difficulty.js';
@@ -76,5 +76,23 @@ describe('the safe spot and solid doors (§2.3)', () => {
     expect(x).toBeGreaterThanOrEqual(west.x);
     expect(x + p.w).toBeLessThanOrEqual(west.x + west.w);
     expect(hollow).toBeDefined();
+  });
+});
+
+describe('damage rules (Bug review 3/4)', () => {
+  it('hurtPlayer does nothing once the level is won', () => {
+    const p = createPlayer(createLevel(600)); p.won = true;
+    expect(hurtPlayer(p, cam, fx)).toBe(false); expect(p.hp).toBe(3);
+  });
+  it('easy: a pit fall that costs nothing grants no invulnerability', () => {
+    setDifficulty('easy');
+    const l = createLevel(600), p = createPlayer(l);
+    p.y = l.height + 1; updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.invuln).toBe(0);
+  });
+  it('hard: a pit fall that costs a heart still grants invulnerability', () => {
+    const l = createLevel(600), p = createPlayer(l);
+    p.y = l.height + 1; updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.hp).toBe(2); expect(p.invuln).toBeGreaterThan(0);
   });
 });

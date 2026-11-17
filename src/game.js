@@ -119,6 +119,7 @@ export function update(dt, viewW, fx) {
   // no pit rule, no damage. The scene keeps rendering and animating, and the
   // only live key is Space at the card (main.js).
   if (game.level.ending9?.started) {
+    resetArrows(); // the player's arrows stop where they are; none fly through the ending
     updateEnding(game, dt, fx);
     const q = game.enemies.find(e => e.kind === 'queenboss' && e.dying);
     if (q) updateQueenDying(q, game.level, game.enemies, dt, fx);
@@ -198,6 +199,7 @@ function decayShake(dt) {
 // floor hazards — so the grace isn't spent dodging the last attack.
 function updateRevive(dt, fx) {
   const p = game.player;
+  input.cast = false; // a cast pressed during the beat must not fire on revival
   p.reviving = Math.max(0, p.reviving - dt);
   updateParticles(dt);
   decayShake(dt);
@@ -246,9 +248,9 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden' || e.kind === 'queenboss') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden' || e.kind === 'queenboss' || e.kind === 'troll') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
-    while (!e.dead) damageEnemy(e, fx);
+    while (!e.dead) damageEnemy(e, fx, cam);
   }
   resetFireballs();
   resetCones();

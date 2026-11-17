@@ -68,11 +68,10 @@ describe('key chain', () => {
     expect(box.x).toBeGreaterThan(1100); // calm stretch after the 2nd zombie patrol
     expect(box.x).toBeLessThan(1460); // right before the west lip / key nook
   });
-  it('the hint rect matches the cell approach zone horizontally', () => {
-    // the approach zone now reaches the ceiling (bug review 2.4); level3.js is outside lane D, so the hint keeps its 140 px height
+  it('the hint rect matches the cell approach zone', () => {
     const d = lvl.dialogs.find(d => d.id === 'cell-hint');
     const a = cellApproach(lvl);
-    expect([d.x, d.w]).toEqual([a.x, a.w]);
+    expect([d.x, d.y, d.w, d.h]).toEqual([a.x, a.y, a.w, a.h]);
   });
 });
 

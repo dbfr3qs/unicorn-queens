@@ -1,6 +1,7 @@
 // Game loop: no simulation step is longer than 1/60 s (stepFrame).
 import { describe, it, expect, beforeEach } from 'vitest';
-import { game, startGame, stepFrame, update } from '../src/game.js';
+import { game, startGame, stepFrame, update, fireSunbeam } from '../src/game.js';
+import { arrows, fireArrow } from '../src/arrows.js';
 import { BLIZZ_DRIFT, blizzardWobble } from '../src/enemies/queenboss.js';
 import { input } from '../src/input.js';
 import { LEVELS } from '../src/levels/index.js';
@@ -83,5 +84,25 @@ describe('trigger rects (bug review 2.4)', () => {
     game.player.x = d.x - 500; frames(1); // leave
     stand(); frames(5);
     expect(opens).toBe(2);
+  });
+});
+
+describe('loop fixes (bug review 3/4)', () => {
+  it('arrows in flight are cleared when the level 9 ending starts', () => {
+    startGame(600, 8); fireArrow(game.player); game.level.ending9.started = true;
+    update(1 / 60, 800, fx); expect(arrows).toHaveLength(0);
+  });
+  it('a cast pressed during the revive beat does not fire on revival', () => {
+    setDifficulty('easy'); startGame(600, 0);
+    try {
+      game.player.reviving = 0.5; input.cast = true; update(1 / 60, 800, fx);
+      expect(input.cast).toBe(false);
+    } finally { setDifficulty('hard'); }
+  });
+  it('the sunbeam spares the troll and does not throw', () => {
+    startGame(600, 2);
+    const troll = game.enemies.find(e => e.kind === 'troll'); game.camera.x = troll.x - 100;
+    expect(() => fireSunbeam(game.player, game.level, fx, 800)).not.toThrow();
+    expect(troll.dead).toBe(false);
   });
 });

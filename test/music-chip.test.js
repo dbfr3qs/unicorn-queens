@@ -3,6 +3,8 @@
 // (without running it) so a typo fails here instead of going silently
 // missing at playback.
 import { describe, it, expect } from 'vitest';
+import { trackFor } from '../src/music/tracks.js';
+import { LEVELS } from '../src/levels/index.js';
 import { CHIP, DRUMS, BASS, LEAD, PAD, ARP, FX, VARIANTS, cpm, stackOf } from '../src/music/chip.js';
 
 // new Function() parses without executing: no Strudel, no AudioContext,
@@ -180,8 +182,8 @@ describe('chip rack', () => {
     const [before, after] = Object.values(era);
     expect(before).toMatch(/room\(/);       // reverb: the clearest modern tell
     expect(after).not.toMatch(/room\(/);    // rule 3, the one that survived A/B
-    expect(after).toMatch(/coarse\(/);      // the grit that replaced crush()
-    expect(after).toMatch(/pw\(\.5\)/);     // duty verdict: the plain square
+    expect(after).not.toMatch(/coarse\(/);  // the shipped voices dropped per-note worklets
+    expect(after).toMatch(/s\("square"\)/); // duty verdict: the plain square
     expect(after).toMatch(/s\("triangle"\)/); // flat-gate triangle bass
   });
 });
@@ -205,5 +207,32 @@ describe('stackOf', () => {
     const src = stackOf(124, ['kick', 'snare']);
     expect(src).toContain('penv(30)'); // from kick
     expect(src).toContain('bpf(1600)'); // from snare
+  });
+});
+
+// BUG-REVIEW.md 1.3: per-note coarse/distort each instantiate an audio
+// worklet per note, and the shared delay orbit smears every delay time
+// into one line. Checked on the assembled track sources, not VARIANTS
+// (which is audition material and keeps its coarse calls).
+const tracks = LEVELS.map(l => [l.name, trackFor(l.name)]);
+
+describe('shipped tracks', () => {
+  it('covers every level', () => {
+    expect(tracks).toHaveLength(9);
+  });
+
+  it.each(tracks)('%s uses no per-note worklet effects', (_, src) => {
+    expect(src).not.toMatch(/\.coarse\(/);
+    expect(src).not.toMatch(/\.distort\(/);
+    expect(src).not.toMatch(/s\("pulse"\)\.pw\(\.5\)/);
+  });
+
+  it.each(tracks)('%s gives each delay time its own orbit', (_, src) => {
+    const want = { '.125': 2, '.1875': 3, '.375': 4 };
+    for (const [, time, orbit] of src.matchAll(/\.delaytime\(([.\d]+)\)[^\n]*?\.orbit\((\d)\)/g)) {
+      expect(Number(orbit)).toBe(want[time]);
+    }
+    expect((src.match(/\.delaytime\(/g) ?? []).length).toBe((src.match(/\.orbit\(/g) ?? []).length);
+    for (const [, time] of src.matchAll(/\.delaytime\(([.\d]+)\)/g)) expect(want).toHaveProperty(time);
   });
 });

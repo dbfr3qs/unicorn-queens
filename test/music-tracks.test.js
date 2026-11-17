@@ -100,7 +100,7 @@ describe('withNotes', () => {
   it('keeps the voice and swaps the pitches', () => {
     const out = withNotes(CHIP.chord, '<[d3,f3,a3]>');
     expect(out).toContain('[d3,f3,a3]');
-    expect(out).toContain('pw(.5)');      // timbre survives
+    expect(out).toContain('s("square")'); // timbre survives (a 50% pulse is now a plain square)
     expect(out).toContain('gain(.24)');   // and so does the mix budget
   });
 

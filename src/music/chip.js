@@ -51,9 +51,15 @@
 //   3. KEPT — no reverb. room() is the clearest modern tell of the
 //      three. Space is a short slap delay, or nothing.
 //
-// Also kept: coarse(), which aliases the high harmonics and is where the
-// digital grit actually comes from (crush() alone does not get you
-// there), and the triangle-with-a-flat-gate bass.
+// Also kept: the triangle-with-a-flat-gate bass.
+//
+// Dropped: per-note coarse() and distort(). They aliased the high
+// harmonics and were where the digital grit came from, but each one
+// instantiates an audio worklet per note and starved the audio thread
+// (BUG-REVIEW.md 1.3). The grit is the cost. VARIANTS below still uses
+// them as audition material; no shipped voice does. For the same reason
+// the plain 50% pulse is written s("square"), and each delay time has
+// its own orbit so the delay lines do not share one buffer.
 //
 // The useful summary: the *timbre* rules earned their place, the
 // *polyphony* rules did not. VARIANTS at the bottom keeps every
@@ -92,46 +98,46 @@
 
 export const DRUMS = {
   // The chip had no kick, so a kick is a pitch envelope on a tuned
-  // voice: a triangle dropped two and a half octaves in 30 ms. coarse()
-  // is what separates this from a modern sine kick — the aliasing gives
-  // it the hard digital edge.
+  // voice: a triangle dropped two and a half octaves in 30 ms. The
+  // coarse()/distort() edge that once set it apart from a modern sine
+  // kick was dropped (a worklet per note), so it is softer now.
   kick: `s("triangle*4").note("c2")
   .attack(.001).decay(.11).sustain(0)
   .penv(30).pdecay(.03)
-  .coarse(2).distort(1.2).gain(.6)`,
+  .gain(.6)`,
 
   // Harder variant for the boss layer and the faster levels.
   kickHard: `s("triangle*4").note("c2")
   .attack(.001).decay(.09).sustain(0)
   .penv(36).pdecay(.024)
-  .coarse(3).distort(2).gain(.62)`,
+  .gain(.62)`,
 
   // The noise channel is the whole kit, so the hats are deliberately
-  // crunchy rather than silky: coarse() to drop the rate, and no
-  // careful band-passing. Accents keep it from machine-gunning.
+  // plain rather than silky: no careful band-passing (the coarse()
+  // crunch was dropped, one worklet per note). Accents keep it from machine-gunning.
   hatsClosed: `s("white*8").decay(.02).sustain(0)
-  .coarse(7).hpf(6000).gain("[.2 .1]*4")`,
+  .hpf(6000).gain("[.2 .1]*4")`,
 
   // The offbeat open hat — the most house-defining element here. Lands
   // on the "and" of every beat, between the kicks.
   hatsOpen: `s("~ white").fast(4).decay(.09).sustain(0)
-  .coarse(7).hpf(4800).gain(.18)`,
+  .hpf(4800).gain(.18)`,
 
   // Snare/clap on 2 and 4. One crunchy noise burst, no pitched layer —
   // a second voice for the snare is a luxury four channels do not have.
   snare: `s("~ white ~ white").decay(.1).sustain(0)
-  .coarse(5).bpf(1600).distort(1.3).gain(.3)`,
+  .bpf(1600).gain(.3)`,
 
   // Half-time: the backbeat moves to bar-centre, which halves the
   // perceived tempo without touching the kick. Level 6's swamp drag.
   snareHalf: `s("~ ~ white ~").decay(.14).sustain(0)
-  .coarse(5).bpf(1400).distort(1.2).gain(.3)`,
+  .bpf(1400).gain(.3)`,
 
   // Level 8's clockwork tick: a 12.5% pulse at the top of its range,
   // clipped to almost nothing.
   gearTick: `s("pulse*16").note("c7").pw(.125)
   .attack(.001).decay(.008).sustain(0)
-  .gain("[.12 .05 .08 .05]*4").coarse(3)`,
+  .gain("[.12 .05 .08 .05]*4")`,
 };
 
 // ---- bass --------------------------------------------------------------
@@ -144,18 +150,18 @@ export const BASS = {
   // would normally get.
   roll: `note("<a1 f1 g1 e1>*16").s("triangle")
   .attack(.001).decay(.03).sustain(.9).release(.01)
-  .coarse(2).gain(.62)`,
+  .gain(.62)`,
 
   // Half-time cousin for the sparse levels (1, and 9's opening).
   slow: `note("<a1 f1 g1 e1>*8").s("triangle")
   .attack(.001).decay(.03).sustain(.9).release(.01)
-  .coarse(2).gain(.5)`,
+  .gain(.5)`,
 
   // A 25% pulse bass instead of the triangle: reedier, cuts harder
   // through a busy mix. Mega Man rather than Super Mario Bros.
   pulseBass: `note("<a1 f1 g1 e1>*16").s("pulse").pw(.25)
   .attack(.001).decay(.04).sustain(.7).release(.01)
-  .coarse(2).gain(.5)`,
+  .gain(.5)`,
 
   // Sub: an octave down, flat. Weight rather than motion. Strictly this
   // is a fifth channel the NES never had — use it sparingly.
@@ -166,49 +172,48 @@ export const BASS = {
 // ---- lead ---------------------------------------------------------------
 
 export const LEAD = {
-  // The melody voice. pw(.5) per the duty verdict — fuller than the
+  // The melody voice. A plain square (pw .5) per the duty verdict — fuller than the
   // narrow duties and it stays audible over the drums without having to
   // be loud. delaytime(.1875) is a dotted eighth at 4 cycles to the bar —
   // the trance delay, kept because the echoes land between the notes.
   // A slap delay is period-plausible in a way reverb is not.
-  lead: `note("<a4 c5 b4 g4>").s("pulse").pw(.5)
+  lead: `note("<a4 c5 b4 g4>").s("square")
   .attack(.001).decay(.04).sustain(.8).release(.02)
   .vib(6).vibmod(.15)
-  .coarse(2).gain(.3)
-  .delay(.3).delaytime(.1875).delayfeedback(.28)`,
+  .gain(.3)
+  .delay(.3).delaytime(.1875).delayfeedback(.28).orbit(3)`,
 
   // The trance arp, now on a 25% pulse instead of a square.
   arp: `note("<[a3 c4 e4 a4 e4 c4]*2 [f3 a3 c4 f4 c4 a3]*2 [g3 b3 d4 g4 d4 b3]*2 [e3 g3 b3 e4 b3 g3]*2>").s("pulse").pw(.25)
   .attack(.001).decay(.05).sustain(0)
-  .coarse(2).gain(.38)
-  .delay(.4).delaytime(.1875).delayfeedback(.3)`,
+  .gain(.38)
+  .delay(.4).delaytime(.1875).delayfeedback(.3).orbit(3)`,
 
   // Octave-doubled, for level 4 and the boss layer.
   arpOct: `note("<[a3 c4 e4 a4 e4 c4]*2 [f3 a3 c4 f4 c4 a3]*2 [g3 b3 d4 g4 d4 b3]*2 [e3 g3 b3 e4 b3 g3]*2>").add(note("<0 12>")).s("pulse").pw(.25)
   .attack(.001).decay(.05).sustain(0)
-  .coarse(2).gain(.32)
-  .delay(.4).delaytime(.1875).delayfeedback(.3)`,
+  .gain(.32)
+  .delay(.4).delaytime(.1875).delayfeedback(.3).orbit(3)`,
 
   // Level 8's clockwork bell. partials() builds it additively, which is
   // the one voice here that a real NES could not have produced — kept
   // because the level is about a clock, not about 1985.
   bell: `note("<a5 c5 b5 g5>").s("sine").partials("1 .5 .25 .35 .1")
   .decay(.6).sustain(0).gain(.3)
-  .delay(.35).delaytime(.125).delayfeedback(.35)`,
+  .delay(.35).delaytime(.125).delayfeedback(.35).orbit(2)`,
 
   // Level 9's thaw sparkle: high, brief, panned. A 12.5% pulse at the
   // top of the range glitters without needing reverb to do it.
   sparkle: `note("<a5 c6 e6 b5>*2").s("pulse").pw(.125)
   .attack(.001).decay(.09).sustain(0).gain(.15)
-  .coarse(2)
-  .delay(.45).delaytime(.125).delayfeedback(.4)
+  .delay(.45).delaytime(.125).delayfeedback(.4).orbit(2)
   .pan(sine.range(.25,.75).slow(5))`,
 };
 
 // ---- chords ------------------------------------------------------------
 // Doctrine rule 2 was rejected: the plain simultaneous chord beat every
 // arpeggio rate in the A/B, so this is the default harmony voice and the
-// sweeps live in ARP below. pw(.5) follows the same verdict as the lead.
+// sweeps live in ARP below. The plain square (pw .5) follows the same verdict as the lead.
 //
 // No reverb (rule 3 stands) — depth comes from the slap delay and from
 // keeping the voicing low and narrow.
@@ -216,24 +221,24 @@ export const LEAD = {
 export const PAD = {
   // The default. Four bars, one chord each.
   chord: `note("<[a3,c4,e4] [f3,a3,c4] [g3,b3,d4] [e3,g3,b3]>")
-  .s("pulse").pw(.5)
+  .s("square")
   .attack(.02).decay(.3).sustain(.55).release(.25)
-  .coarse(2).gain(.24)
-  .delay(.25).delaytime(.375).delayfeedback(.2)`,
+  .gain(.24)
+  .delay(.25).delaytime(.375).delayfeedback(.2).orbit(4)`,
 
   // Wider voicing with the 7th on top, for the big levels (7, 8).
   chordWide: `note("<[a3,c4,e4,g4] [f3,a3,c4,e4] [g3,b3,d4,f4] [e3,g3,b3,d4]>")
-  .s("pulse").pw(.5)
+  .s("square")
   .attack(.02).decay(.3).sustain(.5).release(.3)
-  .coarse(2).gain(.2)
-  .delay(.25).delaytime(.375).delayfeedback(.2)`,
+  .gain(.2)
+  .delay(.25).delaytime(.375).delayfeedback(.2).orbit(4)`,
 
   // Stabs rather than a bed: the house chord on the offbeat.
   stab: `note("~ [a3,c4,e4] ~ [g3,b3,d4]")
-  .s("pulse").pw(.5)
+  .s("square")
   .attack(.001).decay(.12).sustain(0)
-  .coarse(2).gain(.26)
-  .delay(.3).delaytime(.1875).delayfeedback(.25)`,
+  .gain(.26)
+  .delay(.3).delaytime(.1875).delayfeedback(.25).orbit(3)`,
 };
 
 // ---- arpeggios ---------------------------------------------------------
@@ -269,13 +274,13 @@ export const ARP = {
   arpChord: `note("<[a3 c4 e4]*16 [f3 a3 c4]*16 [g3 b3 d4]*16 [e3 g3 b3]*16>")
   .s("pulse").pw(.25)
   .attack(.001).decay(.02).sustain(.75).release(.01)
-  .coarse(2).gain(.24)`,
+  .gain(.24)`,
 
   // Faster and thinner: a solid harmonic wash for busy sections.
   arpBuzz: `note("<[a3 c4 e4 b4]*32 [f3 a3 c4 g4]*32 [g3 b3 d4 a4]*32 [e3 g3 b3 f4]*32>")
   .s("pulse").pw(.125)
   .attack(.001).decay(.015).sustain(.7).release(.01)
-  .coarse(2).gain(.18)`,
+  .gain(.18)`,
 
   // Slow enough to hear as a figure rather than a texture — for sparse
   // levels where the arpeggio should be a part, not a bed. Up-and-down
@@ -283,7 +288,7 @@ export const ARP = {
   arpSlow: `note("<[a3 c4 e4 c4]*8 [f3 a3 c4 a3]*8 [g3 b3 d4 b3]*8 [e3 g3 b3 g3]*8>")
   .s("pulse").pw(.25)
   .attack(.001).decay(.04).sustain(.5).release(.01)
-  .coarse(2).gain(.26)`,
+  .gain(.26)`,
 
   // The swamp/mire colour: slow vibrato detunes the whole figure, which
   // is period-plausible (pitch modulation was cheap) where a filtered
@@ -292,7 +297,7 @@ export const ARP = {
   .s("pulse").pw(.375)
   .attack(.001).decay(.03).sustain(.6).release(.01)
   .vib(.7).vibmod(.4)
-  .coarse(3).gain(.22)`,
+  .gain(.22)`,
 };
 
 // ---- transitions -------------------------------------------------------

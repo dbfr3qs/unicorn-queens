@@ -141,7 +141,7 @@ export function createLevel9(viewH = 600) {
       },
       {
         id: 'l9-gate',
-        x: 5250, y: groundY - 140, w: 150, h: 140, // just inside the throne door
+        x: 5250, y: 0, w: 150, h: groundY, // just inside the throne door
         beats: [{
           id: 'l9-gate',
           // she speaks only once the level is warm: walking in with two hearths

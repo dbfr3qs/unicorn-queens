@@ -83,7 +83,7 @@ export function createLevel3(viewH = 600) {
     dialogs: [
       {
         id: 'cell-hint',
-        x: 2040, y: groundY - 140, w: 130, h: 140, // = the cell's approach zone
+        x: 2040, y: 0, w: 130, h: groundY, // = the cell's approach zone (full height, to the cell's floor)
         beats: [{
           id: 'witch-hint',
           repeat: true, // re-fires on every approach until the key is found

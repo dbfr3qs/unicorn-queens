@@ -120,12 +120,7 @@ describe("the King's end beat", () => {
     game.player.y = game.level.groundY - 36;
     update(DT, 800, fx([])); // entry while the wizard lives: the when guard holds
     expect(isDialogueOpen()).toBe(false);
-    wiz.dead = true; // the release (the player is still in the band: no re-check mid-visit)
-    update(DT, 800, fx([]));
-    expect(isDialogueOpen()).toBe(false);
-    game.player.x = 5600; // out of the band
-    for (let f = 0; f < 120; f++) update(DT, 800, fx([])); // the arena wraiths settle
-    game.player.x = 5950; // back in: the gate now passes
+    wiz.dead = true; // the release while she stands in the band: the beat fires (bug review 2.4)
     update(DT, 800, fx([]));
     expect(isDialogueOpen()).toBe(true);
     expect(currentLine().speaker).toBe('The Unicorn King');

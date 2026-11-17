@@ -100,6 +100,14 @@ export function startLoop(onFrame, raf = globalThis.requestAnimationFrame) {
   raf(loop);
 }
 
+// No simulation step is longer than 1/60 s: a slow frame is split into equal
+// sub-steps, so the jump, troll slab, boulders and stomp behave as at 60 fps.
+export const MAX_STEP = 1 / 60;
+export function stepFrame(dt, viewW, fx) {
+  const n = Math.max(1, Math.ceil(dt / MAX_STEP - 1e-6));
+  for (let i = 0; i < n; i++) update(dt / n, viewW, fx);
+}
+
 export function update(dt, viewW, fx) {
   if (game.picker) return; // the difficulty card: nothing moves until a choice
   if (game.intro) { updateIntro(dt, fx); return; } // the opening: level 1 waits underneath, untouched
@@ -111,6 +119,7 @@ export function update(dt, viewW, fx) {
   // no pit rule, no damage. The scene keeps rendering and animating, and the
   // only live key is Space at the card (main.js).
   if (game.level.ending9?.started) {
+    resetArrows(); // the player's arrows stop where they are; none fly through the ending
     updateEnding(game, dt, fx);
     const q = game.enemies.find(e => e.kind === 'queenboss' && e.dying);
     if (q) updateQueenDying(q, game.level, game.enemies, dt, fx);
@@ -121,6 +130,12 @@ export function update(dt, viewW, fx) {
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
   if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx); // the machines move before the player does
   if (game.level.springs) updateSprings(game.level, game.player, dt, fx); // level 8: touch-sever a mainspring
+  if (game.level.blizzard && !game.player.dead) {
+    // the storm's drift, applied here rather than in the player so it reaches
+    // a flying queen too — a position push (a velocity nudge is wiped by the
+    // player's own friction), resolved by the player's collision pass below
+    game.player.x += BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(game.gameTime) * dt;
+  }
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame
@@ -128,11 +143,6 @@ export function update(dt, viewW, fx) {
   if (gate && !game.gateChimed && game.player.x + game.player.w > gate.x + gate.w / 2) {
     game.gateChimed = true;
     fx.play('gate');
-  }
-  if (game.level.blizzard && !game.player.dead) {
-    // the storm's drift, applied here rather than in the player so it reaches
-    // a flying queen too — the level 7 wind's pattern, gentler
-    game.player.vx += BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(game.gameTime) * dt;
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);
@@ -189,6 +199,7 @@ function decayShake(dt) {
 // floor hazards — so the grace isn't spent dodging the last attack.
 function updateRevive(dt, fx) {
   const p = game.player;
+  input.cast = false; // a cast pressed during the beat must not fire on revival
   p.reviving = Math.max(0, p.reviving - dt);
   updateParticles(dt);
   decayShake(dt);
@@ -206,8 +217,8 @@ function updateRevive(dt, fx) {
 }
 
 // Proximity dialogue: each lvl.dialogs entry is a trigger rect with
-// ordered beats. Beats fire on ENTRY of the rect (game.dialogsIn tracks
-// who is standing in which rect), so a `repeat` beat re-fires on each
+// ordered beats. A beat fires once per stay in the rect (game.dialogsIn
+// marks rects where one has fired), so a `repeat` beat re-fires on each
 // approach while plain beats fire once per run (id in game.dialogsFired).
 // A beat's `when(game)` gates it; the first eligible beat opens.
 function checkDialogs(fx) {
@@ -217,10 +228,10 @@ function checkDialogs(fx) {
   for (const d of dialogs) {
     const inside = p.x < d.x + d.w && p.x + p.w > d.x && p.y < d.y + d.h && p.y + p.h > d.y;
     if (!inside) { game.dialogsIn.delete(d.id); continue; }
-    if (game.dialogsIn.has(d.id)) continue; // already standing in it
-    game.dialogsIn.add(d.id); // entry edge this frame
+    if (game.dialogsIn.has(d.id)) continue; // a beat already fired for this stay
     const beat = d.beats.find(b => (b.repeat || !game.dialogsFired.has(b.id)) && (!b.when || b.when(game)));
-    if (!beat) continue;
+    if (!beat) continue; // not marked: a beat that becomes eligible while she stands here still fires
+    game.dialogsIn.add(d.id);
     if (!beat.repeat) game.dialogsFired.add(beat.id);
     openDialogue(beat.lines);
     fx.play('dialog');
@@ -237,9 +248,9 @@ function checkDialogs(fx) {
 export function fireSunbeam(p, lvl, fx, viewW = 800) {
   const cam = game.camera;
   for (const e of game.enemies) {
-    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden' || e.kind === 'queenboss') continue; // bosses are sunbeam-exempt
+    if (e.dead || e.kind === 'mage' || e.kind === 'dragon' || e.kind === 'spiderboss' || e.kind === 'wizardboss' || e.kind === 'warden' || e.kind === 'queenboss' || e.kind === 'troll') continue; // bosses are sunbeam-exempt
     if (e.x + e.w <= cam.x || e.x >= cam.x + viewW) continue; // off-screen: spared
-    while (!e.dead) damageEnemy(e, fx);
+    while (!e.dead) damageEnemy(e, fx, cam);
   }
   resetFireballs();
   resetCones();

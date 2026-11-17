@@ -1,8 +1,9 @@
 // Game loop: no simulation step is longer than 1/60 s (stepFrame).
 import { describe, it, expect, beforeEach } from 'vitest';
-import { game, startGame, stepFrame } from '../src/game.js';
+import { game, startGame, stepFrame, update } from '../src/game.js';
+import { BLIZZ_DRIFT, blizzardWobble } from '../src/enemies/queenboss.js';
 import { input } from '../src/input.js';
-import { setDifficulty } from '../src/difficulty.js';
+import { setDifficulty, difficulty } from '../src/difficulty.js';
 
 const fx = { play() {} };
 
@@ -32,5 +33,20 @@ describe('stepFrame', () => {
   it('a 50 ms frame still advances 50 ms of game time', () => {
     startGame(600, 0); const t0 = game.gameTime; stepFrame(0.05, 800, fx);
     expect(game.gameTime - t0).toBeCloseTo(0.05, 10);
+  });
+});
+
+describe('level 9 blizzard', () => {
+  it('the blizzard moves a standing player', () => {
+    startGame(600, 8);
+    game.player.x = 400; // out of the spawn band: its dialogue would freeze the world; and off the west wall the drift pushes toward
+    for (let i = 0; i < 5; i++) update(1 / 60, 800, fx);
+    game.level.blizzard = { t: 5, next: 99 };
+    // the wobble can be zero at the sampled time; run on until it is not
+    while (Math.abs(blizzardWobble(game.gameTime + 1 / 60)) < 0.05) update(1 / 60, 800, fx);
+    const x0 = game.player.x, t = game.gameTime + 1 / 60;
+    update(1 / 60, 800, fx);
+    expect(game.player.x - x0).toBeCloseTo(BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(t) / 60, 5);
+    expect(game.player.x).not.toBe(x0);
   });
 });

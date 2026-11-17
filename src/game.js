@@ -129,6 +129,12 @@ export function update(dt, viewW, fx) {
   if (game.level.wind) updateWind(game.level, game.player, dt, fx, game.gameTime); // before the player reads it
   if (game.level.clock) updateClock(game.level, game.player, game.enemies, dt, fx); // the machines move before the player does
   if (game.level.springs) updateSprings(game.level, game.player, dt, fx); // level 8: touch-sever a mainspring
+  if (game.level.blizzard && !game.player.dead) {
+    // the storm's drift, applied here rather than in the player so it reaches
+    // a flying queen too — a position push (a velocity nudge is wiped by the
+    // player's own friction), resolved by the player's collision pass below
+    game.player.x += BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(game.gameTime) * dt;
+  }
   updatePlayer(game.player, input, game.level, game.camera, dt, fx);
   resolveDoor(game.level, game.player); // locked/shut door: solid wall
   checkDialogs(fx); // a proximity beat may freeze us again next frame
@@ -136,11 +142,6 @@ export function update(dt, viewW, fx) {
   if (gate && !game.gateChimed && game.player.x + game.player.w > gate.x + gate.w / 2) {
     game.gateChimed = true;
     fx.play('gate');
-  }
-  if (game.level.blizzard && !game.player.dead) {
-    // the storm's drift, applied here rather than in the player so it reaches
-    // a flying queen too — the level 7 wind's pattern, gentler
-    game.player.vx += BLIZZ_DRIFT * difficulty().hazard * blizzardWobble(game.gameTime) * dt;
   }
   updateEnemies(game.enemies, game.player, game.level, game.camera, dt, fx);
   const queen = game.enemies.find(e => e.kind === 'spiderboss' && !e.dead);

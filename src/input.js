@@ -64,9 +64,11 @@ export function onKeyDown(e) {
   if (!e.repeat && e.code === 'KeyM') { toggleMuted(); setMusicMuted(muted || musicOnly); }
   if (!e.repeat && e.code === 'KeyN') { musicOnly = !musicOnly; setMusicMuted(muted || musicOnly); }
   if (isDialogueOpen()) {
-    // dialogue open: advance keys only, never game input
+    // dialogue open: advance keys only, never game input. Synthetic arrows
+    // (the touch pad and gamepad, isTrusted === false) do not advance: a
+    // thumb rolling on the pad would skip lines. Space and Enter always do.
     if (!e.repeat && (e.code === 'Space' || e.code === 'Enter' ||
-        e.code === 'NumpadEnter' || e.code.startsWith('Arrow'))) {
+        e.code === 'NumpadEnter' || (e.code.startsWith('Arrow') && e.isTrusted !== false))) {
       held.add(e.code); stale.add(e.code);
       if (advanceDialogue()) syncInput();
       fx.play('dialog');

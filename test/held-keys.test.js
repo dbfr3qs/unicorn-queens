@@ -63,3 +63,24 @@ it("M does not overwrite N's music-only mute", () => {
   onKeyDown(ev('KeyM')); onKeyDown(ev('KeyM')); // master off, then on again
   expect(audio.muted).toBe(false); expect(music.muted).toBe(true);
 });
+describe('synthetic keys during a dialogue (final review F5)', () => {
+  const synth = code => ({ ...ev(code), isTrusted: false }); // what the touch pad and gamepad dispatch
+  it('a synthetic arrow does not advance the box, and is held when Space closes it', () => {
+    openDialogue(LINE);
+    onKeyDown(synth('ArrowRight'));
+    expect(isDialogueOpen()).toBe(true);
+    onKeyDown(ev('Space'));
+    expect(isDialogueOpen()).toBe(false);
+    expect(input.right).toBe(true);
+  });
+  it('a synthetic Space closes the box', () => {
+    openDialogue(LINE);
+    onKeyDown(synth('Space'));
+    expect(isDialogueOpen()).toBe(false);
+  });
+  it('a keyboard arrow (no isTrusted field) still advances the box', () => {
+    openDialogue(LINE);
+    onKeyDown(ev('ArrowRight'));
+    expect(isDialogueOpen()).toBe(false);
+  });
+});

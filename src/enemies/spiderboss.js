@@ -186,61 +186,50 @@ function update(e, { p, lvl, dt, fx }) {
   if (e.t <= 0) pickAttack.call(this, e, p, lvl, fx);
 }
 
-function draw(c, e) {
-  c.save();
-  c.translate(e.x + e.w / 2, e.y + e.h); // anchor at the feet
-  c.scale(e.dir, 1);
-  const crouched = e.state === 'lungeTele'; // the squash crouch
-  const staggered = e.state === 'stagger';
-  const bodyY = crouched ? 14 : 18;
-  const legAnim = Math.sin(e.legPhase) * (crouched ? 2 : 5);
-  c.strokeStyle = '#23232e'; // 8 long jointed legs: 4 per side
-  c.lineWidth = 3;
-  for (let i = 0; i < 4; i++) {
-    const lx = -26 + i * 15;
-    const lift = staggered ? 0 : legAnim * (i % 2 ? 1 : -1);
-    c.beginPath();
-    c.moveTo(lx, -bodyY + 6);
-    c.lineTo(lx - 14, -bodyY - 14 + lift);
-    c.lineTo(lx - 22, -2 + lift);
-    c.stroke();
-    c.beginPath();
-    c.moveTo(lx, -bodyY + 8);
-    c.lineTo(lx - 12, -bodyY - 4 - lift);
-    c.lineTo(lx - 20, 2 - lift);
-    c.stroke();
-  }
-  c.fillStyle = '#3a3a48'; // the great abdomen
-  c.beginPath(); c.ellipse(-12, -bodyY - 6, 24, 18, 0, 0, Math.PI * 2); c.fill();
-  c.strokeStyle = isOpen(e) ? 'rgba(255, 209, 102, 0.95)' : 'rgba(232, 224, 208, 0.5)'; // the web pattern: gold while she is open
-  c.lineWidth = 1.5;
-  for (let i = 0; i < 3; i++) {
-    c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
-  }
-  c.fillStyle = '#4a4a58'; // the cephalothorax
-  c.beginPath(); c.ellipse(14, -bodyY, 12, 10, 0, 0, Math.PI * 2); c.fill();
-  c.fillStyle = '#5a5a6a'; // the fanged head
-  c.fillRect(20, -bodyY - 8, 14, 12);
-  c.fillStyle = '#e8e0d0'; // the fangs
-  c.fillRect(30, -bodyY + 2, 3, 7);
-  c.fillRect(26, -bodyY + 2, 3, 6);
-  c.fillStyle = e.state === 'spitWind' ? '#ffd166' : '#ff4444'; // four glowing eyes
-  c.fillRect(27, -bodyY - 6, 3, 3);
-  c.fillRect(23, -bodyY - 6, 3, 3);
-  c.fillRect(27, -bodyY - 2, 3, 3);
-  c.fillRect(23, -bodyY - 2, 3, 3);
+// Overlay pieces, shared by draw and drawOverlay. The fang glow and the flash are in
+// the body's local frame (origin: the feet, flipped by e.dir); the pillars, the glint
+// and the pips are world space.
+const bodyYOf = e => (e.state === 'lungeTele' ? 14 : 18); // the squash crouch lowers the body
+
+function drawFangs(c, e, bodyY) {
   if (e.state === 'spitWind') { // the windup: the fangs open wide
     c.fillStyle = 'rgba(240, 240, 248, 0.5)';
     c.beginPath(); c.ellipse(30, -bodyY + 6, 6, 4, 0, 0, Math.PI * 2); c.fill();
   }
+}
+
+function drawFlash(c, e, bodyY) {
   if (e.flash > 0) { // hit flash
     c.globalAlpha = 0.7;
     c.fillStyle = '#fff';
     c.beginPath(); c.ellipse(-4, -bodyY - 4, 30, 20, 0, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
   }
-  c.restore();
-  // world-space extras (no camera in draw): the pillars, the glint, pips
+}
+
+// Overlay-only cues (the vector body shows these by pose and recolouring, which a
+// static sprite cannot). The open window: the vector web pattern, gold, over the sprite.
+function drawOpenWeb(c, e, bodyY) {
+  if (!isOpen(e)) return;
+  c.strokeStyle = 'rgba(255, 209, 102, 0.95)';
+  c.lineWidth = 1.5;
+  for (let i = 0; i < 3; i++) {
+    c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
+  }
+}
+
+// The lunge telegraph: the mage's windup orange, a translucent tint over the whole body
+// for as long as she crouches.
+function drawLungeTell(c, e, bodyY) {
+  if (e.state !== 'lungeTele') return;
+  c.globalAlpha = 0.45;
+  c.fillStyle = '#ff8c42';
+  c.beginPath(); c.ellipse(-4, -bodyY - 4, 30, 20, 0, 0, Math.PI * 2); c.fill();
+  c.globalAlpha = 1;
+}
+
+// world-space extras (no camera in draw): the pillars, the glint, pips
+function drawWorld(c, e) {
   for (const q of e.pillars ?? []) {
     const grow = Math.min(1, q.t / 0.25);
     const a = q.t < PILLAR_SOLID ? 1 : 1 - (q.t - PILLAR_SOLID) / 0.5;
@@ -288,6 +277,69 @@ function draw(c, e) {
   }
 }
 
+// The sprite path: the sheet is the body; the web pillars, her tells and the pips stay.
+function drawOverlay(c, e) {
+  const bodyY = bodyYOf(e);
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h);
+  c.scale(e.dir, 1);
+  drawOpenWeb(c, e, bodyY);
+  drawLungeTell(c, e, bodyY);
+  drawFangs(c, e, bodyY);
+  drawFlash(c, e, bodyY);
+  c.restore();
+  drawWorld(c, e);
+}
+
+function draw(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h); // anchor at the feet
+  c.scale(e.dir, 1);
+  const crouched = e.state === 'lungeTele'; // the squash crouch
+  const staggered = e.state === 'stagger';
+  const bodyY = bodyYOf(e);
+  const legAnim = Math.sin(e.legPhase) * (crouched ? 2 : 5);
+  c.strokeStyle = '#23232e'; // 8 long jointed legs: 4 per side
+  c.lineWidth = 3;
+  for (let i = 0; i < 4; i++) {
+    const lx = -26 + i * 15;
+    const lift = staggered ? 0 : legAnim * (i % 2 ? 1 : -1);
+    c.beginPath();
+    c.moveTo(lx, -bodyY + 6);
+    c.lineTo(lx - 14, -bodyY - 14 + lift);
+    c.lineTo(lx - 22, -2 + lift);
+    c.stroke();
+    c.beginPath();
+    c.moveTo(lx, -bodyY + 8);
+    c.lineTo(lx - 12, -bodyY - 4 - lift);
+    c.lineTo(lx - 20, 2 - lift);
+    c.stroke();
+  }
+  c.fillStyle = '#3a3a48'; // the great abdomen
+  c.beginPath(); c.ellipse(-12, -bodyY - 6, 24, 18, 0, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = isOpen(e) ? 'rgba(255, 209, 102, 0.95)' : 'rgba(232, 224, 208, 0.5)'; // the web pattern: gold while she is open
+  c.lineWidth = 1.5;
+  for (let i = 0; i < 3; i++) {
+    c.beginPath(); c.ellipse(-12, -bodyY - 6, 18 - i * 5, 13 - i * 3.5, 0, 0, Math.PI * 2); c.stroke();
+  }
+  c.fillStyle = '#4a4a58'; // the cephalothorax
+  c.beginPath(); c.ellipse(14, -bodyY, 12, 10, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#5a5a6a'; // the fanged head
+  c.fillRect(20, -bodyY - 8, 14, 12);
+  c.fillStyle = '#e8e0d0'; // the fangs
+  c.fillRect(30, -bodyY + 2, 3, 7);
+  c.fillRect(26, -bodyY + 2, 3, 6);
+  c.fillStyle = e.state === 'spitWind' ? '#ffd166' : '#ff4444'; // four glowing eyes
+  c.fillRect(27, -bodyY - 6, 3, 3);
+  c.fillRect(23, -bodyY - 6, 3, 3);
+  c.fillRect(27, -bodyY - 2, 3, 3);
+  c.fillRect(23, -bodyY - 2, 3, 3);
+  drawFangs(c, e, bodyY);
+  drawFlash(c, e, bodyY);
+  c.restore();
+  drawWorld(c, e);
+}
+
 register({
   kind: 'spiderboss',
   w: 72, h: 56,
@@ -304,5 +356,5 @@ register({
   hitSound: 'bossHit', deathSound: 'growl',
   arrowBlocked: e => !isOpen(e), // the carapace
   onHit, onDeath,
-  update, nextIdle, draw,
+  update, nextIdle, draw, drawOverlay,
 });

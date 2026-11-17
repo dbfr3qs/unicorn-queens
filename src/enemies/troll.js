@@ -186,13 +186,74 @@ function update(e, { p, lvl, cam, dt, fx }) {
   }
 }
 
+// Overlay pieces, shared by draw and drawOverlay. The club, slab and flash are in the
+// body's local frame (origin: the middle of the box, flipped by e.dir, lowered by the
+// crouch); the pips are world space.
+const crouchOf = e => (e.state === 'stagger' ? 6 : e.state === 'slamWindup' ? 5 : 0); // crouch poses
+
+function drawClub(c, cx, cy) {
+  c.fillStyle = '#8a5f22'; // club shaft (raised per windup pose)
+  c.fillRect(cx, cy, 7, 28);
+  c.fillStyle = '#6b4a32'; // club head
+  c.fillRect(cx - 3, cy - 8, 13, 10);
+}
+
+function drawShield(c, e) {
+  if (e.shield) { // stone slab at the front
+    c.fillStyle = '#9aa0a8';
+    c.fillRect(20, -20, 9, 44);
+    c.fillStyle = '#6e747c';
+    c.fillRect(23, -20, 3, 44);
+  }
+}
+
+function drawFlash(c, e) {
+  if (e.flash > 0) { // hit flash
+    c.globalAlpha = 0.7;
+    c.fillStyle = palette.white;
+    c.fillRect(-24, -36, 48, 72);
+    c.globalAlpha = 1;
+  }
+}
+
+function drawPips(c, e) {
+  if (!e.dead) { // hp pips, world space above the boss: two rows of 8 at 16 hp
+    const n = pipMax(e, 16), per = n > 8 ? Math.ceil(n / 2) : n;
+    for (let i = 0; i < n; i++) {
+      const row = i < per ? 0 : 1, col = i % per;
+      c.fillStyle = i < e.hp ? '#a3d977' : '#3a4034';
+      c.fillRect(e.x + e.w / 2 - per * 4 + col * 8, e.y - 21 + row * 7, 7, 4);
+    }
+  }
+}
+
+// The sprite path: the sheet is the body. What the vector draw shows by pose or colour
+// is drawn here over it: the raised club of each windup (overhead for the slam, cocked
+// for the lob, so the two still read apart) and the ember eye of phase 2.
+function drawOverlay(c, e) {
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  c.translate(0, crouchOf(e));
+  if (e.phase2) {
+    c.fillStyle = '#ff8c42'; // ember eyes in phase 2
+    c.fillRect(6, -26, 5, 5);
+  }
+  if (e.state === 'slamWindup') drawClub(c, 4, -44);
+  else if (e.state === 'lobWindup') drawClub(c, 22, -44);
+  drawShield(c, e);
+  drawFlash(c, e);
+  c.restore();
+  drawPips(c, e);
+}
+
 function draw(c, e) {
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
   const windupSlam = e.state === 'slamWindup';
   const windupLob = e.state === 'lobWindup';
-  c.translate(0, e.state === 'stagger' ? 6 : windupSlam ? 5 : 0); // crouch poses
+  c.translate(0, crouchOf(e)); // crouch poses
   c.fillStyle = '#4a5240'; // legs
   c.fillRect(-18, 26, 12, 8);
   c.fillRect(6, 26, 12, 8);
@@ -206,33 +267,13 @@ function draw(c, e) {
   c.fillRect(6, -26, 5, 5);
   c.fillStyle = palette.white; // fang
   c.fillRect(8, -16, 3, 4);
-  c.fillStyle = '#8a5f22'; // club shaft (raised per windup pose)
   const cx = windupSlam ? 4 : windupLob ? 22 : 18;
   const cy = windupSlam || windupLob ? -44 : -10;
-  c.fillRect(cx, cy, 7, 28);
-  c.fillStyle = '#6b4a32'; // club head
-  c.fillRect(cx - 3, cy - 8, 13, 10);
-  if (e.shield) { // stone slab at the front
-    c.fillStyle = '#9aa0a8';
-    c.fillRect(20, -20, 9, 44);
-    c.fillStyle = '#6e747c';
-    c.fillRect(23, -20, 3, 44);
-  }
-  if (e.flash > 0) { // hit flash
-    c.globalAlpha = 0.7;
-    c.fillStyle = palette.white;
-    c.fillRect(-24, -36, 48, 72);
-    c.globalAlpha = 1;
-  }
+  drawClub(c, cx, cy);
+  drawShield(c, e);
+  drawFlash(c, e);
   c.restore();
-  if (!e.dead) { // hp pips, world space above the boss: two rows of 8 at 16 hp
-    const n = pipMax(e, 16), per = n > 8 ? Math.ceil(n / 2) : n;
-    for (let i = 0; i < n; i++) {
-      const row = i < per ? 0 : 1, col = i % per;
-      c.fillStyle = i < e.hp ? '#a3d977' : '#3a4034';
-      c.fillRect(e.x + e.w / 2 - per * 4 + col * 8, e.y - 21 + row * 7, 7, 4);
-    }
-  }
+  drawPips(c, e);
 }
 
 register({
@@ -256,5 +297,5 @@ register({
   reactiveChance: 0.75, reactiveChance2: 0.9, reactiveCooldown: 0.6, // 0.45 / 0.65 / 1.0 before BOSS-PLAN B3: the shield is his lesson
   boulders1: 2, boulders2: 3, phase2Hp: 8, // half, as before
   hitSound: 'bossHit', deathSound: 'boss', deathFx: FX.trollDeath,
-  onHit, onDeath, update, nextIdle, draw,
+  onHit, onDeath, update, nextIdle, draw, drawOverlay,
 });

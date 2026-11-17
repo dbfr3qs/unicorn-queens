@@ -157,7 +157,10 @@ function update(e, { p, lvl, dt, fx }) {
 
 function nextIdle() { return (this.idleMin + Math.random() * (this.idleMax - this.idleMin)) * difficulty().bossCd; }
 
-function draw(c, e) {
+// Overlay pieces (state-dependent, shared by draw and drawOverlay). The shadow and the
+// pips are world space; the flash and the orb glow are in the body's local frame
+// (origin: the middle of the box, flipped by e.dir).
+function drawShadow(c, e) {
   if (e.levitating) { // soft floor shadow while floating
     const lift = e.homeY - e.y;
     const s = Math.max(0.35, 1 - lift / 500); // shrink and fade with height
@@ -169,6 +172,44 @@ function draw(c, e) {
     c.fill();
     c.restore();
   }
+}
+
+function drawFlash(c, e) {
+  if (e.flash > 0) {
+    c.globalAlpha = 0.7; // hit flash
+    c.fillStyle = palette.white;
+    c.fillRect(-17, -28, 34, 56);
+  }
+}
+
+function drawPips(c, e) {
+  if (!e.dead) { // hp pips, world space above the boss
+    const n = pipMax(e, 5);
+    for (let i = 0; i < n; i++) {
+      c.fillStyle = i < e.hp ? '#e33' : '#522';
+      c.fillRect(e.x + e.w / 2 - n * 6 + 1 + i * 12, e.y - 14, 10, 4);
+    }
+  }
+}
+
+// The sprite path: the sheet is the body, so what the vector draw shows by recolouring
+// (the staff orb in the windup) is drawn here as the orb itself, over the sprite.
+function drawOverlay(c, e) {
+  drawShadow(c, e);
+  c.save();
+  c.translate(e.x + e.w / 2, e.y + e.h / 2);
+  c.scale(e.dir, 1);
+  if (e.state === 'windup') {
+    c.fillStyle = '#ff8c42';
+    c.fillRect(11, -24, 9, 9);
+  }
+  drawFlash(c, e);
+  c.restore();
+  drawPips(c, e);
+}
+
+function draw(c, e) {
+  drawShadow(c, e);
   c.save();
   c.translate(e.x + e.w / 2, e.y + e.h / 2);
   c.scale(e.dir, 1);
@@ -188,19 +229,9 @@ function draw(c, e) {
   c.fillRect(14, -16, 3, 40);
   c.fillStyle = windup ? '#ff8c42' : '#6fe3e1'; // staff orb glows in the windup
   c.fillRect(11, -24, 9, 9);
-  if (e.flash > 0) {
-    c.globalAlpha = 0.7; // hit flash
-    c.fillStyle = palette.white;
-    c.fillRect(-17, -28, 34, 56);
-  }
+  drawFlash(c, e);
   c.restore();
-  if (!e.dead) { // hp pips, world space above the boss
-    const n = pipMax(e, 5);
-    for (let i = 0; i < n; i++) {
-      c.fillStyle = i < e.hp ? '#e33' : '#522';
-      c.fillRect(e.x + e.w / 2 - n * 6 + 1 + i * 12, e.y - 14, 10, 4);
-    }
-  }
+  drawPips(c, e);
 }
 
 register({
@@ -219,4 +250,5 @@ register({
   update,
   nextIdle,
   draw,
+  drawOverlay,
 });

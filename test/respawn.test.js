@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { createLevel } from '../src/levels/level.js';
+import { createLevel, pitLine } from '../src/levels/level.js';
+import { LEVELS } from '../src/levels/index.js';
 import { createPlayer, updatePlayer, revivePlayer, respawnY, BIG_W, BIG_H } from '../src/player.js';
 import { createCamera } from '../src/camera.js';
 import { setDifficulty } from '../src/difficulty.js';
@@ -31,4 +32,14 @@ describe('respawn height (§2.1)', () => {
     p.safeSurf = l.platforms[0];
     expect(respawnY(p, l)).toBe(l.platforms[0].y - p.h);
   });
+});
+
+describe('the pit line (§2.2)', () => {
+  it.each([[1, 3550], [2, 4350]])('small player standing on the bottom exit step of level %i is not falling', (idx, x) => {
+    const l = LEVELS[idx].make(600), p = createPlayer(l);
+    p.x = x; p.y = l.groundY + 80 - p.h;
+    for (let i = 0; i < 60; i++) updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.hp).toBe(3); expect(Math.abs(p.x - x)).toBeLessThan(1);
+  });
+  it('level 1 is unchanged', () => { const l = createLevel(600); expect(pitLine(l)).toBe(l.height); });
 });

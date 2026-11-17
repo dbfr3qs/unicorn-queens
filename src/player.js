@@ -1,5 +1,5 @@
 // Player: state and physics (jump buffering, coyote time, squash & stretch).
-import { resolveGroundCollision, effectiveKind } from './levels/level.js';
+import { resolveGroundCollision, effectiveKind, pitLine } from './levels/level.js';
 import { inWindZone } from './wind.js';
 import { burst } from './particles.js';
 import { shake } from './camera.js';
@@ -36,11 +36,6 @@ const UNSAFE_FOOTING = new Set(['box', 'gear', 'trapdoor']); // breaks, slides, 
 // drop). A surface too narrow for the margin centres the player on it.
 // The pull never passes a door that is a wall right now: level 9's first
 // frost seal stands 50 px in from crevasse 1's lip, on the same floor.
-// The y a respawn stands at: on the recorded surface, at the size she is now.
-export function respawnY(p, lvl) {
-  return (p.safeSurf?.y ?? lvl.groundY) - p.h;
-}
-
 export function respawnX(p, lvl) {
   const s = p.safeSurf;
   if (!s) return p.safeX;
@@ -54,6 +49,11 @@ export function respawnX(p, lvl) {
     if (x < p.safeX && d.x + d.w <= p.safeX && d.x + d.w > x) x = Math.min(p.safeX, d.x + d.w); // stop east of it
   }
   return x;
+}
+
+// The y a respawn stands at: on the recorded surface, at the size she is now.
+export function respawnY(p, lvl) {
+  return (p.safeSurf?.y ?? lvl.groundY) - p.h;
 }
 
 // carry: permanent acquisitions from the previous level (big, bow),
@@ -269,7 +269,7 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
   }
   player.sx += (1 - player.sx) * Math.min(1, dt * 14); // ease back to rest
   player.sy += (1 - player.sy) * Math.min(1, dt * 14);
-  if (player.y > lvl.height) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
+  if (player.y > pitLine(lvl)) { // fell in a pit: the preset's damage (1, none on easy), respawn at last safe spot
     player.hp -= difficulty().pitDamage;
     player.cuttable = false;
     if (player.hp <= 0) { shake(cam, 10, 0.4); downPlayer(player, cam, fx); }

@@ -77,6 +77,32 @@ describe('reflect', () => {
     expect(calls).toContain('reflect');
   });
 
+  const rig = () => {
+    const l = lvl(), p = createPlayer(l), cam = createCamera();
+    p.x = 500; p.y = l.groundY - P_H;
+    return { l, p, cam };
+  };
+  const quiet = { play() {} };
+
+  it('a reflected bolt reverses both axes and reaches the shooter', () => {
+    const { l, p, cam } = rig(); p.shield = 1; resetFireballs();
+    const sx = p.x + 200, sy = p.y - 100;                     // the shooter, up and to the right
+    fireFireball(sx, sy, -240 * 0.894, 240 * 0.447, quiet);      // aimed at the player
+    let closest = Infinity;
+    for (let i = 0; i < 240; i++) {
+      updateFireballs(p, l, cam, 1 / 60, quiet);
+      const f = fireballs[0]; if (f?.reflected && !f.dead) closest = Math.min(closest, Math.hypot(f.x - sx, f.y - sy));
+    }
+    expect(closest).toBeLessThan(20);
+  });
+
+  it('a reflected bolt never hits the player who reflected it', () => {
+    const { l, p, cam } = rig(); resetFireballs();
+    fireFireball(p.x, p.y, 0, 0, quiet); fireballs[0].reflected = true;
+    updateFireballs(p, l, cam, 1 / 60, quiet);
+    expect(p.hp).toBe(3);
+  });
+
   it('a reflected shot damages the mage and despawns', () => {
     startGame(600, 1);
     const g = game;

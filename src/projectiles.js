@@ -47,11 +47,12 @@ export function updateFireballs(p, lvl, cam, dt, fx, enemies = []) {
     if (f.ttl <= 0) { f.dead = true; fizzle(f, fx); continue; }
     if (f.x + f.w < 0 || f.x > lvl.width) { f.dead = true; continue; } // off the level
     if (hitsSurface(f, lvl)) { f.dead = true; fizzle(f, fx); continue; }
-    if (f.cool <= 0 && !p.dead &&
+    if (f.cool <= 0 && !f.reflected && !p.dead &&
         f.x < p.x + p.w && f.x + f.w > p.x && f.y < p.y + p.h && f.y + f.h > p.y) {
       if (p.shield > 0) { // reflect wins over hurt (and over invuln)
         p.shield -= 1;
         f.vx = -f.vx;
+        f.vy = -f.vy;
         f.reflected = true;
         f.cool = 0.4; // time to clear the player's body
         fx.play('reflect');

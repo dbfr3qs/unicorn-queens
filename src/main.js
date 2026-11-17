@@ -20,6 +20,8 @@ const ctx = canvas.getContext('2d');
 
 addEventListener('keydown', onKeyDown);
 addEventListener('keyup', onKeyUp);
+// Early, with the key listeners: they are live during loading, so a focus loss then must release keys too.
+addEventListener('blur', () => { releaseAllKeys(); resetGamepads(); });
 // Fullscreen: F, or the footer link. The page goes fullscreen, not the
 // canvas, so the touch buttons come with it; index.html's :root:fullscreen
 // rules scale the canvas to fit. This needs a real gesture — the browser
@@ -147,8 +149,6 @@ addEventListener('keydown', e => {
     game.player.jumpHeld = true;
   }
 });
-addEventListener('blur', () => { releaseAllKeys(); resetGamepads(); });
-
 startLoop(dt => {
   pollGamepads(); // before update, so a press this frame is this frame's input
   stepFrame(dt, canvas.width, fx);

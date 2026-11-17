@@ -59,4 +59,22 @@ describe('the safe spot and solid doors (§2.3)', () => {
     for (let i = 0; i < 30; i++) updatePlayer(p, { ...noInput, right: true }, l, cam, DT, fx);
     expect(p.safeX + p.w).toBeLessThanOrEqual(d.x);
   });
+  it('level 6: a frame the web wall pushed her on records no spot; the respawn stays on the west segment', () => {
+    const l = LEVELS[5].make(600), p = createPlayer(l), d = frostDoor(l);
+    expect(d.kind).toBe('webwall');
+    const west = l.ground.find(g => g.x + g.w <= d.x && g.x + g.w >= d.x - 400); // the segment before the pit
+    const hollow = l.ground.find(g => g.x === d.x);
+    p.x = west.x + 1000; p.y = l.groundY - p.h;
+    for (let i = 0; i < 5; i++) updatePlayer(p, noInput, l, cam, DT, fx);   // seeds a safe spot on the west segment
+    const seeded = p.safeX;
+    expect(p.safeSurf).toBe(west);
+    p.x = d.x + 4; p.y = l.groundY - p.h; p.vy = 0;        // on the hollow's lip, centre west of the wall's centre
+    for (let i = 0; i < 5; i++) updatePlayer(p, noInput, l, cam, DT, fx);
+    expect(p.safeX).toBe(seeded);
+    expect(p.safeSurf).toBe(west);
+    const x = respawnX(p, l);
+    expect(x).toBeGreaterThanOrEqual(west.x);
+    expect(x + p.w).toBeLessThanOrEqual(west.x + west.w);
+    expect(hollow).toBeDefined();
+  });
 });

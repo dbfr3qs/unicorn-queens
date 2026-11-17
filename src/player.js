@@ -251,9 +251,11 @@ export function updatePlayer(player, inp, lvl, cam, dt, fx) {
     player.vy = Math.max(0, player.vy);
   }
   const surface = resolveGroundCollision(player, lvl, dt);
-  resolveDoor(lvl, player); // before the safe spot is taken: a solid door has already pushed her out
+  const doorX = player.x;
+  resolveDoor(lvl, player); // before the safe spot is taken
+  const pushed = player.x !== doorX; // a frame the door pushed her on records no spot: the last one stands
   if (player.flying && player.onGround && !wasOnGround) endFlight(player, fx); // landing ends flight
-  if (player.onGround && surface && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
+  if (player.onGround && surface && !pushed && !UNSAFE_FOOTING.has(surface.kind)) { // respawn point
     player.safeX = player.x; player.safeY = player.y; player.safeSurf = surface;
   }
   if (player.onGround && prevVy > 350) { // hard landing: squash + dust

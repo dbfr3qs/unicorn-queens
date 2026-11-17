@@ -1,6 +1,6 @@
 // Game loop: no simulation step is longer than 1/60 s (stepFrame).
 import { describe, it, expect, beforeEach } from 'vitest';
-import { game, startGame, stepFrame, update, fireSunbeam } from '../src/game.js';
+import { game, startGame, stepFrame, stepCount, update, fireSunbeam } from '../src/game.js';
 import { arrows, fireArrow } from '../src/arrows.js';
 import { BLIZZ_DRIFT, blizzardWobble } from '../src/enemies/queenboss.js';
 import { input } from '../src/input.js';
@@ -16,11 +16,11 @@ beforeEach(() => {
   for (const k of Object.keys(input)) if (typeof input[k] === 'boolean') input[k] = false;
 });
 
-const apex = dt => {
+const apex = (dt, step = stepFrame) => {
   startGame(600, 0); const y0 = game.level.groundY - game.player.h; let top = y0;
-  input.jump = false; for (let i = 0; i < 10; i++) stepFrame(dt, 800, fx); // settle
+  input.jump = false; for (let i = 0; i < 10; i++) step(dt, 800, fx); // settle
   input.jump = true;
-  for (let t = 0; t < 1.2; t += dt) { stepFrame(dt, 800, fx); top = Math.min(top, game.player.y); }
+  for (let t = 0; t < 1.2; t += dt) { step(dt, 800, fx); top = Math.min(top, game.player.y); }
   input.jump = false; return y0 - top;
 };
 
@@ -29,14 +29,13 @@ describe('stepFrame', () => {
     expect(Math.abs(apex(1 / 24) - apex(1 / 60))).toBeLessThan(1.5);
     expect(apex(1 / 24)).toBeGreaterThan(121); // level 3's key ledge is +120
   });
-  it('a 144 Hz frame is one update with its own dt (Review Focus 3)', () => {
-    startGame(600, 0); const t0 = game.gameTime;
-    stepFrame(1 / 144, 800, fx);
-    expect(game.gameTime - t0).toBeCloseTo(1 / 144, 10);
+  it('a frame up to 10 % over 1/60 s is one step (final review F1)', () => {
+    for (const dt of [1 / 60, 0.016667, 0.0167, 1 / 59.94, 0.017, 1 / 75, 1 / 144]) expect(stepCount(dt)).toBe(1);
+    expect(stepCount(1 / 30)).toBe(2);
+    expect(stepCount(0.05)).toBe(3);
   });
-  it('a 50 ms frame still advances 50 ms of game time', () => {
-    startGame(600, 0); const t0 = game.gameTime; stepFrame(0.05, 800, fx);
-    expect(game.gameTime - t0).toBeCloseTo(0.05, 10);
+  it('a 60 Hz frame with jittered timestamps jumps as one plain update does (final review F1)', () => {
+    for (const dt of [0.0167, 1 / 59.94]) expect(apex(dt)).toBe(apex(dt, update));
   });
 });
 

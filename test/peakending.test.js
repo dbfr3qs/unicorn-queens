@@ -122,7 +122,10 @@ describe("the King's end beat", () => {
     expect(isDialogueOpen()).toBe(false);
     wiz.dead = true; // the release while she stands in the band: the beat fires (bug review 2.4)
     update(DT, 800, fx([]));
+    expect(isDialogueOpen()).toBe(false); // not on the kill frame: the cage is still swinging (final review F3)
+    for (let f = 0; f < 200 && !isDialogueOpen(); f++) update(DT, 800, fx([]));
     expect(isDialogueOpen()).toBe(true);
+    expect(game.level.cage.openT).toBe(0); // he speaks once his door stands open
     expect(currentLine().speaker).toBe('The Unicorn King');
     expect(currentLine().text).toBe('You did it. I am… free. The storm breaks.');
     advanceDialogue();
@@ -156,7 +159,9 @@ describe('the rainbow exit', () => {
     expect(p.won).toBe(false); // standing in the dim arc is not a win
     // The King's end beat (band 5900–6200) is what opens it (onOpen).
     p.x = 5950;
-    update(DT, 800, fx([])); // entry edge: the when gate now passes
+    update(DT, 800, fx([])); // entry edge: the cage is still swinging, so he waits (final review F3)
+    expect(isDialogueOpen()).toBe(false);
+    for (let f = 0; f < 200 && !isDialogueOpen(); f++) update(DT, 800, fx([])); // the door opens: the when gate passes
     expect(isDialogueOpen()).toBe(true);
     advanceDialogue(); advanceDialogue(); // the beat closes
     expect(game.level.exit.locked).toBe(false); // his word lights the rainbow

@@ -70,7 +70,17 @@ describe('trigger rects (bug review 2.4)', () => {
     update(1 / 60, 800, fx);
     while (isDialogueOpen()) advanceDialogue(); // another beat may open first
     for (const e of game.enemies) if (e.kind === 'wizardboss') e.dead = true;
-    update(1 / 60, 800, fx); expect(isDialogueOpen()).toBe(true);
+    // the King waits for his cage to open (final review F3): the box opens
+    // the frame the 1.2 s swing ends, and not while the door is still moving
+    let frames = 0;
+    while (!isDialogueOpen() && frames < 200) {
+      update(1 / 60, 800, fx); frames++;
+      if (game.level.cage.openT > 0) expect(isDialogueOpen()).toBe(false);
+    }
+    expect(isDialogueOpen()).toBe(true);
+    expect(game.level.ending7.started).toBe(true);
+    expect(game.level.cage.openT).toBe(0);
+    expect(frames).toBeGreaterThan(60); // ~1.2 s of swing, not the kill frame
   });
   it('a repeat beat fires once per entry, not every frame', () => {
     startGame(600, 4);
